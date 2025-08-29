@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.zerows</groupId>
     <artifactId>r2mo-rapid</artifactId>
-    <version>1.0-M0</version>
-    <name>R2mo Rapid</name>
+    <version>1.0-M1</version>
+    <name>R2mo Rapid --> ${r2mo.version} / ${project.version}</name>
     <!-- License -->
     <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
     <description>
@@ -61,7 +61,7 @@
         <module>r2mo-bootstrap</module>
     </modules>
     <properties>
-        <r2mo.version>1.0-M0</r2mo.version>
+        <r2mo.version>1.0-M1</r2mo.version>
         <!-- 项目基本信息 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -80,7 +80,7 @@
         <mysql.version>8.4.0</mysql.version>
         <flyway.version>11.11.2</flyway.version>
         <mybatis-plus.version>3.5.12</mybatis-plus.version>
-        <mybatis.version>3.5.9</mybatis.version>
+        <mybatis.version>3.5.19</mybatis.version>
         <reflections.version>0.10.2</reflections.version>
         <!-- ======================= Template Engine =========================== -->
         <freemarker.version>2.3.34</freemarker.version>
@@ -183,23 +183,23 @@
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-bootstrap</artifactId>
-                <version>${project.version}</version>
+                <version>${r2mo.version}</version>
             </dependency>
             <!-- 统一抽象接口 -->
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-ams</artifactId>
-                <version>${project.version}</version>
+                <version>${r2mo.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-dbe</artifactId>
-                <version>${project.version}</version>
+                <version>${r2mo.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-spring</artifactId>
-                <version>${project.version}</version>
+                <version>${r2mo.version}</version>
             </dependency>
 
             <dependency>
@@ -264,6 +264,11 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+                <version>${dynamic-datasource.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>

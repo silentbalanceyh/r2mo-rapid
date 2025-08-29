@@ -2,6 +2,9 @@ package io.r2mo.dbe.mybatisplus.generator;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -33,19 +36,43 @@ public class SourceGenerator {
     }
 
     public void generate() {
+        this.generate(true);
+    }
+
+    public void generate(final boolean isFull) {
+        // 清理上次生成
+        this.purgeSql();
+
         final List<Class<?>> entities = this.genConfig.getEntities();
         // Mapper 生成
         for (final Class<?> entity : entities) {
             // SQL
             this.processorSql.generate(entity, this.genConfig);
-            // Mapper Interface
-            this.processorMapper.generate(entity, this.genConfig);
-            // Mapper XML
-            this.processorXml.generate(entity, this.genConfig);
-            // Service Interface
-            this.processorService.generate(entity, this.genConfig);
-            // Service Impl
-            this.processorServiceImpl.generate(entity, this.genConfig);
+
+            if (isFull) {
+                // Mapper Interface
+                this.processorMapper.generate(entity, this.genConfig);
+                // Mapper XML
+                this.processorXml.generate(entity, this.genConfig);
+                // Service Interface
+                this.processorService.generate(entity, this.genConfig);
+                // Service Impl
+                this.processorServiceImpl.generate(entity, this.genConfig);
+            }
+        }
+    }
+
+    @SuppressWarnings("all")
+    private void purgeSql() {
+        final Path pathDB = this.genConfig.outSql();
+        final Path pathSchema = pathDB.resolve("schema");
+        final Path v1_init_schema = pathSchema.resolve("V1__init_schema.sql");
+        try {
+            if (Files.exists(v1_init_schema)) {
+                Files.delete(v1_init_schema);
+            }
+        } catch (final IOException ex) {
+            ex.printStackTrace();
         }
     }
 }

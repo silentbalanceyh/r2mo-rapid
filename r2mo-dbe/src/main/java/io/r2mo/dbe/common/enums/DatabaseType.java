@@ -9,5 +9,9 @@ public enum DatabaseType {
     MYSQL_9,
     PGSQL,
     SQLITE_3,
-    H2,
+    H2;
+
+    public static boolean isMySQL(final DatabaseType type) {
+        return type == MYSQL_5 || type == MYSQL_8 || type == MYSQL_9;
+    }
 }
