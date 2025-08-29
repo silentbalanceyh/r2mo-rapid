@@ -24,5 +24,21 @@
             <artifactId>r2mo-spring</artifactId>
             <version>${r2mo.version}</version>
         </dependency>
+        <!--
+        01. Flyway
+        02. MyBatis-Plus
+        03. Web Server
+        04. Swagger 3
+        -->
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-mysql -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
     </dependencies>
 </project>

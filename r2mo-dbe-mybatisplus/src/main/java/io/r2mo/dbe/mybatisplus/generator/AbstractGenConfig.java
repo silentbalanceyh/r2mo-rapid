@@ -1,6 +1,8 @@
 package io.r2mo.dbe.mybatisplus.generator;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.r2mo.dbe.common.enums.DatabaseType;
+import io.r2mo.dbe.mybatisplus.generator.configure.GenPath;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
@@ -25,20 +27,20 @@ public abstract class AbstractGenConfig implements GenConfig {
 
     @Override
     public Path outProvider() {
-        final Path path = this.output("-provider");
+        final Path path = this.gen().outDao();
         return path.resolve("src/main/java");
     }
 
     @Override
     public Path outProviderXml() {
-        final Path path = this.output("-provider");
+        final Path path = this.gen().outDao();
         final String module = Path.of(System.getProperty("user.dir")).toFile().getName();
         return path.resolve("src/main/resources/" + module + "/mapper");
     }
 
     @Override
     public Path outSql() {
-        final Path path = this.output("-domain");
+        final Path path = this.gen().outSchema();
         final String module = Path.of(System.getProperty("user.dir")).toFile().getName();
         return path.resolve("src/main/resources/" + module + "/database");
     }
@@ -53,16 +55,23 @@ public abstract class AbstractGenConfig implements GenConfig {
             .toList();
     }
 
-    private Path output(final String suffix) {
-        final Path path = Path.of(System.getProperty("user.dir"));
-        final String module = path.toFile().getName();
-        final String submodule = module + suffix;
-        return path.resolve(submodule);
+    @Override
+    public SourceStructure metaStructure() {
+        return SourceStructure.DPA;
+    }
+
+    @Override
+    public DatabaseType metaDatabaseType() {
+        return DatabaseType.MYSQL_8;
+    }
+
+    private GenPath gen() {
+        return GenPath.of(this.metaStructure());
     }
 
     @Override
     public Path outApi() {
-        final Path path = this.output("-api");
+        final Path path = this.gen().outApi();
         return path.resolve("src/main/java");
     }
 }

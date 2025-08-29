@@ -1,4 +1,4 @@
-package io.r2mo.dbe.mybatisplus;
+package io.r2mo.spring.mybatisplus.program;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

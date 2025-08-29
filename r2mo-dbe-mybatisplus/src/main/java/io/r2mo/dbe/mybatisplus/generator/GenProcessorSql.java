@@ -3,6 +3,7 @@ package io.r2mo.dbe.mybatisplus.generator;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.r2mo.dbe.mybatisplus.constant.SourceField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,16 +21,9 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 class GenProcessorSql implements GenProcessor {
-    private static final List<String> FIELD_ORDER = List.of(
-        "id", "code", "name", "type", "status",
-        "enabled", "description",
-        "parentId", "appId", "directoryId",
-        "createdAt", "createdBy", "updatedAt", "updatedBy",
-        "language", "version", "cMetadata"
-    );
 
     private static int getFieldPriority(final String fieldName) {
-        final int index = FIELD_ORDER.indexOf(fieldName);
+        final int index = SourceField.FIELD_ORDER.indexOf(fieldName);
         return index == -1 ? Integer.MAX_VALUE : index; // 不在列表中的字段放到最后
     }
 

@@ -1,5 +1,7 @@
 package io.r2mo.dbe.mybatisplus.generator;
 
+import io.r2mo.dbe.common.enums.DatabaseType;
+
 import java.nio.file.Path;
 import java.util.List;
 
@@ -21,4 +23,8 @@ public interface GenConfig {
     Path outSql();
 
     Path outApi();
+
+    SourceStructure metaStructure();
+
+    DatabaseType metaDatabaseType();
 }

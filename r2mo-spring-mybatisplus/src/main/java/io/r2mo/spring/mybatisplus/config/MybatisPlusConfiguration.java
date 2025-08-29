@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import io.r2mo.spring.common.config.PropertySourceYmlFactory;
 import io.r2mo.spring.mybatisplus.handler.InjectionMetaObjectHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement(proxyTargetClass = true)
 @MapperScan("${mybatis-plus.mapperPackage}")
 @PropertySource(value = "classpath:common-mybatis-plus.yml", factory = PropertySourceYmlFactory.class)
+@Slf4j
 public class MybatisPlusConfiguration {
 
     @Bean
@@ -47,6 +49,8 @@ public class MybatisPlusConfiguration {
             final OptimisticLockerInnerInterceptor lockerInnerInterceptor = new OptimisticLockerInnerInterceptor();
             interceptor.addInnerInterceptor(lockerInnerInterceptor);
         }
+
+        log.info("[ R2MO ] Config / Mybatis-Plus Interceptor 配置完成！");
         return interceptor;
     }
 

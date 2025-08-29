@@ -14,7 +14,7 @@ import java.util.List;
  * @author lang : 2025-07-25
  */
 @Slf4j
-public class EntityGenerator {
+public class SourceGenerator {
 
     private final GenProcessor processorSql = new GenProcessorSql();
     private final GenProcessor processorMapper = new GenProcessorMapper();
@@ -23,7 +23,7 @@ public class EntityGenerator {
     private final GenProcessor processorServiceImpl = new GenProcessorServiceImpl(); // 这里可以替换为具体的实现类
     private GenConfig genConfig;
 
-    public EntityGenerator(final Class<? extends GenConfig> clazz) {
+    public SourceGenerator(final Class<? extends GenConfig> clazz) {
         try {
             this.genConfig = clazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
