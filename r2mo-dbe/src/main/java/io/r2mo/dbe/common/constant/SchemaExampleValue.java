@@ -1,4 +1,4 @@
-package io.r2mo.dbe.mybatisplus.constant;
+package io.r2mo.dbe.common.constant;
 
 /**
  * @author lang : 2025-07-25

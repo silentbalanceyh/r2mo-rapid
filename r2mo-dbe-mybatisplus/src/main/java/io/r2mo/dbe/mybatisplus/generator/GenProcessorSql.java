@@ -3,9 +3,10 @@ package io.r2mo.dbe.mybatisplus.generator;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.r2mo.dbe.mybatisplus.constant.SourceField;
+import io.r2mo.dbe.common.constant.SourceField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.type.JdbcType;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -194,7 +195,13 @@ class GenProcessorSql implements GenProcessor {
 
         if (tableFieldAnnotation != null) {
             // 可以根据需要处理 jdbcType
-            // TODO: 大文本处理
+            // 大文本必须追加 TableField 的注解
+            final JdbcType jdbcType = tableFieldAnnotation.jdbcType();
+            if (jdbcType == JdbcType.CLOB) {
+                return "TEXT";
+            } else if (jdbcType == JdbcType.NCLOB) {
+                return "LONGTEXT";
+            }
         }
 
         // 根据 Java 类型映射到 SQL 类型
@@ -332,12 +339,12 @@ class GenProcessorSql implements GenProcessor {
 
         FieldInfo(final Field field) {
             this.fieldName = field.getName();
-            this.columnName = getColumnName(field);
-            this.columnType = getColumnType(field);
-            this.isPrimaryKey = isPrimaryKey(field);
-            this.nullable = isNullable(field);
-            this.defaultValue = getDefaultValue(field);
-            this.comment = getComment(field);
+            this.columnName = GenProcessorSql.getColumnName(field);
+            this.columnType = GenProcessorSql.getColumnType(field);
+            this.isPrimaryKey = GenProcessorSql.isPrimaryKey(field);
+            this.nullable = GenProcessorSql.isNullable(field);
+            this.defaultValue = GenProcessorSql.getDefaultValue(field);
+            this.comment = GenProcessorSql.getComment(field);
         }
     }
 }
