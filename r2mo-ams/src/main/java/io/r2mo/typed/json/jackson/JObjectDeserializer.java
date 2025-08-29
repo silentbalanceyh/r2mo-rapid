@@ -1,0 +1,23 @@
+package io.r2mo.typed.json.jackson;
+
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.r2mo.spi.SPIConnect;
+import io.r2mo.typed.json.JObject;
+
+import java.io.IOException;
+
+/**
+ * @author lang : 2025-08-28
+ */
+public class JObjectDeserializer extends JsonDeserializer<JObject> {
+    @Override
+    public JObject deserialize(final JsonParser parser,
+                               final DeserializationContext context) throws IOException, JacksonException {
+        final JsonNode node = parser.getCodec().readTree(parser);
+        return SPIConnect.SPI_OBJECT.jsonObject(node.toString());
+    }
+}
