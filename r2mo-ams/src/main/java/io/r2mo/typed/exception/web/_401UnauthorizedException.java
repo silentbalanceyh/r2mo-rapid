@@ -1,4 +1,4 @@
-package io.r2mo.typed.exception.impl;
+package io.r2mo.typed.exception.web;
 
 import io.r2mo.spi.SPIConnect;
 import io.r2mo.typed.exception.WebException;

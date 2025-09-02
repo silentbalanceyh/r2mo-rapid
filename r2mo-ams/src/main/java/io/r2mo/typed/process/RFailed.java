@@ -3,7 +3,7 @@ package io.r2mo.typed.process;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.r2mo.typed.exception.AbstractException;
 import io.r2mo.typed.exception.WebException;
-import io.r2mo.typed.exception.impl._500ServerInternalException;
+import io.r2mo.typed.exception.web._500ServerInternalException;
 import lombok.Data;
 
 import java.io.Serializable;

@@ -55,7 +55,6 @@
 
         <!-- 🌷 数据类型实现 -->
         <module>r2mo-typed-hutool</module>
-        <module>r2mo-typed-vertx</module>
 
         <!-- 🌷 IO 详细实现 -->
         <module>r2mo-io</module>
@@ -63,8 +62,6 @@
         <!-- 🌷 Database Engine 实现 -->
         <module>r2mo-dbe</module>
         <module>r2mo-dbe-mybatisplus</module>
-        <module>r2mo-dbe-jooq</module>
-        <module>r2mo-dbe-jpa</module>
 
         <!-- 🌷 Spring 模块专用 -->
         <module>r2mo-spring</module>
@@ -73,6 +70,7 @@
 
         <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
         <module>r2mo-bootstrap</module>
+        <module>r2mo-io-local</module>
     </modules>
     <properties>
         <r2mo.version>1.0-M1</r2mo.version>

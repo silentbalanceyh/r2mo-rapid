@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.r2mo.spi.SPIConnect;
-import io.r2mo.typed.exception.impl._500ServerInternalException;
+import io.r2mo.typed.exception.web._500ServerInternalException;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -34,11 +34,11 @@ public class R<T> implements SPIConnect, Serializable {
     }
 
     public static <T> R<T> ok() {
-        return success(null, SPI_WEB.ofSuccess204());
+        return success(null, SPIConnect.SPI_WEB.ofSuccess204());
     }
 
     public static <T> R<T> ok(final T data) {
-        return success(data, SPI_WEB.ofSuccess());
+        return success(data, SPIConnect.SPI_WEB.ofSuccess());
     }
 
     public static <T> R<T> ok(final T data, final WebState state) {

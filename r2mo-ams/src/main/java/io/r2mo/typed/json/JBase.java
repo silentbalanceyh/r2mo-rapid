@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import io.r2mo.spi.SPIConnect;
 import io.r2mo.typed.json.jackson.*;
 
 import java.io.Serializable;
@@ -47,6 +48,21 @@ public interface JBase extends Serializable {
 
 
         return modules;
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T> T parse(String json) {
+        if (json == null || json.isEmpty()) {
+            return null;
+        }
+        final String content = json.trim();
+        if (content.startsWith("[") && content.endsWith("]")) {
+            return (T) SPIConnect.SPI_OBJECT.jsonArray(json);
+        } else if (content.startsWith("{") && content.endsWith("}")) {
+            return (T) SPIConnect.SPI_OBJECT.jsonObject(json);
+        } else {
+            throw new IllegalStateException("[ R2MO ] 无法解析该 JSON 内容：" + json);
+        }
     }
 
     boolean isEmpty();

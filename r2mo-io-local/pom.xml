@@ -9,12 +9,12 @@
         <version>1.0-M1</version>
     </parent>
 
-    <artifactId>r2mo-io</artifactId>
-    <name>R2MO::IO</name>
+    <artifactId>r2mo-io-local</artifactId>
+    <name>R2MO::IO::Local</name>
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>
-            <artifactId>r2mo-ams</artifactId>
+            <artifactId>r2mo-io</artifactId>
         </dependency>
     </dependencies>
 </project>
