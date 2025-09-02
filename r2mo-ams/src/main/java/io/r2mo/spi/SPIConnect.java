@@ -2,6 +2,8 @@ package io.r2mo.spi;
 
 import io.r2mo.typed.json.JUtil;
 
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * 特殊接口连接点
  *
@@ -16,6 +18,8 @@ public interface SPIConnect {
     FactoryIo SPI_IO = ProviderOfFactory.forIo();
 
     FactoryWeb SPI_WEB = ProviderOfFactory.forWeb();
+
+    ConcurrentMap<Class<?>, Class<?>> SPI_META = ProviderOfFactory.meta();
 
     JUtil _UTJ = SPI_OBJECT.jsonUtil();
 }

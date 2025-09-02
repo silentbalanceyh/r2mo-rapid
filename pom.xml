@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.zerows</groupId>
     <artifactId>r2mo-rapid</artifactId>
-    <version>1.0-M1</version>
+    <version>1.0-M2</version>
     <name>R2mo Rapid --> ${r2mo.version} / ${project.version}</name>
     <!-- License -->
     <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
@@ -83,6 +83,8 @@
         <!-- 基础依赖 -->
         <spring-boot.version>3.5.5</spring-boot.version>
         <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
+        <!-- ======================= SJR ============================ -->
+        <jsr250.version>3.0.0</jsr250.version>
         <!-- ======================= Apache Commons   =========================== -->
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <!-- ======================= Tools           =========================== -->
@@ -228,6 +230,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api -->
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jsr250.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
             <dependency>

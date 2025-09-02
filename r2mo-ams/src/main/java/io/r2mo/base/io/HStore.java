@@ -3,6 +3,7 @@ package io.r2mo.base.io;
 import cn.hutool.core.io.IoUtil;
 import io.r2mo.function.Fn;
 import io.r2mo.typed.exception.web._501NotSupportException;
+import io.r2mo.typed.json.JBase;
 
 import java.io.File;
 import java.io.InputStream;
@@ -33,9 +34,9 @@ public interface HStore {
     boolean mkdir(Set<String> dirs);
 
     /* 重命名：mv */
-    boolean rename(String from, String to);
+    boolean mv(String from, String to);
 
-    boolean rename(ConcurrentMap<String, String> vectorMap);
+    boolean mv(ConcurrentMap<String, String> vectorMap);
 
     /* 删除：rm */
     boolean rm(String filename);
@@ -78,29 +79,43 @@ public interface HStore {
     default List<String> lsFilesN(final String filename) {
         return this.lsFiles(filename, null);
     }
-    
+
+    default <T extends JBase> T inJson(final String filename) {
+        return JBase.parse(this.inString(filename));
+    }
+
+    default <T extends JBase> T inJson(final URL url) {
+        return JBase.parse(this.inString(url));
+    }
+
     /* 文件读取 */
+    // -> filename -> InputStream -> String
     default String inString(final String filename) {
         return IoUtil.read(this.inStream(filename), StandardCharsets.UTF_8);
     }
 
+    // -> URL -> InputStream -> String
     default String inString(final URL url) {
         return IoUtil.read(this.inStream(url), StandardCharsets.UTF_8);
     }
 
+    // -> filename -> InputStream -> byte[]
     default byte[] inBytes(final String filename) {
         return IoUtil.readBytes(this.inStream(filename));
     }
 
+    // -> URL -> InputStream -> byte[]
     default byte[] inBytes(final URL url) {
         return IoUtil.readBytes(this.inStream(url));
     }
 
     /* 文件 Stream 读取 */
+    // -> filename -> URL -> InputStream
     default InputStream inStream(final String filename) {
         return this.inStream(this.toURL(filename));
     }
 
+    // -> URL -> InputStream
     default InputStream inStream(final URL url) {
         if (null == url) {
             return null;
@@ -108,7 +123,26 @@ public interface HStore {
         return Fn.jvmOr(url::openStream, null);
     }
 
+    <T extends JBase> T inYaml(URL url);
+
+    <T extends JBase> T inYaml(String filename);
+
     // ---------------- 下边方法不适合在网络或分布式环境中使用
+    <T extends JBase> T inYaml(File file);
+
+    <T extends JBase> T inYaml(Path path);
+
+    /*
+     * 最终异常会从 inStream 中抛出
+     */
+    default <T extends JBase> T inJson(final File file) {
+        return JBase.parse(this.inString(file));
+    }
+
+    default <T extends JBase> T inJson(final Path file) {
+        return JBase.parse(this.inString(file));
+    }
+
     default String inString(final File file) {
         return IoUtil.read(this.inStream(file), StandardCharsets.UTF_8);
     }

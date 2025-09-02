@@ -15,21 +15,21 @@ public abstract class ServiceOfMybatisPlus<T> {
     @SuppressWarnings("all")
     public ServiceOfMybatisPlus() {
         final Type genericType = this.getClass().getGenericSuperclass();
-        if(genericType instanceof final ParameterizedType parameterizedType) {
+        if (genericType instanceof final ParameterizedType parameterizedType) {
             final Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-            if(0 < actualTypeArguments.length) {
+            if (0 < actualTypeArguments.length) {
                 this.entityCls = (Class<T>) actualTypeArguments[0];
-            }else{
+            } else {
                 throw new IllegalStateException("[ R2MO ] 泛型定义长度不对！");
             }
-        }else{
+        } else {
             throw new IllegalStateException("[ R2MO ] 泛型类型获取失败！");
         }
     }
 
     protected abstract <M extends BaseMapper<T>> M executor();
 
-    protected DBE<T> db(){
+    protected DBE<T> db() {
         return DBE.of(this.entityCls, this.executor());
     }
 }

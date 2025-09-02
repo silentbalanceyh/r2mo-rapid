@@ -44,12 +44,12 @@ public class HStoreLocal extends AbstractHStore {
     }
 
     @Override
-    public boolean rename(final String from, final String to) {
+    public boolean mv(final String from, final String to) {
         return LocalWriter.move(from, to);
     }
 
     @Override
-    public boolean rename(final ConcurrentMap<String, String> vectorMap) {
+    public boolean mv(final ConcurrentMap<String, String> vectorMap) {
         if (vectorMap == null || vectorMap.isEmpty()) {
             return true;
         }

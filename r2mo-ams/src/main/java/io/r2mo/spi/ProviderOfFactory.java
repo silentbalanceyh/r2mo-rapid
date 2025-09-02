@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author lang : 2025-08-28
@@ -21,6 +23,8 @@ public class ProviderOfFactory {
 
     private static final Cc<String, FactoryWeb> CCT_WEB_FACTORY = Cc.openThread();
 
+    private static final ConcurrentMap<Class<?>, Class<?>> META_CLASS = new ConcurrentHashMap<>();
+
     public static FactoryIo forIo() {
         return CCT_IO_FACTORY.pick(() -> findOne(FactoryIo.class));
     }
@@ -35,6 +39,10 @@ public class ProviderOfFactory {
 
     public static FactoryWeb forWeb() {
         return CCT_WEB_FACTORY.pick(() -> findOne(FactoryWeb.class));
+    }
+
+    static ConcurrentMap<Class<?>, Class<?>> meta() {
+        return META_CLASS;
     }
 
     private static <T> T findBy(final Class<T> clazz, final String name) {
@@ -58,6 +66,9 @@ public class ProviderOfFactory {
         Objects.requireNonNull(clazz);
         final ServiceLoader<T> loader = ServiceLoader.load(clazz);
         for (final T instance : loader) {
+            if (Objects.nonNull(instance)) {
+                META_CLASS.put(clazz, instance.getClass());
+            }
             return instance;
         }
         return null;
