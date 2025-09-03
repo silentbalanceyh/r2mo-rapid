@@ -45,6 +45,7 @@ public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Schema(description = "类名")
     @JsonIgnore
+    @TableField(exist = false)
     private String className = this.getClass().getSimpleName();
     @Schema(description = "主键", example = SchemaExampleValue.DEFAULT_UUID)
     @TableId(value = "id", type = IdType.ASSIGN_UUID)

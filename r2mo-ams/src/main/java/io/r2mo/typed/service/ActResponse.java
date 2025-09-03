@@ -20,4 +20,5 @@ public record ActResponse<T>(T data, ActState state) {
     public static <T> ActResponse<T> failure(final T data) {
         return new ActResponse<>(data, ActState.FAILURE);
     }
+    
 }

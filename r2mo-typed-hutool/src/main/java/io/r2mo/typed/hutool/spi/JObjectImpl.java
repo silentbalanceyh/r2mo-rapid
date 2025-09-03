@@ -53,6 +53,12 @@ class JObjectImpl implements JObject {
     }
 
     @Override
+    public JObject put(final Map<String, Object> map) {
+        this.data.putAll(map);
+        return this;
+    }
+
+    @Override
     public boolean containsKey(final String key) {
         return this.data.containsKey(key);
     }

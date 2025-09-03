@@ -173,11 +173,21 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     // ---- findPage
     public Pagination<T> findPage(final QQuery query) {
-        return this.opVary.queryPage(query);
+        return this.opVary.findPage(query);
     }
 
     public Pagination<T> findPage(final JObject queryJ) {
         return this.findPage(QQuery.of(queryJ));
+    }
+
+    // ---- findAll
+    public List<T> findAll() {
+        return this.opVary.findAll();
+    }
+
+    public <K> Map<K, List<T>> findGroupBy(final String groupBy) {
+        final List<T> entities = this.findAll();
+        return DBETool.groupBy(entities, groupBy, this.entityCls);
     }
     // ---- findGroupBy
 
@@ -199,7 +209,7 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
     // ---- findMap
     public List<T> findMap(final Map<String, Object> map) {
         final QR condition = this.qrAnalyzer.where(map);
-        return this.opVary.queryMany(condition);
+        return this.opVary.findMany(condition);
     }
 
     public List<T> findMap(final JObject mapJ) {
@@ -209,7 +219,7 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
     // ---- findManyIn
     public List<T> findManyIn(final String field, final Object... values) {
         final QR condition = this.qrAnalyzer.whereIn(field, values);
-        return this.opVary.queryMany(condition);
+        return this.opVary.findMany(condition);
     }
 
     public List<T> findManyIn(final String field, final List<?> values) {

@@ -2,9 +2,11 @@ package io.r2mo.dbe.mybatisplus.spi;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.r2mo.base.dbe.operation.OpVary;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.dbe.common.operation.AbstractDbOperation;
@@ -25,7 +27,7 @@ class OpVaryImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWr
     }
 
     @Override
-    public Pagination<T> queryPage(final QQuery query) {
+    public Pagination<T> findPage(final QQuery query) {
         if (Objects.isNull(query)) {
             return new Pagination<>();
         }
@@ -52,7 +54,7 @@ class OpVaryImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWr
     }
 
     @Override
-    public List<T> queryMany(final QueryWrapper<T> condition) {
+    public List<T> findMany(final QueryWrapper<T> condition) {
         if (Objects.isNull(condition)) {
             return new ArrayList<>();
         }
@@ -60,7 +62,13 @@ class OpVaryImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWr
     }
 
     @Override
-    public Optional<T> queryOne(final QueryWrapper<T> condition) {
+    public List<T> findAll() {
+        final Wrapper<T> condition = Wrappers.query(this.entityCls());
+        return this.executor().selectList(condition);
+    }
+
+    @Override
+    public Optional<T> findOne(final QueryWrapper<T> condition) {
         if (Objects.isNull(condition)) {
             return Optional.empty();
         }

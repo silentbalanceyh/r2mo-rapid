@@ -18,13 +18,15 @@ public interface OpVary<T, CONDITION> {
      *
      * @return 分页结果
      */
-    Pagination<T> queryPage(QQuery query);
+    Pagination<T> findPage(QQuery query);
 
     boolean removeBy(CONDITION condition);
 
-    List<T> queryMany(CONDITION condition);
+    List<T> findMany(CONDITION condition);
 
-    Optional<T> queryOne(CONDITION condition);
+    List<T> findAll();
+
+    Optional<T> findOne(CONDITION condition);
 
     boolean removeById(Serializable id);
 

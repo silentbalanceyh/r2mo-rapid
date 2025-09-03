@@ -28,6 +28,8 @@ public interface JObject extends JBase {
 
     JObject put(String key, Object value);
 
+    JObject put(Map<String, Object> map);
+
     boolean containsKey(String key);
 
     Map<String, Object> toMap();

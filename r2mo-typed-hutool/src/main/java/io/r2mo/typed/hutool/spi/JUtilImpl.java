@@ -4,6 +4,7 @@ import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.json.JUtil;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -20,6 +21,16 @@ class JUtilImpl implements JUtil {
             INSTANCE = new JUtilImpl();
         }
         return INSTANCE;
+    }
+
+    @Override
+    public JObject toJObject(final Map<String, Object> map) {
+        if (Objects.isNull(map) || map.isEmpty()) {
+            return new JObjectImpl();
+        }
+        final JObject json = new JObjectImpl();
+        json.put(map);
+        return json;
     }
 
     @Override
