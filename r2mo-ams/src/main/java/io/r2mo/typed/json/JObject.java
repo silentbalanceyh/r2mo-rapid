@@ -22,6 +22,14 @@ public interface JObject extends JBase {
         return this.getBool(key, false);
     }
 
+    String getString(String key, String defaultValue);
+
+    default String getString(String key) {
+        return this.getString(key, null);
+    }
+
+    Object get(String key);
+
     JObject getJObject(String key);
 
     JArray getJArray(String key);

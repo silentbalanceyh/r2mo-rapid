@@ -21,16 +21,18 @@ public class RestMeta implements Serializable {
         this.appId = appId;
     }
 
-    public void headerApp(final String pNameAppHeader) {
-        this.pHeaderApp = pNameAppHeader;
+    public RestMeta headerApp(final String headerApp) {
+        this.pHeaderApp = headerApp;
+        return this;
     }
 
     public String headerApp() {
         return this.pHeaderApp;
     }
 
-    public void headerSign(final String pNameSign) {
-        this.pHeaderSign = pNameSign;
+    public RestMeta headerSign(final String headerSign) {
+        this.pHeaderSign = headerSign;
+        return this;
     }
 
     public String headerSign() {

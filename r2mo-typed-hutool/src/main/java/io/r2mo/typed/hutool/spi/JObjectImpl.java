@@ -37,6 +37,16 @@ class JObjectImpl implements JObject {
     }
 
     @Override
+    public String getString(final String key, final String defaultValue) {
+        return this.data.getStr(key, defaultValue);
+    }
+
+    @Override
+    public Object get(final String key) {
+        return this.data.getObj(key);
+    }
+
+    @Override
     public JObject getJObject(final String key) {
         return (JObject) this.data.getObj(key);
     }
