@@ -1,16 +1,16 @@
 package io.r2mo.spring.common.spi;
 
-import io.r2mo.typed.process.WebState;
+import io.r2mo.typed.webflow.WebState;
 import org.springframework.http.HttpStatus;
 
 /**
  * @author lang : 2025-09-02
  */
-class SpringWebState implements WebState {
+class SpringHttpState implements WebState {
 
     private final HttpStatus status;
 
-    SpringWebState(final HttpStatus status) {
+    SpringHttpState(final HttpStatus status) {
         this.status = status;
     }
 

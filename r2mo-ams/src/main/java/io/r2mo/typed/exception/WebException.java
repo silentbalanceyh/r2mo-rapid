@@ -1,6 +1,6 @@
 package io.r2mo.typed.exception;
 
-import io.r2mo.typed.process.WebState;
+import io.r2mo.typed.webflow.WebState;
 import lombok.Getter;
 
 /**

@@ -1,4 +1,4 @@
-package io.r2mo.typed.process;
+package io.r2mo.typed.webflow;
 
 import java.io.Serializable;
 

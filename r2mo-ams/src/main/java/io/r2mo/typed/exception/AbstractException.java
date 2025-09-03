@@ -1,6 +1,7 @@
 package io.r2mo.typed.exception;
 
 import cn.hutool.core.util.StrUtil;
+import io.r2mo.base.web.ForLocale;
 import io.r2mo.spi.SPIConnect;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +27,8 @@ public abstract class AbstractException extends RuntimeException {
         this.messageKey = messageKey;
         this.messageArgs = messageArgs;
         if (StrUtil.isNotEmpty(messageKey)) {
-            this.messageContent = SPIConnect.SPI_WEB.ofMessage(messageKey, messageArgs);
+            final ForLocale localization = SPIConnect.SPI_WEB.ofLocale();
+            this.messageContent = localization.format(messageKey, messageArgs);
         }
     }
 

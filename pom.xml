@@ -73,7 +73,7 @@
         <module>r2mo-io-local</module>
     </modules>
     <properties>
-        <r2mo.version>1.0-M1</r2mo.version>
+        <r2mo.version>1.0-M2</r2mo.version>
         <!-- 项目基本信息 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

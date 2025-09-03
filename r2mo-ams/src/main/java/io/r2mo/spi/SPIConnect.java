@@ -1,5 +1,6 @@
 package io.r2mo.spi;
 
+import io.r2mo.base.web.ForStatus;
 import io.r2mo.typed.json.JUtil;
 
 import java.util.concurrent.ConcurrentMap;
@@ -20,6 +21,8 @@ public interface SPIConnect {
     FactoryWeb SPI_WEB = ProviderOfFactory.forWeb();
 
     ConcurrentMap<Class<?>, Class<?>> SPI_META = ProviderOfFactory.meta();
-
+    /* 下边是专用的接口部分用来处理特定场景下的相关内容 */
     JUtil _UTJ = SPI_OBJECT.jsonUtil();
+
+    ForStatus STATUS = SPI_WEB.ofStatus();
 }

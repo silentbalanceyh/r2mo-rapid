@@ -1,29 +1,17 @@
 package io.r2mo.spi;
 
-import io.r2mo.typed.process.WebState;
+import io.r2mo.base.web.ForFailure;
+import io.r2mo.base.web.ForLocale;
+import io.r2mo.base.web.ForStatus;
 
 /**
  * @author lang : 2025-08-28
  */
 public interface FactoryWeb {
 
-    <T> WebState ofFailure(T status);
+    ForStatus ofStatus();
 
-    WebState ofFail501();
+    ForLocale ofLocale();
 
-    WebState ofFail500();
-
-    WebState ofFail400();
-
-    WebState ofFail401();
-
-    WebState ofFail403();
-
-    <T> WebState ofSuccess(T status);
-
-    WebState ofSuccess();
-
-    WebState ofSuccess204();
-
-    String ofMessage(String messageKey, Object... messageArgs);
+    ForFailure ofFailure();
 }

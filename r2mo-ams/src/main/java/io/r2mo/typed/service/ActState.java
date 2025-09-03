@@ -1,4 +1,4 @@
-package io.r2mo.typed.process;
+package io.r2mo.typed.service;
 
 /**
  * @author lang : 2025-08-28

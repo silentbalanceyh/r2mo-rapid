@@ -1,4 +1,4 @@
-package io.r2mo.typed.process;
+package io.r2mo.typed.webflow;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -34,11 +34,11 @@ public class R<T> implements SPIConnect, Serializable {
     }
 
     public static <T> R<T> ok() {
-        return success(null, SPIConnect.SPI_WEB.ofSuccess204());
+        return success(null, SPIConnect.STATUS.ok204());
     }
 
     public static <T> R<T> ok(final T data) {
-        return success(data, SPIConnect.SPI_WEB.ofSuccess());
+        return success(data, SPIConnect.STATUS.ok());
     }
 
     public static <T> R<T> ok(final T data, final WebState state) {

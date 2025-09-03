@@ -1,4 +1,4 @@
-package io.r2mo.typed;
+package io.r2mo.typed.common;
 
 import java.util.Map;
 import java.util.Objects;

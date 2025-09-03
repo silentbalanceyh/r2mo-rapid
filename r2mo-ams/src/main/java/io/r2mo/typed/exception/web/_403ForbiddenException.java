@@ -8,7 +8,7 @@ import io.r2mo.typed.exception.WebException;
  */
 public class _403ForbiddenException extends WebException {
     public _403ForbiddenException(final String messageContent) {
-        super(SPIConnect.SPI_WEB.ofFail403(), messageContent);
+        super(SPIConnect.STATUS.V403(), messageContent);
     }
 
     @Override

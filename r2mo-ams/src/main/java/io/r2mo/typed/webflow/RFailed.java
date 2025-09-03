@@ -1,4 +1,4 @@
-package io.r2mo.typed.process;
+package io.r2mo.typed.webflow;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.r2mo.typed.exception.AbstractException;

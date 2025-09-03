@@ -8,7 +8,7 @@ import io.r2mo.typed.exception.WebException;
  */
 public class _500ServerInternalException extends WebException {
     public _500ServerInternalException(final String messageContent) {
-        super(SPIConnect.SPI_WEB.ofFail500(), messageContent);
+        super(SPIConnect.STATUS.V500(), messageContent);
     }
 
     @Override

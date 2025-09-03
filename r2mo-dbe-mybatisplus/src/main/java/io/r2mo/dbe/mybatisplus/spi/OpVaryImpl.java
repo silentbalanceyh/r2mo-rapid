@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.r2mo.base.dbe.operation.OpVary;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.dbe.common.operation.AbstractDbOperation;
-import io.r2mo.typed.process.Pagination;
+import io.r2mo.typed.common.Pagination;
 
 import java.io.Serializable;
 import java.util.ArrayList;

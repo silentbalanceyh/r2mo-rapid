@@ -5,9 +5,10 @@ import io.r2mo.base.dbe.constant.QCV;
 import io.r2mo.base.dbe.operation.*;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QTree;
+import io.r2mo.spi.SPIConnect;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.common.Pagination;
 import io.r2mo.typed.json.JObject;
-import io.r2mo.typed.process.Pagination;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -37,13 +38,13 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
         this.entityCls = entityCls;
         this.executor = executor;
 
-        this.opAggr = SPI_DB.opAggr(entityCls, executor);
-        this.qrOne = SPI_DB.qrOne(entityCls, executor);
-        this.qrMany = SPI_DB.qrMany(entityCls, executor);
-        this.opDb = SPI_DB.opDb(entityCls, executor);
+        this.opAggr = SPIConnect.SPI_DB.opAggr(entityCls, executor);
+        this.qrOne = SPIConnect.SPI_DB.qrOne(entityCls, executor);
+        this.qrMany = SPIConnect.SPI_DB.qrMany(entityCls, executor);
+        this.opDb = SPIConnect.SPI_DB.opDb(entityCls, executor);
 
-        this.opVary = SPI_DB.opVary(entityCls, executor);
-        this.qrAnalyzer = SPI_DB.qrAnalyzer(entityCls, executor);
+        this.opVary = SPIConnect.SPI_DB.opVary(entityCls, executor);
+        this.qrAnalyzer = SPIConnect.SPI_DB.qrAnalyzer(entityCls, executor);
     }
 
     @SuppressWarnings("unchecked")
