@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.zerows</groupId>
     <artifactId>r2mo-rapid</artifactId>
-    <version>1.0-M2</version>
+    <version>1.0-M3</version>
     <name>R2mo Rapid --> ${r2mo.version} / ${project.version}</name>
     <!-- License -->
     <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
@@ -73,7 +73,7 @@
         <module>r2mo-io-local</module>
     </modules>
     <properties>
-        <r2mo.version>1.0-M2</r2mo.version>
+        <r2mo.version>1.0-M3</r2mo.version>
         <!-- 项目基本信息 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -85,6 +85,8 @@
         <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
         <!-- ======================= SJR ============================ -->
         <jsr250.version>3.0.0</jsr250.version>
+        <jsr.servlet.version>6.1.0</jsr.servlet.version>
+        <jsr.validation.version>3.1.1</jsr.validation.version>
         <!-- ======================= Apache Commons   =========================== -->
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <!-- ======================= Tools           =========================== -->
@@ -230,6 +232,18 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jsr.validation.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jsr.servlet.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api -->
             <dependency>

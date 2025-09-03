@@ -1,7 +1,7 @@
 package io.r2mo.io.common;
 
 import io.r2mo.base.io.HStore;
-import io.r2mo.spi.SPIConnect;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JBase;
 
@@ -24,7 +24,7 @@ public class HFS {
     private final HStore store;
 
     protected HFS() {
-        this.store = SPIConnect.SPI_IO.ioAction();
+        this.store = SPI.SPI_IO.ioAction();
     }
 
     public static HFS of() {

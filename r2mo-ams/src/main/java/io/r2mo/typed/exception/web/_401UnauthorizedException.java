@@ -1,6 +1,6 @@
 package io.r2mo.typed.exception.web;
 
-import io.r2mo.spi.SPIConnect;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.exception.WebException;
 
 /**
@@ -8,7 +8,7 @@ import io.r2mo.typed.exception.WebException;
  */
 public class _401UnauthorizedException extends WebException {
     public _401UnauthorizedException(final String messageContent) {
-        super(SPIConnect.STATUS.V401(), messageContent);
+        super(SPI.V_STATUS.V401(), messageContent);
     }
 
     @Override

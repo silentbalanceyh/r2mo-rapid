@@ -1,12 +1,12 @@
 package io.r2mo.base.dbe.syntax;
 
-import io.r2mo.spi.SPIConnect;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JBase;
 
 /**
  * @author lang : 2025-08-28
  */
-public interface QRequest extends SPIConnect {
+public interface QRequest extends SPI {
 
     String field();
 

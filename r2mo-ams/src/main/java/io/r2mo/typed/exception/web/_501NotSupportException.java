@@ -1,6 +1,6 @@
 package io.r2mo.typed.exception.web;
 
-import io.r2mo.spi.SPIConnect;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.exception.WebException;
 
 /**
@@ -8,7 +8,7 @@ import io.r2mo.typed.exception.WebException;
  */
 public class _501NotSupportException extends WebException {
     public _501NotSupportException(final String messageContent) {
-        super(SPIConnect.STATUS.V501(), messageContent);
+        super(SPI.V_STATUS.V501(), messageContent);
     }
 
     @Override

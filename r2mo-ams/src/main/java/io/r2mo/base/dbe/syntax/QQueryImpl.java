@@ -1,6 +1,7 @@
 package io.r2mo.base.dbe.syntax;
 
 import io.r2mo.base.dbe.constant.QCV;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
 
 import java.util.Objects;
@@ -17,10 +18,10 @@ class QQueryImpl implements QQuery {
 
     QQueryImpl(final JObject queryJ) {
         Objects.requireNonNull(queryJ, "[ R2MO ] 参数 queryJ 不能为空");
-        this.pager = QPager.of(_UTJ.valueJObject(queryJ, QCV.P_PAGER));
-        this.sorter = QSorter.of(_UTJ.valueJArray(queryJ, QCV.P_SORTER));
-        this.projection = QProjection.of(_UTJ.valueJArray(queryJ, QCV.P_PROJECTION));
-        this.criteria = QTree.of(_UTJ.valueJObject(queryJ, QCV.P_CRITERIA));
+        this.pager = QPager.of(SPI.V_UTIL.valueJObject(queryJ, QCV.P_PAGER));
+        this.sorter = QSorter.of(SPI.V_UTIL.valueJArray(queryJ, QCV.P_SORTER));
+        this.projection = QProjection.of(SPI.V_UTIL.valueJArray(queryJ, QCV.P_PROJECTION));
+        this.criteria = QTree.of(SPI.V_UTIL.valueJObject(queryJ, QCV.P_CRITERIA));
     }
 
     @Override

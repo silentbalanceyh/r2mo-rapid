@@ -70,6 +70,16 @@ class SpringForStatus implements ForStatus {
         return this.vStatus(HttpStatus.NOT_FOUND);
     }
 
+    @Override
+    public WebState V405() {
+        return this.vStatus(HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @Override
+    public WebState V415() {
+        return this.vStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    }
+
     private WebState vStatus(final HttpStatus status) {
         return CC_STATE.pick(() -> new SpringHttpState(status), status.value());
     }

@@ -5,7 +5,7 @@ import io.r2mo.base.dbe.constant.QCV;
 import io.r2mo.base.dbe.operation.*;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QTree;
-import io.r2mo.spi.SPIConnect;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Pagination;
 import io.r2mo.typed.json.JObject;
@@ -38,13 +38,13 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
         this.entityCls = entityCls;
         this.executor = executor;
 
-        this.opAggr = SPIConnect.SPI_DB.opAggr(entityCls, executor);
-        this.qrOne = SPIConnect.SPI_DB.qrOne(entityCls, executor);
-        this.qrMany = SPIConnect.SPI_DB.qrMany(entityCls, executor);
-        this.opDb = SPIConnect.SPI_DB.opDb(entityCls, executor);
+        this.opAggr = SPI.SPI_DB.opAggr(entityCls, executor);
+        this.qrOne = SPI.SPI_DB.qrOne(entityCls, executor);
+        this.qrMany = SPI.SPI_DB.qrMany(entityCls, executor);
+        this.opDb = SPI.SPI_DB.opDb(entityCls, executor);
 
-        this.opVary = SPIConnect.SPI_DB.opVary(entityCls, executor);
-        this.qrAnalyzer = SPIConnect.SPI_DB.qrAnalyzer(entityCls, executor);
+        this.opVary = SPI.SPI_DB.opVary(entityCls, executor);
+        this.qrAnalyzer = SPI.SPI_DB.qrAnalyzer(entityCls, executor);
     }
 
     @SuppressWarnings("unchecked")
@@ -183,7 +183,8 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public <K> Map<K, List<T>> findGroupBy(final QTree criteria, final String groupBy) {
         final List<T> entities = this.findMany(criteria);
-        return DBETool.groupBy(entities, groupBy, this.entityCls);
+        return
+            DBETool.groupBy(entities, groupBy, this.entityCls);
     }
 
     public <K> Map<K, List<T>> findGroupBy(final JObject criteriaJ, final String groupBy) {

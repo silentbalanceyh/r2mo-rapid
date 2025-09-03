@@ -3,7 +3,7 @@ package io.r2mo.typed.webflow;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.r2mo.spi.SPIConnect;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.exception.web._500ServerInternalException;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * @author lang : 2025-08-28
  */
-public class R<T> implements SPIConnect, Serializable {
+public class R<T> implements SPI, Serializable {
 
     @JsonIgnore
     private RSuccess<T> success;
@@ -34,11 +34,11 @@ public class R<T> implements SPIConnect, Serializable {
     }
 
     public static <T> R<T> ok() {
-        return success(null, SPIConnect.STATUS.ok204());
+        return success(null, SPI.V_STATUS.ok204());
     }
 
     public static <T> R<T> ok(final T data) {
-        return success(data, SPIConnect.STATUS.ok());
+        return success(data, SPI.V_STATUS.ok());
     }
 
     public static <T> R<T> ok(final T data, final WebState state) {

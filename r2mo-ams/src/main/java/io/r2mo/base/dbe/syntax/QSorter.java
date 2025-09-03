@@ -1,7 +1,7 @@
 package io.r2mo.base.dbe.syntax;
 
 import io.r2mo.base.dbe.constant.QCV;
-import io.r2mo.spi.SPIConnect;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.json.JArray;
 
@@ -24,7 +24,7 @@ public class QSorter implements Serializable, QRequest {
     }
 
     public static QSorter of(final JArray sorterA) {
-        if (SPIConnect._UTJ.isEmpty(sorterA)) {
+        if (SPI.V_UTIL.isEmpty(sorterA)) {
             return new QSorter();
         }
         final QSorter sorter = new QSorter();

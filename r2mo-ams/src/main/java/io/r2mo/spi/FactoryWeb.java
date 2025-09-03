@@ -1,6 +1,6 @@
 package io.r2mo.spi;
 
-import io.r2mo.base.web.ForFailure;
+import io.r2mo.base.web.ForAbort;
 import io.r2mo.base.web.ForLocale;
 import io.r2mo.base.web.ForStatus;
 
@@ -13,5 +13,5 @@ public interface FactoryWeb {
 
     ForLocale ofLocale();
 
-    ForFailure ofFailure();
+    ForAbort ofAbort();
 }

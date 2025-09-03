@@ -27,4 +27,8 @@ public interface ForStatus {
     WebState V403();
 
     WebState V404();
+
+    WebState V405();
+
+    WebState V415();
 }

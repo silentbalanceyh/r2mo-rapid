@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>r2mo-rapid</artifactId>
-        <version>1.0-M2</version>
+        <version>1.0-M3</version>
     </parent>
 
     <artifactId>r2mo-ams</artifactId>
@@ -15,11 +15,19 @@
         Abstract Modeling Service
     </description>
     <dependencies>
+        <!-- JSR -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-core</artifactId>

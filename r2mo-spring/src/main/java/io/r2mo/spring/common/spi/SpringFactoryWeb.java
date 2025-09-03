@@ -1,6 +1,6 @@
 package io.r2mo.spring.common.spi;
 
-import io.r2mo.base.web.ForFailure;
+import io.r2mo.base.web.ForAbort;
 import io.r2mo.base.web.ForLocale;
 import io.r2mo.base.web.ForStatus;
 import io.r2mo.spi.FactoryWeb;
@@ -12,7 +12,7 @@ import io.r2mo.typed.cc.Cc;
 public class SpringFactoryWeb implements FactoryWeb {
     private static final Cc<String, ForStatus> CCT_STATUS = Cc.openThread();
     private static final Cc<String, ForLocale> CCT_LOCALE = Cc.openThread();
-    private static final Cc<String, ForFailure> CCT_FAILURE = Cc.openThread();
+    private static final Cc<String, ForAbort> CCT_ABORT = Cc.openThread();
 
     @Override
     public ForStatus ofStatus() {
@@ -25,7 +25,7 @@ public class SpringFactoryWeb implements FactoryWeb {
     }
 
     @Override
-    public ForFailure ofFailure() {
-        return CCT_FAILURE.pick(SpringForFailure::new, SpringForFailure.class.getName());
+    public ForAbort ofAbort() {
+        return CCT_ABORT.pick(SpringForAbort::new, SpringForAbort.class.getName());
     }
 }
