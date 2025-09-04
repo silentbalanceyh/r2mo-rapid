@@ -7,11 +7,11 @@ import java.io.Serializable;
  */
 public interface WebRequest<T> extends Serializable {
 
-    String X_APP_ID = "X-App-Id";
-
-    String X_TENANT_ID = "X-Tenant-Id";
-
     default T data() {
+        return null;
+    }
+
+    default Serializable id() {
         return null;
     }
 }

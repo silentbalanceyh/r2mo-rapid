@@ -15,6 +15,8 @@ public interface ForStatus {
 
     WebState ok204();
 
+    WebState ok201();
+
     /* 常用状态相关信息 */
     WebState V501();
 

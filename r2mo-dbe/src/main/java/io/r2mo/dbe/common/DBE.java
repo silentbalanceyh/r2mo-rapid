@@ -145,6 +145,10 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
         return this.findOne(QTree.of(criteriaJ));
     }
 
+    public Optional<T> findOne(final Map<String, Object> condition) {
+        return this.opVary.findOne(condition);
+    }
+
     // ---- findMany
     public List<T> findMany(final Serializable... ids) {
         return this.qrMany.execute(ids);

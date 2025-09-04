@@ -6,7 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.r2mo.base.web.entity.BaseAudit;
+import io.r2mo.base.web.entity.BaseScope;
 import io.r2mo.dbe.common.constant.SchemaExampleValue;
+import io.r2mo.dbe.mybatisplus.core.typehandler.TypedUUIDHandler;
+import io.r2mo.function.Fn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
@@ -17,6 +21,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -35,11 +40,14 @@ import java.util.UUID;
  *     - language   / 语言
  *     - version    / 版本
  *     - metadata   / 元配置
+ *
+ *     - appId / 所属应用
+ *     - tenantId / 所属租户
  * </pre>
  */
 @Schema(description = "实体基类", discriminatorProperty = "className")
 @Data
-public class BaseEntity implements Serializable {
+public class BaseEntity implements BaseScope, BaseAudit, Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -53,7 +61,6 @@ public class BaseEntity implements Serializable {
 
     /** 编码 */
     @Schema(description = "编码", example = SchemaExampleValue.DEFAULT_CODE)
-    @TableField
     private String code;
 
     /** 创建者 */
@@ -87,12 +94,18 @@ public class BaseEntity implements Serializable {
     private boolean enabled = true;
 
     @Schema(description = "语言", example = SchemaExampleValue.DEFAULT_LANGUAGE)
-    @TableField
     private String language = "zh-CN";
 
     @Schema(description = "版本号", example = SchemaExampleValue.DEFAULT_VERSION)
-    @TableField
     private String version = "1.0.0";
+
+    @Schema(description = "所属租户", example = SchemaExampleValue.DEFAULT_UUID)
+    @TableField(typeHandler = TypedUUIDHandler.class)
+    private UUID tenantId;
+
+    @Schema(description = "所属应用", example = SchemaExampleValue.DEFAULT_UUID)
+    @TableField(typeHandler = TypedUUIDHandler.class)
+    private UUID appId;
 
     @Schema(description = "辅助元配置", example = SchemaExampleValue.DEFAULT_METADATA)
     @TableField(jdbcType = JdbcType.CLOB)
@@ -108,4 +121,29 @@ public class BaseEntity implements Serializable {
     @TableField(exist = false)
     private Map<String, Object> params = new HashMap<>();
 
+    @Override
+    public void app(final String appId) {
+        if (Objects.isNull(appId)) {
+            return;
+        }
+        Fn.jvmAt(() -> this.appId = UUID.fromString(appId));
+    }
+
+    @Override
+    public String app() {
+        return Objects.isNull(this.appId) ? null : this.appId.toString();
+    }
+
+    @Override
+    public void tenant(final String tenantId) {
+        if (Objects.isNull(tenantId)) {
+            return;
+        }
+        Fn.jvmAt(() -> this.tenantId = UUID.fromString(tenantId));
+    }
+
+    @Override
+    public String tenant() {
+        return Objects.isNull(this.tenantId) ? null : this.tenantId.toString();
+    }
 }

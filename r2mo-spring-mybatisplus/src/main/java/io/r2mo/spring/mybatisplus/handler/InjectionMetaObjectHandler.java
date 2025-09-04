@@ -1,6 +1,8 @@
 package io.r2mo.spring.mybatisplus.handler;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +10,8 @@ import org.apache.ibatis.reflection.MetaObject;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -29,31 +33,16 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
     public void insertFill(final MetaObject metaObject) {
         try {
             if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof final BaseEntity baseEntity) {
-                // 获取当前时间作为创建时间和更新时间，如果创建时间不为空，则使用创建时间，否则使用当前时间
-                final LocalDateTime current;
-                if (ObjectUtil.isNotNull(baseEntity.getCreatedAt())) {
-                    current = baseEntity.getCreatedAt();
-                } else {
-                    current = LocalDateTime.now();
-                }
-                baseEntity.setCreatedAt(current);
-                baseEntity.setUpdatedAt(current);
+                // createdAt / createdBy
+                this.setCreated(baseEntity);
+                // updatedAt / updatedBy
+                this.setUpdated(baseEntity);
+                // id
+                this.setId(baseEntity);
+                // code
+                this.setCode(baseEntity);
 
-                // 如果创建人为空，则填充当前登录用户的信息
-                if (ObjectUtil.isNull(baseEntity.getCreatedBy())) {
-                    final UUID userId = this.getUserId();
-                    if (ObjectUtil.isNotNull(userId)) {
-                        // 填充创建人、更新人和创建部门信息
-                        baseEntity.setCreatedBy(userId);
-                        baseEntity.setUpdatedBy(userId);
-                        // baseEntity.setCreateDept(ObjectUtils.notNull(baseEntity.getCreateDept(), loggedUser.getDeptId()));
-                    } else {
-                        // 填充创建人、更新人和创建部门信息
-                        baseEntity.setCreatedBy(DEFAULT_USER_ID);
-                        baseEntity.setUpdatedBy(DEFAULT_USER_ID);
-                        // baseEntity.setCreateDept(ObjectUtils.notNull(baseEntity.getCreateDept(), DEFAULT_USER_ID));
-                    }
-                }
+                // language, version, enabled 构造时就带有默认值，无需处理
             } else {
                 final Date date = new Date();
                 this.strictInsertFill(metaObject, "createdAt", Date.class, date);
@@ -62,6 +51,46 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void setCode(final BaseEntity baseEntity) {
+        final String code = baseEntity.getCode();
+        if (StrUtil.isBlank(code)) {
+            final String generated = RandomUtil.randomString(16).toUpperCase(Locale.getDefault());
+            baseEntity.setCode(generated);
+        }
+    }
+
+    private void setId(final BaseEntity baseEntity) {
+        final UUID id = baseEntity.getId();
+        if (Objects.isNull(id)) {
+            baseEntity.setId(UUID.randomUUID());
+        }
+    }
+
+    /*
+     * - createdAt / createdBy
+     */
+    private void setCreated(final BaseEntity baseEntity) {
+        final LocalDateTime current;
+        if (ObjectUtil.isNotNull(baseEntity.getCreatedAt())) {
+            current = baseEntity.getCreatedAt();
+        } else {
+            current = LocalDateTime.now();
+        }
+        baseEntity.setCreatedAt(current);
+        if (Objects.isNull(baseEntity.getCreatedBy())) {
+            UUID userId = this.getUserId();
+            userId = Objects.isNull(userId) ? DEFAULT_USER_ID : userId;
+            baseEntity.setCreatedBy(userId);
+        }
+    }
+
+    private void setUpdated(final BaseEntity baseEntity) {
+        baseEntity.setUpdatedAt(LocalDateTime.now());
+        UUID userId = this.getUserId();
+        userId = Objects.isNull(userId) ? DEFAULT_USER_ID : userId;
+        baseEntity.setUpdatedBy(userId);
     }
 
     /**
@@ -73,16 +102,8 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
     public void updateFill(final MetaObject metaObject) {
         try {
             if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof final BaseEntity baseEntity) {
-                // 获取当前时间作为更新时间，无论原始对象中的更新时间是否为空都填充
-                baseEntity.setUpdatedAt(LocalDateTime.now());
-
-                // 获取当前登录用户的ID，并填充更新人信息
-                final UUID userId = this.getUserId();
-                if (ObjectUtil.isNotNull(userId)) {
-                    baseEntity.setUpdatedBy(userId);
-                } else {
-                    baseEntity.setUpdatedBy(DEFAULT_USER_ID);
-                }
+                // updatedAt / updatedBy
+                this.setUpdated(baseEntity);
             } else {
                 this.strictUpdateFill(metaObject, "updatedAt", LocalDateTime.class, LocalDateTime.now());
             }

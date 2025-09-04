@@ -41,6 +41,11 @@ class SpringForStatus implements ForStatus {
     }
 
     @Override
+    public WebState ok201() {
+        return this.vStatus(HttpStatus.CREATED);
+    }
+
+    @Override
     public WebState V501() {
         return this.vStatus(HttpStatus.NOT_IMPLEMENTED);
     }

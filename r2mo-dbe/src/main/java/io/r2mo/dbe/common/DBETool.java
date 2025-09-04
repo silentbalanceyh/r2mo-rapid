@@ -1,8 +1,12 @@
 package io.r2mo.dbe.common;
 
+import io.r2mo.typed.annotation.Identifiers;
+
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -54,5 +58,35 @@ public class DBETool {
             }
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Map<String, Object> getIdentifier(final Object entity) {
+        if (Objects.isNull(entity)) {
+            return null;
+        }
+        final Class<T> entityCls = (Class<T>) entity.getClass();
+        final Identifiers identifiers = entityCls.getDeclaredAnnotation(Identifiers.class);
+        if (Objects.isNull(identifiers)) {
+            return null;
+        }
+        final Map<String, Object> condition = new HashMap<>();
+        final String[] fields = identifiers.value();
+        final T instance = (T) entity;
+        // WHERE field1 = ? AND field2 = ? ...
+        for (final String field : fields) {
+            condition.put(field, getValue(instance, field, entityCls));
+        }
+        // WHERE appId = ? AND tenantId = ? AND enabled = true
+        if (identifiers.ifApp()) {
+            condition.put("appId", getValue(instance, "appId", entityCls));
+        }
+        if (identifiers.ifTenant()) {
+            condition.put("tenantId", getValue(instance, "tenantId", entityCls));
+        }
+        if (identifiers.ifEnabled()) {
+            condition.put("enabled", true);
+        }
+        return condition;
     }
 }

@@ -2,7 +2,6 @@ package io.r2mo.dbe.mybatisplus.spi;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,10 +12,7 @@ import io.r2mo.dbe.common.operation.AbstractDbOperation;
 import io.r2mo.typed.common.Pagination;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author lang : 2025-08-28
@@ -63,7 +59,7 @@ class OpVaryImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWr
 
     @Override
     public List<T> findAll() {
-        final Wrapper<T> condition = Wrappers.query(this.entityCls());
+        final QueryWrapper<T> condition = Wrappers.query(this.entityCls());
         return this.executor().selectList(condition);
     }
 
@@ -73,6 +69,15 @@ class OpVaryImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWr
             return Optional.empty();
         }
         return Optional.ofNullable(this.executor().selectOne(condition));
+    }
+
+    @Override
+    public Optional<T> findOne(final Map<String, Object> condition) {
+        if (Objects.isNull(condition) || condition.isEmpty()) {
+            return Optional.empty();
+        }
+        final QueryWrapper<T> query = this.analyzer().where(condition);
+        return this.findOne(query);
     }
 
     @Override
