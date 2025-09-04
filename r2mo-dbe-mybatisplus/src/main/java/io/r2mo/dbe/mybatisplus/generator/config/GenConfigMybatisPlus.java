@@ -1,4 +1,4 @@
-package io.r2mo.generator.normalize;
+package io.r2mo.dbe.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.r2mo.base.generator.AbstractGenConfig;

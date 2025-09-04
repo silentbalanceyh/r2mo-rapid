@@ -2,7 +2,9 @@ package io.r2mo.dbe.mybatisplus.generator;
 
 import io.r2mo.base.generator.AbstractGenProcessor;
 import io.r2mo.base.generator.GenConfig;
+import io.r2mo.base.generator.GenField;
 import io.r2mo.base.generator.GenProcessor;
+import io.r2mo.dbe.mybatisplus.generator.field.GenFieldMybatisPlus;
 import io.r2mo.typed.annotation.SPID;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,5 +32,10 @@ public class GenProcessorMybatisPlus extends AbstractGenProcessor {
         this.processorService.generate(entity, config);
         // Service Impl
         this.processorServiceImpl.generate(entity, config);
+    }
+
+    @Override
+    public GenField getFieldProcessor() {
+        return new GenFieldMybatisPlus();
     }
 }

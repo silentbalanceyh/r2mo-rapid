@@ -7,6 +7,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+${enumsImport}
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 /**
  * <p>
  * ${className} 响应
@@ -19,5 +24,13 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Schema(name = "${entityDisplay}响应")
 public class ${className}CommonResponse extends PostResponse implements WebResponse<${entityName}> {
-    ${fieldsResponse}
+${fieldsResponse}
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ${className}CommonResponse data(${entityName} data) {
+        final ${className}CommonResponse response = new ${className}CommonResponse();
+        response.readFrom(data);
+        return response;
+    }
 }

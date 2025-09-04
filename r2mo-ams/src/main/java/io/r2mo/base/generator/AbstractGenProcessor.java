@@ -35,7 +35,9 @@ public abstract class AbstractGenProcessor implements GenProcessor {
             entityPackageName.substring(0, entityPackageName.lastIndexOf(".domain")) :
             entityPackageName;
         final Map<String, Object> model = new HashMap<>();
-        model.put("className", this.getClassName(entity));
+        final String className = this.getClassName(entity);
+        model.put("actor", className.toLowerCase(Locale.ROOT));
+        model.put("className", className);
         model.put("entityName", entity.getSimpleName());
         model.put("packageName", parentPackageName);
         model.put("entityPackage", entity.getPackage().getName());

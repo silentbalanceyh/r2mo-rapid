@@ -7,6 +7,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+${enumsImport}
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 /**
  * <p>
  * ${className} 请求
@@ -19,5 +24,16 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Schema(name = "${entityDisplay}请求")
 public class ${className}CommonRequest extends PreRequest implements WebRequest<${entityName}> {
-    ${fieldsRequest}
+${fieldsRequest}
+
+    @Override
+    public ${entityName} data() {
+        final ${entityName} entity = new ${entityName}();
+
+        this.writeScope(entity);
+
+        this.writeTo(entity);
+
+        return entity;
+    }
 }

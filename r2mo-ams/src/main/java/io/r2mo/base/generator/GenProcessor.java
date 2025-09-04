@@ -7,4 +7,8 @@ package io.r2mo.base.generator;
 public interface GenProcessor {
 
     void generate(Class<?> entity, GenConfig config);
+
+    default GenField getFieldProcessor(){
+        return null;
+    }
 }

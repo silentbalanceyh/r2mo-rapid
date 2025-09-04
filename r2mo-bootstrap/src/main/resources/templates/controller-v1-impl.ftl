@@ -1,7 +1,7 @@
 package ${packageName}.controller.${v};
 
 import ${packageName}.business.${v}.${className}Service${V};
-import ${packageName}.controller.${className}Controller;
+import ${packageName}.controller.${className}ControllerCrud;
 import ${entityPackage}.${entityName};
 import ${packageName}.io.${className}CommonRequest;
 import ${packageName}.io.${className}CommonResponse;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/${v}")
-public class ${className}Controller${V} extends BaseController<${entityName}, ${className}CommonRequest, ${className}CommonResponse> implements ${className}Controller {
+public class ${className}ControllerCrud${V} extends BaseController<${entityName}, ${className}CommonRequest, ${className}CommonResponse> implements ${className}ControllerCrud {
 
     @Autowired
     private ${className}Service${V} service;

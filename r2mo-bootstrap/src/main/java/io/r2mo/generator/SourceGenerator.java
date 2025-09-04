@@ -68,6 +68,16 @@ public class SourceGenerator {
         }
     }
 
+    public void generate(final Class<?> entity){
+        if (this.isLock(entity)) {
+            return;
+        }
+        // 上层生成
+        this.normalizer.generate(entity, this.genConfig);
+
+        this.writeLock(entity);
+    }
+
     private boolean isLock(final Class<?> entity) {
         final Path lockFile = this.getLock(entity);
         if (Files.exists(lockFile)) {
