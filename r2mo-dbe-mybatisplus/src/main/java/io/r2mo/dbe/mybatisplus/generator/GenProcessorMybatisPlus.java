@@ -3,14 +3,14 @@ package io.r2mo.dbe.mybatisplus.generator;
 import io.r2mo.base.generator.AbstractGenProcessor;
 import io.r2mo.base.generator.GenConfig;
 import io.r2mo.base.generator.GenProcessor;
-import io.r2mo.typed.annotation.OneSPI;
+import io.r2mo.typed.annotation.SPID;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author lang : 2025-09-04
  */
 @Slf4j
-@OneSPI(name = "GenMybatisPlus")
+@SPID(name = "GenMybatisPlus")
 public class GenProcessorMybatisPlus extends AbstractGenProcessor {
     private final GenProcessor processorSql = new GenProcessorSql();
     private final GenProcessor processorMapper = new GenProcessorMapper();

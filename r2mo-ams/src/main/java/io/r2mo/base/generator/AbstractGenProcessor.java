@@ -2,7 +2,9 @@ package io.r2mo.base.generator;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import io.r2mo.SourcePackage;
 import io.r2mo.function.Fn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -12,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author lang : 2025-07-28
@@ -39,10 +42,16 @@ public abstract class AbstractGenProcessor implements GenProcessor {
         model.put("author", System.getProperty("user.name"));
         model.put("date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
+        final Schema schema = entity.getDeclaredAnnotation(Schema.class);
+        model.put("entityDisplay", Objects.isNull(schema)? "": schema.name());
+
         final GenMeta meta = config.getMetadata();
-        model.put("sourcePackage", meta.getSourcePackage());
+        final Package sourcePackage = SourcePackage.class.getPackage();
+        model.put("sourcePackage", sourcePackage.getName());
+        model.put("baseAct", meta.getBaseAct());
         model.put("v", meta.getVersion());
         model.put("V", meta.getVersion().toUpperCase(Locale.getDefault()));
+
         DEFAULT_MODEL.put(entity.getName(), model);
         return model;
     }
@@ -95,6 +104,6 @@ public abstract class AbstractGenProcessor implements GenProcessor {
     }
 
     protected Path getPackage(final GenConfig config) {
-        return null;
+        return config.outProvider();
     }
 }

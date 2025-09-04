@@ -9,6 +9,6 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface OneSPI {
+public @interface SPID {
     String name() default "";
 }

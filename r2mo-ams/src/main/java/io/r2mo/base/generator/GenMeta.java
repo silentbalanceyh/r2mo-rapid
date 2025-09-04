@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * @author lang : 2025-09-04
@@ -28,5 +29,13 @@ public class GenMeta implements Serializable {
     private String version;
 
     @Getter
-    private String sourcePackage;
+    private String baseAct;
+
+    public String v(){
+        return this.version;
+    }
+
+    public String V(){
+        return this.version.toUpperCase(Locale.getDefault());
+    }
 }

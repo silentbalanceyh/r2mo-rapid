@@ -1,7 +1,7 @@
 package io.r2mo.spi;
 
 import cn.hutool.core.util.StrUtil;
-import io.r2mo.typed.annotation.OneSPI;
+import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,7 +62,7 @@ public class ProviderOfFactory {
         } else {
             return instances.stream().filter(item -> {
                 final Class<?> implClass = item.getClass();
-                final OneSPI annoSPI = implClass.getDeclaredAnnotation(OneSPI.class);
+                final SPID annoSPI = implClass.getDeclaredAnnotation(SPID.class);
                 if (Objects.isNull(annoSPI)) {
                     return false;
                 }

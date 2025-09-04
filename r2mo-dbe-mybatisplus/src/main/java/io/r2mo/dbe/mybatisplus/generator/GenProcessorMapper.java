@@ -28,9 +28,4 @@ class GenProcessorMapper extends AbstractGenProcessor {
         // 生成
         this.sourceGenerate("mapper-interface.ftl", sourcePath, dataModel);
     }
-
-    @Override
-    protected Path getPackage(final GenConfig config) {
-        return config.outProvider();
-    }
 }

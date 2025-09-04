@@ -28,10 +28,4 @@ class GenProcessorService extends AbstractGenProcessor {
         // 生成
         this.sourceGenerate("service-interface.ftl", sourcePath, dataModel);
     }
-
-
-    @Override
-    protected Path getPackage(final GenConfig config) {
-        return config.outProvider();
-    }
 }
