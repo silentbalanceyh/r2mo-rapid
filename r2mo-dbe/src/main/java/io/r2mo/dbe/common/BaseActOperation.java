@@ -1,7 +1,5 @@
-package io.r2mo.base.program;
+package io.r2mo.dbe.common;
 
-import io.r2mo.dbe.common.DBE;
-import io.r2mo.dbe.common.DBETool;
 import io.r2mo.typed.common.Pagination;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.service.ActOperation;
@@ -11,20 +9,17 @@ import io.r2mo.typed.service.ActState;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author lang : 2025-09-04
  */
-public abstract class ActOperationBase<T> implements ActOperation<T> {
+public abstract class BaseActOperation<T> implements ActOperation<T> {
 
     protected final Class<T> entityCls;
 
     @SuppressWarnings("unchecked")
-    public ActOperationBase() {
+    public BaseActOperation() {
         final Type genericType = this.getClass().getGenericSuperclass();
         if (genericType instanceof final ParameterizedType parameterizedType) {
             final Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
@@ -96,8 +91,20 @@ public abstract class ActOperationBase<T> implements ActOperation<T> {
     }
 
     @Override
-    public ActResponse<List<T>> findAll() {
-        final List<T> queried = this.db().findAll();
+    public ActResponse<List<T>> findAll(final Serializable appId, final Serializable tenantId) {
+        final Map<String, Object> condition = new HashMap<>();
+        if (Objects.nonNull(appId)) {
+            condition.put("appId", appId);
+        }
+        if (Objects.nonNull(tenantId)) {
+            condition.put("tenantId", tenantId);
+        }
+        final List<T> queried;
+        if (condition.isEmpty()) {
+            queried = this.db().findAll();
+        } else {
+            queried = this.db().findMap(condition);
+        }
         return ActResponse.success(queried);
     }
 

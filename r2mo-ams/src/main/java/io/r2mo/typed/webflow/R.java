@@ -37,6 +37,10 @@ public class R<T> implements SPI, Serializable {
         return success(null, SPI.V_STATUS.ok204());
     }
 
+    public static R<Boolean> ok(final boolean value) {
+        return success(value, SPI.V_STATUS.ok());
+    }
+
     public static <T> R<T> ok(final T data) {
         return success(data, SPI.V_STATUS.ok());
     }

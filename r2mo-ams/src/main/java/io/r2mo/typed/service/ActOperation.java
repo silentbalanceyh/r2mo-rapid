@@ -23,7 +23,17 @@ public interface ActOperation<T> {
     ActResponse<T> findById(Serializable id);
 
     // GET /???/entity-all
-    ActResponse<List<T>> findAll();
+    default ActResponse<List<T>> findAll() {
+        return this.findAll(null, null);
+    }
+
+    // GET /???/entity-all
+    default ActResponse<List<T>> findAll(final Serializable appId) {
+        return this.findAll(appId, null);
+    }
+
+    // GET /???/entity-all
+    ActResponse<List<T>> findAll(Serializable appId, Serializable tenantId);
 
     // 导出：POST /???/entity/export
     ActResponse<List<T>> findBy(JObject criteria);
