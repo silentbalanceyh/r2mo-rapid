@@ -1,11 +1,16 @@
-package io.r2mo.dbe.mybatisplus.generator;
+package io.r2mo.generator;
 
+import io.r2mo.base.generator.GenConfig;
+import io.r2mo.base.generator.GenMeta;
+import io.r2mo.base.generator.GenProcessor;
+import io.r2mo.spi.SPI;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * SQL 脚本生成器，根据 Entity 定义生成脚本，主要脚本包含几个方面
@@ -19,46 +24,36 @@ import java.util.List;
 @Slf4j
 public class SourceGenerator {
 
-    private final GenProcessor processorSql = new GenProcessorSql();
-    private final GenProcessor processorMapper = new GenProcessorMapper();
-    private final GenProcessor processorXml = new GenProcessorMapperXml();
-    private final GenProcessor processorService = new GenProcessorService();
-    private final GenProcessor processorServiceImpl = new GenProcessorServiceImpl(); // 这里可以替换为具体的实现类
+    private final GenProcessor processor;
     private GenConfig genConfig;
 
     public SourceGenerator(final Class<? extends GenConfig> clazz) {
         try {
             this.genConfig = clazz.getDeclaredConstructor().newInstance();
+
         } catch (final Exception e) {
             log.error(e.getMessage());
             this.genConfig = null;
         }
+        Objects.requireNonNull(this.genConfig);
+        final String name = this.genConfig.getMetadata().getSpi();
+        this.processor = SPI.findOne(GenProcessor.class, name);
+        if (Objects.isNull(this.processor)) {
+            log.error("[ R2MO ] 请选择正确的代码生成器：");
+            return;
+        }
+        final Class<?> generatorClass = this.processor.getClass();
+        log.info("[ R2MO ] 代码生成器实现: {}", generatorClass.getName());
     }
 
     public void generate() {
-        this.generate(true);
-    }
-
-    public void generate(final boolean isFull) {
         // 清理上次生成
         this.purgeSql();
 
         final List<Class<?>> entities = this.genConfig.getEntities();
         // Mapper 生成
         for (final Class<?> entity : entities) {
-            // SQL
-            this.processorSql.generate(entity, this.genConfig);
-
-            if (isFull) {
-                // Mapper Interface
-                this.processorMapper.generate(entity, this.genConfig);
-                // Mapper XML
-                this.processorXml.generate(entity, this.genConfig);
-                // Service Interface
-                this.processorService.generate(entity, this.genConfig);
-                // Service Impl
-                this.processorServiceImpl.generate(entity, this.genConfig);
-            }
+            this.processor.generate(entity, this.genConfig);
         }
     }
 
@@ -66,7 +61,8 @@ public class SourceGenerator {
     private void purgeSql() {
         final Path pathDB = this.genConfig.outSql();
         final Path pathSchema = pathDB.resolve("schema");
-        final Path v1_init_schema = pathSchema.resolve("V1__init_schema.sql");
+        final GenMeta meta = this.genConfig.getMetadata();
+        final Path v1_init_schema = pathSchema.resolve(meta.getSchema());
         try {
             if (Files.exists(v1_init_schema)) {
                 Files.delete(v1_init_schema);

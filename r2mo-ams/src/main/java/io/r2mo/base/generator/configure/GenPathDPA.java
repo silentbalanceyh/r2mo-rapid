@@ -1,4 +1,4 @@
-package io.r2mo.dbe.mybatisplus.generator.configure;
+package io.r2mo.base.generator.configure;
 
 import java.nio.file.Path;
 

@@ -6,6 +6,7 @@ import io.r2mo.base.web.ForLocale;
 import io.r2mo.base.web.ForStatus;
 import io.r2mo.typed.json.JUtil;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -34,4 +35,16 @@ public interface SPI {
     ForLocale V_LOCALE = SPI_WEB.ofLocale();
 
     ForAbort V_ABORT = SPI_WEB.ofAbort();
+
+    static <T> List<T> findMany(final Class<T> clazz) {
+        return ProviderOfFactory.findMany(clazz);
+    }
+
+    static <T> T findOne(final Class<T> clazz) {
+        return ProviderOfFactory.findOne(clazz, null);
+    }
+
+    static <T> T findOne(final Class<T> clazz, final String name) {
+        return ProviderOfFactory.findOne(clazz, name);
+    }
 }

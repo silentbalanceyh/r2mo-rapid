@@ -1,9 +1,12 @@
 package io.r2mo.spi;
 
-import io.r2mo.typed.annotation.Oneness;
+import cn.hutool.core.util.StrUtil;
+import io.r2mo.typed.annotation.OneSPI;
 import io.r2mo.typed.cc.Cc;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,43 +29,60 @@ public class ProviderOfFactory {
     private static final ConcurrentMap<Class<?>, Class<?>> META_CLASS = new ConcurrentHashMap<>();
 
     public static FactoryIo forIo() {
-        return CCT_IO_FACTORY.pick(() -> findOne(FactoryIo.class));
+        return CCT_IO_FACTORY.pick(() -> findOneInternal(FactoryIo.class));
     }
 
     public static FactoryObject forObject() {
-        return CCT_OBJECT_FACTORY.pick(() -> findOne(FactoryObject.class));
+        return CCT_OBJECT_FACTORY.pick(() -> findOneInternal(FactoryObject.class));
     }
 
     public static FactoryDBAction forDBAction() {
-        return CCT_DB_ACTION_FACTORY.pick(() -> findOne(FactoryDBAction.class));
+        return CCT_DB_ACTION_FACTORY.pick(() -> findOneInternal(FactoryDBAction.class));
     }
 
     public static FactoryWeb forWeb() {
-        return CCT_WEB_FACTORY.pick(() -> findOne(FactoryWeb.class));
+        return CCT_WEB_FACTORY.pick(() -> findOneInternal(FactoryWeb.class));
     }
 
     static ConcurrentMap<Class<?>, Class<?>> meta() {
         return META_CLASS;
     }
 
-    private static <T> T findBy(final Class<T> clazz, final String name) {
-        Objects.requireNonNull(clazz);
-        Objects.requireNonNull(name);
-        final ServiceLoader<T> loader = ServiceLoader.load(clazz);
-        for (final T instance : loader) {
-            final Class<?> implCls = instance.getClass();
-            final Oneness oneness = implCls.getDeclaredAnnotation(Oneness.class);
-            if (Objects.isNull(oneness)) {
-                continue;
-            }
-            if (name.equals(oneness.value())) {
-                return instance;
-            }
+    static <T> T findOne(final Class<T> clazz, final String name) {
+        final List<T> instances = findMany(clazz);
+        if (instances.isEmpty()) {
+            log.warn("[ R2MO ] SPI 实现类未找到: {}", clazz.getName());
+            return null;
+        } else if (instances.size() > 1) {
+            log.warn("[ R2MO ] SPI 实现类不唯一: {}, {}", clazz.getName(), instances.size());
+            return null;
         }
-        return null;
+        if (StrUtil.isBlank(name)) {
+            return instances.get(0);
+        } else {
+            return instances.stream().filter(item -> {
+                final Class<?> implClass = item.getClass();
+                final OneSPI annoSPI = implClass.getDeclaredAnnotation(OneSPI.class);
+                if (Objects.isNull(annoSPI)) {
+                    return false;
+                }
+                final String implName = annoSPI.name();
+                return StrUtil.equals(name, implName);
+            }).findAny().orElse(null);
+        }
     }
 
-    private static <T> T findOne(final Class<T> clazz) {
+    static <T> List<T> findMany(final Class<T> clazz) {
+        Objects.requireNonNull(clazz);
+        final ServiceLoader<T> loader = ServiceLoader.load(clazz);
+        final List<T> instances = new ArrayList<>();
+        for (final T instance : loader) {
+            instances.add(instance);
+        }
+        return instances;
+    }
+
+    private static <T> T findOneInternal(final Class<T> clazz) {
         Objects.requireNonNull(clazz);
         final ServiceLoader<T> loader = ServiceLoader.load(clazz);
         for (final T instance : loader) {

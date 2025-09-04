@@ -1,4 +1,4 @@
-package io.r2mo.dbe.mybatisplus.generator;
+package io.r2mo.base.generator;
 
 
 /**

@@ -1,13 +1,10 @@
-package io.r2mo.dbe.mybatisplus.generator;
+package io.r2mo.base.generator;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.r2mo.dbe.common.enums.DatabaseType;
-import io.r2mo.dbe.mybatisplus.generator.configure.GenPath;
+import io.r2mo.base.generator.configure.GenPath;
+import io.r2mo.typed.enums.DatabaseType;
 import lombok.extern.slf4j.Slf4j;
-import org.reflections.Reflections;
 
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * @author lang : 2025-07-28
@@ -46,16 +43,6 @@ public abstract class AbstractGenConfig implements GenConfig {
     }
 
     @Override
-    public List<Class<?>> getEntities() {
-        final String entityPackageName = this.basePackage.getName() + ".domain";
-        log.info("[ GEN ] Entity package name: {}", entityPackageName);
-        final Reflections reflections = new Reflections(entityPackageName);
-        return reflections.getTypesAnnotatedWith(TableName.class)
-            .stream()
-            .toList();
-    }
-
-    @Override
     public SourceStructure metaStructure() {
         return SourceStructure.DPA;
     }
@@ -66,7 +53,8 @@ public abstract class AbstractGenConfig implements GenConfig {
     }
 
     private GenPath gen() {
-        return GenPath.of(this.metaStructure());
+        final GenMeta meta = this.getMetadata();
+        return GenPath.of(meta.getStructure());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package io.r2mo.dbe.common.enums;
+package io.r2mo.typed.enums;
 
 /**
  * @author lang : 2025-08-29

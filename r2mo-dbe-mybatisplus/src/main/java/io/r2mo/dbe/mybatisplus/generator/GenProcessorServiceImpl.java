@@ -2,6 +2,8 @@ package io.r2mo.dbe.mybatisplus.generator;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import io.r2mo.base.generator.AbstractGenProcessor;
+import io.r2mo.base.generator.GenConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

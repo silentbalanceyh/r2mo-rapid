@@ -3,6 +3,8 @@ package io.r2mo.dbe.mybatisplus.generator;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.r2mo.base.generator.GenConfig;
+import io.r2mo.base.generator.GenProcessor;
 import io.r2mo.dbe.common.constant.SourceField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;

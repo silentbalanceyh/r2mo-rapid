@@ -1,6 +1,6 @@
-package io.r2mo.dbe.mybatisplus.generator;
+package io.r2mo.base.generator;
 
-import io.r2mo.dbe.common.enums.DatabaseType;
+import io.r2mo.typed.enums.DatabaseType;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -12,10 +12,13 @@ import java.util.List;
  */
 public interface GenConfig {
 
+    // 包名
     Package getBasePackage();
 
+    // 实体信息
     List<Class<?>> getEntities();
 
+    // --------------- 输出路径
     Path outProvider();
 
     Path outProviderXml();
@@ -24,7 +27,12 @@ public interface GenConfig {
 
     Path outApi();
 
+    // --------------- 元信息
+    GenMeta getMetadata();
+
     SourceStructure metaStructure();
 
     DatabaseType metaDatabaseType();
+
+    String metaFileSchema();
 }
