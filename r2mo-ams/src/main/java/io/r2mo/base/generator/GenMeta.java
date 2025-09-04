@@ -23,4 +23,10 @@ public class GenMeta implements Serializable {
 
     @Getter
     private String spi;
+
+    @Getter
+    private String version;
+
+    @Getter
+    private String sourcePackage;
 }

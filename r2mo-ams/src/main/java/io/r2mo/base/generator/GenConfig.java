@@ -1,7 +1,5 @@
 package io.r2mo.base.generator;
 
-import io.r2mo.typed.enums.DatabaseType;
-
 import java.nio.file.Path;
 import java.util.List;
 
@@ -29,10 +27,4 @@ public interface GenConfig {
 
     // --------------- 元信息
     GenMeta getMetadata();
-
-    SourceStructure metaStructure();
-
-    DatabaseType metaDatabaseType();
-
-    String metaFileSchema();
 }
