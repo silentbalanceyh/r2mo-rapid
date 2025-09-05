@@ -45,13 +45,29 @@ public class GenFieldMybatisPlus implements GenField {
     }
 
     private String generate(final Class<?> entity, final Set<String> ignoreSet) {
+        final List<String> lines = this.generateLoop(entity, ignoreSet);
+        return String.join("\n", lines);
+    }
+
+    private List<String> generateLoop(final Class<?> entity, final Set<String> ignoreSet) {
         final List<String> lines = new ArrayList<>();
-        final Field[] fields = entity.getDeclaredFields();
+        // 递归处理父类的字段
+        final Class<?> superclass = entity.getSuperclass();
+        if (superclass != null && !superclass.equals(Object.class)) {
+            lines.addAll(this.generateLoop(superclass, ignoreSet));
+        }
+        // 处理当前类的字段
+        lines.addAll(this.generateFields(entity.getDeclaredFields(), ignoreSet));
+        return lines;
+    }
+
+    private List<String> generateFields(final Field[] fields, final Set<String> ignoreSet) {
+        final List<String> lines = new ArrayList<>();
         Arrays.stream(fields)
             .filter(field -> !ignoreSet.contains(field.getName()))
             .filter(this::isValid)
             .forEach(field -> lines.addAll(this.buildLines(field)));
-        return String.join("\n", lines);
+        return lines;
     }
 
     @Override
@@ -82,7 +98,7 @@ public class GenFieldMybatisPlus implements GenField {
         final Schema schema = field.getAnnotation(Schema.class);
         final StringBuilder lineSwagger = new StringBuilder();
         if(schema != null) {
-            lineSwagger.append("@Schema(");
+            lineSwagger.append("    @Schema(");
             if (!schema.description().isBlank()) {
                 lineSwagger.append("description = \"").append(schema.description()).append("\"");
             }

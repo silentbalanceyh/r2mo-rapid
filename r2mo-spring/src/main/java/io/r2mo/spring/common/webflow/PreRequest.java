@@ -46,19 +46,22 @@ public class PreRequest implements Serializable {
         }
     }
 
-    protected void writeAudit(final BaseAudit entity, final boolean created) {
-        Objects.requireNonNull(entity, "[ R2MO ] -> 传入实体不可为 null");
-        final LocalDateTime processedAt = LocalDateTime.now();
-        entity.setUpdatedAt(processedAt);
-        entity.setUpdatedBy(this.userId());
-        if (created) {
-            entity.setCreatedAt(processedAt);
-            entity.setCreatedBy(this.userId());
+    protected void writeAudit(final Object entityObj, final boolean created) {
+        Objects.requireNonNull(entityObj, "[ R2MO ] -> 传入实体不可为 null");
+        if(entityObj instanceof final BaseAudit entity) {
+
+            final LocalDateTime processedAt = LocalDateTime.now();
+            entity.setUpdatedAt(processedAt);
+            entity.setUpdatedBy(this.userId());
+            if (created) {
+                entity.setCreatedAt(processedAt);
+                entity.setCreatedBy(this.userId());
+            }
         }
     }
 
-    protected void writeScope(final BaseScope entity) {
-        if (Objects.nonNull(this.request)) {
+    protected void writeScope(final Object entityObj) {
+        if (Objects.nonNull(this.request) && entityObj instanceof final BaseScope entity) {
             // appId
             final String appId = this.request.getHeader(BaseScope.X_APP_ID);
             entity.app(appId);
