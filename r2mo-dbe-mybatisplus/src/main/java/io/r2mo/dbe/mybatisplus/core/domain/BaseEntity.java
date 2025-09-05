@@ -56,7 +56,11 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
     @TableField(exist = false)
     private String className = this.getClass().getSimpleName();
     @Schema(description = "主键", example = SchemaExampleValue.DEFAULT_UUID)
-    @TableId(value = "id", type = IdType.ASSIGN_UUID)
+    /*
+     * 由于此处使用了 @TableId 会导致 @TableField 失效，所以无法直接使用 TypedUUIDHandler，加上此处类型是 java.util.UUID，
+     * 而 Mybatis-Plus 默认只支持 Long/String 类型的主键自定义生成策略，所以只能使用 IdType.INPUT
+     */
+    @TableId(value = "id", type = IdType.INPUT)
     private UUID id;
 
     /** 编码 */

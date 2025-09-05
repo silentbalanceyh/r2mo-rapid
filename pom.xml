@@ -58,6 +58,7 @@
 
         <!-- 🌷 IO 详细实现 -->
         <module>r2mo-io</module>
+        <module>r2mo-io-local</module>
 
         <!-- 🌷 Database Engine 实现 -->
         <module>r2mo-dbe</module>
@@ -70,7 +71,9 @@
 
         <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
         <module>r2mo-bootstrap</module>
-        <module>r2mo-io-local</module>
+
+        <!-- JUnit 测试相关 -->
+        <module>r2mo-spring-junit5</module>
     </modules>
     <properties>
         <r2mo.version>1.0-M6</r2mo.version>
@@ -82,26 +85,38 @@
         <java.version>17</java.version>
         <!-- 基础依赖 -->
         <spring-boot.version>3.5.5</spring-boot.version>
-        <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
+
         <!-- ======================= SJR ============================ -->
         <jsr250.version>3.0.0</jsr250.version>
         <jsr.servlet.version>6.1.0</jsr.servlet.version>
         <jsr.validation.version>3.1.1</jsr.validation.version>
+
         <!-- ======================= Apache Commons   =========================== -->
         <commons-lang3.version>3.18.0</commons-lang3.version>
+
         <!-- ======================= Tools           =========================== -->
         <hutool.version>5.8.39</hutool.version>
         <lombok.version>1.18.38</lombok.version>
+        <reflections.version>0.10.2</reflections.version>
+
         <!-- ======================= Database Access =========================== -->
         <mysql.version>8.4.0</mysql.version>
+
         <flyway.version>11.11.2</flyway.version>
+
         <mybatis-plus.version>3.5.12</mybatis-plus.version>
         <mybatis.version>3.5.19</mybatis.version>
-        <reflections.version>0.10.2</reflections.version>
+        <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
+
         <!-- ======================= Template Engine =========================== -->
         <freemarker.version>2.3.34</freemarker.version>
+
         <!-- ======================= Swagger Document ========================== -->
         <swagger.core.version>2.2.34</swagger.core.version>
+
+        <!-- ======================= JUnit =========================== -->
+        <junit.jupiter.version>5.13.4</junit.jupiter.version>
+        <junit.platform.version>1.13.4</junit.platform.version>
 
         <!-- ====== Maven Plugins ===== -->
         <maven.plugin.staging>1.7.0</maven.plugin.staging>
@@ -221,6 +236,36 @@
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-io</artifactId>
                 <version>${r2mo.version}</version>
+            </dependency>
+
+            <!-- 第三方 -->
+            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher -->
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <version>${junit.platform.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>

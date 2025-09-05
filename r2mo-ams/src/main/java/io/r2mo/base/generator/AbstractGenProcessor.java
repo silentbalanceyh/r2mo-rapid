@@ -41,18 +41,25 @@ public abstract class AbstractGenProcessor implements GenProcessor {
         model.put("entityName", entity.getSimpleName());
         model.put("packageName", parentPackageName);
         model.put("entityPackage", entity.getPackage().getName());
+
+
         model.put("author", System.getProperty("user.name"));
         model.put("date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         final Schema schema = entity.getDeclaredAnnotation(Schema.class);
-        model.put("entityDisplay", Objects.isNull(schema)? "": schema.name());
+        model.put("entityDisplay", Objects.isNull(schema) ? "" : schema.name());
 
         final GenMeta meta = config.getMetadata();
         final Package sourcePackage = SourcePackage.class.getPackage();
         model.put("sourcePackage", sourcePackage.getName());
-        model.put("baseAct", meta.getBaseAct());
         model.put("v", meta.getVersion());
         model.put("V", meta.getVersion().toUpperCase(Locale.getDefault()));
+
+
+        final String baseAct = meta.baseActName(true);
+        final String baseActSimple = meta.baseActName(false);
+        model.put("baseAct", baseAct);
+        model.put("baseActName", baseActSimple);
 
         DEFAULT_MODEL.put(entity.getName(), model);
         return model;

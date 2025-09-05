@@ -30,7 +30,7 @@ public class GenMeta implements Serializable {
     private String version;
 
     @Getter
-    private String baseAct;
+    private Class<?> baseAct;
 
     @Getter
     private Set<String> ignoreReq;
@@ -38,11 +38,19 @@ public class GenMeta implements Serializable {
     @Getter
     private Set<String> ignoreResp;
 
-    public String v(){
+    public String baseActName(final boolean isFull) {
+        if (isFull) {
+            return this.baseAct.getName();
+        } else {
+            return this.baseAct.getSimpleName();
+        }
+    }
+
+    public String v() {
         return this.version;
     }
 
-    public String V(){
+    public String V() {
         return this.version.toUpperCase(Locale.getDefault());
     }
 }
