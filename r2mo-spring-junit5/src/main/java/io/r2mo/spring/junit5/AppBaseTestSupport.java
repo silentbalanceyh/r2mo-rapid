@@ -1,4 +1,4 @@
-package io.r2mo.spring.junit5.base;
+package io.r2mo.spring.junit5;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.r2mo.SourceReflect;
@@ -31,8 +31,6 @@ import java.util.Arrays;
  *     3. 功能3：可直接访问文件系统进行 HFS 测试
  *     4. 功能4：可实现 Spring 级别的容器测试
  * </pre>
- *
- * @author lang : 2025-09-06
  */
 @SpringBootTest
 @Transactional
