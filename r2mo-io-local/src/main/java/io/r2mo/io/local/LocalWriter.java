@@ -77,7 +77,6 @@ class LocalWriter {
                 directoryMove(fromPath, targetPath);
             } else {
                 // 目标不存在，拷贝目录到目标路径，此处没有递归，且 toPath 就是目录
-                Fn.jvmAt(() -> Files.createDirectories(toPath));
                 directoryMove(fromPath, toPath);
             }
         } else {
@@ -155,7 +154,11 @@ class LocalWriter {
         Fn.jvmAt(() -> Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Path targetFile = target.resolve(source.relativize(file));
+                final Path targetFile = target.resolve(source.relativize(file));
+                final Path parent = targetFile.getParent();
+                if (!Files.exists(parent)) {
+                    Fn.jvmAt(() -> Files.createDirectories(parent));
+                }
                 Files.move(file, targetFile,
                     StandardCopyOption.REPLACE_EXISTING,
                     StandardCopyOption.ATOMIC_MOVE);
