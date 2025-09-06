@@ -3,6 +3,8 @@ package io.r2mo.spring.junit5;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.r2mo.SourceReflect;
 import io.r2mo.dbe.mybatisplus.DBE;
+import io.r2mo.function.Actuator;
+import io.r2mo.function.Fn;
 import io.r2mo.io.common.HFS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +18,6 @@ import org.springframework.util.StreamUtils;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -38,14 +38,12 @@ import java.util.Arrays;
 @Slf4j
 public abstract class AppBaseTestSupport<T> {
 
+    private static boolean RUN_ONCE = true;
     private final Class<T> entityCls;
-
     @Autowired
     private BaseMapper<T> mapper;
-
     @Autowired
     private ResourceLoader loader;
-
     @Autowired
     private DataSource dataSource;
 
@@ -87,7 +85,15 @@ public abstract class AppBaseTestSupport<T> {
         return HFS.of();
     }
 
-    protected Path root() {
-        return Paths.get("");
+    /**
+     * 实例模式下的一次性运行行为
+     *
+     * @param actuator 执行函数
+     */
+    protected void runOnce(final Actuator actuator) {
+        if (RUN_ONCE) {
+            Fn.jvmAt(actuator);
+            RUN_ONCE = false;
+        }
     }
 }

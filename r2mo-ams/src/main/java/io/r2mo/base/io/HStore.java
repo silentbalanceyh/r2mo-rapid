@@ -57,6 +57,16 @@ public interface HStore {
     /* 文件写入：echo */
     boolean write(String filename, String content, boolean append);
 
+    boolean isExist(String path);
+
+    boolean isDirectory(String path);
+
+    boolean isFile(String path);
+
+    boolean isEmpty(String path);
+
+    boolean isSame(String path1, String path2);
+
     /**
      * 核心方法，从一个 filename 读取 URL，此路径作为读取数据和写入数据的核心桥梁方法，基本上所有的读取和写入都基于 URL 来完成，只要将
      * 一个 filename 转换为 URL，就可以实现针对它的所有读取，返回结果都统一使用 {@link InputStream} 来完成，这种模式下可以直接支持

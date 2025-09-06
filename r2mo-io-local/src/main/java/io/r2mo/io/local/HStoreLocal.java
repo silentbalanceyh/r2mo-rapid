@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class HStoreLocal extends AbstractHStore {
 
+
     @Override
     public boolean cp(final String source, final String target) {
         return LocalWriter.copy(source, target);
@@ -36,6 +37,31 @@ public class HStoreLocal extends AbstractHStore {
     @Override
     public boolean write(final String filename, final String content, final boolean append) {
         return LocalWriter.write(filename, content, append);
+    }
+
+    @Override
+    public boolean isExist(final String path) {
+        return LocalIs.isExist(path);
+    }
+
+    @Override
+    public boolean isDirectory(final String path) {
+        return LocalIs.isDirectory(path);
+    }
+
+    @Override
+    public boolean isFile(final String path) {
+        return LocalIs.isFile(path);
+    }
+
+    @Override
+    public boolean isEmpty(final String path) {
+        return LocalIs.isEmpty(path);
+    }
+
+    @Override
+    public boolean isSame(final String path1, final String path2) {
+        return LocalCompare.isSame(path1, path2);
     }
 
     @Override

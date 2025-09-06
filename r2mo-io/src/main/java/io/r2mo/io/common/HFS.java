@@ -86,6 +86,27 @@ public class HFS {
         return this.store.write(filename, content, append);
     }
 
+    // ------------------------------------ 判断专用方法
+    public boolean isExist(final String path) {
+        return this.store.isExist(path);
+    }
+
+    public boolean isDirectory(final String path) {
+        return this.store.isDirectory(path);
+    }
+
+    public boolean isFile(final String path) {
+        return this.store.isFile(path);
+    }
+
+    public boolean isEmpty(final String path) {
+        return this.store.isEmpty(path);
+    }
+    
+    public boolean isSame(final String path1, final String path2) {
+        return this.store.isSame(path1, path2);
+    }
+
     // ------------------------------------ 接口级方法
     public List<String> lsFiles(final String filename) {
         return this.lsFiles(filename, null);
