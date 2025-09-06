@@ -115,8 +115,8 @@
         <swagger.core.version>2.2.34</swagger.core.version>
 
         <!-- ======================= JUnit =========================== -->
-        <junit.jupiter.version>5.13.4</junit.jupiter.version>
-        <junit.platform.version>1.13.4</junit.platform.version>
+        <junit.jupiter.version>5.12.2</junit.jupiter.version>
+        <junit.platform.version>1.12.2</junit.platform.version>
 
         <!-- ====== Maven Plugins ===== -->
         <maven.plugin.staging>1.7.0</maven.plugin.staging>

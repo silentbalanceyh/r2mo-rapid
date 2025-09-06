@@ -1,5 +1,6 @@
 package io.r2mo.dbe.common;
 
+import io.r2mo.SourceReflect;
 import io.r2mo.typed.common.Pagination;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.service.ActOperation;
@@ -7,8 +8,6 @@ import io.r2mo.typed.service.ActResponse;
 import io.r2mo.typed.service.ActState;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -18,19 +17,8 @@ public abstract class BaseActOperation<T> implements ActOperation<T> {
 
     protected final Class<T> entityCls;
 
-    @SuppressWarnings("unchecked")
     public BaseActOperation() {
-        final Type genericType = this.getClass().getGenericSuperclass();
-        if (genericType instanceof final ParameterizedType parameterizedType) {
-            final Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-            if (0 < actualTypeArguments.length) {
-                this.entityCls = (Class<T>) actualTypeArguments[0];
-            } else {
-                throw new IllegalStateException("[ R2MO ] 泛型定义长度不对！");
-            }
-        } else {
-            throw new IllegalStateException("[ R2MO ] 泛型类型获取失败！");
-        }
+        this.entityCls = SourceReflect.classT0(this.getClass());
     }
 
     protected abstract DBE<?, T, ?> db();

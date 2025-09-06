@@ -1,5 +1,6 @@
 package io.r2mo.generator;
 
+import io.r2mo.SourceReflect;
 import io.r2mo.base.generator.GenConfig;
 import io.r2mo.base.generator.GenMeta;
 import io.r2mo.base.generator.GenProcessor;
@@ -29,16 +30,11 @@ public class SourceGenerator {
 
     private final GenProcessor processor;
     private final GenProcessor normalizer;
-    private GenConfig genConfig;
+    private final GenConfig genConfig;
 
     public SourceGenerator(final Class<? extends GenConfig> clazz) {
         this.normalizer = new GenProcessorNorm();
-        try {
-            this.genConfig = clazz.getDeclaredConstructor().newInstance();
-        } catch (final Exception e) {
-            log.error(e.getMessage());
-            this.genConfig = null;
-        }
+        this.genConfig = SourceReflect.instance(clazz);
         Objects.requireNonNull(this.genConfig);
         final String name = this.genConfig.getMetadata().getSpi();
         this.processor = SPI.findOne(GenProcessor.class, name);
@@ -68,7 +64,7 @@ public class SourceGenerator {
         }
     }
 
-    public void generate(final Class<?> entity){
+    public void generate(final Class<?> entity) {
         if (this.isLock(entity)) {
             return;
         }

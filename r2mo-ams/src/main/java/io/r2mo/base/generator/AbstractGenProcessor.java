@@ -2,7 +2,7 @@ package io.r2mo.base.generator;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import io.r2mo.SourcePackage;
+import io.r2mo.SourceReflect;
 import io.r2mo.function.Fn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public abstract class AbstractGenProcessor implements GenProcessor {
         model.put("entityDisplay", Objects.isNull(schema) ? "" : schema.name());
 
         final GenMeta meta = config.getMetadata();
-        final Package sourcePackage = SourcePackage.class.getPackage();
+        final Package sourcePackage = SourceReflect.class.getPackage();
         model.put("sourcePackage", sourcePackage.getName());
         model.put("v", meta.getVersion());
         model.put("V", meta.getVersion().toUpperCase(Locale.getDefault()));

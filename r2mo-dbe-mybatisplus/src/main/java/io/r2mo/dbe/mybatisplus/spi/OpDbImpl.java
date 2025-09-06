@@ -2,9 +2,9 @@ package io.r2mo.dbe.mybatisplus.spi;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.r2mo.SourceReflect;
 import io.r2mo.base.dbe.constant.OpType;
 import io.r2mo.base.dbe.operation.OpDb;
-import io.r2mo.dbe.common.DBETool;
 import io.r2mo.dbe.common.operation.AbstractDbOperation;
 import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
 import org.apache.ibatis.executor.BatchResult;
@@ -61,11 +61,11 @@ class OpDbImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrap
             }
 
             // 第二规范提取
-            final Field field = DBETool.getField(this.entityCls(), "id");
+            final Field field = SourceReflect.fieldN(this.entityCls(), "id");
             if (Objects.isNull(field)) {
                 continue;
             }
-            final Object value = DBETool.getValue(entity, field.getName(), this.entityCls());
+            final Object value = SourceReflect.value(entity, field.getName(), this.entityCls());
             if (Objects.nonNull(value)) {
                 ids.add(value);
             }
