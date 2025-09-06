@@ -1,5 +1,6 @@
 package io.r2mo.spi;
 
+import io.r2mo.base.io.HPath;
 import io.r2mo.base.io.HStore;
 
 /**
@@ -8,4 +9,8 @@ import io.r2mo.base.io.HStore;
 public interface FactoryIo {
 
     HStore ioAction();
+
+    HPath ioPath();
+
+    HPath ioPath(String name);
 }

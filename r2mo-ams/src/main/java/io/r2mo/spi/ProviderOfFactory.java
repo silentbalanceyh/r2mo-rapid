@@ -66,7 +66,7 @@ public class ProviderOfFactory {
                 if (Objects.isNull(annoSPI)) {
                     return false;
                 }
-                final String implName = annoSPI.name();
+                final String implName = annoSPI.value();
                 return StrUtil.equals(name, implName);
             }).findAny().orElse(null);
         }

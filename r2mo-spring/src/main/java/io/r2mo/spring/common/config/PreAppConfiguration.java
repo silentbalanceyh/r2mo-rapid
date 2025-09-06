@@ -1,10 +1,12 @@
 package io.r2mo.spring.common.config;
 
+import io.r2mo.base.io.HPath;
 import io.r2mo.base.io.HStore;
 import io.r2mo.base.web.ForAbort;
 import io.r2mo.base.web.ForLocale;
 import io.r2mo.base.web.ForStatus;
 import io.r2mo.spi.SPI;
+import io.r2mo.typed.annotation.SPID;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +28,14 @@ public class PreAppConfiguration {
         final HStore store = SPI.V_STORE;
         if (Objects.nonNull(store)) {
             log.info("[ R2MO ] (HStore) 组件加载：{}", store.getClass().getName());
+        }
+
+        final HPath path = SPI.V_PATH;
+        if (Objects.nonNull(path)) {
+            final Class<?> implClass = path.getClass();
+            final SPID spid = implClass.getDeclaredAnnotation(SPID.class);
+            log.info("[ R2MO ] (HPath) 组件加载：{}, 名称：{}",
+                path.getClass().getName(), Objects.isNull(spid) ? null : spid.value());
         }
 
         final ForAbort abort = SPI.V_ABORT;

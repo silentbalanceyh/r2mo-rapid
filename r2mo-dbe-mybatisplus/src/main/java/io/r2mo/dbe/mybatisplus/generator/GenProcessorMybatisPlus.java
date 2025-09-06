@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author lang : 2025-09-04
  */
 @Slf4j
-@SPID(name = "GenMybatisPlus")
+@SPID("GenMybatisPlus")
 public class GenProcessorMybatisPlus extends AbstractGenProcessor {
     private final GenProcessor processorSql = new GenProcessorSql();
     private final GenProcessor processorMapper = new GenProcessorMapper();
