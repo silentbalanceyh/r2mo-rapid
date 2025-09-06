@@ -155,10 +155,7 @@ class LocalWriter {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 final Path targetFile = target.resolve(source.relativize(file));
-                final Path parent = targetFile.getParent();
-                if (!Files.exists(parent)) {
-                    Fn.jvmAt(() -> Files.createDirectories(parent));
-                }
+                pathParent(targetFile);
                 Files.move(file, targetFile,
                     StandardCopyOption.REPLACE_EXISTING,
                     StandardCopyOption.ATOMIC_MOVE);
