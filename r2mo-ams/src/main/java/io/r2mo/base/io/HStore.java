@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author lang : 2025-08-28
  */
 public interface HStore {
+
     /* 拷贝：cp */
     boolean cp(String name, String renamed);
 

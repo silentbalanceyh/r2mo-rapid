@@ -1,6 +1,5 @@
 package io.r2mo.spi;
 
-import io.r2mo.base.io.HPath;
 import io.r2mo.base.io.HStore;
 import io.r2mo.base.web.ForAbort;
 import io.r2mo.base.web.ForLocale;
@@ -30,8 +29,6 @@ public interface SPI {
     JUtil V_UTIL = SPI_OBJECT.jsonUtil();
 
     HStore V_STORE = SPI_IO.ioAction();
-
-    HPath V_PATH = SPI_IO.ioPath();
 
     ForStatus V_STATUS = SPI_WEB.ofStatus();
 

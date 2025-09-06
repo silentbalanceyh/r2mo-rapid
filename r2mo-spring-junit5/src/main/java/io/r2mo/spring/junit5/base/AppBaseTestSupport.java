@@ -16,6 +16,8 @@ import org.springframework.util.StreamUtils;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -85,5 +87,9 @@ public abstract class AppBaseTestSupport<T> {
 
     protected HFS fs() {
         return HFS.of();
+    }
+
+    protected Path root() {
+        return Paths.get("");
     }
 }
