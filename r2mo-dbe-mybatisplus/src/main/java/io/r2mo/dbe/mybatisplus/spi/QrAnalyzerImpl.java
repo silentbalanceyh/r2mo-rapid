@@ -64,7 +64,7 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
                 condition.select(columnList);
             }
         }
-        return null;
+        return condition;
     }
 
     private void where(final QNode node, final QueryWrapper<T> query) {

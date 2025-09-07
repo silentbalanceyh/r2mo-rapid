@@ -1,5 +1,6 @@
 package io.r2mo.dbe.mybatisplus.core.typehandler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
@@ -24,6 +25,7 @@ import java.util.UUID;
  */
 @MappedJdbcTypes({JdbcType.VARCHAR, JdbcType.BINARY, JdbcType.OTHER})
 @MappedTypes({UUID.class})
+@Slf4j
 public class TypedUUIDHandler extends BaseTypeHandler<Object> {
 
     /* ===================== 写入 ===================== */
@@ -48,7 +50,8 @@ public class TypedUUIDHandler extends BaseTypeHandler<Object> {
         try {
             return UUID.fromString(str);
         } catch (final IllegalArgumentException ex) {
-            throw new SQLException("Invalid UUID string: '" + s + "'", ex);
+            log.error(ex.getMessage(), ex);
+            return null;
         }
     }
 

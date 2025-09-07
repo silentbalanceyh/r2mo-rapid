@@ -16,7 +16,7 @@ import java.util.List;
  * 支持多格式 + 时区感知 + Unicode 清洗 的 LocalDateTime 反序列化器
  * 使用方式：在 ObjectMapper 注册 Module 时替换默认的 LocalDateTimeDeserializer
  *
- * @author lang-gpt
+ * @author lang
  */
 @Slf4j
 public class MultiLocalDateTimeDeserializer extends LocalDateTimeDeserializer {
