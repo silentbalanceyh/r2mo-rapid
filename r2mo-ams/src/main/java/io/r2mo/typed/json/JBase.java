@@ -72,4 +72,6 @@ public interface JBase extends Serializable {
     String encode();
 
     String encodePretty();
+
+    String encodeYaml();
 }

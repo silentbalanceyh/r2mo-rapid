@@ -219,7 +219,7 @@ class GenProcessorSqlMySQL implements GenProcessor {
         } else if (type == Float.class || type == float.class) {
             return "FLOAT";
         } else if (type == Boolean.class || type == boolean.class) {
-            return "TINYINT(1)";
+            return "TINYINT";
         } else if (type == Date.class) {
             return "DATETIME";
         } else if (type == java.time.LocalDateTime.class) {
@@ -228,6 +228,9 @@ class GenProcessorSqlMySQL implements GenProcessor {
             return "DATE";
         } else if (type == java.math.BigDecimal.class) {
             return "DECIMAL(10,2)";
+        } else if (type == UUID.class) {
+            // Fix issue of UUID
+            return "VARCHAR(36)";
         } else {
             return "VARCHAR(255)"; // 默认类型
         }

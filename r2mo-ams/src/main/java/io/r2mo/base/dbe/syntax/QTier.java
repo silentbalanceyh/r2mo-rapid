@@ -55,12 +55,10 @@ class QTier implements QBranch {
     public String dgInfo() {
         final StringBuilder source = new StringBuilder();
         source.append("\t".repeat(Math.max(0, this.level)));
-        source.append("Branch").append(",");
-        source.append("OP：").append(this.op).append(",");
-        source.append("Node：").append("\n");
+        source.append("Branch").append(" / ").append(this.op).append("\n");
         this.nodes.forEach(node -> {
-            source.append("\t".repeat(Math.max(0, this.level)));
-            source.append(node).append("\n");
+            // source.append("\t".repeat(Math.max(0, this.level)));
+            source.append(node.dgInfo()).append("\n");
         });
         return source.toString();
     }

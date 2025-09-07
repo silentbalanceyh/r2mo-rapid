@@ -5,7 +5,6 @@ import io.r2mo.SourceReflect;
 import io.r2mo.dbe.mybatisplus.DBE;
 import io.r2mo.function.Actuator;
 import io.r2mo.function.Fn;
-import io.r2mo.io.common.HFS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,8 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -36,7 +40,7 @@ import java.util.Arrays;
 @Transactional
 @Component
 @Slf4j
-public abstract class AppBaseTestSupport<T> {
+public abstract class AppBaseTestSupport<T> extends AppIoTestSupport {
 
     private static boolean RUN_ONCE = true;
     private final Class<T> entityCls;
@@ -51,11 +55,9 @@ public abstract class AppBaseTestSupport<T> {
         this.entityCls = SourceReflect.classT0(this.getClass());
     }
 
-    public void execute(final String filePath) {
+    @SuppressWarnings("all")
+    public void executeString(final String sql) {
         try {
-            final Resource resource = this.loader.getResource(filePath);
-            final String sql = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
-
             try (final Connection conn = this.dataSource.getConnection();
                  final Statement stmt = conn.createStatement()) {
 
@@ -68,8 +70,8 @@ public abstract class AppBaseTestSupport<T> {
                     }
                 }
             }
-        } catch (final IOException | SQLException e) {
-            throw new RuntimeException("[ R2MO Test ] 执行SQL文件失败: " + filePath, e);
+        } catch (final SQLException e) {
+            throw new RuntimeException("[ R2MO Test ] 执行SQL文件失败: " + sql, e);
         }
     }
 
@@ -77,12 +79,33 @@ public abstract class AppBaseTestSupport<T> {
         return DBE.of(this.entityCls, this.mapper);
     }
 
-    protected void executeSQL(final String... files) {
-        Arrays.stream(files).forEach(this::execute);
+    protected void executeFile(final String file) {
+        try {
+            // 1. 尝试从当前运行路径加载文件
+            final Path path = Paths.get(file);
+            final File currentPath = path.toFile();
+            if (Files.exists(path)) {
+                log.info("[ R2MOMO ] 正在从当前路径加载文件: {}", file);
+                final String sql = StreamUtils.copyToString(new FileInputStream(currentPath), StandardCharsets.UTF_8);
+                this.executeString(sql);
+                return;
+            }
+            // 2. 如果当前路径找不到文件，则尝试从 ResourceLoader 加载
+            log.info("[ R2MOMO ] 当前路径未找到文件, 尝试从资源路径加载: {}", file);
+            final Resource resource = this.loader.getResource(file);
+            if (resource.exists() && resource.isReadable()) {
+                final String sql = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+                this.executeString(sql);
+            } else {
+                throw new IOException("[ R2MO ] 文件在当前路径和资源路径中均未找到: " + file);
+            }
+        } catch (final IOException e) {
+            throw new RuntimeException("[ R2MO ] 执行SQL文件失败: " + file, e);
+        }
     }
 
-    protected HFS fs() {
-        return HFS.of();
+    protected void executeFiles(final String... files) {
+        Arrays.stream(files).forEach(this::executeFile);
     }
 
     /**

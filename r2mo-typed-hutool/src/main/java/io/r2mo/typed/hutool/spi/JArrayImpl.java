@@ -1,6 +1,7 @@
 package io.r2mo.typed.hutool.spi;
 
 import cn.hutool.json.JSONArray;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JObject;
 
@@ -36,6 +37,7 @@ class JArrayImpl implements JArray {
     @Override
     public Stream<JObject> itObject() {
         return this.data.stream()
+            .map(JUtilImpl::boxIn)     // JSONObject -> JObject
             .filter(item -> item instanceof JObject)
             .map(item -> (JObject) item);
     }
@@ -48,7 +50,7 @@ class JArrayImpl implements JArray {
 
     @Override
     public <T> JArray add(final T value) {
-        this.data.add(value);
+        this.data.add(JUtilImpl.boxOut(value));
         return this;
     }
 
@@ -65,6 +67,11 @@ class JArrayImpl implements JArray {
     @Override
     public String encodePretty() {
         return this.data.toStringPretty();
+    }
+
+    @Override
+    public String encodeYaml() {
+        return SPI.V_UTIL.toYaml(this);
     }
 
     @Override

@@ -63,7 +63,12 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
         return this.entityCls;
     }
 
+
     // ---- COUNT
+    public Optional<Long> count() {
+        return this.opAggr.execute(null, Long.class, QCV.Aggr.COUNT, null);
+    }
+
     public Optional<Long> count(final String field, final Object value) {
         return this.opAggr.execute(null, Long.class, QCV.Aggr.COUNT, field, value);
     }

@@ -4,6 +4,8 @@ import io.r2mo.base.io.HStore;
 import io.r2mo.base.web.ForAbort;
 import io.r2mo.base.web.ForLocale;
 import io.r2mo.base.web.ForStatus;
+import io.r2mo.typed.json.JArray;
+import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.json.JUtil;
 
 import java.util.List;
@@ -35,6 +37,15 @@ public interface SPI {
     ForLocale V_LOCALE = SPI_WEB.ofLocale();
 
     ForAbort V_ABORT = SPI_WEB.ofAbort();
+
+    /* 快速构造 */
+    static JObject J() {
+        return SPI_OBJECT.jsonObject();
+    }
+
+    static JArray A() {
+        return SPI_OBJECT.jsonArray();
+    }
 
     static <T> List<T> findMany(final Class<T> clazz) {
         return ProviderOfFactory.findMany(clazz);

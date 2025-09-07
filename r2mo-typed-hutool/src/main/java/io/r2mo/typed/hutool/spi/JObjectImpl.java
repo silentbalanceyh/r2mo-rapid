@@ -1,12 +1,15 @@
 package io.r2mo.typed.hutool.spi;
 
 import cn.hutool.json.JSONObject;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
+import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author lang : 2025-08-28
@@ -48,23 +51,31 @@ class JObjectImpl implements JObject {
 
     @Override
     public JObject getJObject(final String key) {
-        return (JObject) this.data.getObj(key);
+        return this.getJson(key);
+    }
+
+    private <T extends JBase> T getJson(final String key) {
+        final Object value = this.get(key);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return JUtilImpl.boxOut(value);
     }
 
     @Override
     public JArray getJArray(final String key) {
-        return (JArray) this.data.getObj(key);
+        return this.getJson(key);
     }
 
     @Override
     public JObject put(final String key, final Object value) {
-        this.data.set(key, value);
+        this.data.set(key, JUtilImpl.boxIn(value));
         return this;
     }
 
     @Override
     public JObject put(final Map<String, Object> map) {
-        this.data.putAll(map);
+        map.forEach(this::put);
         return this;
     }
 
@@ -79,9 +90,8 @@ class JObjectImpl implements JObject {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <V> void itKv(final BiConsumer<String, V> action) {
-        this.data.forEach((k, v) -> action.accept(k, (V) v));
+    public Stream<Map.Entry<String, Object>> itKv() {
+        return this.data.entrySet().stream();
     }
 
     @Override
@@ -97,6 +107,11 @@ class JObjectImpl implements JObject {
     @Override
     public String encodePretty() {
         return this.data.toStringPretty();
+    }
+
+    @Override
+    public String encodeYaml() {
+        return SPI.V_UTIL.toYaml(this);
     }
 
     @Override

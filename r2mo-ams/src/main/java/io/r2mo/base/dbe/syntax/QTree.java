@@ -2,7 +2,9 @@ package io.r2mo.base.dbe.syntax;
 
 import io.r2mo.base.dbe.constant.QCV;
 import io.r2mo.base.dbe.constant.QOp;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.typed.json.JUtil;
 
 import java.util.Objects;
 
@@ -35,30 +37,37 @@ public class QTree implements QRequest {
     }
 
     /**
-     * {@link QBranch} / {@link QLeaf}
-     */
-    private QNode initialize(final String field, final Object value, final int level) {
-        final QNode node;
-        if (value instanceof final JObject branchJ) {
-            node = this.initialize(branchJ, level);
-        } else {
-            node = this.initialize(field, value).level(level);
-        }
-        return node;
-    }
-
-    /**
+     * 初始化入口
      * {@link QBranch} / {@link QLeaf}
      */
     private QNode initialize(final JObject syntaxJ, final int level) {
         final QNode root = this.initialize(syntaxJ);
-        syntaxJ.itKv((field, value) -> {
+        root.level(level);
+        syntaxJ.itKv().filter(field -> !"".equals(field.getKey())).forEach(entry -> {
+            final String field = entry.getKey();
+            final Object value = entry.getValue();
             final QNode branch = this.initialize(field, value, level + 1);
             if (!root.isLeaf()) {
                 ((QBranch) root).add(branch);
             }
         });
         return root;
+    }
+
+    /**
+     * {@link QBranch} / {@link QLeaf}
+     */
+    private QNode initialize(final String field, final Object value, final int level) {
+        final QNode node;
+        // 此处判断要调整
+        final JUtil ut = SPI.V_UTIL;
+        if (ut.isJObject(value)) {
+            final JObject branchJ = ut.toJObject(value);
+            node = this.initialize(branchJ, level);
+        } else {
+            node = this.initialize(field, value).level(level);
+        }
+        return node;
     }
 
     /**
@@ -88,6 +97,7 @@ public class QTree implements QRequest {
             // 默认连接符
             connector = QOp.AND;
         }
+        // 判断是否复杂逻辑
         return QTier.of(connector);
     }
 
@@ -115,5 +125,10 @@ public class QTree implements QRequest {
         } else {
             return Objects.nonNull(this.root);
         }
+    }
+
+    @Override
+    public String toString() {
+        return this.root.dgInfo();
     }
 }

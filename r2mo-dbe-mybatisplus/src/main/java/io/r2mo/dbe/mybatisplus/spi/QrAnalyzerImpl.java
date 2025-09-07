@@ -101,7 +101,8 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
             case CONTAIN -> query.like(leaf.field(), leaf.value());         // like '%value%'
             case START -> query.likeRight(leaf.field(), leaf.value());      // like 'value%'
             case END -> query.likeLeft(leaf.field(), leaf.value());         // like '%value'
-            case IN -> query.in(leaf.field(), leaf.value());                // in (value1, value2, ...)
+            // Fix Issue 1: 存在类型转换的软处理流程
+            case IN -> QrSoftValue.in(leaf, query);                         // in (value1, value2, ...)
             case NOT_IN -> query.notIn(leaf.field(), leaf.value());         // not in (value1, value2, ...)
             case NULL -> query.isNull(leaf.field());                        // is null
             case NOT_NULL -> query.isNotNull(leaf.field());                 // is not null

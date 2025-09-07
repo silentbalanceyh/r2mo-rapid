@@ -41,7 +41,7 @@ public interface QCV {
 
     interface Op {
         String EQ = "=";                    // 等于
-        String NEQ = "!=";                  // 不等于
+        String NEQ = "<>";                  // 不等于
         String GT = ">";                    // 大于
         String GTE = ">=";                  // 大于等于
         String LT = "<";                    // 小于
@@ -55,19 +55,19 @@ public interface QCV {
         String CONTAIN = "c";               // 包含 / LIKE
         Set<String> VALUES = new HashSet<>() {
             {
-                this.add(EQ);
-                this.add(NEQ);
-                this.add(GT);
-                this.add(GTE);
-                this.add(LT);
-                this.add(LTE);
-                this.add(NULL);
-                this.add(NOT_NULL);
-                this.add(IN);
-                this.add(NOT_IN);
-                this.add(START);
-                this.add(END);
-                this.add(CONTAIN);
+                this.add(Op.EQ);
+                this.add(Op.NEQ);
+                this.add(Op.GT);
+                this.add(Op.GTE);
+                this.add(Op.LT);
+                this.add(Op.LTE);
+                this.add(Op.NULL);
+                this.add(Op.NOT_NULL);
+                this.add(Op.IN);
+                this.add(Op.NOT_IN);
+                this.add(Op.START);
+                this.add(Op.END);
+                this.add(Op.CONTAIN);
             }
         };
     }
