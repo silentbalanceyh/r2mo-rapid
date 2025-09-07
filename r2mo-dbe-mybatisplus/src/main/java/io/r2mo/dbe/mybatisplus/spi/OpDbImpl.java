@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author lang : 2025-08-28
@@ -42,6 +43,8 @@ class OpDbImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrap
         if (Objects.isNull(entities) || entities.isEmpty()) {
             return new ArrayList<>();
         }
+        // Insert issue
+        this.batchInsert(entities, opType);
         // Execute
         return switch (opType) {
             case CREATE -> this.buildResult(this.executor().insert(entities, batchSize));
@@ -49,6 +52,19 @@ class OpDbImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrap
             case REMOVE -> this.batchRemove(entities);
             case SAVE -> this.buildResult(this.executor().insertOrUpdate(entities, batchSize));
         };
+    }
+
+    private void batchInsert(final List<T> entities, final OpType opType) {
+        // Fix Issue of id
+        if (OpType.CREATE == opType) {
+            for (final T entity : entities) {
+                if (entity instanceof final BaseEntity baseEntity) {
+                    if (Objects.isNull(baseEntity.getId())) {
+                        baseEntity.setId(UUID.randomUUID());
+                    }
+                }
+            }
+        }
     }
 
     private List<T> batchRemove(final List<T> entities) {
