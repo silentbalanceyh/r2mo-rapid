@@ -10,10 +10,7 @@ import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
 import org.apache.ibatis.executor.BatchResult;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author lang : 2025-08-28
@@ -54,13 +51,21 @@ class OpDbImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrap
         };
     }
 
+    @SuppressWarnings("all")
     private void batchInsert(final List<T> entities, final OpType opType) {
         // Fix Issue of id
         if (OpType.CREATE == opType) {
             for (final T entity : entities) {
+                // 直接实体
                 if (entity instanceof final BaseEntity baseEntity) {
                     if (Objects.isNull(baseEntity.getId())) {
                         baseEntity.setId(UUID.randomUUID());
+                    }
+                }
+                // LinkedHashMap
+                if (entity instanceof final LinkedHashMap baseMap) {
+                    if (Objects.isNull(baseMap.get("id"))) {
+                        baseMap.put("id", UUID.randomUUID());
                     }
                 }
             }
