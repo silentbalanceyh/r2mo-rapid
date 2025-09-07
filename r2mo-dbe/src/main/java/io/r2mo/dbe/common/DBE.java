@@ -66,7 +66,7 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     // ---- COUNT
     public Optional<Long> count() {
-        return this.opAggr.execute(null, Long.class, QCV.Aggr.COUNT, null);
+        return this.opAggr.execute(null, Long.class, QCV.Aggr.COUNT, (QTree) null);
     }
 
     public Optional<Long> count(final String field, final Object value) {
@@ -75,6 +75,10 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public Optional<Long> count(final QTree criteria) {
         return this.opAggr.execute(null, Long.class, QCV.Aggr.COUNT, criteria);
+    }
+
+    public Optional<Long> count(final Map<String, Object> condition) {
+        return this.opAggr.execute(null, Long.class, QCV.Aggr.COUNT, condition);
     }
 
     public Optional<Long> count(final JObject criteriaJ) {
@@ -88,6 +92,10 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public Optional<BigDecimal> sum(final String aggrField, final QTree criteria) {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.SUM, criteria);
+    }
+
+    public Optional<BigDecimal> sum(final String aggrField, final Map<String, Object> condition) {
+        return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.SUM, condition);
     }
 
     public Optional<BigDecimal> sum(final String aggrField, final JObject criteriaJ) {
@@ -107,6 +115,10 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
         return this.avg(aggrField, QTree.of(criteriaJ));
     }
 
+    public Optional<BigDecimal> avg(final String aggrField, final Map<String, Object> condition) {
+        return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.AVG, condition);
+    }
+
     // ---- MIN
     public Optional<BigDecimal> min(final String aggrField, final String field, final Object value) {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.MIN, field, value);
@@ -114,6 +126,10 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public Optional<BigDecimal> min(final String aggrField, final QTree criteria) {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.MIN, criteria);
+    }
+
+    public Optional<BigDecimal> min(final String aggrField, final Map<String, Object> condition) {
+        return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.MIN, condition);
     }
 
     public Optional<BigDecimal> min(final String aggrField, final JObject criteriaJ) {
@@ -127,6 +143,10 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public Optional<BigDecimal> max(final String aggrField, final QTree criteria) {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.MAX, criteria);
+    }
+
+    public Optional<BigDecimal> max(final String aggrField, final Map<String, Object> condition) {
+        return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.MAX, condition);
     }
 
     public Optional<BigDecimal> max(final String aggrField, final JObject criteriaJ) {
@@ -151,7 +171,7 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
     }
 
     public Optional<T> findOne(final Map<String, Object> condition) {
-        return this.opVary.findOne(condition);
+        return this.qrOne.execute(condition);
     }
 
     // ---- findMany
@@ -169,6 +189,10 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public List<T> findMany(final JObject criteriaJ) {
         return this.findMany(QTree.of(criteriaJ));
+    }
+
+    public List<T> findMany(final Map<String, Object> condition) {
+        return this.qrMany.execute(condition);
     }
 
     // ---- findFull
@@ -202,8 +226,12 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public <K> Map<K, List<T>> findGroupBy(final QTree criteria, final String groupBy) {
         final List<T> entities = this.findMany(criteria);
-        return
-            DBETool.groupBy(entities, groupBy, this.entityCls);
+        return DBETool.groupBy(entities, groupBy, this.entityCls);
+    }
+
+    public <K> Map<K, List<T>> findGroupBy(final Map<String, Object> map, final String groupBy) {
+        final List<T> entities = this.findMany(map);
+        return DBETool.groupBy(entities, groupBy, this.entityCls);
     }
 
     public <K> Map<K, List<T>> findGroupBy(final JObject criteriaJ, final String groupBy) {
@@ -216,13 +244,9 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
     }
 
     // ---- findMap
-    public List<T> findMap(final Map<String, Object> map) {
-        final QR condition = this.qrAnalyzer.where(map);
+    public List<T> findManyBy(final JObject mapJ) {
+        final QR condition = this.qrAnalyzer.where(mapJ.toMap());
         return this.opVary.findMany(condition);
-    }
-
-    public List<T> findMap(final JObject mapJ) {
-        return this.findMap(mapJ.toMap());
     }
 
     // ---- findManyIn
@@ -299,6 +323,11 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
         return this.opVary.removeBy(condition);
     }
 
+    public boolean removeBy(final Map<String, Object> map) {
+        final QR condition = this.qrAnalyzer.where(map);
+        return this.opVary.removeBy(condition);
+    }
+
     public boolean removeBy(final JObject criteriaJ) {
         return this.removeBy(QTree.of(criteriaJ));
     }
@@ -315,6 +344,10 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
         return this.opVary.update(this.findOne(criteria), latest);
     }
 
+    public T updateBy(final Map<String, Object> map, final T latest) {
+        return this.opVary.update(this.findOne(map), latest);
+    }
+
     public T updateBy(final JObject criteriaJ, final T latest) {
         return this.updateBy(QTree.of(criteriaJ), latest);
     }
@@ -325,6 +358,10 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public T saveBy(final String field, final Object value, final T latest) {
         return this.opVary.save(this.findOne(field, value), latest);
+    }
+
+    public T saveBy(final Map<String, Object> map, final T latest) {
+        return this.opVary.save(this.findOne(map), latest);
     }
 
     public T saveBy(final QTree criteria, final T latest) {

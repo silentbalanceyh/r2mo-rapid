@@ -1,5 +1,7 @@
 package io.r2mo.typed.constant;
 
+import java.util.UUID;
+
 /**
  * @author lang : 2025-09-03
  */
@@ -23,5 +25,20 @@ public interface DefaultConstantValue {
 
     String DEFAULT_VERSION = "1.0.0";
 
-    String DEFAULT_BY_SYSTEM = "00000000-0000-0000-0000-000000000001";
+    // --------------- UUID 账号 ---------------
+
+    // 默认系统账号
+    UUID BY_SYSTEM = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
+    // 默认测试账号
+    UUID BY_TESTER = UUID.fromString("00000000-0000-0000-0000-000000000002");
+
+    // 默认管理账号
+    UUID BY_ADMIN = UUID.fromString("00000000-0000-0000-0000-000000000003");
+
+    // 默认用户账号
+    UUID BY_USER = UUID.fromString("00000000-0000-0000-0000-000000000004");
+
+    // 默认匿名账号
+    UUID BY_ANONYMOUS = UUID.fromString("00000000-0000-0000-0000-000000000005");
 }

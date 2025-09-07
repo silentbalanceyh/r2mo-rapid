@@ -129,6 +129,6 @@ public class QTree implements QRequest {
 
     @Override
     public String toString() {
-        return this.root.dgInfo();
+        return "-----QTree-----\n" + this.root.dgInfo();
     }
 }

@@ -5,7 +5,6 @@ import io.r2mo.typed.common.Pagination;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -28,8 +27,6 @@ public interface OpVary<T, CONDITION> {
     List<T> findAll();
 
     Optional<T> findOne(CONDITION condition);
-
-    Optional<T> findOne(Map<String, Object> condition);
 
     boolean removeById(Serializable id);
 

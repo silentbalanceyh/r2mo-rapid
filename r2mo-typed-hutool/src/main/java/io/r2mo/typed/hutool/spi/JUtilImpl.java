@@ -3,7 +3,10 @@ package io.r2mo.typed.hutool.spi;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import io.r2mo.function.Fn;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
@@ -18,7 +21,8 @@ import java.util.Objects;
  * @author lang : 2025-08-28
  */
 class JUtilImpl implements JUtil {
-    private static final YAMLMapper YAML = new YAMLMapper();
+    private static final YAMLMapper MAPPER_YAML = new YAMLMapper();
+    private static final JsonMapper MAPPER_JSON = JBase.jackson();
     private static JUtil INSTANCE;
 
     private JUtilImpl() {
@@ -104,11 +108,56 @@ class JUtilImpl implements JUtil {
         }
         final Object jsonObject = JSONUtil.parse(json.encode());
         try {
-            return YAML.writerWithDefaultPrettyPrinter()
+            return MAPPER_YAML.writerWithDefaultPrettyPrinter()
                 .writeValueAsString(jsonObject);
         } catch (final Exception ex) {
             throw new RuntimeException("[ R2MO ] 转换YAML字符串失败！", ex);
         }
+    }
+
+    @Override
+    public <T, R extends JBase> R serializeJson(final T target) {
+        if (Objects.isNull(target)) {
+            // 无法判断返回类型
+            return null;
+        }
+        // 使用自定义的 Mapper 进行转换
+        final String jsonStr = Fn.jvmOr(() -> MAPPER_JSON.writeValueAsString(target));
+
+        // 根据字符串转换成对应的 JBase
+        return JBase.parse(jsonStr);
+    }
+
+    @Override
+    public <T> T deserializeJson(final JObject json, final Class<T> clazz) {
+        if (Objects.isNull(json) || Objects.isNull(clazz)) {
+            return null;
+        }
+
+        // JObject 转换成 Json 字符串
+        final String jsonStr = json.encode();
+
+
+        // 使用自定义的 Mapper 进行转换
+        return Fn.jvmOr(() -> MAPPER_JSON.readValue(jsonStr, clazz));
+    }
+
+    @Override
+    public <T> List<T> deserializeJson(final JArray json, final Class<T> clazz) {
+        if (Objects.isNull(json) || Objects.isNull(clazz)) {
+            return List.of();
+        }
+
+
+        // JArray 转换成 Json 字符串
+        final String jsonStr = json.encode();
+
+
+        // 创建 TypeReference<T> 来处理泛型列表
+        final TypeReference<List<T>> typeRef = new TypeReference<>() {
+        };
+        
+        return Fn.jvmOr(() -> MAPPER_JSON.readValue(jsonStr, typeRef));
     }
 
     @Override

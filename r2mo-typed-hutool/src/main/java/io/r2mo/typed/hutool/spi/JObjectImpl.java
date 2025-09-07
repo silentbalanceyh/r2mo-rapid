@@ -59,7 +59,7 @@ class JObjectImpl implements JObject {
         if (Objects.isNull(value)) {
             return null;
         }
-        return JUtilImpl.boxOut(value);
+        return JUtilImpl.boxIn(value);
     }
 
     @Override
@@ -69,7 +69,7 @@ class JObjectImpl implements JObject {
 
     @Override
     public JObject put(final String key, final Object value) {
-        this.data.set(key, JUtilImpl.boxIn(value));
+        this.data.set(key, JUtilImpl.boxOut(value));
         return this;
     }
 

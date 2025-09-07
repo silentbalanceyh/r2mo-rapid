@@ -8,6 +8,8 @@ import io.r2mo.base.dbe.syntax.QTree;
 import io.r2mo.dbe.common.operation.AbstractDbOperation;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -20,12 +22,36 @@ class QrOneImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWra
 
     @Override
     public Optional<T> execute(final QTree syntax) {
-        return Optional.empty();
+        if (Objects.isNull(syntax) || syntax.isOk()) {
+            return Optional.empty();
+        }
+
+
+        // Execute
+        final QueryWrapper<T> query = this.analyzer().where(syntax);
+
+
+        // Result
+        return Optional.ofNullable(this.executor().selectOne(query));
+    }
+
+    @Override
+    public Optional<T> execute(final Map<String, Object> condition) {
+        if (Objects.isNull(condition) || condition.isEmpty()) {
+            return Optional.empty();
+        }
+        final QueryWrapper<T> query = this.analyzer().where(condition);
+        return Optional.ofNullable(this.executor().selectOne(query));
     }
 
     @Override
     public Optional<T> execute(final Serializable id) {
-        return Optional.empty();
+        if (Objects.isNull(id)) {
+            return Optional.empty();
+        }
+
+
+        return Optional.ofNullable(this.executor().selectById(id));
     }
 
     @Override

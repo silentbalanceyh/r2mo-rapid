@@ -150,4 +150,8 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
     public String tenant() {
         return Objects.isNull(this.tenantId) ? null : this.tenantId.toString();
     }
+
+    public String dgInfo() {
+        return BaseDebug.dgInfo(this);
+    }
 }

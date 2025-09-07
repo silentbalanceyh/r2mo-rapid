@@ -5,6 +5,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
+import io.r2mo.typed.constant.DefaultConstantValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 
@@ -20,9 +21,6 @@ import java.util.UUID;
  */
 @Slf4j
 public class InjectionMetaObjectHandler implements MetaObjectHandler {
-
-    /** 如果用户不存在默认注入-1代表无用户 */
-    private static final UUID DEFAULT_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     /**
      * 插入填充方法，用于在插入数据时自动填充实体对象中的创建时间、更新时间、创建人、更新人等信息
@@ -81,7 +79,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
         baseEntity.setCreatedAt(current);
         if (Objects.isNull(baseEntity.getCreatedBy())) {
             UUID userId = this.getUserId();
-            userId = Objects.isNull(userId) ? DEFAULT_USER_ID : userId;
+            userId = Objects.isNull(userId) ? DefaultConstantValue.BY_SYSTEM : userId;
             baseEntity.setCreatedBy(userId);
         }
     }
@@ -89,7 +87,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
     private void setUpdated(final BaseEntity baseEntity) {
         baseEntity.setUpdatedAt(LocalDateTime.now());
         UUID userId = this.getUserId();
-        userId = Objects.isNull(userId) ? DEFAULT_USER_ID : userId;
+        userId = Objects.isNull(userId) ? DefaultConstantValue.BY_SYSTEM : userId;
         baseEntity.setUpdatedBy(userId);
     }
 

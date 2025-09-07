@@ -91,7 +91,7 @@ public abstract class BaseActOperation<T> implements ActOperation<T> {
         if (condition.isEmpty()) {
             queried = this.db().findAll();
         } else {
-            queried = this.db().findMap(condition);
+            queried = this.db().findMany(condition);
         }
         return ActResponse.success(queried);
     }

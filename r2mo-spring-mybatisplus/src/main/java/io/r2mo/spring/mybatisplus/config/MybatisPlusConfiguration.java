@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.sql.DataSource;
+
 /**
  * Mybatis-Plus配置类
  *
@@ -27,6 +29,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @PropertySource(value = "classpath:common-mybatis-plus.yml", factory = PropertySourceYmlFactory.class)
 @Slf4j
 public class MybatisPlusConfiguration {
+    private final DataSource dataSource;
+
+    public MybatisPlusConfiguration(final DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {

@@ -8,6 +8,7 @@ import io.r2mo.base.dbe.syntax.QTree;
 import io.r2mo.dbe.common.operation.AbstractDbOperation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,6 +40,16 @@ class OpAggrImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWr
 
         // Execute
         final QueryWrapper<T> query = this.analyzer().where(criteria);
+
+        return this.execute(aggrField, returnCls, query, aggr);
+    }
+
+    @Override
+    public <N extends Number> Optional<N> execute(final String aggrField, final Class<N> returnCls,
+                                                  final QCV.Aggr aggr,
+                                                  final Map<String, Object> map) {
+        // Execute
+        final QueryWrapper<T> query = this.analyzer().where(map);
 
         return this.execute(aggrField, returnCls, query, aggr);
     }

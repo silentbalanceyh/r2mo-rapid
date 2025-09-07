@@ -9,10 +9,7 @@ import io.r2mo.base.dbe.syntax.QTree;
 import io.r2mo.dbe.common.operation.AbstractDbOperation;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author lang : 2025-08-28
@@ -58,6 +55,15 @@ class QrManyImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWr
 
         // Execute
         return this.executor().selectByIds(Arrays.asList(ids));
+    }
+
+    @Override
+    public List<T> execute(final Map<String, Object> condition) {
+        if (Objects.isNull(condition) || condition.isEmpty()) {
+            return new ArrayList<>();
+        }
+        final QueryWrapper<T> query = this.analyzer().where(condition);
+        return this.executor().selectList(query);
     }
 
     @Override

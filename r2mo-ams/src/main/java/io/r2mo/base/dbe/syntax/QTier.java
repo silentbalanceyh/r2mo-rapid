@@ -58,7 +58,10 @@ class QTier implements QBranch {
         source.append("Branch").append(" / ").append(this.op).append("\n");
         this.nodes.forEach(node -> {
             // source.append("\t".repeat(Math.max(0, this.level)));
-            source.append(node.dgInfo()).append("\n");
+            source.append(node.dgInfo());
+            if (node instanceof QValue) {
+                source.append("\n");
+            }
         });
         return source.toString();
     }

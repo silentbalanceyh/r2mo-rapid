@@ -3,6 +3,7 @@ package io.r2mo.base.dbe.operation;
 import io.r2mo.base.dbe.syntax.QTree;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -15,4 +16,6 @@ public interface QrOne<T> {
     Optional<T> execute(Serializable id);
 
     Optional<T> execute(String field, Object value);
+
+    Optional<T> execute(Map<String, Object> condition);
 }

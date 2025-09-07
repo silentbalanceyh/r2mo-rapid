@@ -12,7 +12,10 @@ import io.r2mo.dbe.common.operation.AbstractDbOperation;
 import io.r2mo.typed.common.Pagination;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author lang : 2025-08-28
@@ -69,15 +72,6 @@ class OpVaryImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWr
             return Optional.empty();
         }
         return Optional.ofNullable(this.executor().selectOne(condition));
-    }
-
-    @Override
-    public Optional<T> findOne(final Map<String, Object> condition) {
-        if (Objects.isNull(condition) || condition.isEmpty()) {
-            return Optional.empty();
-        }
-        final QueryWrapper<T> query = this.analyzer().where(condition);
-        return this.findOne(query);
     }
 
     @Override
