@@ -9,7 +9,7 @@ import java.util.List;
  * @author lang : 2025-09-04
  */
 public interface BaseAttachment<T> {
-
+    
     default T toOne(final MultipartFile file) {
         return null;
     }
