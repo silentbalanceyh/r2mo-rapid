@@ -1,7 +1,6 @@
 package io.r2mo.spring.common.config;
 
 import io.r2mo.typed.webflow.R;
-import io.r2mo.typed.webflow.WebState;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -35,8 +34,7 @@ public class SpringResponseAdvice implements ResponseBodyAdvice<R<?>> {
                                 @NonNull final Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                 @NonNull final ServerHttpRequest request, @NonNull final ServerHttpResponse response) {
         if (Objects.nonNull(body) && Objects.nonNull(body.getData())) {
-            final WebState state = body.getStatus();
-            final HttpStatus status = state.value();
+            final HttpStatus status = body.getStatus();
             response.setStatusCode(status);
             log.info("[ R2MO ] 响应代码：{}", status.value());
         }
