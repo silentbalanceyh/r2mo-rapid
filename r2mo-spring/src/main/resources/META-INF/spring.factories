@@ -1,0 +1,2 @@
+org.springframework.context.ApplicationContextInitializer=\
+  io.r2mo.spring.SpringApplicationInitializer
