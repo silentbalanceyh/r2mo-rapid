@@ -36,7 +36,8 @@ public abstract class BaseActOperation<T> implements ActOperation<T> {
         // 2. 如果存在则拒绝创建
         if (queried.isPresent()) {
             // 201
-            return ActResponse.success(entity, ActState.SUCCESS_201_CREATED);
+            final T created = queried.get();
+            return ActResponse.success(created, ActState.SUCCESS_201_CREATED);
         } else {
             // 200
             final T created = this.db().create(entity);

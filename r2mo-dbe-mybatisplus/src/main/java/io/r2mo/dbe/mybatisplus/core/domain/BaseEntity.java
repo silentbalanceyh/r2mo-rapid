@@ -64,7 +64,6 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
      * 而 Mybatis-Plus 默认只支持 Long/String 类型的主键自定义生成策略，所以只能使用 IdType.INPUT
      */
     @TableId(value = "id", type = IdType.INPUT)
-    @TableField(typeHandler = TypedUUIDHandler.class)
     private UUID id;
 
     /** 编码 */
