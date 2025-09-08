@@ -10,7 +10,9 @@ import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
 import org.apache.ibatis.executor.BatchResult;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author lang : 2025-08-28
@@ -25,6 +27,8 @@ class OpDbImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrap
         if (Objects.isNull(entity)) {
             return null;
         }
+
+        MetaObject.insert(entity, opType);
         // Execute
         switch (opType) {
             case CREATE -> this.executor().insert(entity);
@@ -40,8 +44,8 @@ class OpDbImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrap
         if (Objects.isNull(entities) || entities.isEmpty()) {
             return new ArrayList<>();
         }
-        // Insert issue
-        this.batchInsert(entities, opType);
+
+        MetaObject.insert(entities, opType);
         // Execute
         return switch (opType) {
             case CREATE -> this.buildResult(this.executor().insert(entities, batchSize));
@@ -49,27 +53,6 @@ class OpDbImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrap
             case REMOVE -> this.batchRemove(entities);
             case SAVE -> this.buildResult(this.executor().insertOrUpdate(entities, batchSize));
         };
-    }
-
-    @SuppressWarnings("all")
-    private void batchInsert(final List<T> entities, final OpType opType) {
-        // Fix Issue success id
-        if (OpType.CREATE == opType) {
-            for (final T entity : entities) {
-                // 直接实体
-                if (entity instanceof final BaseEntity baseEntity) {
-                    if (Objects.isNull(baseEntity.getId())) {
-                        baseEntity.setId(UUID.randomUUID());
-                    }
-                }
-                // LinkedHashMap
-                if (entity instanceof final LinkedHashMap baseMap) {
-                    if (Objects.isNull(baseMap.get("id"))) {
-                        baseMap.put("id", UUID.randomUUID());
-                    }
-                }
-            }
-        }
     }
 
     private List<T> batchRemove(final List<T> entities) {

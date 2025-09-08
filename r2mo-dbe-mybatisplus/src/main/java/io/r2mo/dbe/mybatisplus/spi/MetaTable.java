@@ -8,10 +8,7 @@ import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -93,7 +90,8 @@ class MetaTable<T> {
     }
 
     Map<String, Object> vColumn(final Map<String, Object> condition) {
-        final Map<String, Object> columnMap = new ConcurrentHashMap<>();
+        // new ConcurrentHashMap<>(); 此处不可以使用并发的 Map，因为空键和空值会引起问题
+        final Map<String, Object> columnMap = new HashMap<>();
         condition.forEach((field, value) -> {
             final String column = this.vColumn(field);
             columnMap.put(column, value);
