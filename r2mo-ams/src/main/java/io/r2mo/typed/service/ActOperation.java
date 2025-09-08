@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * 特殊用法而已，如果遇到其他的后期来扩展
+ *
  * @author lang : 2025-09-04
  */
 public interface ActOperation<T> {

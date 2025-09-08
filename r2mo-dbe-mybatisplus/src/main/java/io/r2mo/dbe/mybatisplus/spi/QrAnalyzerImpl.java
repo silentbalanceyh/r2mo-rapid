@@ -15,24 +15,29 @@ import java.util.*;
  */
 class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
     private final Class<T> entityCls;
+    private final MetaTable<T> meta;
 
     QrAnalyzerImpl(final Class<T> entityCls) {
         this.entityCls = entityCls;
+        this.meta = MetaTable.of(entityCls);
     }
 
     @Override
     public QueryWrapper<T> whereIn(final String field, final Object... values) {
-        return Wrappers.query(this.entityCls).in(field, Arrays.asList(values));
+        final String column = this.meta.vColumn(field);
+        return Wrappers.query(this.entityCls).in(column, Arrays.asList(values));
     }
 
     @Override
     public QueryWrapper<T> where(final String field, final Object value) {
-        return Wrappers.query(this.entityCls).eq(field, value);
+        final String column = this.meta.vColumn(field);
+        return Wrappers.query(this.entityCls).eq(column, value);
     }
 
     @Override
     public QueryWrapper<T> where(final Map<String, Object> condition) {
-        return Wrappers.query(this.entityCls).allEq(condition);
+        final Map<String, Object> column = this.meta.vColumn(condition);
+        return Wrappers.query(this.entityCls).allEq(column);
     }
 
     @Override
@@ -45,7 +50,7 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
         final QNode root = tree.item();
         this.where(root, condition);
         // 排序
-        this.orderBy(condition, sorter);
+        this.meta.orderBy(condition, sorter);
         return condition;
     }
 
@@ -57,10 +62,11 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
 
 
         // 列过滤
-        final QProjection columns = query.projection();
-        if (columns.isOk()) {
-            final List<String> columnList = columns.item();
-            if (!columnList.isEmpty()) {
+        final QProjection fields = query.projection();
+        if (fields.isOk()) {
+            final List<String> fieldList = fields.item();
+            if (!fieldList.isEmpty()) {
+                final List<String> columnList = this.meta.vColumn(fieldList);
                 condition.select(columnList);
             }
         }
@@ -91,37 +97,23 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
 
     private void whereInternal(final QLeaf leaf, final QueryWrapper<T> query) {
         final QOp op = leaf.op();
+        final String column = this.meta.vColumn(leaf.field());
         switch (op) {
-            case EQ -> query.eq(leaf.field(), leaf.value());                // ==
-            case NEQ -> query.ne(leaf.field(), leaf.value());               // <>
-            case GT -> query.gt(leaf.field(), leaf.value());                // >
-            case GTE -> query.ge(leaf.field(), leaf.value());               // >=
-            case LT -> query.lt(leaf.field(), leaf.value());                // <
-            case LTE -> query.le(leaf.field(), leaf.value());               // <=
-            case CONTAIN -> query.like(leaf.field(), leaf.value());         // like '%value%'
-            case START -> query.likeRight(leaf.field(), leaf.value());      // like 'value%'
-            case END -> query.likeLeft(leaf.field(), leaf.value());         // like '%value'
+            case EQ -> query.eq(column, leaf.value());                // ==
+            case NEQ -> query.ne(column, leaf.value());               // <>
+            case GT -> query.gt(column, leaf.value());                // >
+            case GTE -> query.ge(column, leaf.value());               // >=
+            case LT -> query.lt(column, leaf.value());                // <
+            case LTE -> query.le(column, leaf.value());               // <=
+            case CONTAIN -> query.like(column, leaf.value());         // like '%value%'
+            case START -> query.likeRight(column, leaf.value());      // like 'value%'
+            case END -> query.likeLeft(column, leaf.value());         // like '%value'
             // Fix Issue 1: 存在类型转换的软处理流程
-            case IN -> QrSoftValue.in(leaf, query);                         // in (value1, value2, ...)
-            case NOT_IN -> query.notIn(leaf.field(), leaf.value());         // not in (value1, value2, ...)
-            case NULL -> query.isNull(leaf.field());                        // is null
-            case NOT_NULL -> query.isNotNull(leaf.field());                 // is not null
+            case IN -> this.meta.in(leaf, query);                         // in (value1, value2, ...)
+            case NOT_IN -> query.notIn(column, leaf.value());         // not in (value1, value2, ...)
+            case NULL -> query.isNull(column);                        // is null
+            case NOT_NULL -> query.isNotNull(column);                 // is not null
         }
-    }
-
-    private void orderBy(final QueryWrapper<T> query, final QSorter sorter) {
-        if (Objects.isNull(sorter)) {
-            return;
-        }
-        sorter.item().forEach(kv -> {
-            final boolean isAsc = kv.value();
-            final String field = kv.key();
-            if (isAsc) {
-                query.orderByAsc(field);
-            } else {
-                query.orderByDesc(field);
-            }
-        });
     }
 
     @Override

@@ -231,7 +231,7 @@ class GenProcessorSqlMySQL implements GenProcessor {
         } else if (type == java.math.BigDecimal.class) {
             return "DECIMAL(10,2)";
         } else if (type == UUID.class) {
-            // Fix issue of UUID
+            // Fix issue success UUID
             return "VARCHAR(36)";
         } else if (JObject.class.isAssignableFrom(type)
             || JArray.class.isAssignableFrom(type)) {

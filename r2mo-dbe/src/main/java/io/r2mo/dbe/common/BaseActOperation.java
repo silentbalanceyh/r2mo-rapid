@@ -36,7 +36,7 @@ public abstract class BaseActOperation<T> implements ActOperation<T> {
         // 2. 如果存在则拒绝创建
         if (queried.isPresent()) {
             // 201
-            return ActResponse.success201(entity);
+            return ActResponse.success(entity, ActState.SUCCESS_201_CREATED);
         } else {
             // 200
             final T created = this.db().create(entity);
@@ -54,7 +54,7 @@ public abstract class BaseActOperation<T> implements ActOperation<T> {
             return ActResponse.success(updated);
         } else {
             // 204 无数据
-            return ActResponse.success204();
+            return ActResponse.success();
         }
     }
 
@@ -66,16 +66,18 @@ public abstract class BaseActOperation<T> implements ActOperation<T> {
             final Boolean removed = this.db().removeBy(id);
             return ActResponse.success(removed);
         } else {
-            // 210 数据已不存在
-            return ActResponse.of(false, ActState.SUCCESS_210_GONE);
+            // 204 数据已经被删除（无数据）
+            return ActResponse.success(false, ActState.SUCCESS_204_NO_DATA);
         }
     }
 
     @Override
     public ActResponse<T> findById(final Serializable id) {
         final Optional<T> queried = this.db().findOne(id);
-        // 200 查询到数据 / 204 无数据
-        return queried.map(ActResponse::success).orElseGet(ActResponse::success204);
+        // 200 查询到数据
+        return queried.map(ActResponse::success)
+            // 204 无数据
+            .orElseGet(ActResponse::success);
     }
 
     @Override
@@ -111,7 +113,7 @@ public abstract class BaseActOperation<T> implements ActOperation<T> {
     @Override
     public ActResponse<List<T>> saveBatch(final List<T> entities) {
         if (entities == null || entities.isEmpty()) {
-            return ActResponse.of(new ArrayList<>(), ActState.SUCCESS_204_NO_DATA);
+            return ActResponse.success(new ArrayList<>(), ActState.SUCCESS_204_NO_DATA);
         }
         final List<T> saved = this.db().save(entities);
         return ActResponse.success(saved);

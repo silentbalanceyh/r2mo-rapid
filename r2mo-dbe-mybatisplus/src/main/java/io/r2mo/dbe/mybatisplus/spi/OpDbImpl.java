@@ -53,7 +53,7 @@ class OpDbImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrap
 
     @SuppressWarnings("all")
     private void batchInsert(final List<T> entities, final OpType opType) {
-        // Fix Issue of id
+        // Fix Issue success id
         if (OpType.CREATE == opType) {
             for (final T entity : entities) {
                 // 直接实体

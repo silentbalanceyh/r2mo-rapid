@@ -2,10 +2,8 @@ package io.r2mo.spring.common.webflow;
 
 import cn.hutool.core.io.IoUtil;
 import io.r2mo.function.Fn;
-import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Pagination;
 import io.r2mo.typed.json.JObject;
-import io.r2mo.typed.service.ActOperation;
 import io.r2mo.typed.service.ActResponse;
 import io.r2mo.typed.service.ActState;
 import io.r2mo.typed.webflow.R;
@@ -26,7 +24,9 @@ import java.util.UUID;
  * @author lang : 2025-09-04
  */
 @Slf4j
-public abstract class BaseController<T, REQ extends WebRequest<T>, RESP extends WebResponse<T>> {
+public abstract class BaseController<
+    T, REQ extends WebRequest<T>, RESP extends WebResponse<T>
+    > extends SuperController<T> {
 
     public R<RESP> createSingle(final REQ request) {
         Objects.requireNonNull(request, "[ R2MO ] 请求对象不能为空！");
@@ -34,17 +34,8 @@ public abstract class BaseController<T, REQ extends WebRequest<T>, RESP extends 
         final T entity = request.data();
         // 保存
         final ActResponse<T> executed = this.service().create(entity);
-        // 响应
-        final RESP response = this.createResponse();
-        if (ActState.SUCCESS_201_CREATED == executed.state()) {
-            // 201 旧数据
-            response.data(entity);
-            return R.ok(response, SPI.V_STATUS.ok201());
-        } else {
-            // 200 新数据
-            response.data(executed.data());
-            return R.ok(response);
-        }
+        /* 201 / 200 */
+        return this.replySuccess(executed, this::createResponse);
     }
 
     public R<RESP> updateSingle(final String id, final REQ request) {
@@ -54,38 +45,20 @@ public abstract class BaseController<T, REQ extends WebRequest<T>, RESP extends 
         final T entity = request.data();
         // 更新
         final ActResponse<T> executed = this.service().updateById(id, entity);
-        // 响应
-        if (ActState.SUCCESS_204_NO_DATA == executed.state()) {
-            // 204 无数据
-            return R.ok();
-        } else {
-            // 200 新数据
-            final RESP response = this.createResponse();
-            response.data(executed.data());
-            return R.ok(response);
-        }
+        /* 204 / 200 */
+        return this.replySuccess(executed, this::createResponse);
     }
 
     public R<T> findSingle(final String id) {
         final ActResponse<T> executed = this.service().findById(id);
-        if (ActState.SUCCESS_204_NO_DATA == executed.state()) {
-            // 204 无数据
-            return R.ok();
-        } else {
-            // 200 新数据
-            return R.ok(executed.data());
-        }
+        /* 204 / 200 */
+        return this.replySuccess(executed);
     }
 
     public R<Boolean> removeSingle(final String id) {
         final ActResponse<Boolean> executed = this.service().removeById(id);
-        if (ActState.SUCCESS_210_GONE == executed.state()) {
-            // 204 无数据
-            return R.ok(false);
-        } else {
-            // 200 新数据
-            return R.ok(true);
-        }
+        /* 204 / 200 */
+        return this.replySuccessOr(executed);
     }
 
     public R<Pagination<T>> findPage(final JObject query) {
@@ -140,8 +113,6 @@ public abstract class BaseController<T, REQ extends WebRequest<T>, RESP extends 
         response.setHeader("Content-Disposition", "attachment;filename=" + filename);
         Fn.jvmAt(() -> IoUtil.copy(binary, response.getOutputStream()));
     }
-
-    protected abstract ActOperation<T> service();
 
     protected BaseAttachment<T> serviceAttachment() {
         // TODO:
