@@ -6,11 +6,14 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.r2mo.base.web.entity.BaseAudit;
 import io.r2mo.base.web.entity.BaseScope;
 import io.r2mo.dbe.common.constant.SchemaExampleValue;
+import io.r2mo.dbe.mybatisplus.core.typehandler.TypedJObjectHandler;
 import io.r2mo.dbe.mybatisplus.core.typehandler.TypedUUIDHandler;
 import io.r2mo.function.Fn;
+import io.r2mo.typed.json.JObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
@@ -112,8 +115,9 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
     private UUID appId;
 
     @Schema(description = "辅助元配置", example = SchemaExampleValue.DEFAULT_METADATA)
-    @TableField(jdbcType = JdbcType.CLOB)
-    private String cMetadata;
+    @TableField(jdbcType = JdbcType.CLOB, typeHandler = TypedJObjectHandler.class)
+    @JsonProperty("cMetadata")
+    private JObject cMetadata;
     // ---------------- 和表无关
     /** （保留）搜索值 */
     @JsonIgnore

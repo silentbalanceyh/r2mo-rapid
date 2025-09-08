@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.r2mo.base.generator.GenConfig;
 import io.r2mo.base.generator.GenProcessor;
 import io.r2mo.dbe.common.constant.SourceField;
+import io.r2mo.typed.json.JArray;
+import io.r2mo.typed.json.JObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
@@ -231,8 +233,12 @@ class GenProcessorSqlMySQL implements GenProcessor {
         } else if (type == UUID.class) {
             // Fix issue of UUID
             return "VARCHAR(36)";
+        } else if (JObject.class.isAssignableFrom(type)
+            || JArray.class.isAssignableFrom(type)) {
+            return "TEXT"; // 默认类型
         } else {
-            return "VARCHAR(255)"; // 默认类型
+            // 其他类型默认使用 VARCHAR
+            return "VARCHAR(255)";
         }
     }
 
