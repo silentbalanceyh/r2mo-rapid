@@ -5,9 +5,7 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -17,15 +15,14 @@ import java.util.Objects;
 /**
  * @author lang : 2025-09-04
  */
+@Data
 public class PostResponse implements Serializable {
 
     @Schema(hidden = true)
-    @Setter(AccessLevel.NONE)
     @JsonIgnore
     private HttpServletResponse response;
 
     @Schema(description = "会话ID", hidden = true)
-    @Getter
     @JsonIgnore
     private String sessionId;
 

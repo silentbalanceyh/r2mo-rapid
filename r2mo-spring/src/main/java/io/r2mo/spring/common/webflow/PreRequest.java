@@ -39,6 +39,9 @@ public class PreRequest implements Serializable {
     @Schema(description = "会话ID", hidden = true)
     private String sessionId;
 
+    @Schema(description = "记录ID", hidden = true)
+    private UUID id;
+
     public PreRequest() {
         final ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (Objects.nonNull(attributes)) {
