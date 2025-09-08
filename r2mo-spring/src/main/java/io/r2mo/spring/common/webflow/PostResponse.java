@@ -26,6 +26,7 @@ public class PostResponse implements Serializable {
 
     @Schema(description = "会话ID", hidden = true)
     @Getter
+    @JsonIgnore
     private String sessionId;
 
     public PostResponse() {

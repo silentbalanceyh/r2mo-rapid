@@ -45,6 +45,7 @@ public class TypedUUIDHandler extends BaseTypeHandler<Object> {
                 return new UUID(msb, lsb);
             } catch (final NumberFormatException e) {
                 // fall through
+                log.error(e.getMessage(), e);
             }
         }
         try {
