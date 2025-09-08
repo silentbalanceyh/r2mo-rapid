@@ -28,7 +28,10 @@ public abstract class SuperController<T> {
         this.entityCls = SourceReflect.classT0(this.getClass());
     }
 
-    protected abstract ActOperation<T> service();
+    protected ActOperation<T> service() {
+        // CRUD 的 Controller 才需要此 service
+        return null;
+    }
 
     protected <RESP extends WebResponse<T>> R<RESP> replySuccess(
         final ActResponse<T> actionResult, final Supplier<RESP> supplier) {
