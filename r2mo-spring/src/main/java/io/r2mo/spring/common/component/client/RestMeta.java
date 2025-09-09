@@ -1,4 +1,4 @@
-package io.r2mo.spring.common.client;
+package io.r2mo.spring.common.component.client;
 
 import io.r2mo.typed.common.GdbSigner;
 

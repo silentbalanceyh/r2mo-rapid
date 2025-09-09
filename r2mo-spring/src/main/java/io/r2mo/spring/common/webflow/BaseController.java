@@ -2,6 +2,7 @@ package io.r2mo.spring.common.webflow;
 
 import cn.hutool.core.io.IoUtil;
 import io.r2mo.function.Fn;
+import io.r2mo.spring.common.webflow.attachment.MultipartProcessor;
 import io.r2mo.typed.common.Pagination;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.service.ActResponse;
@@ -76,10 +77,11 @@ public abstract class BaseController<
         return R.ok(executed.data());
     }
 
-    public R<Boolean> uploadData(final MultipartFile file) {
-        final BaseAttachment<T> serviceAttachment = this.serviceAttachment();
+    public R<Boolean> uploadData(final MultipartFile file, final JObject config) {
         // 数据转换
-        final List<T> imported = serviceAttachment.toMany(file);
+        final MultipartProcessor<T> serviceAttachment = this.multipartProcessor();
+        final List<T> imported = serviceAttachment.toMany(file,
+            this.multipartMeta(config, true));
         // 批量保存
         final ActResponse<List<T>> executed = this.service().saveBatch(imported);
         return R.ok(ActState.SUCCESS == executed.state());
@@ -95,7 +97,6 @@ public abstract class BaseController<
             return;
         }
 
-
         // 导出
         final HttpServletResponse response = this.createResponse().response();
         if (Objects.isNull(response)) {
@@ -105,18 +106,16 @@ public abstract class BaseController<
 
 
         response.setContentType("application/octet-stream; charset=UTF-8");
-        final BaseAttachment<T> serviceAttachment = this.serviceAttachment();
-        final InputStream binary = serviceAttachment.toBinary(executed.data());
+
+        final JObject config = criteria.getJObject("config");
+        final MultipartProcessor<T> serviceAttachment = this.multipartProcessor();
+        final InputStream binary = serviceAttachment.toBinary(executed.data(),
+            this.multipartMeta(config, false));
 
         // 特殊参数
-        final String filename = criteria.getString("filename", UUID.randomUUID().toString());
+        final String filename = config.getString("filename", UUID.randomUUID().toString());
         response.setHeader("Content-Disposition", "attachment;filename=" + filename);
         Fn.jvmAt(() -> IoUtil.copy(binary, response.getOutputStream()));
-    }
-
-    protected BaseAttachment<T> serviceAttachment() {
-        // TODO:
-        throw new UnsupportedOperationException("[ R2MO ] 当前 Controller 不支持上传下载！");
     }
 
     protected abstract RESP createResponse();

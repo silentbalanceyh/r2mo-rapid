@@ -1,4 +1,4 @@
-package io.r2mo.spring.common.client;
+package io.r2mo.spring.common.component.client;
 
 import io.r2mo.typed.cc.Cc;
 import lombok.extern.slf4j.Slf4j;

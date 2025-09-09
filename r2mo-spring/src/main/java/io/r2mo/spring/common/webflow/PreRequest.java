@@ -56,6 +56,7 @@ public class PreRequest implements Serializable {
         this.tenantId = this.context.tenantId(true);
     }
 
+    // 数据处理
     protected void writeAudit(final Object entityObj, final boolean created) {
         this.apply.writeAudit(this.context, entityObj, created);
     }
@@ -69,7 +70,7 @@ public class PreRequest implements Serializable {
             new CopyOptions().ignoreNullValue().ignoreError());
     }
 
-
+    // 查询条件
     public JObject withScope(final Class<?> clazz, final JObject condition) {
         return this.query.withScope(this.context, condition, clazz);
     }

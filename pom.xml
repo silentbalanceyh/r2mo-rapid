@@ -68,6 +68,7 @@
         <module>r2mo-spring</module>
         <module>r2mo-spring-mybatisplus</module>
         <module>r2mo-spring-json</module>
+        <module>r2mo-spring-excel</module>
 
         <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
         <module>r2mo-bootstrap</module>
