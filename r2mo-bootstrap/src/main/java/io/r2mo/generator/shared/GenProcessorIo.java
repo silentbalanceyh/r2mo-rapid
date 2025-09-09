@@ -39,12 +39,12 @@ class GenProcessorIo extends AbstractGenProcessor {
         final String classModule = dataModel.get("classModule").toString();
         String javaFile = className + "CommonRequest";
         Path sourcePath = this.getSource(javaFile,
-            "controller." + classModule, config);
+            "controller.gen." + classModule, config);
         this.sourceGenerate("controller-io-request.ftl", sourcePath, dataModel);
 
         javaFile = className + "CommonResponse";
         sourcePath = this.getSource(javaFile,
-            "controller." + classModule, config);
+            "controller.gen." + classModule, config);
         this.sourceGenerate("controller-io-response.ftl", sourcePath, dataModel);
     }
 

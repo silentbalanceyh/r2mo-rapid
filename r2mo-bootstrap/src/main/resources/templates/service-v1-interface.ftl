@@ -1,4 +1,4 @@
-package ${packageName}.service.${classModule};
+package ${packageName}.service.gen.${classModule};
 
 import ${entityPackage}.${entityName};
 import ${sourcePackage}.typed.service.ActOperation;

@@ -25,7 +25,7 @@ class GenProcessorServiceImpl extends AbstractGenProcessor {
         final String classModule = dataModel.get("classModule").toString();
         final String javaFile = "I" + className + "ServiceImpl";
         final Path sourcePath = getSource(javaFile,
-            "service." + classModule, config);
+            "service.gen." + classModule, config);
 
 
         // 生成

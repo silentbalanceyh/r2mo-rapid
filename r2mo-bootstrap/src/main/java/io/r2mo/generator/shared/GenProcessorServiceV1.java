@@ -26,12 +26,14 @@ class GenProcessorServiceV1 extends AbstractGenProcessor {
         final String className = dataModel.get("className").toString();
         final String classModule = dataModel.get("classModule").toString();
         String javaFile = "I" + className + "Service" + meta.V();
-        Path sourcePath = this.getSource(javaFile, "service." + classModule, config);
+        Path sourcePath = this.getSource(javaFile,
+            "service.gen." + classModule, config);
         this.sourceGenerate("service-v1-interface.ftl", sourcePath, dataModel);
 
         // 生成 IServiceV?Impl
         javaFile = "I" + className + "Service" + meta.V() + "Impl";
-        sourcePath = this.getSource(javaFile, "service." + classModule, config);
+        sourcePath = this.getSource(javaFile,
+            "service.gen." + classModule, config);
         this.sourceGenerate("service-v1-impl.ftl", sourcePath, dataModel);
     }
 }
