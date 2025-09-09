@@ -1,6 +1,6 @@
 package ${packageName}.controller.gen.${classModule};
 
-import ${packageName}.service.${classModule}.I${className}Service${V};
+import ${packageName}.service.gen.${classModule}.I${className}Service${V};
 import ${entityPackage}.${entityName};
 import ${sourcePackage}.spring.common.webflow.BaseController;
 import lombok.RequiredArgsConstructor;
