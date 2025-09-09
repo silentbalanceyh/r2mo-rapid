@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * @author lang : 2025-09-08
  */
-class SuperVector {
+class SuperMap {
 
     private static final ConcurrentMap<ActState, HttpStatus> STATE_MAP = new ConcurrentHashMap<ActState, HttpStatus>() {
         {

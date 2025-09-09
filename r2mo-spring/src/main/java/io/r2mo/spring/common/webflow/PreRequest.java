@@ -2,10 +2,8 @@ package io.r2mo.spring.common.webflow;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import cn.hutool.core.util.StrUtil;
-import io.r2mo.base.web.entity.BaseAudit;
-import io.r2mo.base.web.entity.BaseScope;
-import io.r2mo.typed.annotation.Identifiers;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,12 +11,8 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -27,88 +21,75 @@ import java.util.UUID;
 @Data
 public class PreRequest implements Serializable {
 
+    @Schema(hidden = true)
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @JsonIgnore
+    private final PreRequestContext context = new PreRequestContext();
+    @Schema(hidden = true)
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @JsonIgnore
+    private final PreRequestApply apply = PreRequestApply.of();
+    @Schema(hidden = true)
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @JsonIgnore
+    private final PreRequestQuery query = PreRequestQuery.of();
     @Schema(description = "关联App", hidden = true)
     private UUID appId;     // X-App-Id
-
     @Schema(description = "关联租户", hidden = true)
     private UUID tenantId;  // X-Tenant-Id
-
     @Schema(hidden = true)
     @Getter
     @Setter(AccessLevel.NONE)
     private HttpServletRequest request;
-
     @Schema(description = "会话ID", hidden = true)
     private String sessionId;
-
     @Schema(description = "记录ID", hidden = true)
     private UUID id;
 
     public PreRequest() {
-        final ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (Objects.nonNull(attributes)) {
-            this.request = attributes.getRequest();
-            this.sessionId = attributes.getSessionId();
-            // Fix issue: 默认请求中不带 appId 和 tenantId
-            // 构造时填充 this.appId
-            final String appId = this.request.getHeader(BaseScope.X_APP_ID);
-            if (StrUtil.isNotEmpty(appId)) {
-                this.appId = UUID.fromString(appId);
-            }
-            // 构造时填充 this.tenantId
-            final String tenantId = this.request.getHeader(BaseScope.X_TENANT_ID);
-            if (StrUtil.isNotEmpty(tenantId)) {
-                this.tenantId = UUID.fromString(tenantId);
-            }
-        }
+        this.request = this.context.request();
+        this.sessionId = this.context.sessionId();
+        this.appId = this.context.appId(true);
+        this.tenantId = this.context.tenantId(true);
     }
 
     protected void writeAudit(final Object entityObj, final boolean created) {
-        Objects.requireNonNull(entityObj, "[ R2MO ] -> 传入实体不可为 null");
-        if (entityObj instanceof final BaseAudit entity) {
-
-            final LocalDateTime processedAt = LocalDateTime.now();
-            entity.setUpdatedAt(processedAt);
-            entity.setUpdatedBy(this.userId());
-            if (created) {
-                entity.setCreatedAt(processedAt);
-                entity.setCreatedBy(this.userId());
-            }
-        }
+        this.apply.writeAudit(this.context, entityObj, created);
     }
 
     protected void writeScope(final Object entityObj) {
-        if (Objects.nonNull(this.request) && entityObj instanceof final BaseScope entity) {
-            // appId
-            final String appId = this.request.getHeader(BaseScope.X_APP_ID);
-            entity.app(appId);
-            // tenantId
-            final String tenantId = this.request.getHeader(BaseScope.X_TENANT_ID);
-            entity.tenant(tenantId);
-        }
+        this.apply.writeScope(this.context, entityObj);
     }
 
     protected void writeTo(final Object target) {
-        final CopyOptions copyOptions = new CopyOptions()
-            .ignoreNullValue()
-            .ignoreError();
-        BeanUtil.copyProperties(this, target, copyOptions);
+        BeanUtil.copyProperties(this, target,
+            new CopyOptions().ignoreNullValue().ignoreError());
     }
 
-    protected void writeQr(final JObject condition, final Class<?> clazz) {
-        final Identifiers identifiers = clazz.getDeclaredAnnotation(Identifiers.class);
-        if (Objects.isNull(identifiers)) {
-            return;
-        }
-        if (identifiers.ifApp()) {
-            condition.put("appId", this.appId);
-        }
-        if (identifiers.ifTenant()) {
-            condition.put("tenantId", this.tenantId);
-        }
+
+    public JObject withScope(final Class<?> clazz, final JObject condition) {
+        return this.query.withScope(this.context, condition, clazz);
     }
 
-    private UUID userId() {
-        return null;
+    public JObject withScope(final Class<?> clazz) {
+        return this.withScope(clazz, SPI.J());
+    }
+
+    public <K, V> JObject withScope(final Class<?> clazz,
+                                    final K k1, final V v1) {
+        return this.query.withMapN(this.context, clazz, k1, v1);
+    }
+
+    public <K, V> JObject withScope(final Class<?> clazz,
+                                    final K k1, final V v1, final K k2, final V v2) {
+        return this.query.withMapN(this.context, clazz, k1, v1, k2, v2);
+    }
+
+    public <K, V> JObject withScope(final Class<?> clazz,
+                                    final K k1, final V v1, final K k2, final V v2, final K k3, final V v3) {
+        return this.query.withMapN(this.context, clazz, k1, v1, k2, v2, k3, v3);
     }
 }
