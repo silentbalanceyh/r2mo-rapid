@@ -38,7 +38,9 @@ public interface ActOperation<T> {
     ActResponse<List<T>> findAll(Serializable appId, Serializable tenantId);
 
     // 导出：POST /???/entity/export
-    ActResponse<List<T>> findBy(JObject criteria);
+    ActResponse<List<T>> findMany(JObject criteria);
+
+    ActResponse<T> findOne(JObject criteria);
 
     // 分页：POST /???/entity/search
     ActResponse<Pagination<T>> findPage(JObject query);

@@ -89,7 +89,7 @@ public abstract class BaseController<
     public void downloadBy(final JObject criteria) {
         Objects.requireNonNull(criteria, "[ R2MO ] 请求对象不能为空！");
         // 查询数据
-        final ActResponse<List<T>> executed = this.service().findBy(criteria);
+        final ActResponse<List<T>> executed = this.service().findMany(criteria);
         if (ActState.SUCCESS_204_NO_DATA == executed.state()) {
             log.warn("[ R2MO ] 无数据可供导出！");
             return;

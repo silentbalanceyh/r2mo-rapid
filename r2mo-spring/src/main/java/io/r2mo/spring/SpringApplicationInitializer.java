@@ -1,5 +1,7 @@
 package io.r2mo.spring;
 
+import io.r2mo.spring.common.config.SpringResponseAdvice;
+import io.r2mo.spring.common.exception.SpringExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -22,7 +24,8 @@ public class SpringApplicationInitializer implements ApplicationContextInitializ
 
         final String[] advicePackages = {
             // 主要扫描当前包及其子包
-            this.getClass().getPackageName()
+            SpringResponseAdvice.class.getPackageName(),
+            SpringExceptionHandler.class.getPackageName(),
         };
 
         if (applicationContext instanceof final GenericApplicationContext genericContext) {

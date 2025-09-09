@@ -100,9 +100,18 @@ public abstract class BaseActOperation<T> implements ActOperation<T> {
     }
 
     @Override
-    public ActResponse<List<T>> findBy(final JObject criteria) {
+    public ActResponse<List<T>> findMany(final JObject criteria) {
         final List<T> queried = this.db().findMany(criteria);
         return ActResponse.success(queried);
+    }
+
+    @Override
+    public ActResponse<T> findOne(final JObject criteria) {
+        final Optional<T> queried = this.db().findOne(criteria);
+        // 200 查询到数据
+        return queried.map(ActResponse::success)
+            // 204 无数据
+            .orElseGet(ActResponse::success);
     }
 
     @Override
