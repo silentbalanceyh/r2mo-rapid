@@ -22,7 +22,7 @@ class QrOneImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWra
 
     @Override
     public Optional<T> execute(final QTree syntax) {
-        if (Objects.isNull(syntax) || syntax.isOk()) {
+        if (Objects.isNull(syntax) || !syntax.isOk()) {
             return Optional.empty();
         }
 
