@@ -5,6 +5,8 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.web.entity.BaseAudit;
 import io.r2mo.base.web.entity.BaseScope;
+import io.r2mo.typed.annotation.Identifiers;
+import io.r2mo.typed.json.JObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
@@ -91,6 +93,19 @@ public class PreRequest implements Serializable {
             .ignoreNullValue()
             .ignoreError();
         BeanUtil.copyProperties(this, target, copyOptions);
+    }
+
+    protected void writeQr(final JObject condition, final Class<?> clazz) {
+        final Identifiers identifiers = clazz.getDeclaredAnnotation(Identifiers.class);
+        if (Objects.isNull(identifiers)) {
+            return;
+        }
+        if (identifiers.ifApp()) {
+            condition.put("appId", this.appId);
+        }
+        if (identifiers.ifTenant()) {
+            condition.put("tenantId", this.tenantId);
+        }
     }
 
     private UUID userId() {

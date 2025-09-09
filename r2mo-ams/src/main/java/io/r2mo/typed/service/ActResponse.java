@@ -55,4 +55,13 @@ public class ActResponse<T> {
     public ActState state() {
         return this.state;
     }
+
+    @Override
+    public String toString() {
+        return "ActResponse{" +
+            "data=" + data +
+            ", state=" + state +
+            ", error=" + error +
+            '}';
+    }
 }

@@ -1,9 +1,8 @@
-package ${packageName}.business.${v};
+package ${packageName}.service.${classModule};
 
 import ${baseAct};
 import ${entityPackage}.${entityName};
 import ${packageName}.mapper.${className}Mapper;
-import ${packageName}.service.${className}Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +15,10 @@ import org.springframework.stereotype.Service;
  * @since ${date}
  */
 @Service
-public class ${className}Service${V}Impl extends ${baseActName}<${entityName}> implements ${className}Service${V} {
+public class I${className}Service${V}Impl extends ${baseActName}<${entityName}> implements I${className}Service${V} {
 
     @Autowired
-    private ${className}Service service;
+    private I${className}Service service;
 
 
     @Override

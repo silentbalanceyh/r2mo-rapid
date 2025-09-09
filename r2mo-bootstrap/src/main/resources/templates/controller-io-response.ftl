@@ -1,4 +1,4 @@
-package ${packageName}.io;
+package ${packageName}.controller.gen.${classModule};
 
 import ${entityPackage}.${entityName};
 import ${sourcePackage}.spring.common.webflow.PostResponse;
@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 ${enumsImport}
 
+import ${sourcePackage}.typed.json.JObject;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -29,8 +30,7 @@ ${fieldsResponse}
     @Override
     @SuppressWarnings("unchecked")
     public ${className}CommonResponse data(${entityName} data) {
-        final ${className}CommonResponse response = new ${className}CommonResponse();
-        response.readFrom(data);
-        return response;
+        this.readFrom(data);
+        return this;
     }
 }

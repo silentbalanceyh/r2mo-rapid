@@ -1,4 +1,4 @@
-package ${packageName}.business.${v};
+package ${packageName}.service.${classModule};
 
 import ${entityPackage}.${entityName};
 import ${sourcePackage}.typed.service.ActOperation;
@@ -11,6 +11,6 @@ import ${sourcePackage}.typed.service.ActOperation;
  * @author ${author}
  * @since ${date}
  */
-public interface ${className}Service${V} extends ActOperation<${entityName}> {
+public interface I${className}Service${V} extends ActOperation<${entityName}> {
 
 }

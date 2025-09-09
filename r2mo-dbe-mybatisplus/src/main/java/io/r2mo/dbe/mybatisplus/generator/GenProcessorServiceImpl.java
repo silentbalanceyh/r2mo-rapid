@@ -21,8 +21,11 @@ class GenProcessorServiceImpl extends AbstractGenProcessor {
 
 
         // 获取源代码路径
-        final String javaFile = getClassName(entity) + "ServiceImpl";
-        final Path sourcePath = getSource(javaFile, "service.impl", config);
+        final String className = dataModel.get("className").toString();
+        final String classModule = dataModel.get("classModule").toString();
+        final String javaFile = "I" + className + "ServiceImpl";
+        final Path sourcePath = getSource(javaFile,
+            "service." + classModule, config);
 
 
         // 生成

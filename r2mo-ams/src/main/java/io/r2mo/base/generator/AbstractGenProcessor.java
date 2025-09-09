@@ -38,6 +38,7 @@ public abstract class AbstractGenProcessor implements GenProcessor {
         final String className = this.getClassName(entity);
         model.put("actor", className.toLowerCase(Locale.ROOT));
         model.put("className", className);
+        model.put("classModule", className.toLowerCase(Locale.ROOT));
         model.put("entityName", entity.getSimpleName());
         model.put("packageName", parentPackageName);
         model.put("entityPackage", entity.getPackage().getName());

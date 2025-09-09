@@ -35,13 +35,17 @@ class GenProcessorIo extends AbstractGenProcessor {
             final String enums = fieldGen.generateEnum(entity);
             dataModel.put("enumsImport", enums);
         }
-        String javaFile = this.getClassName(entity) + "CommonRequest";
-        Path sourcePath = this.getSource(javaFile, "io", config);
-        this.sourceGenerate("io-request-swagger.ftl", sourcePath, dataModel);
+        final String className = dataModel.get("className").toString();
+        final String classModule = dataModel.get("classModule").toString();
+        String javaFile = className + "CommonRequest";
+        Path sourcePath = this.getSource(javaFile,
+            "controller." + classModule, config);
+        this.sourceGenerate("controller-io-request.ftl", sourcePath, dataModel);
 
-        javaFile = this.getClassName(entity) + "CommonResponse";
-        sourcePath = this.getSource(javaFile, "io", config);
-        this.sourceGenerate("io-response-swagger.ftl", sourcePath, dataModel);
+        javaFile = className + "CommonResponse";
+        sourcePath = this.getSource(javaFile,
+            "controller." + classModule, config);
+        this.sourceGenerate("controller-io-response.ftl", sourcePath, dataModel);
     }
 
     private GenField getFieldGenerator(final GenConfig config) {

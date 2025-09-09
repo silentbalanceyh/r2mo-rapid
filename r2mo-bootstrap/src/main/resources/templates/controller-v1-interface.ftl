@@ -1,8 +1,6 @@
-package ${packageName}.controller;
+package ${packageName}.controller.gen.${classModule};
 
 import ${entityPackage}.${entityName};
-import ${packageName}.io.${className}CommonRequest;
-import ${packageName}.io.${className}CommonResponse;
 import ${sourcePackage}.typed.common.Pagination;
 import ${sourcePackage}.typed.webflow.R;
 import ${sourcePackage}.typed.json.JObject;
@@ -23,7 +21,7 @@ import java.util.List;
  * @since ${date}
  */
 @Tag(name = "${entityDisplay}", description = "${entityDisplay}相关API接口")
-public interface ${className}ControllerCrud {
+public interface ${className}CrudController {
 
     @PostMapping("/${actor}")
     @Operation(summary = "创建${entityDisplay}", description = "管理端/创建${entityDisplay}")

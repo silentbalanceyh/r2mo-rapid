@@ -21,14 +21,17 @@ class GenProcessorController extends AbstractGenProcessor {
         // 获取源代码路径
         final GenMeta meta = config.getMetadata();
 
-        // 生成 ServiceV?
-        String javaFile = this.getClassName(entity) + "ControllerCrud";
-        Path sourcePath = this.getSource(javaFile, "controller", config);
-        this.sourceGenerate("controller-interface.ftl", sourcePath, dataModel);
+        final String className = dataModel.get("className").toString();
+        final String classModule = dataModel.get("classModule").toString();
 
-        // 生成 ServiceV?Impl
-        javaFile = this.getClassName(entity) + "ControllerCrud" + meta.V();
-        sourcePath = this.getSource(javaFile, "controller." + meta.v(), config);
+        String javaFile = className + "CrudController";
+        Path sourcePath = this.getSource(javaFile,
+            "controller.gen." + classModule, config);
+        this.sourceGenerate("controller-v1-interface.ftl", sourcePath, dataModel);
+
+        javaFile = className + "CrudController" + meta.V();
+        sourcePath = this.getSource(javaFile,
+            "controller.gen." + classModule, config);
         this.sourceGenerate("controller-v1-impl.ftl", sourcePath, dataModel);
     }
 

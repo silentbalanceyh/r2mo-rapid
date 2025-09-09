@@ -1,4 +1,4 @@
-package ${packageName}.service;
+package ${packageName}.service.${classModule};
 
 import ${entityPackage}.${entityName};
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author ${author}
  * @since ${date}
  */
-public interface ${className}Service extends IService<${entityName}> {
+public interface I${className}Service extends IService<${entityName}> {
 
 }

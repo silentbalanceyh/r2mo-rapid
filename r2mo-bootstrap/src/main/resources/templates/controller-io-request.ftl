@@ -1,4 +1,4 @@
-package ${packageName}.io;
+package ${packageName}.controller.gen.${classModule};
 
 import ${entityPackage}.${entityName};
 import ${sourcePackage}.spring.common.webflow.PreRequest;
@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 ${enumsImport}
 
+import ${sourcePackage}.typed.json.JObject;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;

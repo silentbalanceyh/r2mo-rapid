@@ -21,8 +21,10 @@ class GenProcessorService extends AbstractGenProcessor {
 
 
         // 获取源代码路径
-        final String javaFile = getClassName(entity) + "Service";
-        final Path sourcePath = getSource(javaFile, "service", config);
+        final String className = dataModel.get("className").toString();
+        final String classModule = dataModel.get("classModule").toString();
+        final String javaFile = "I" + className + "Service";
+        final Path sourcePath = getSource(javaFile, "service." + classModule, config);
 
 
         // 生成
