@@ -2,6 +2,7 @@ package io.r2mo.dbe.common;
 
 import io.r2mo.SourceReflect;
 import io.r2mo.typed.annotation.Identifiers;
+import io.r2mo.typed.constant.DefaultField;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,13 +40,15 @@ public class DBETool {
         }
         // WHERE appId = ? AND tenantId = ? AND enabled = true
         if (identifiers.ifApp()) {
-            condition.put("appId", SourceReflect.value(instance, "appId", entityCls));
+            condition.put(DefaultField.APP_ID,
+                SourceReflect.value(instance, DefaultField.APP_ID, entityCls));
         }
         if (identifiers.ifTenant()) {
-            condition.put("tenantId", SourceReflect.value(instance, "tenantId", entityCls));
+            condition.put(DefaultField.TENANT_ID,
+                SourceReflect.value(instance, DefaultField.TENANT_ID, entityCls));
         }
         if (identifiers.ifEnabled()) {
-            condition.put("enabled", true);
+            condition.put(DefaultField.IS_ENABLED, true);
         }
         return condition;
     }

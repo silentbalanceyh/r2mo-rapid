@@ -3,6 +3,7 @@ package io.r2mo.spring;
 import io.r2mo.spring.common.config.SpringResponseAdvice;
 import io.r2mo.spring.common.exception.SpringExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
@@ -20,6 +21,12 @@ public class SpringApplicationInitializer implements ApplicationContextInitializ
 
     @Override
     public void initialize(@NonNull final ConfigurableApplicationContext applicationContext) {
+        // 只在 Web 环境下执行
+        if (!(applicationContext instanceof final AnnotationConfigServletWebServerApplicationContext genericContext)) {
+            log.debug("[ R2MO ] Skipping initialization for non-web context");
+            return;
+        }
+
         log.info("[ R2MO ] === 注册 Advice 处理组件 ===");
 
         final String[] advicePackages = {
@@ -28,9 +35,7 @@ public class SpringApplicationInitializer implements ApplicationContextInitializ
             SpringExceptionHandler.class.getPackageName(),
         };
 
-        if (applicationContext instanceof final GenericApplicationContext genericContext) {
-            this.scanAdviceComponents(genericContext, advicePackages);
-        }
+        this.scanAdviceComponents(genericContext, advicePackages);
 
         log.info("[ R2MO ] === Advice 处理组件注册完成 ===");
     }

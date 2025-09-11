@@ -3,6 +3,7 @@ package io.r2mo.spring.common.webflow;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.annotation.Identifiers;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.constant.DefaultField;
 import io.r2mo.typed.json.JObject;
 
 import java.util.HashMap;
@@ -30,11 +31,11 @@ class PreRequestQuery {
         }
         if (identifiers.ifApp()) {
             final UUID appId = context.appId(true);
-            condition.put("appId", appId);
+            condition.put(DefaultField.APP_ID, appId);
         }
         if (identifiers.ifTenant()) {
             final UUID tenantId = context.tenantId(true);
-            condition.put("tenantId", tenantId);
+            condition.put(DefaultField.TENANT_ID, tenantId);
         }
         return condition;
     }

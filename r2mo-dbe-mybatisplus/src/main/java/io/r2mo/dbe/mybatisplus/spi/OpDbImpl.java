@@ -7,6 +7,7 @@ import io.r2mo.base.dbe.constant.OpType;
 import io.r2mo.base.dbe.operation.OpDb;
 import io.r2mo.dbe.common.operation.AbstractDbOperation;
 import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
+import io.r2mo.typed.constant.DefaultField;
 import org.apache.ibatis.executor.BatchResult;
 
 import java.lang.reflect.Field;
@@ -65,7 +66,7 @@ class OpDbImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrap
             }
 
             // 第二规范提取
-            final Field field = SourceReflect.fieldN(this.entityCls(), "id");
+            final Field field = SourceReflect.fieldN(this.entityCls(), DefaultField.ID);
             if (Objects.isNull(field)) {
                 continue;
             }

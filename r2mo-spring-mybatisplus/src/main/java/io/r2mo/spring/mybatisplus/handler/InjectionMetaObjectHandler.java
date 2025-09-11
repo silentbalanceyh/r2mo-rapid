@@ -6,11 +6,11 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
 import io.r2mo.typed.constant.DefaultConstantValue;
+import io.r2mo.typed.constant.DefaultField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
@@ -42,9 +42,11 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
 
                 // language, version, enabled 构造时就带有默认值，无需处理
             } else {
-                final Date date = new Date();
-                this.strictInsertFill(metaObject, "createdAt", Date.class, date);
-                this.strictInsertFill(metaObject, "updatedAt", Date.class, date);
+                final LocalDateTime date = LocalDateTime.now();
+                this.strictInsertFill(metaObject, DefaultField.CREATED_AT,
+                    LocalDateTime.class, date);
+                this.strictInsertFill(metaObject, DefaultField.UPDATED_AT,
+                    LocalDateTime.class, date);
             }
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -103,7 +105,8 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
                 // updatedAt / updatedBy
                 this.setUpdated(baseEntity);
             } else {
-                this.strictUpdateFill(metaObject, "updatedAt", LocalDateTime.class, LocalDateTime.now());
+                this.strictUpdateFill(metaObject, DefaultField.UPDATED_AT,
+                    LocalDateTime.class, LocalDateTime.now());
             }
         } catch (final Exception e) {
             throw new RuntimeException(e);

@@ -2,6 +2,7 @@ package io.r2mo.dbe.mybatisplus.spi;
 
 import io.r2mo.base.dbe.constant.OpType;
 import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
+import io.r2mo.typed.constant.DefaultField;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,9 +29,9 @@ class MetaObject {
         }
         // 间接实体
         if (entity instanceof final LinkedHashMap baseMap) {
-            final Object id = baseMap.get("id");
+            final Object id = baseMap.get(DefaultField.ID);
             if (Objects.isNull(id)) {
-                baseMap.put("id", UUID.randomUUID());
+                baseMap.put(DefaultField.ID, UUID.randomUUID());
             }
         }
     }

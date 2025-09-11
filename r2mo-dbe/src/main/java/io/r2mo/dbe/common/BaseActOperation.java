@@ -2,6 +2,7 @@ package io.r2mo.dbe.common;
 
 import io.r2mo.SourceReflect;
 import io.r2mo.typed.common.Pagination;
+import io.r2mo.typed.constant.DefaultField;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.service.ActOperation;
 import io.r2mo.typed.service.ActResponse;
@@ -85,10 +86,10 @@ public abstract class BaseActOperation<T> implements ActOperation<T> {
     public ActResponse<List<T>> findAll(final Serializable appId, final Serializable tenantId) {
         final Map<String, Object> condition = new HashMap<>();
         if (Objects.nonNull(appId)) {
-            condition.put("appId", appId);
+            condition.put(DefaultField.APP_ID, appId);
         }
         if (Objects.nonNull(tenantId)) {
-            condition.put("tenantId", tenantId);
+            condition.put(DefaultField.TENANT_ID, tenantId);
         }
         final List<T> queried;
         if (condition.isEmpty()) {
