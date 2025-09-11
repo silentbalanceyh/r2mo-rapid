@@ -85,4 +85,9 @@ class JArrayImpl implements JArray {
     public List toList() {
         return this.data.stream().toList();
     }
+
+    @Override
+    public String toString() {
+        return this.encode();
+    }
 }

@@ -119,4 +119,9 @@ class JObjectImpl implements JObject {
     public JSONObject data() {
         return this.data;
     }
+
+    @Override
+    public String toString() {
+        return this.encode();
+    }
 }

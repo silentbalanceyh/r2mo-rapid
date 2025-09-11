@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.r2mo.spi.SPI;
@@ -21,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 工具类，辅助 JObject 和 JArray 的实现
@@ -82,6 +85,8 @@ class JBaseUtil {
         moduleJson.addDeserializer(JObject.class, new JObjectDeserializer());
         moduleJson.addSerializer(JArray.class, new JArraySerializer());
         moduleJson.addDeserializer(JArray.class, new JArrayDeserializer());
+        moduleJson.addSerializer(UUID.class, new UUIDSerializer());
+        moduleJson.addDeserializer(UUID.class, new UUIDDeserializer());
         modules.add(moduleJson);
         return modules;
     }
