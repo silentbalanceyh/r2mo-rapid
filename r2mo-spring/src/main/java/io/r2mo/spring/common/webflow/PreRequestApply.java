@@ -1,7 +1,5 @@
 package io.r2mo.spring.common.webflow;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.domain.BaseAudit;
 import io.r2mo.typed.domain.BaseScope;
@@ -45,12 +43,5 @@ class PreRequestApply {
             // idTenant
             entity.tenant(context.idTenant(false));
         }
-    }
-
-    void writeBean(final Object source, final Object target) {
-        final CopyOptions copyOptions = new CopyOptions()
-            .ignoreNullValue()
-            .ignoreError();
-        BeanUtil.copyProperties(source, target, copyOptions);
     }
 }

@@ -8,7 +8,6 @@ import io.r2mo.typed.domain.ContextOr;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 /**
  * @author lang : 2025-09-11
@@ -16,39 +15,6 @@ import java.util.function.Supplier;
 public class BaseProp {
 
     private BaseProp() {
-    }
-
-    /**
-     * 根据已有的 {@link BaseEntity} 创建一个新的实体，其中属性包括
-     * <pre>
-     *     - language, version, enabled
-     *     - appId, tenantId
-     *     - <<audit>> / createdBy, createdAt, updatedBy, updatedAt
-     *     - code, cMetadata, id
-     * </pre>
-     *
-     * @param entity      已有的实体
-     * @param constructor 新实体的构造器
-     * @param <T>         新实体类型
-     *
-     * @return 新实体
-     */
-    public static <T extends BaseEntity> T newFull(
-        final BaseEntity entity, final Supplier<T> constructor) {
-        Objects.requireNonNull(constructor);
-        final T created = constructor.get();
-        /*
-         * 拷贝
-         * - language, version, enabled,
-         * - appId, tenantId,
-         * - <<audit>>
-         * - code, cMetadata, id
-         */
-        copyFull(created, entity);
-        setCode(created);
-        created.setCMetadata(SPI.J());
-        created.setId(UUID.randomUUID());
-        return created;
     }
 
     /**
@@ -124,27 +90,6 @@ public class BaseProp {
         final String code = baseEntity.getCode();
         if (StrUtil.isEmpty(code)) {
             baseEntity.setCode(RandomUtil.randomString(16));
-        }
-    }
-
-    /**
-     * （输入合法就设置）设置常规字段
-     * <pre>
-     *     - language
-     *     - version
-     * </pre>
-     *
-     * @param baseEntity 目标实体
-     * @param language   语言
-     * @param version    版本
-     */
-    public static void setCommon(final BaseEntity baseEntity,
-                                 final String language, final String version) {
-        if (StrUtil.isNotEmpty(language)) {
-            baseEntity.setLanguage(language);
-        }
-        if (StrUtil.isNotEmpty(version)) {
-            baseEntity.setVersion(version);
         }
     }
 
