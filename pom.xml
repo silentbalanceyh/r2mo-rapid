@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.zerows</groupId>
     <artifactId>r2mo-rapid</artifactId>
-    <version>1.0-M13</version>
+    <version>1.0-M14</version>
     <name>R2mo Rapid --> ${r2mo.version} / ${project.version}</name>
     <!-- License -->
     <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
@@ -77,7 +77,7 @@
         <module>r2mo-spring-junit5</module>
     </modules>
     <properties>
-        <r2mo.version>1.0-M13</r2mo.version>
+        <r2mo.version>1.0-M14</r2mo.version>
         <!-- 项目基本信息 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
