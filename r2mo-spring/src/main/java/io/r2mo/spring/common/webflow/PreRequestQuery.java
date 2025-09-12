@@ -30,11 +30,11 @@ class PreRequestQuery {
             return condition;
         }
         if (identifiers.ifApp()) {
-            final UUID appId = context.appId(true);
+            final UUID appId = context.idApp(true);
             condition.put(DefaultField.APP_ID, appId);
         }
         if (identifiers.ifTenant()) {
-            final UUID tenantId = context.tenantId(true);
+            final UUID tenantId = context.idTenant(true);
             condition.put(DefaultField.TENANT_ID, tenantId);
         }
         return condition;

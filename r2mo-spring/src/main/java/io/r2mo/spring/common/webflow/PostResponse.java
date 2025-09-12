@@ -31,8 +31,8 @@ public class PostResponse implements Serializable {
     private String sessionId;
 
     public PostResponse() {
-        this.response = this.context.response();
-        this.sessionId = this.context.sessionId();
+        this.response = this.context.webResponse();
+        this.sessionId = this.context.webSession(false);
     }
 
     protected void readFrom(final Object source) {

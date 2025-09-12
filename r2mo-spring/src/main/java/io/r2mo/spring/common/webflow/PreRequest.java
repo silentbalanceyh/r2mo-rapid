@@ -50,10 +50,10 @@ public class PreRequest implements Serializable {
     private UUID id;
 
     public PreRequest() {
-        this.request = this.context.request();
-        this.sessionId = this.context.sessionId();
-        this.appId = this.context.appId(true);
-        this.tenantId = this.context.tenantId(true);
+        this.request = this.context.webRequest();
+        this.sessionId = this.context.webSession(false);
+        this.appId = this.context.idApp(true);
+        this.tenantId = this.context.idTenant(true);
     }
 
     // 数据处理

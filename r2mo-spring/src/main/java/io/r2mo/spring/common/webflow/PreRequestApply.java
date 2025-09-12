@@ -2,9 +2,9 @@ package io.r2mo.spring.common.webflow;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import io.r2mo.base.web.entity.BaseAudit;
-import io.r2mo.base.web.entity.BaseScope;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.domain.BaseAudit;
+import io.r2mo.typed.domain.BaseScope;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -26,7 +26,7 @@ class PreRequestApply {
     void writeAudit(final PreRequestContext context, final Object entityObj, final boolean created) {
         Objects.requireNonNull(entityObj, "[ R2MO ] -> 传入实体不可为 null");
         if (entityObj instanceof final BaseAudit entity) {
-            final UUID userId = context.userId();
+            final UUID userId = context.idUser(true);
             final LocalDateTime processedAt = LocalDateTime.now();
             entity.setUpdatedAt(processedAt);
             entity.setUpdatedBy(userId);
@@ -39,11 +39,11 @@ class PreRequestApply {
 
     void writeScope(final PreRequestContext context, final Object entityObj) {
         Objects.requireNonNull(entityObj, "[ R2MO ] -> 传入实体不可为 null");
-        if (context.isOk() && entityObj instanceof final BaseScope entity) {
-            // appId
-            entity.app(context.appId(false));
-            // tenantId
-            entity.tenant(context.tenantId(false));
+        if (context.webOk() && entityObj instanceof final BaseScope entity) {
+            // idApp
+            entity.app(context.idApp(false));
+            // idTenant
+            entity.tenant(context.idTenant(false));
         }
     }
 

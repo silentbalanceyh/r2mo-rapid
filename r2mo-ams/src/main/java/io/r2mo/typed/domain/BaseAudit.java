@@ -1,4 +1,4 @@
-package io.r2mo.base.web.entity;
+package io.r2mo.typed.domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

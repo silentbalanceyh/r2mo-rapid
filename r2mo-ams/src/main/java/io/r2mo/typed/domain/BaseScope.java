@@ -1,4 +1,4 @@
-package io.r2mo.base.web.entity;
+package io.r2mo.typed.domain;
 
 /**
  * 为 appId / tenantId 提供的统一作用域接口
