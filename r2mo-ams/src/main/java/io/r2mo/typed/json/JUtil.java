@@ -22,6 +22,9 @@ public interface JUtil {
 
     JArray valueJArray(JObject jsonJ, String field);
 
+    JObject valueJObject(JObject jsonJ);
+
+    JArray valueJArray(JArray jsonJ);
 
     // -------------- 转换函数
     JObject toJObject(Object value);

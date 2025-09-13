@@ -156,7 +156,7 @@ class JUtilImpl implements JUtil {
         // 创建 TypeReference<T> 来处理泛型列表
         final TypeReference<List<T>> typeRef = new TypeReference<>() {
         };
-        
+
         return Fn.jvmOr(() -> MAPPER_JSON.readValue(jsonStr, typeRef));
     }
 
@@ -220,5 +220,21 @@ class JUtilImpl implements JUtil {
             value = new JArrayImpl();
         }
         return value;
+    }
+
+    @Override
+    public JObject valueJObject(final JObject jsonJ) {
+        if (Objects.isNull(jsonJ)) {
+            return new JObjectImpl();
+        }
+        return jsonJ;
+    }
+
+    @Override
+    public JArray valueJArray(final JArray jsonJ) {
+        if (Objects.isNull(jsonJ)) {
+            return new JArrayImpl();
+        }
+        return jsonJ;
     }
 }
