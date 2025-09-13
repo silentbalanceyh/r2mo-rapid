@@ -82,7 +82,7 @@ class JObjectImpl implements JObject {
 
     @Override
     public JObject remove(final String... keys) {
-        Arrays.stream(keys).forEach(this::remove);
+        Arrays.stream(keys).forEach(this.data::remove);
         return this;
     }
 

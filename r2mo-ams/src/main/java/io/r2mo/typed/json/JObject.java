@@ -59,7 +59,6 @@ public interface JObject extends JBase {
         return this.put(source.toMap());
     }
 
-    @SuppressWarnings("all")
     JObject remove(String... keys);
 
     // 判断 key 属性是否存在
