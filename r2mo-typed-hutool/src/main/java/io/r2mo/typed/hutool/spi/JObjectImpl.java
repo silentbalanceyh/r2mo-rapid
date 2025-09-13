@@ -6,6 +6,7 @@ import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -80,6 +81,12 @@ class JObjectImpl implements JObject {
     }
 
     @Override
+    public JObject remove(final String... keys) {
+        Arrays.stream(keys).forEach(this::remove);
+        return this;
+    }
+
+    @Override
     public boolean containsKey(final String key) {
         return this.data.containsKey(key);
     }
@@ -118,6 +125,16 @@ class JObjectImpl implements JObject {
     @SuppressWarnings("unchecked")
     public JSONObject data() {
         return this.data;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public JObject subset(final String... fields) {
+        final JObject subset = new JObjectImpl();
+        Arrays.stream(fields)
+            .filter(this::containsKey)
+            .forEach(field -> subset.put(field, this.get(field)));
+        return subset;
     }
 
     @Override

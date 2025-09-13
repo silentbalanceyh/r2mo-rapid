@@ -1,6 +1,5 @@
 package io.r2mo.dbe.mybatisplus.core.builder;
 
-import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
 import io.r2mo.typed.common.Ref;
 import io.r2mo.typed.exception.web._501NotSupportException;
 
@@ -9,10 +8,10 @@ import java.util.function.Supplier;
 /**
  * @author lang : 2025-09-12
  */
-public interface BuilderOf<T extends BaseEntity> {
+public interface BuilderOf<T> {
 
     @SuppressWarnings("unchecked")
-    static <T extends BaseEntity> BuilderOf<T> of(final Supplier<BuilderOf<T>> constructorFn) {
+    static <T> BuilderOf<T> of(final Supplier<BuilderOf<T>> constructorFn) {
         return (BuilderOf<T>) AbstractBuilderOf.CC_SUPPLIER
             .pick(constructorFn::get, String.valueOf(constructorFn.hashCode()));
     }
@@ -32,7 +31,7 @@ public interface BuilderOf<T extends BaseEntity> {
      *
      * @return 实体
      */
-    default <R extends BaseEntity> T create(final R source) {
+    default <R> T create(final R source) {
         return this.create();
     }
 

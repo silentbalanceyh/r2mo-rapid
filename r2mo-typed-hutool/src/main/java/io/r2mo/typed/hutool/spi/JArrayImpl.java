@@ -5,8 +5,8 @@ import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JObject;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -89,5 +89,77 @@ class JArrayImpl implements JArray {
     @Override
     public String toString() {
         return this.encode();
+    }
+
+    @Override
+    public JObject findOne(final String field, final Object value) {
+        return this.findInternal(field, value).findAny().orElse(null);
+    }
+
+    @Override
+    public JArray findMany(final String field, final Object value) {
+        final JArray foundList = new JArrayImpl();
+        this.findInternal(field, value).forEach(foundList::add);
+        return foundList;
+    }
+
+    @Override
+    public <V> V mapOne(final String field) {
+        final Set<V> valueSet = this.mapSet(field);
+        if (1 < valueSet.size()) {
+            throw new IllegalArgumentException("[ R2MO ] 本集合不符合调用条件( size = 0|1 ) / size = " + valueSet.size());
+        }
+        return valueSet.isEmpty() ? null : valueSet.iterator().next();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <V> Set<V> mapSet(final String field) {
+        return this.itObject()
+            .map(item -> item.get(field))
+            .filter(Objects::nonNull)
+            .map(value -> (V) value)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <K> Map<K, JArray> groupBy(final String field) {
+        final Map<K, JArray> map = new HashMap<>();
+        this.itObject().forEach(item -> {
+            final K key = (K) item.get(field);
+            if (Objects.nonNull(key)) {
+                final JArray group = map.computeIfAbsent(key, k -> new JArrayImpl());
+                group.add(item);
+                map.put(key, group);
+            }
+        });
+        return map;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <K> Map<K, JObject> mapBy(final String field) {
+        final Map<K, JObject> map = new HashMap<>();
+        this.itObject().forEach(item -> {
+            final K key = (K) item.get(field);
+            if (Objects.nonNull(key)) {
+                map.put(key, item);
+            }
+        });
+        return map;
+    }
+
+    private Stream<JObject> findInternal(final String field, final Object value) {
+        return this.itObject()
+            .filter(item -> value.equals(item.get(field)));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public JArray subset(final String... fields) {
+        final JArray subset = new JArrayImpl();
+        this.itObject().map(JObject::subset).forEach(subset::add);
+        return subset;
     }
 }

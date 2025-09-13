@@ -55,6 +55,13 @@ public interface JObject extends JBase {
     // 批量添加 key = value
     JObject put(Map<String, Object> map);
 
+    default JObject put(final JObject source) {
+        return this.put(source.toMap());
+    }
+
+    @SuppressWarnings("all")
+    JObject remove(String... keys);
+
     // 判断 key 属性是否存在
     boolean containsKey(String key);
 
