@@ -29,6 +29,8 @@ public interface JBase extends Serializable {
 
     <T extends JBase> T subset(String... fields);
 
+    <T extends JBase> T copy();
+
     String encode();
 
     String encodePretty();

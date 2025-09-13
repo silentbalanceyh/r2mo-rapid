@@ -1,6 +1,7 @@
 package io.r2mo.typed.hutool.spi;
 
 import cn.hutool.json.JSONObject;
+import io.r2mo.function.Fn;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
@@ -140,5 +141,11 @@ class JObjectImpl implements JObject {
     @Override
     public String toString() {
         return this.encode();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public JObject copy() {
+        return new JObjectImpl(Fn.jvmOr(this.data::clone));
     }
 }

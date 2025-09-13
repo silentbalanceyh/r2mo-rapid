@@ -1,6 +1,7 @@
 package io.r2mo.typed.hutool.spi;
 
 import cn.hutool.json.JSONArray;
+import io.r2mo.function.Fn;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JObject;
@@ -161,5 +162,11 @@ class JArrayImpl implements JArray {
         final JArray subset = new JArrayImpl();
         this.itObject().map(JObject::subset).forEach(subset::add);
         return subset;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public JArray copy() {
+        return new JArrayImpl((JSONArray) Fn.jvmOr(this.data::clone));
     }
 }
