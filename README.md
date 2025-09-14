@@ -19,16 +19,18 @@
 搭建经典的 `-domain/-provider/-api` 的结构，在父 POM 项目中继承
 
 ```xml
-    <parent>
-        <groupId>io.zerows</groupId>
-        <artifactId>r2mo-rapid</artifactId>
-        <version>1.0-M5</version>
-    </parent>
+
+<parent>
+    <groupId>io.zerows</groupId>
+    <artifactId>r2mo-rapid</artifactId>
+    <version>1.0-M5</version>
+</parent>
 ```
 
 子项目 `-domain` 中引入
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>io.zerows</groupId>
@@ -68,10 +70,6 @@
 
     - [x] Hutool 中的 `JSONObject`
     - [ ] Vertx 中的 `JsonObject`
-    - [ ] Fastjson2
-    - [ ] Jackson
-    - [ ] Gson
-    - [ ] Spring
 - 统一异常处理，提供三种核心异常类型
 
     - [x] Web 异常
@@ -80,17 +78,9 @@
 - Io 类型对接和实现：
 
     - [x] 本地文件系统
-    - [ ] HDFS
-    - [ ] CephFS
     - [ ] FTP / SFTP
-    - [ ] Minio
-    - [ ] 阿里云 OSS
-    - [ ] 腾讯云 COS
-    - [ ] 七牛云 Kodo
-    - [ ] 华为云 OBS
 - 数据库访问 DBE 实现
 
     - [x] Mybatis Plus
     - [ ] JPA
     - [ ] JOOQ
-    - [ ] Spring JDBC
