@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import io.r2mo.spring.common.config.PropertySourceYmlFactory;
+import io.r2mo.spring.common.config.SpringPropertySourceFactory;
 import io.r2mo.spring.mybatisplus.handler.InjectionMetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
@@ -26,7 +26,7 @@ import javax.sql.DataSource;
 @AutoConfiguration
 @EnableTransactionManagement(proxyTargetClass = true)
 @MapperScan("${mybatis-plus.mapperPackage}")
-@PropertySource(value = "classpath:common-mybatis-plus.yml", factory = PropertySourceYmlFactory.class)
+@PropertySource(value = "classpath:common-mybatis-plus.yml", factory = SpringPropertySourceFactory.class)
 @Slf4j
 public class MybatisPlusConfiguration {
     private final DataSource dataSource;

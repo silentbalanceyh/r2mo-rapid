@@ -1,1 +1,2 @@
 io.r2mo.spring.common.config.PreAppConfiguration
+io.r2mo.spring.common.config.WebMvcPostProcessor

@@ -164,7 +164,9 @@ public final class SourceReflect {
                 throw new IllegalStateException("[ R2MO ] 泛型定义长度不对！");
             }
         } else {
-            throw new IllegalStateException("[ R2MO ] 泛型类型获取失败！");
+            // 旧代码, 孙子辈不可能再出现泛型，扩展专用
+            // throw new IllegalStateException("[ R2MO ] 泛型类型获取失败！");
+            return null;
         }
     }
 }

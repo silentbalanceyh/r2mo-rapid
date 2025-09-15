@@ -49,7 +49,7 @@ public class SpringApplicationInitializer implements ApplicationContextInitializ
 
         for (final String packageName : packages) {
             final int count = scanner.scan(packageName);
-            log.info("[ R2MO ] 扫描包 [" + packageName + "] 发现 " + count + " 个 Advice 组件");
+            log.info("[ R2MO ] 扫描包 [" + packageName + "] 发现 " + count + " 个组件");
         }
     }
 }

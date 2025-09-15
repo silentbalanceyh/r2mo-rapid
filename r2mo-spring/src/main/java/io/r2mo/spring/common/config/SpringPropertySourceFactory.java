@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * yml 配置源工厂
  */
-public class PropertySourceYmlFactory extends DefaultPropertySourceFactory {
+public class SpringPropertySourceFactory extends DefaultPropertySourceFactory {
 
 
     @Override
