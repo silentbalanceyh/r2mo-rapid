@@ -1,4 +1,4 @@
-package io.r2mo.io.local;
+package io.r2mo.io.local.operation;
 
 import io.r2mo.io.common.AbstractHStore;
 
