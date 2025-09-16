@@ -19,12 +19,12 @@ public interface FactoryIo {
     HStore ioAction(String name);
 
     default HStore ioAction() {
-        return ioAction(null);
+        return this.ioAction(HStore.DEFAULT_ID);
     }
 
     HTransfer ioTransfer(String name);
 
     default HTransfer ioTransfer() {
-        return ioTransfer(null);
+        return this.ioTransfer(HTransfer.DEFAULT_ID);
     }
 }
