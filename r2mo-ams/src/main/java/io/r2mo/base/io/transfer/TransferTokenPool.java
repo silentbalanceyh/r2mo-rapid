@@ -13,6 +13,8 @@ public interface TransferTokenPool {
 
     boolean runDelete(String token);
 
+    int runClean(boolean expiredOnly);
+
     TransferToken findBy(String token);
 
     boolean isExists(String token);
