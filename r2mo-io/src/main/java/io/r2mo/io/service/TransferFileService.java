@@ -1,9 +1,9 @@
 package io.r2mo.io.service;
 
-import io.r2mo.base.io.HTransferService;
-import io.r2mo.base.io.enums.TransferResult;
 import io.r2mo.base.io.modeling.StoreChunk;
 import io.r2mo.base.io.modeling.StoreRange;
+import io.r2mo.base.io.transfer.HTransferService;
+import io.r2mo.base.io.transfer.TransferResult;
 import io.r2mo.io.modeling.TransferRequest;
 import io.r2mo.io.modeling.TransferResponse;
 

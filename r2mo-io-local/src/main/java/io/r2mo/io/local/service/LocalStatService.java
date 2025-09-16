@@ -1,7 +1,7 @@
 package io.r2mo.io.local.service;
 
-import io.r2mo.base.io.enums.TransferResult;
-import io.r2mo.io.enums.TransferType;
+import io.r2mo.base.io.transfer.TransferResult;
+import io.r2mo.base.io.transfer.TransferType;
 import io.r2mo.io.modeling.TransferStatistics;
 import io.r2mo.io.service.MonitorStatService;
 

@@ -7,6 +7,7 @@ import io.r2mo.typed.json.JBase;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author lang : 2025-08-28
  */
-public interface HStore {
+public interface HStore extends Serializable {
 
     String DEFAULT_ID = "spi.io.store.DEFAULT";
 

@@ -2,10 +2,12 @@ package io.r2mo.base.io;
 
 import io.r2mo.base.io.enums.UriScheme;
 
+import java.io.Serializable;
+
 /**
  * @author lang : 2025-09-15
  */
-public interface HUri {
+public interface HUri extends Serializable {
 
     /* 协议，默认是本地文件协议 */
     default UriScheme scheme() {

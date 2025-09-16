@@ -1,7 +1,8 @@
 package io.r2mo.io.local.service;
 
+import io.r2mo.base.io.transfer.TransferToken;
+import io.r2mo.base.io.transfer.TransferTokenPool;
 import io.r2mo.io.modeling.TransferRequest;
-import io.r2mo.io.modeling.TransferToken;
 import io.r2mo.io.service.TransferTokenService;
 import io.r2mo.typed.json.JObject;
 
@@ -12,6 +13,12 @@ import java.util.UUID;
  * @author lang : 2025-09-16
  */
 class LocalTokenService implements TransferTokenService {
+    private final TransferTokenPool cache;
+
+    public LocalTokenService(final TransferTokenPool cache) {
+        this.cache = cache;
+    }
+
     @Override
     public TransferToken runValidate(final String token) {
         return null;

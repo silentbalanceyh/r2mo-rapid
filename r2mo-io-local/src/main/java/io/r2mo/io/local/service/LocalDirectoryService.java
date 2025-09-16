@@ -1,7 +1,7 @@
 package io.r2mo.io.local.service;
 
-import io.r2mo.base.io.enums.TransferResult;
 import io.r2mo.base.io.modeling.StoreNode;
+import io.r2mo.base.io.transfer.TransferResult;
 import io.r2mo.io.modeling.TransferRequest;
 import io.r2mo.io.modeling.TransferResponse;
 import io.r2mo.io.service.TransferDirectoryService;

@@ -5,6 +5,7 @@ import io.r2mo.base.io.HTransfer;
 import io.r2mo.io.modeling.TransferParameter;
 import io.r2mo.io.modeling.TransferRequest;
 import io.r2mo.spi.FactoryIo;
+import io.r2mo.typed.json.JObject;
 
 /**
  * Dubbo 专用远程 Service，可对接底层的 {@link FactoryIo} 去得到实现，主要用于获取两个核心组件
@@ -40,8 +41,11 @@ import io.r2mo.spi.FactoryIo;
  * @author lang : 2025-09-16
  */
 public interface RemoteIoService {
+    HStore findStore(JObject storageJ);
 
     HStore findStore(String name);
+
+    HTransfer findTransfer(JObject storageJ);
 
     HTransfer findTransfer(String name);
 }

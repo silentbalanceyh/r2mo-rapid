@@ -1,11 +1,11 @@
-package io.r2mo.base.io;
+package io.r2mo.base.io.transfer;
 
-import io.r2mo.base.io.enums.TransferResult;
+import java.io.Serializable;
 
 /**
  * @author lang : 2025-09-16
  */
-public interface HTransferAction {
+public interface HTransferAction extends Serializable {
     /**
      * 取消传输
      *

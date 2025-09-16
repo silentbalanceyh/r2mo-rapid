@@ -1,7 +1,7 @@
 package io.r2mo.io.service;
 
-import io.r2mo.base.io.HTransferAction;
-import io.r2mo.base.io.enums.TransferResult;
+import io.r2mo.base.io.transfer.HTransferAction;
+import io.r2mo.base.io.transfer.TransferResult;
 import io.r2mo.io.enums.TransferStatus;
 import io.r2mo.io.modeling.TransferProgress;
 

@@ -1,8 +1,9 @@
 package io.r2mo.io.local.service;
 
 import io.r2mo.base.io.HTransfer;
-import io.r2mo.base.io.HTransferAction;
-import io.r2mo.base.io.HTransferService;
+import io.r2mo.base.io.transfer.HTransferAction;
+import io.r2mo.base.io.transfer.HTransferService;
+import io.r2mo.base.io.transfer.TransferTokenPool;
 import io.r2mo.io.service.*;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
@@ -33,8 +34,10 @@ public class HTransferLocal implements HTransfer {
     }
 
     @Override
-    public TransferTokenService serviceToken() {
-        return (TransferTokenService) CCT_SERVICE.pick(LocalTokenService::new, LocalTokenService.class.getName());
+    public TransferTokenService serviceToken(final TransferTokenPool store) {
+        String cacheKey = store == null ? "default" : String.valueOf(store.hashCode());
+        cacheKey = cacheKey + "@" + LocalTokenService.class.getName();
+        return (TransferTokenService) CCT_SERVICE.pick(() -> new LocalTokenService(store), cacheKey);
     }
 
     @Override

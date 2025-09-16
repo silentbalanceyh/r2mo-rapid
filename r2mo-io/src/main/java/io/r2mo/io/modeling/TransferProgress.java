@@ -1,7 +1,7 @@
 package io.r2mo.io.modeling;
 
+import io.r2mo.base.io.transfer.TransferType;
 import io.r2mo.io.enums.TransferStatus;
-import io.r2mo.io.enums.TransferType;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

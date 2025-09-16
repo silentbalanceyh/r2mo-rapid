@@ -1,10 +1,8 @@
 package io.r2mo.io.common;
 
 import io.r2mo.base.io.HStore;
-import io.r2mo.io.modeling.TransferRequest;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
-import io.r2mo.typed.domain.builder.BuilderOf;
 import io.r2mo.typed.json.JBase;
 
 import java.io.File;
@@ -31,10 +29,6 @@ public class HFS {
 
     public static HFS of() {
         return CCT_HFS.pick(HFS::new);
-    }
-
-    public static BuilderOf<TransferRequest> ofBuilder() {
-        return BuilderOfTransfer.of();
     }
 
     /* cp */

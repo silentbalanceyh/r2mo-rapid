@@ -2,7 +2,7 @@ package io.r2mo.io.modeling;
 
 import io.r2mo.base.io.modeling.StoreChunk;
 import io.r2mo.base.io.modeling.StoreRange;
-import io.r2mo.io.enums.TransferType;
+import io.r2mo.base.io.transfer.TransferType;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import io.r2mo.typed.exception.AbstractException;
 import io.r2mo.typed.json.JObject;

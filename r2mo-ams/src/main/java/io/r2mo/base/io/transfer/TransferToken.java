@@ -1,6 +1,5 @@
-package io.r2mo.io.modeling;
+package io.r2mo.base.io.transfer;
 
-import io.r2mo.io.enums.TransferType;
 import io.r2mo.typed.common.Ref;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import io.r2mo.typed.json.JObject;
