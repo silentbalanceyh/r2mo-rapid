@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * <pre>
@@ -27,18 +28,25 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class TransferToken extends AbstractNormObject {
     private String token;                   // 唯一令牌
-    private String userId;                  // 用户ID
+    private UUID userId;                    // 用户ID
     private TransferType type;              // 传输类型（上传还是下载）
     private String clientAgent;             // 客户端代理
     private String clientIp;                // 客户端IP
     private LocalDateTime expiredAt;        // 过期时间
-
     private Boolean isMultipart;            // 是否分片
     private Boolean isDirectory;            // 是否目录
-
     private String serviceProvider;         // 服务名称
     private String serviceConsumer;         // 调用方名称
     private JObject configuration;          // 扩展配置
     // 为了可传输目录，此处使用 Ref 结构
     private Ref ref;                        // 关联对象
+
+    public interface NAME {
+        String SERVICE_PROVIDER = "serviceProvider";
+        String SERVICE_CONSUMER = "serviceConsumer";
+        String PATH_TARGET = "pathTarget";
+        String PATH_SOURCE = "pathSource";
+        String NODE_TYPE = "nodeType";
+        String NODE_ID = "nodeId";
+    }
 }

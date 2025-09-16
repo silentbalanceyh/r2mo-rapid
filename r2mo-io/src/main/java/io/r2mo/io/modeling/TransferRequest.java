@@ -29,23 +29,29 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TransferRequest extends AbstractNormObject {
-    private UUID nodeId;                    // 节点ID
+    // 共享属性
     private UUID userId;                    // 用户ID
     private String clientAgent;             // 客户端代理
     private String clientIp;                // 客户端IP
-
-    private String pathTarget;              // 目标路径（上传用）
-    private String pathSource;              // 源路径（下载用）
-    private StoreRange range;               // 传输范围
-    private StoreChunk content;             // 分片信息（分片上传用）
     private TransferType type;              // 传输类型（上传还是下载）
 
-    private Boolean isMultipart;            // 是否分片文件
-    private Boolean isDirectory;            // 是否目录
+    // 上传专用
+    private String pathTarget;              // 目标路径（上传用）
+    private StoreChunk content;             // 分片信息（分片上传用）
 
+    // 下载专用
+    private String pathSource;              // 源路径（下载用）
+    private StoreRange range;               // 传输范围
+
+    // 目录专用
+    private Boolean isDirectory;            // 是否目录
+    private UUID nodeId;                    // 节点ID
+    private List<String> filePaths;         // 目录中文件路径列表
+
+    // 文件专用
+    private Boolean isMultipart;            // 是否分片文件
     private Long fileSize;                  // 文件大小
     private String fileName;                // 文件名称
-    private List<String> filePaths;         // 目录中文件路径列表
 
     private JObject parameters;             // 扩展参数
     private AbstractException error;
