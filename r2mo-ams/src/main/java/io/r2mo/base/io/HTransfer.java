@@ -16,6 +16,8 @@ import io.r2mo.typed.json.JObject;
  */
 public interface HTransfer {
 
+    String DEFAULT_ID = "spi.io.transfer.DEFAULT";
+
     <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfFile();
 
     <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfLarge();

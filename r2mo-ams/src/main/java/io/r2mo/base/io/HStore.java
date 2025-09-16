@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 public interface HStore {
 
+    String DEFAULT_ID = "spi.io.store.DEFAULT";
+
     /* 拷贝：cp */
     boolean cp(String name, String renamed);
 

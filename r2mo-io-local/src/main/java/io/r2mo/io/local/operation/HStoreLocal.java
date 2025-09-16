@@ -1,6 +1,8 @@
 package io.r2mo.io.local.operation;
 
+import io.r2mo.base.io.HStore;
 import io.r2mo.io.common.AbstractHStore;
+import io.r2mo.typed.annotation.SPID;
 
 import java.io.File;
 import java.io.InputStream;
@@ -13,8 +15,8 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * @author lang : 2025-09-02
  */
+@SPID(HStore.DEFAULT_ID)
 public class HStoreLocal extends AbstractHStore {
-
 
     @Override
     public boolean cp(final String source, final String target) {

@@ -16,11 +16,15 @@ import io.r2mo.base.io.HTransfer;
  */
 public interface FactoryIo {
 
-    HStore ioAction();
+    HStore ioAction(String name);
 
-    default HTransfer ioTransfer() {
-        return this.ioTransfer(null);
+    default HStore ioAction() {
+        return ioAction(null);
     }
 
-    HTransfer ioTransfer(String lookupName);
+    HTransfer ioTransfer(String name);
+
+    default HTransfer ioTransfer() {
+        return ioTransfer(null);
+    }
 }

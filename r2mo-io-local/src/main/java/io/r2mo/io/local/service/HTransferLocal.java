@@ -4,12 +4,14 @@ import io.r2mo.base.io.HTransfer;
 import io.r2mo.base.io.HTransferAction;
 import io.r2mo.base.io.HTransferService;
 import io.r2mo.io.service.*;
+import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
 
 /**
  * @author lang : 2025-09-16
  */
 @SuppressWarnings("unchecked")
+@SPID(HTransfer.DEFAULT_ID)
 public class HTransferLocal implements HTransfer {
 
     private static final Cc<String, HTransferAction> CCT_ACTION = Cc.openThread();
