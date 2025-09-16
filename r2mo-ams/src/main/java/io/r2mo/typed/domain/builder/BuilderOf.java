@@ -1,5 +1,6 @@
-package io.r2mo.dbe.mybatisplus.core.builder;
+package io.r2mo.typed.domain.builder;
 
+import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Ref;
 import io.r2mo.typed.exception.web._501NotSupportException;
 
@@ -9,11 +10,11 @@ import java.util.function.Supplier;
  * @author lang : 2025-09-12
  */
 public interface BuilderOf<T> {
+    Cc<String, BuilderOf<?>> CC_SKELETON = Cc.openThread();
 
     @SuppressWarnings("unchecked")
     static <T> BuilderOf<T> of(final Supplier<BuilderOf<T>> constructorFn) {
-        return (BuilderOf<T>) AbstractBuilderOf.CC_SUPPLIER
-            .pick(constructorFn::get, String.valueOf(constructorFn.hashCode()));
+        return (BuilderOf<T>) CC_SKELETON.pick(constructorFn::get, String.valueOf(constructorFn.hashCode()));
     }
 
     /**

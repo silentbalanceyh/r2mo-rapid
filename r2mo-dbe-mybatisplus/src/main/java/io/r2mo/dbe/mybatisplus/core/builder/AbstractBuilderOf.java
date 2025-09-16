@@ -6,7 +6,7 @@ import io.r2mo.SourceReflect;
 import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
 import io.r2mo.dbe.mybatisplus.core.domain.BaseProp;
 import io.r2mo.spi.SPI;
-import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.domain.builder.BuilderOf;
 
 import java.util.UUID;
 
@@ -14,7 +14,6 @@ import java.util.UUID;
  * @author lang : 2025-09-12
  */
 public abstract class AbstractBuilderOf<T extends BaseEntity> implements BuilderOf<T> {
-    static final Cc<String, BuilderOf<?>> CC_SUPPLIER = Cc.openThread();
     private final Class<T> entityCls;
 
     protected AbstractBuilderOf() {
