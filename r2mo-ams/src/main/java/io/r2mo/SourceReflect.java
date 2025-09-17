@@ -134,19 +134,19 @@ public final class SourceReflect {
      * @param target 目标类
      * @param <T>    类型
      *
-     * @return Class<T> 返回泛型的类型信息
+     * @return Class<UT> 返回泛型的类型信息
      */
     public static <T> Class<T> classT1(final Class<?> target) {
         return classT(target, 1);
     }
 
     /**
-     * 获取泛型定义中的第一个类型，通常是 T
+     * 获取泛型定义中的第一个类型，通常是 UT
      *
      * @param target 目标类
      * @param <T>    类型
      *
-     * @return Class<T> 返回泛型的类型信息
+     * @return Class<UT> 返回泛型的类型信息
      */
     public static <T> Class<T> classT0(final Class<?> target) {
         return classT(target, 0);

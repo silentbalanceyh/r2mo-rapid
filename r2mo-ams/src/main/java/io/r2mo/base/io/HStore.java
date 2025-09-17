@@ -7,6 +7,7 @@ import io.r2mo.typed.json.JBase;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +29,9 @@ import java.util.concurrent.ConcurrentMap;
 public interface HStore extends Serializable {
 
     String DEFAULT_ID = "spi.io.store.DEFAULT";
+
+    /* 提取根目录 */
+    String pHome();
 
     /* 拷贝：cp */
     boolean cp(String name, String renamed);
@@ -59,6 +63,20 @@ public interface HStore extends Serializable {
 
     /* 文件写入：echo */
     boolean write(String filename, String content, boolean append);
+
+    /* 文件写入 */
+    default boolean write(final String filename, final InputStream in) {
+        return this.write(filename, in, null);
+    }
+
+    boolean write(String filename, InputStream in, HProgressor progress);
+
+    default boolean write(final String filename, final OutputStream out) {
+        return this.write(filename, out, null);
+    }
+
+    /* 文件读取 */
+    boolean write(String filename, OutputStream out, HProgressor progress);
 
     boolean isExist(String path);
 

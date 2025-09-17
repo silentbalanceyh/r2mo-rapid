@@ -3,7 +3,8 @@ package io.r2mo.io.local.service;
 import io.r2mo.base.io.HTransfer;
 import io.r2mo.base.io.transfer.HTransferAction;
 import io.r2mo.base.io.transfer.HTransferService;
-import io.r2mo.base.io.transfer.TransferTokenPool;
+import io.r2mo.base.io.transfer.token.TransferTokenPool;
+import io.r2mo.base.io.transfer.token.TransferTokenService;
 import io.r2mo.io.service.*;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
@@ -19,14 +20,14 @@ public class HTransferLocal implements HTransfer {
     private static final Cc<String, HTransferService<?, ?, ?>> CCT_SERVICE = Cc.openThread();
 
     @Override
-    public TransferFileService serviceOfFile(final TransferTokenPool store) {
+    public TransferFileService serviceOfFile(final TransferTokenService store) {
         String cacheKey = store == null ? "default" : String.valueOf(store.hashCode());
         cacheKey = cacheKey + "@" + LocalFileService.class.getName();
         return (TransferFileService) CCT_SERVICE.pick(() -> new LocalFileService(store), cacheKey);
     }
 
     @Override
-    public TransferLargeService serviceOfLarge(final TransferTokenPool store) {
+    public TransferLargeService serviceOfLarge(final TransferTokenService store) {
         String cacheKey = store == null ? "default" : String.valueOf(store.hashCode());
         cacheKey = cacheKey + "@" + LocalLargeService.class.getName();
         return (TransferLargeService) CCT_SERVICE.pick(() -> new LocalLargeService(store), cacheKey);
@@ -34,7 +35,7 @@ public class HTransferLocal implements HTransfer {
     }
 
     @Override
-    public TransferDirectoryService serviceOfDirectory(final TransferTokenPool store) {
+    public TransferDirectoryService serviceOfDirectory(final TransferTokenService store) {
         String cacheKey = store == null ? "default" : String.valueOf(store.hashCode());
         cacheKey = cacheKey + "@" + LocalDirectoryService.class.getName();
         return (TransferDirectoryService) CCT_SERVICE.pick(() -> new LocalDirectoryService(store), cacheKey);

@@ -1,4 +1,4 @@
-package io.r2mo.base.io.locator;
+package io.r2mo.base.io.common;
 
 import io.r2mo.base.io.HPath;
 import lombok.Data;
@@ -29,6 +29,6 @@ public class StorePath implements HPath {
 
     @Override
     public String ioPwd() {
-        return T.resolve(this.home, this.context);
+        return UT.resolve(this.home, this.context);
     }
 }

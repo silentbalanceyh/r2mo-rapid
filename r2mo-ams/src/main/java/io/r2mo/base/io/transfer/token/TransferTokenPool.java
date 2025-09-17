@@ -1,4 +1,4 @@
-package io.r2mo.base.io.transfer;
+package io.r2mo.base.io.transfer.token;
 
 /**
  * 存储传输令牌的接口，用于定义令牌的存储和管理方法

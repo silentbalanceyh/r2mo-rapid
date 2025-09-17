@@ -1,11 +1,13 @@
 package io.r2mo.io.local.operation;
 
+import io.r2mo.base.io.HProgressor;
 import io.r2mo.base.io.HStore;
 import io.r2mo.io.common.AbstractHStore;
 import io.r2mo.typed.annotation.SPID;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
@@ -17,6 +19,11 @@ import java.util.concurrent.ConcurrentMap;
  */
 @SPID(HStore.DEFAULT_ID)
 public class HStoreLocal extends AbstractHStore {
+
+    @Override
+    public String pHome() {
+        return LocalHighway.findHome();
+    }
 
     @Override
     public boolean cp(final String source, final String target) {
@@ -39,6 +46,16 @@ public class HStoreLocal extends AbstractHStore {
     @Override
     public boolean write(final String filename, final String content, final boolean append) {
         return LocalWriter.write(filename, content, append);
+    }
+
+    @Override
+    public boolean write(final String filename, final InputStream in, final HProgressor progress) {
+        return LocalHighway.write(filename, in, progress);
+    }
+
+    @Override
+    public boolean write(final String filename, final OutputStream out, final HProgressor progress) {
+        return LocalHighway.write(filename, out, progress);
     }
 
     @Override

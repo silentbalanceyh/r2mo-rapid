@@ -1,9 +1,11 @@
 package io.r2mo.io.local.service;
 
+import io.r2mo.base.io.modeling.StoreDirectory;
 import io.r2mo.base.io.modeling.StoreNode;
+import io.r2mo.base.io.transfer.TransferRequest;
 import io.r2mo.base.io.transfer.TransferResult;
-import io.r2mo.base.io.transfer.TransferTokenPool;
-import io.r2mo.io.modeling.TransferRequest;
+import io.r2mo.base.io.transfer.token.TransferTokenService;
+import io.r2mo.io.component.node.StoreInit;
 import io.r2mo.io.modeling.TransferResponse;
 import io.r2mo.io.service.TransferDirectoryService;
 
@@ -16,8 +18,12 @@ import java.util.UUID;
  * @author lang : 2025-09-16
  */
 class LocalDirectoryService extends AbstractTransferService implements TransferDirectoryService {
-    LocalDirectoryService(final TransferTokenPool cache) {
-        super(cache);
+
+    private final StoreInit<StoreDirectory> initializer;
+
+    LocalDirectoryService(final TransferTokenService token) {
+        super(token);
+        this.initializer = StoreInit.ofDirectory();
     }
 
     @Override

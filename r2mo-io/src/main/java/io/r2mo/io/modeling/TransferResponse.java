@@ -1,15 +1,10 @@
 package io.r2mo.io.modeling;
 
-import io.r2mo.base.io.modeling.StoreChunk;
 import io.r2mo.base.io.modeling.StoreDirectory;
 import io.r2mo.base.io.modeling.StoreFile;
-import io.r2mo.base.io.modeling.StoreNode;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
-import io.r2mo.typed.exception.AbstractException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.List;
 
 /**
  * <pre>
@@ -31,15 +26,19 @@ public class TransferResponse extends AbstractNormObject {
 
     private String token;                           // 传输令牌
     private String url;                             // 传输URL
-
-    private StoreNode storeNode;                    // 关联存储节点
-    private StoreFile storeFile;                    // 关联存储文件
-    private StoreDirectory storeDirectory;          // 关联存储目录
-    private List<StoreChunk> storeChunks;           // 关联存储分片列表
+    private Long size;                              // 总大小
 
     private Boolean isMultipart;                    // 是否分片文件
-    private Long size;                              // 总大小
-    private Long countFile;                         // 文件数量
+    private StoreFile file;                         // 关联存储文件
+    private Long countChunk;                        // 分片数量
 
-    private AbstractException error;
+    private StoreDirectory directory;               // 关联存储目录
+    private Long countFile;                         // 文件数量
+    /*
+     * 注意：响应中没有包含 nodeId，实际是因为执行过程中的流程
+     * 1）Request -> StoreNode + Token
+     *    Token 中包含了 nodeId 信息
+     * 2）StoreNode -> Response
+     *    Response 中包含了 token -> nodeId -> 实际文件信息
+     */
 }

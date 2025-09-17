@@ -48,4 +48,30 @@ public abstract class AbstractNormObject implements BaseScope, BaseAudit, Serial
     public String tenant() {
         return Objects.isNull(this.tenantId) ? null : this.tenantId.toString();
     }
+
+    public void inFrom(final AbstractNormObject other) {
+        if (other == null) {
+            return;
+        }
+        this.id = other.id;
+        this.appId = other.appId;
+        this.tenantId = other.tenantId;
+        this.createdAt = other.createdAt;
+        this.createdBy = other.createdBy;
+        this.updatedAt = other.updatedAt;
+        this.updatedBy = other.updatedBy;
+    }
+
+    public void outTo(final AbstractNormObject other) {
+        if (other == null) {
+            return;
+        }
+        other.id = this.id;
+        other.appId = this.appId;
+        other.tenantId = this.tenantId;
+        other.createdAt = this.createdAt;
+        other.createdBy = this.createdBy;
+        other.updatedAt = this.updatedAt;
+        other.updatedBy = this.updatedBy;
+    }
 }

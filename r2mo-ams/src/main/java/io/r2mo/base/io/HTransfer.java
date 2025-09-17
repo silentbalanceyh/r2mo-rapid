@@ -4,7 +4,8 @@ import io.r2mo.base.io.modeling.StoreChunk;
 import io.r2mo.base.io.modeling.StoreNode;
 import io.r2mo.base.io.transfer.HTransferAction;
 import io.r2mo.base.io.transfer.HTransferService;
-import io.r2mo.base.io.transfer.TransferTokenPool;
+import io.r2mo.base.io.transfer.token.TransferTokenPool;
+import io.r2mo.base.io.transfer.token.TransferTokenService;
 import io.r2mo.typed.json.JObject;
 
 import java.io.Serializable;
@@ -23,11 +24,11 @@ public interface HTransfer extends Serializable {
 
     String DEFAULT_ID = "spi.io.transfer.DEFAULT";
 
-    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfFile(TransferTokenPool store);
+    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfFile(TransferTokenService token);
 
-    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfLarge(TransferTokenPool store);
+    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfLarge(TransferTokenService token);
 
-    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreNode>> ACT serviceOfDirectory(TransferTokenPool store);
+    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreNode>> ACT serviceOfDirectory(TransferTokenService token);
 
     <REQ, TOKEN, ACT extends HTransferService<REQ, TOKEN, JObject>> ACT serviceToken(TransferTokenPool store);
 

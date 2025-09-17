@@ -1,7 +1,7 @@
 package io.r2mo.io.local.service;
 
-import io.r2mo.base.io.transfer.TransferToken;
-import io.r2mo.base.io.transfer.TransferTokenPool;
+import io.r2mo.base.io.transfer.token.TransferToken;
+import io.r2mo.base.io.transfer.token.TransferTokenPool;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.json.JUtil;

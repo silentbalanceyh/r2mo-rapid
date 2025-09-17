@@ -2,8 +2,7 @@ package io.r2mo.io.service;
 
 import io.r2mo.base.io.HStore;
 import io.r2mo.base.io.HTransfer;
-import io.r2mo.io.modeling.TransferParameter;
-import io.r2mo.io.modeling.TransferRequest;
+import io.r2mo.base.io.transfer.TransferRequest;
 import io.r2mo.spi.FactoryIo;
 import io.r2mo.typed.json.JObject;
 
@@ -15,7 +14,7 @@ import io.r2mo.typed.json.JObject;
  *        - 用户开发的 Dubbo -> SPI（Store服务依赖）-> 实现目标执行
  *        - 所以当前接口查找到的组件的操作机器在目标机上（非本机）
  *     2. {@link HTransfer} 负责传输行为如上传、下载、大文件的服务
- *        - 查找对应组件之后可直接执行传输操作（上传、下载等），HFS 中会包含基本类型 {@link TransferParameter} 负责构造请求数据，
+ *        - 查找对应组件之后可直接执行传输操作（上传、下载等），HFS 中会包含基本类型负责构造请求数据，
  *          所有传输动作如：
  *        - 用户开发的 Dubbo -> SPI (Transfer服务依赖）->
  *                         -> 调用 HFS.ofBuilder() 工具函数获取参数构造器，构造参数内容同底层实现对齐

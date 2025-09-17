@@ -12,20 +12,20 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoreRange {
+public class FileRange {
     private Long start;     // 起始字节位置
     private Long end;       // 结束字节位置
     private Long length;    // 范围长度
 
-    public static StoreRange of(final Long start, final Long end) {
-        return StoreRange.builder()
+    public static FileRange of(final Long start, final Long end) {
+        return FileRange.builder()
             .start(start)
             .end(end)
             .length(end - start + 1)
             .build();
     }
 
-    public static StoreRange of(final String header) {
+    public static FileRange of(final String header) {
         if (header == null || !header.startsWith("bytes=")) {
             return null;
         }
@@ -36,7 +36,7 @@ public class StoreRange {
             final Long end = ranges.length > 1 && !ranges[1].isEmpty() ?
                 Long.valueOf(ranges[1]) : null;
 
-            return StoreRange.builder()
+            return FileRange.builder()
                 .start(start)
                 .end(end)
                 .length(end != null ? end - start + 1 : null)

@@ -1,6 +1,6 @@
 package io.r2mo.base.io.modeling;
 
-import io.r2mo.typed.domain.extension.AbstractStoreObject;
+import io.r2mo.base.io.enums.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,17 +15,25 @@ import lombok.EqualsAndHashCode;
  *     - updatedAt
  *     - updatedBy
  *     存储单元
- *     - nodeId         （关联节点ID）
  *     - size
  *     - attributes
  *     - storePath
+ *     节点信息
+ *     - type
+ *     - parentId
+ *     - ownerId
  * </pre>
  *
  * @author lang : 2025-09-15
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class StoreDirectory extends AbstractStoreObject {
-    private Integer countFile;     // 文件数量
-    private Integer countDir;      // 子目录数量
+public class StoreDirectory extends StoreNode {
+    private String directoryName;           // 目录名称
+    private Integer countFile;              // 文件数量
+    private Integer countDirectory;         // 子目录数量
+
+    public StoreDirectory() {
+        this.setType(NodeType.DIRECTORY);
+    }
 }

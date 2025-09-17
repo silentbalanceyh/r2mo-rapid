@@ -12,6 +12,14 @@ public interface JUtil {
 
     boolean isEmpty(JObject jsonJ);
 
+    default boolean isNotEmpty(JArray jsonA) {
+        return !isEmpty(jsonA);
+    }
+
+    default boolean isNotEmpty(JObject jsonJ) {
+        return !isEmpty(jsonJ);
+    }
+
     boolean isJObject(Object value);
 
     boolean isJArray(Object value);

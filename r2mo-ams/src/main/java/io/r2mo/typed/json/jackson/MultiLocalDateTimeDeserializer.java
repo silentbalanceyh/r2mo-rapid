@@ -27,9 +27,9 @@ public class MultiLocalDateTimeDeserializer extends LocalDateTimeDeserializer {
         // —— 无时区 (LocalDateTime) ——
         DateTimeFormatter.ISO_LOCAL_DATE_TIME,                 // 2025-09-07T16:00:00[.SSS...]
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),    // 2025-09-17 13:51:38 ✅ 关键格式
-        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),  // 2025-09-17T13:51:38
+        DateTimeFormatter.ofPattern("yyyy-MM-dd'UT'HH:mm:ss"),  // 2025-09-17T13:51:38
         DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"),    // 2025/09/17 13:51:38
-        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"), // 2025-09-17T13:51:38.123
+        DateTimeFormatter.ofPattern("yyyy-MM-dd'UT'HH:mm:ss.SSS"), // 2025-09-17T13:51:38.123
 
         // —— 带偏移/时区 (Offset/Zoned) ——
         DateTimeFormatter.ISO_OFFSET_DATE_TIME,                // 2025-09-07T16:00:00+08:00 / ...Z
@@ -39,8 +39,8 @@ public class MultiLocalDateTimeDeserializer extends LocalDateTimeDeserializer {
         DateTimeFormatter.ISO_INSTANT,                         // 2025-09-07T08:00:00Z
 
         // —— 补充常见自定义 ——
-        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"), // +08:00
-        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")    // +0800
+        DateTimeFormatter.ofPattern("yyyy-MM-dd'UT'HH:mm:ssXXX"), // +08:00
+        DateTimeFormatter.ofPattern("yyyy-MM-dd'UT'HH:mm:ssZ")    // +0800
     );
 
     public MultiLocalDateTimeDeserializer() {
@@ -59,7 +59,9 @@ public class MultiLocalDateTimeDeserializer extends LocalDateTimeDeserializer {
 
     /** 清洗：去除 Unicode 空白、零宽字符、BOM 等常见脏字符，但保留有效空格 */
     private static String cleanDateTimeText(final String raw) {
-        if (raw == null) return null;
+        if (raw == null) {
+            return null;
+        }
 
         String s = raw;
 

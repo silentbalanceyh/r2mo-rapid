@@ -1,9 +1,8 @@
-package io.r2mo.io.service;
+package io.r2mo.base.io.transfer.token;
 
 import io.r2mo.base.io.transfer.HTransferService;
+import io.r2mo.base.io.transfer.TransferRequest;
 import io.r2mo.base.io.transfer.TransferResult;
-import io.r2mo.base.io.transfer.TransferToken;
-import io.r2mo.io.modeling.TransferRequest;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
 

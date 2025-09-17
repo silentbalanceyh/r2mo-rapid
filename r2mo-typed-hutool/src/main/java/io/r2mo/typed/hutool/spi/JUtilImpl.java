@@ -153,7 +153,7 @@ class JUtilImpl implements JUtil {
         final String jsonStr = json.encode();
 
 
-        // 创建 TypeReference<T> 来处理泛型列表
+        // 创建 TypeReference<UT> 来处理泛型列表
         final TypeReference<List<T>> typeRef = new TypeReference<>() {
         };
 

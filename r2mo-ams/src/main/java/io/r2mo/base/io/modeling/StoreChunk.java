@@ -4,6 +4,8 @@ import io.r2mo.typed.domain.extension.AbstractStoreObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.UUID;
+
 /**
  * <pre>
  *     继承属性
@@ -15,7 +17,6 @@ import lombok.EqualsAndHashCode;
  *     - updatedAt
  *     - updatedBy
  *     存储单元
- *     - nodeId         （关联节点ID）
  *     - size
  *     - attributes
  *     - storePath
@@ -26,6 +27,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class StoreChunk extends AbstractStoreObject {
+    private UUID fileId;           // 关联文件ID
     private Integer index;         // 分片索引
     private Long byteFrom;         // 起始字节
     private Long byteTo;           // 结束字节

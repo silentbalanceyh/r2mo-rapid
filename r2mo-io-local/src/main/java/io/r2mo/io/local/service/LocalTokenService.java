@@ -1,25 +1,31 @@
 package io.r2mo.io.local.service;
 
-import io.r2mo.base.io.transfer.TransferToken;
-import io.r2mo.base.io.transfer.TransferTokenPool;
-import io.r2mo.io.modeling.TransferRequest;
-import io.r2mo.io.service.TransferTokenService;
-import io.r2mo.typed.common.Ref;
+import io.r2mo.base.io.transfer.TransferRequest;
+import io.r2mo.base.io.transfer.token.TransferToken;
+import io.r2mo.base.io.transfer.token.TransferTokenPool;
+import io.r2mo.base.io.transfer.token.TransferTokenService;
+import io.r2mo.io.component.node.StoreInit;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.typed.json.JUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
+ * 桥接专用的 TokenService 用于传输令牌服务
+ *
  * @author lang : 2025-09-16
  */
 @Slf4j
-public class LocalTokenService extends AbstractTransferService implements TransferTokenService {
+class LocalTokenService implements TransferTokenService {
+    protected static final JUtil UT = SPI.V_UTIL;
+    protected final TransferTokenPool cache;
 
     public LocalTokenService(final TransferTokenPool cache) {
-        super(cache);
+        this.cache = cache;
     }
 
     @Override
@@ -124,38 +130,18 @@ public class LocalTokenService extends AbstractTransferService implements Transf
                 return null;
             }
 
-            // 生成唯一的令牌
-            final String tokenId = UUID.randomUUID().toString().replace("-", "");
-
-            // 创建 TransferToken 对象
-            final TransferToken transferToken = new TransferToken();
-            transferToken.setToken(tokenId);
-            transferToken.setUserId(request.getUserId());
-            transferToken.setType(request.getType());
-            transferToken.setClientAgent(request.getClientAgent());
-            transferToken.setClientIp(request.getClientIp());
-            transferToken.setIsMultipart(request.getIsMultipart());
-            transferToken.setIsDirectory(request.getIsDirectory());
-
-            // 特殊对象参数
-            final JObject parameters = request.getParameters();
-            transferToken.setServiceProvider(parameters.getString(TransferToken.NAME.SERVICE_PROVIDER));
-            transferToken.setServiceConsumer(parameters.getString(TransferToken.NAME.SERVICE_CONSUMER));
-
-            // 设置过期时间（默认1小时）
-            final long expireTime = System.currentTimeMillis() + 3600000L; // 1小时
-            transferToken.setExpiredAt(LocalDateTime.now().plusHours(1));
-
-            // 设置关联对象
-            if (request.getNodeId() != null) {
-                final String nodeType = parameters.getString(TransferToken.NAME.NODE_TYPE);
-                transferToken.setRef(Ref.of(nodeType, request.getNodeId()));
+            if (Objects.isNull(request.getNodeId())) {
+                log.error("[ R2MO ] 初始化令牌失败：节点ID为空");
+                return null;
             }
 
+            final TransferToken transferToken = StoreInit.ofToken().input(request);
+
             // 保存到缓存
+            final long expireTime = System.currentTimeMillis() + 3600000L; // 1小时
             final boolean saved = this.cache.runSave(transferToken, expireTime);
             if (saved) {
-                log.info("[ R2MO ] 初始化令牌成功: tokenId={}, type={}", tokenId, request.getType());
+                log.info("[ R2MO ] 初始化令牌成功: tokenId={}, type={}", transferToken.getToken(), request.getType());
                 return transferToken;
             } else {
                 log.error("[ R2MO ] 初始化令牌失败：保存到缓存失败");

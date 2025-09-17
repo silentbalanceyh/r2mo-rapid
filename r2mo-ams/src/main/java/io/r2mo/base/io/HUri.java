@@ -32,7 +32,7 @@ public interface HUri extends Serializable {
     /* 上下文（通常是根目录）*/
     String context();
 
-    interface T {
+    interface UT {
         String SEPARATOR = "/";
 
         /**
