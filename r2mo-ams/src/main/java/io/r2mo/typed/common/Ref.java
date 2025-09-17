@@ -15,6 +15,9 @@ import java.util.UUID;
 @Accessors(fluent = true)
 public class Ref implements Serializable {
 
+    public static final String REF_TYPE = "refType";
+    public static final String REF_ID = "refId";
+
     private String refType;
     private UUID refId;
 

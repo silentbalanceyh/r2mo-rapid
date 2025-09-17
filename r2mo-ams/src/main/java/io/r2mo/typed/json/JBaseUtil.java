@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.r2mo.spi.SPI;
+import io.r2mo.typed.common.Ref;
 import io.r2mo.typed.json.jackson.*;
 
 import java.math.BigDecimal;
@@ -87,6 +88,8 @@ class JBaseUtil {
         moduleJson.addDeserializer(JArray.class, new JArrayDeserializer());
         moduleJson.addSerializer(UUID.class, new UUIDSerializer());
         moduleJson.addDeserializer(UUID.class, new UUIDDeserializer());
+        moduleJson.addSerializer(Ref.class, new RefSerializer());
+        moduleJson.addDeserializer(Ref.class, new RefDeserializer());
         modules.add(moduleJson);
         return modules;
     }

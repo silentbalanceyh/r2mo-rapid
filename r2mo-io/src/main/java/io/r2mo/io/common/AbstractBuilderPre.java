@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * @author lang : 2025-09-16
@@ -57,14 +58,31 @@ abstract class AbstractBuilderPre implements BuilderOf<TransferRequest> {
      * @param parameter 参数对象
      */
     protected void waitForOwner(final TransferRequest request, final JObject parameter) {
-        final UUID id = (UUID) parameter.get(DefaultField.ID);
-        request.setId(Objects.isNull(id) ? UUID.randomUUID() : id);
+        request.setId(this.safeUuid(parameter, DefaultField.ID, UUID::randomUUID));
 
-        request.setAppId((UUID) parameter.get(DefaultField.APP_ID));
-        request.setTenantId((UUID) parameter.get(DefaultField.TENANT_ID));
+        request.setAppId(this.safeUuid(parameter, DefaultField.APP_ID));
+        request.setTenantId(this.safeUuid(parameter, DefaultField.TENANT_ID));
 
-        final UUID userId = (UUID) parameter.get(DefaultField.USER_ID);
-        request.setUserId(Objects.isNull(userId) ? DefaultConstantValue.BY_SYSTEM : userId);
+        request.setUserId(this.safeUuid(parameter, DefaultField.USER_ID));
+    }
+
+    private UUID safeUuid(final JObject parameter, final String field) {
+        return this.safeUuid(parameter, field, null);
+    }
+
+    private UUID safeUuid(final JObject parameter, final String field, final Supplier<UUID> supplier) {
+        final Object value = parameter.get(field);
+        if (value == null) {
+            return Objects.isNull(supplier) ? null : supplier.get();
+        }
+        if (value instanceof String) {
+            return UUID.fromString((String) value);
+        } else if (value instanceof UUID) {
+            return (UUID) value;
+        } else {
+            // 尝试转换为字符串再解析
+            return UUID.fromString(value.toString());
+        }
     }
 
     /**
@@ -80,15 +98,13 @@ abstract class AbstractBuilderPre implements BuilderOf<TransferRequest> {
      * @param parameter 参数对象
      */
     protected void waitForCommon(final TransferRequest request, final JObject parameter) {
-        final UUID userId = (UUID) parameter.get(DefaultField.USER_ID);
+        final UUID userId = this.safeUuid(parameter, DefaultField.USER_ID, () -> DefaultConstantValue.BY_SYSTEM);
         request.setCreatedAt(LocalDateTime.now());
         request.setUpdatedAt(LocalDateTime.now());
         if (Objects.nonNull(userId)) {
             request.setCreatedBy(userId);
             request.setUpdatedBy(userId);
         }
-
-        this.waitForParameters(request, parameter);
     }
 
     /**
@@ -124,9 +140,13 @@ abstract class AbstractBuilderPre implements BuilderOf<TransferRequest> {
      */
     protected void waitForPredicate(final TransferRequest request, final JObject parameter) {
         // nodeType，必须属性
-        final NodeType nodeType = (NodeType) parameter.get(TransferToken.NAME.NODE_TYPE);
+        NodeType nodeType = null;
+        final Object nodeTypeObj = parameter.get(TransferToken.NAME.NODE_TYPE);
+        if (Objects.nonNull(nodeTypeObj)) {
+            nodeType = NodeType.valueOf(nodeTypeObj.toString());
+        }
         request.setIsDirectory(NodeType.DIRECTORY == nodeType);
-        request.setNodeId((UUID) parameter.get(TransferToken.NAME.NODE_ID));
+        request.setNodeId(this.safeUuid(parameter, TransferToken.NAME.NODE_ID));
     }
 
     protected void waitForClient(final TransferRequest request, final JObject parameter) {
@@ -138,7 +158,7 @@ abstract class AbstractBuilderPre implements BuilderOf<TransferRequest> {
         }
     }
 
-    protected TransferRequest waitForCore(final TransferParameter parameter) {
+    protected TransferRequest waitForOwner(final TransferParameter parameter) {
         final TransferRequest transferRequest = new TransferRequest();
 
 
@@ -169,6 +189,9 @@ abstract class AbstractBuilderPre implements BuilderOf<TransferRequest> {
          */
         this.waitForPredicate(transferRequest, params);
         this.waitForClient(transferRequest, params);
+
+        this.waitForCommon(transferRequest, params);
+        this.waitForParameters(transferRequest, params);
         return transferRequest;
     }
 }

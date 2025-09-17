@@ -36,7 +36,7 @@ class BuilderPreFile extends AbstractBuilderPre implements BuilderPre<TransferRe
     }
 
     private TransferRequest waitForUpload(final TransferParameter parameter) {
-        final TransferRequest requestUpload = this.waitForCore(parameter);
+        final TransferRequest requestUpload = this.waitForOwner(parameter);
 
         final JObject params = parameter.data();
         final String pathSource = params.getString(TransferToken.NAME.PATH_TARGET);
@@ -45,7 +45,7 @@ class BuilderPreFile extends AbstractBuilderPre implements BuilderPre<TransferRe
     }
 
     private TransferRequest waitForDownload(final TransferParameter parameter) {
-        final TransferRequest requestDownload = this.waitForCore(parameter);
+        final TransferRequest requestDownload = this.waitForOwner(parameter);
         final JObject params = parameter.data();
         final String pathSource = params.getString(TransferToken.NAME.PATH_SOURCE);
         requestDownload.setPathSource(pathSource);
