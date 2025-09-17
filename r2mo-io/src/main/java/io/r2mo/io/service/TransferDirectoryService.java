@@ -27,12 +27,11 @@ public interface TransferDirectoryService extends HTransferService<TransferReque
      * 运行目录上传
      *
      * @param token    令牌
-     * @param fileData 文件数据流
-     * @param filePath 文件路径
+     * @param fileData 目录数据流
      *
      * @return 上传结果
      */
-    TransferResult runUpload(String token, InputStream fileData, String filePath);
+    TransferResult runUpload(String token, InputStream fileData);
 
     /**
      * 运行目录下载

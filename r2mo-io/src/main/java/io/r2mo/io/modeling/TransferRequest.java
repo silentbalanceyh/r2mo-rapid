@@ -55,4 +55,15 @@ public class TransferRequest extends AbstractNormObject {
 
     private JObject parameters;             // 扩展参数
     private AbstractException error;
+    /*
+     * 如果不请求中不包含传输令牌则先创建一个新的令牌，然后再执行后续的下载，如果包含了传输令牌则可以直接验证令牌来下载相关信息以
+     * 确定请求的合法性，如此执行之后就不用考虑是直接传输还是间接传输
+     * - 直接模式
+     *   这种模式通常令牌信息已经包含在请求中了，所以可以直接调用服务来执行传输
+     * - 间接模式
+     *   这种模式的请求和令牌是分离的，所以需要先将令牌植入到请求中，然后再执行传输
+     * 它们的切换：
+     * 如果请求中忘记设置令牌则创建一个新的令牌，然后再执行传输
+     */
+    private String token;                  // 传输令牌
 }

@@ -3,6 +3,7 @@ package io.r2mo.io.local.service;
 import io.r2mo.base.io.modeling.StoreChunk;
 import io.r2mo.base.io.modeling.StoreRange;
 import io.r2mo.base.io.transfer.TransferResult;
+import io.r2mo.base.io.transfer.TransferTokenPool;
 import io.r2mo.io.modeling.TransferRequest;
 import io.r2mo.io.modeling.TransferResponse;
 import io.r2mo.io.service.TransferLargeService;
@@ -15,7 +16,11 @@ import java.util.UUID;
 /**
  * @author lang : 2025-09-16
  */
-class LocalLargeService implements TransferLargeService {
+class LocalLargeService extends AbstractTransferService implements TransferLargeService {
+    LocalLargeService(final TransferTokenPool cache) {
+        super(cache);
+    }
+
     @Override
     public TransferResult runUpload(final String token, final InputStream fileData, final StoreChunk chunk) {
         return null;

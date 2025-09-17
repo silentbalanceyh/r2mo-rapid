@@ -23,11 +23,11 @@ public interface HTransfer extends Serializable {
 
     String DEFAULT_ID = "spi.io.transfer.DEFAULT";
 
-    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfFile();
+    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfFile(TransferTokenPool store);
 
-    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfLarge();
+    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreChunk>> ACT serviceOfLarge(TransferTokenPool store);
 
-    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreNode>> ACT serviceOfDirectory();
+    <REQ, RESP, ACT extends HTransferService<REQ, RESP, StoreNode>> ACT serviceOfDirectory(TransferTokenPool store);
 
     <REQ, TOKEN, ACT extends HTransferService<REQ, TOKEN, JObject>> ACT serviceToken(TransferTokenPool store);
 

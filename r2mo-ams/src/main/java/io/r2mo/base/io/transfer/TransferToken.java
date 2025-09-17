@@ -48,5 +48,8 @@ public class TransferToken extends AbstractNormObject {
         String PATH_SOURCE = "pathSource";
         String NODE_TYPE = "nodeType";
         String NODE_ID = "nodeId";
+        String CLIENT_IP = "clientIp";
+        String CLIENT_AGENT = "clientAgent";
+        String TOKEN = "token";
     }
 }

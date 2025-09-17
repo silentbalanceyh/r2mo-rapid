@@ -19,18 +19,25 @@ public class HTransferLocal implements HTransfer {
     private static final Cc<String, HTransferService<?, ?, ?>> CCT_SERVICE = Cc.openThread();
 
     @Override
-    public TransferFileService serviceOfFile() {
-        return (TransferFileService) CCT_SERVICE.pick(LocalFileService::new, LocalFileService.class.getName());
+    public TransferFileService serviceOfFile(final TransferTokenPool store) {
+        String cacheKey = store == null ? "default" : String.valueOf(store.hashCode());
+        cacheKey = cacheKey + "@" + LocalFileService.class.getName();
+        return (TransferFileService) CCT_SERVICE.pick(() -> new LocalFileService(store), cacheKey);
     }
 
     @Override
-    public TransferLargeService serviceOfLarge() {
-        return (TransferLargeService) CCT_SERVICE.pick(LocalLargeService::new, LocalLargeService.class.getName());
+    public TransferLargeService serviceOfLarge(final TransferTokenPool store) {
+        String cacheKey = store == null ? "default" : String.valueOf(store.hashCode());
+        cacheKey = cacheKey + "@" + LocalLargeService.class.getName();
+        return (TransferLargeService) CCT_SERVICE.pick(() -> new LocalLargeService(store), cacheKey);
+
     }
 
     @Override
-    public TransferDirectoryService serviceOfDirectory() {
-        return (TransferDirectoryService) CCT_SERVICE.pick(LocalDirectoryService::new, LocalDirectoryService.class.getName());
+    public TransferDirectoryService serviceOfDirectory(final TransferTokenPool store) {
+        String cacheKey = store == null ? "default" : String.valueOf(store.hashCode());
+        cacheKey = cacheKey + "@" + LocalDirectoryService.class.getName();
+        return (TransferDirectoryService) CCT_SERVICE.pick(() -> new LocalDirectoryService(store), cacheKey);
     }
 
     @Override

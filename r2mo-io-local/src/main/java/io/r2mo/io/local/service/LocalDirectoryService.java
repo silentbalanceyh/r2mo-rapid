@@ -2,6 +2,7 @@ package io.r2mo.io.local.service;
 
 import io.r2mo.base.io.modeling.StoreNode;
 import io.r2mo.base.io.transfer.TransferResult;
+import io.r2mo.base.io.transfer.TransferTokenPool;
 import io.r2mo.io.modeling.TransferRequest;
 import io.r2mo.io.modeling.TransferResponse;
 import io.r2mo.io.service.TransferDirectoryService;
@@ -14,9 +15,13 @@ import java.util.UUID;
 /**
  * @author lang : 2025-09-16
  */
-class LocalDirectoryService implements TransferDirectoryService {
+class LocalDirectoryService extends AbstractTransferService implements TransferDirectoryService {
+    LocalDirectoryService(final TransferTokenPool cache) {
+        super(cache);
+    }
+
     @Override
-    public TransferResult runUpload(final String token, final InputStream fileData, final String filePath) {
+    public TransferResult runUpload(final String token, final InputStream fileData) {
         return null;
     }
 
