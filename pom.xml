@@ -53,6 +53,9 @@
     <modules>
         <module>r2mo-ams</module>
 
+        <!-- 🌷 加密解密核心 -->
+        <module>r2mo-jce</module>
+
         <!-- 🌷 数据类型实现 -->
         <module>r2mo-typed-hutool</module>
 
@@ -99,6 +102,7 @@
         <hutool.version>5.8.39</hutool.version>
         <lombok.version>1.18.38</lombok.version>
         <reflections.version>0.10.2</reflections.version>
+        <bouncycastle.version>1.82</bouncycastle.version>
 
         <!-- ======================= Database Access =========================== -->
         <mysql.version>8.4.0</mysql.version>
@@ -235,6 +239,11 @@
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
+                <artifactId>r2mo-jce</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
                 <artifactId>r2mo-spring</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
@@ -243,7 +252,12 @@
                 <artifactId>r2mo-io</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
-
+            <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
             <!-- 第三方 -->
             <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
             <dependency>

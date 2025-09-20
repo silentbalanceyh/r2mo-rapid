@@ -8,7 +8,6 @@ import ${sourcePackage}.typed.json.JObject;
 import ${sourcePackage}.typed.webflow.R;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +22,6 @@ import java.util.List;
  * @author ${author}
  * @since ${date}
  */
-@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/${v}/${actor}")

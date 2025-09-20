@@ -1,4 +1,4 @@
-package io.r2mo.typed.common;
+package io.r2mo.spring.common.component.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -10,11 +10,11 @@ import java.util.TreeMap;
 /**
  * @author lang : 2025-09-03
  */
-public class GdbSigner {
+public class RestSigner {
     private final String appKey;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public GdbSigner(final String appKey) {
+    public RestSigner(final String appKey) {
         this.appKey = appKey;
     }
 
@@ -45,7 +45,9 @@ public class GdbSigner {
             final MessageDigest md5 = MessageDigest.getInstance("MD5");
             final byte[] digest = md5.digest(s.getBytes(StandardCharsets.UTF_8));
             final StringBuilder hex = new StringBuilder();
-            for (final byte b : digest) hex.append(String.format("%02x", b & 0xFF));
+            for (final byte b : digest) {
+                hex.append(String.format("%02x", b & 0xFF));
+            }
             return hex.toString();
         } catch (final Exception e) {
             throw new RuntimeException("[ R2MO ] 签名失败", e);

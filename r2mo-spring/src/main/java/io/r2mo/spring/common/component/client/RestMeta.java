@@ -1,7 +1,5 @@
 package io.r2mo.spring.common.component.client;
 
-import io.r2mo.typed.common.GdbSigner;
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -12,7 +10,7 @@ public class RestMeta implements Serializable {
 
     private final String appId;
     private String apiBase;
-    private GdbSigner signer;
+    private RestSigner signer;
 
     private String pHeaderApp = "X-App-Id";
     private String pHeaderSign = "sig";
@@ -40,11 +38,11 @@ public class RestMeta implements Serializable {
     }
 
     public RestMeta sign(final String appKey) {
-        this.signer = new GdbSigner(appKey);
+        this.signer = new RestSigner(appKey);
         return this;
     }
 
-    public GdbSigner signer() {
+    public RestSigner signer() {
         return this.signer;
     }
 

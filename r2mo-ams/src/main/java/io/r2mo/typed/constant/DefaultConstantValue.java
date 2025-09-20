@@ -25,6 +25,8 @@ public interface DefaultConstantValue {
 
     String DEFAULT_VERSION = "1.0.0";
 
+    String DEFAULT_SEC_PROVIDER = "BC";
+
     // --------------- UUID 账号 ---------------
 
     // 默认系统账号

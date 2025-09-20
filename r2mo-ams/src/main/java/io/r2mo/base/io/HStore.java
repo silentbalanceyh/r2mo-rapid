@@ -5,6 +5,7 @@ import io.r2mo.function.Fn;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JBase;
 
+import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,6 +13,8 @@ import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -198,4 +201,23 @@ public interface HStore extends Serializable {
     default InputStream inStream(final Path path) {
         throw new _501NotSupportException("[ R2MO ] 当前实现类不支持 Path 类型：HStore.inStream(Path");
     }
+
+    // ---------------- 公私钥专用
+    PrivateKey inPrivate(String filename);
+
+    PrivateKey inPrivate(InputStream in);
+
+    PublicKey inPublic(String filename);
+
+    PublicKey inPublic(InputStream in);
+
+    SecretKey inSecret(String filename);
+
+    SecretKey inSecret(InputStream in);
+
+    boolean write(String filename, PrivateKey key);
+
+    boolean write(String filename, PublicKey key);
+
+    boolean write(String filename, SecretKey key);
 }

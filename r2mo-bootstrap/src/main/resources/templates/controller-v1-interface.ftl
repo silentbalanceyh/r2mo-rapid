@@ -30,16 +30,16 @@ public interface ${className}CrudController {
 
     @PutMapping("/{id}")
     @Operation(summary = "更新${entityDisplay}", description = "管理端/更新${entityDisplay}")
-    R<${className}CommonResponse> updateSingle(@PathVariable String id,
-        @Valid @RequestBody ${className}CommonRequest request);
+    R<${className}CommonResponse> updateSingle(@PathVariable("id") String id,
+                                               @Valid @RequestBody ${className}CommonRequest request);
 
     @GetMapping("/{id}")
     @Operation(summary = "获取${entityDisplay}详情", description = "管理端/获取${entityDisplay}详情")
-    R<${entityName}> findSingle(@PathVariable String id);
+    R<${entityName}> findSingle(@PathVariable("id") String id);
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除${entityDisplay}", description = "管理端/删除${entityDisplay}")
-    R<Boolean> removeSingle(@PathVariable String id);
+    R<Boolean> removeSingle(@PathVariable("id") String id);
 
     @PostMapping("/search")
     @Operation(summary = "分页查询${entityDisplay}", description = "管理端/分页查询${entityDisplay}")

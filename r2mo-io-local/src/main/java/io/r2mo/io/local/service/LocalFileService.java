@@ -53,7 +53,9 @@ class LocalFileService extends AbstractTransferService implements TransferFileSe
 
 
         // 4. 使用 StoreInit 将 StoreFile 转换为 TransferResponse
-        return this.initializer.output(file);
+        final TransferResponse response = this.initializer.output(file);
+        response.setToken(token.getToken());
+        return response;
     }
 
 

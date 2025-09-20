@@ -5,10 +5,13 @@ import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JBase;
 
+import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -84,6 +87,22 @@ public class HFS {
     /* 文件写入：echo */
     public boolean write(final String filename, final String content, final boolean append) {
         return this.store.write(filename, content, append);
+    }
+
+    public boolean write(final String filename, final InputStream in) {
+        return this.store.write(filename, in);
+    }
+
+    public boolean write(final String filename, final PublicKey publicKey) {
+        return this.store.write(filename, publicKey);
+    }
+
+    public boolean write(final String filename, final PrivateKey privateKey) {
+        return this.store.write(filename, privateKey);
+    }
+
+    public boolean write(final String filename, final SecretKey secretKey) {
+        return this.store.write(filename, secretKey);
     }
 
     // ------------------------------------ 判断专用方法
@@ -197,5 +216,29 @@ public class HFS {
 
     public <T extends JBase> T inYaml(final Path path) {
         return this.store.inYaml(path);
+    }
+
+    public PublicKey inPublic(final String filename) {
+        return this.store.inPublic(filename);
+    }
+
+    public PublicKey inPublic(final InputStream in) {
+        return this.store.inPublic(in);
+    }
+
+    public PrivateKey inPrivate(final String filename) {
+        return this.store.inPrivate(filename);
+    }
+
+    public PrivateKey inPrivate(final InputStream in) {
+        return this.store.inPrivate(in);
+    }
+
+    public SecretKey inSecret(final String filename) {
+        return this.store.inSecret(filename);
+    }
+
+    public SecretKey inSecret(final InputStream in) {
+        return this.store.inSecret(in);
     }
 }

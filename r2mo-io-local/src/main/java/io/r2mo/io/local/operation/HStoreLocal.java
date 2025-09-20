@@ -4,12 +4,16 @@ import io.r2mo.base.io.HProgressor;
 import io.r2mo.base.io.HStore;
 import io.r2mo.io.common.AbstractHStore;
 import io.r2mo.typed.annotation.SPID;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -18,6 +22,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author lang : 2025-09-02
  */
 @SPID(HStore.DEFAULT_ID)
+@Slf4j
 public class HStoreLocal extends AbstractHStore {
 
     @Override
@@ -117,6 +122,54 @@ public class HStoreLocal extends AbstractHStore {
     @Override
     public InputStream inStream(final Path path) {
         return this.inStream(this.toURL(path));
+    }
+
+    @Override
+    public PrivateKey inPrivate(final String filename) {
+        return this.inPrivate(this.inStream(filename));
+    }
+
+    @Override
+    public PrivateKey inPrivate(final InputStream in) {
+        return LocalSecurity.inPrivate(in);
+    }
+
+    @Override
+    public PublicKey inPublic(final String filename) {
+        return this.inPublic(this.inStream(filename));
+    }
+
+    @Override
+    public PublicKey inPublic(final InputStream in) {
+        return LocalSecurity.inPublic(in);
+    }
+
+    @Override
+    public SecretKey inSecret(final String filename) {
+        return this.inSecret(this.inStream(filename));
+    }
+
+    @Override
+    public SecretKey inSecret(final InputStream in) {
+        return LocalSecurity.inSecret(in);
+    }
+
+    @Override
+    public boolean write(final String filename, final PrivateKey key) {
+        log.info("[ R2MO ] （非对称）写入私钥 PrivateKey 到文件：{}", filename);
+        return this.write(filename, LocalSecurity.inPrivate(key));
+    }
+
+    @Override
+    public boolean write(final String filename, final PublicKey key) {
+        log.info("[ R2MO ] （非对称）写入公钥 PublicKey 到文件：{}", filename);
+        return this.write(filename, LocalSecurity.inPublic(key));
+    }
+
+    @Override
+    public boolean write(final String filename, final SecretKey key) {
+        log.info("[ R2MO ] （对称）写入密钥 SecretKey 到文件：{}", filename);
+        return this.write(filename, LocalSecurity.inSecret(key));
     }
 
     @Override

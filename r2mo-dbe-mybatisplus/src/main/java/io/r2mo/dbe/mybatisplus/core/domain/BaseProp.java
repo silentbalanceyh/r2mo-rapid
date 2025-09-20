@@ -4,6 +4,8 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.domain.ContextOr;
+import io.r2mo.typed.domain.extension.AbstractNormObject;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -12,6 +14,7 @@ import java.util.UUID;
 /**
  * @author lang : 2025-09-11
  */
+@Slf4j
 public class BaseProp {
 
     private BaseProp() {
@@ -29,6 +32,11 @@ public class BaseProp {
      * @param baseEntity 目标实体
      */
     public static void setCommon(final BaseEntity baseEntity) {
+        if (Objects.isNull(baseEntity)) {
+            log.warn("[ R2MO ] - setCommon(BaseEntity): 传入实体为空，无法设置常规字段 \n" +
+                " --> version, enabled, language, cMetadata");
+            return;
+        }
         baseEntity.setVersion("1.0.0");
         baseEntity.setEnabled(Boolean.TRUE);
         baseEntity.setLanguage("zh-CN");
@@ -37,6 +45,11 @@ public class BaseProp {
 
     public static void setScope(final BaseEntity baseEntity,
                                 final ContextOr context) {
+        if (Objects.isNull(baseEntity) || Objects.isNull(context)) {
+            log.warn("[ R2MO ] - setScope(BaseEntity, ContextOr): 传入实体或上下文为空，无法设置范围字段 \n" +
+                " --> appId, tenantId");
+            return;
+        }
         baseEntity.setAppId(context.idApp(true));
         baseEntity.setTenantId(context.idTenant(true));
     }
@@ -55,6 +68,11 @@ public class BaseProp {
     public static void setAudit(final BaseEntity baseEntity,
                                 final UUID userId,
                                 final boolean created) {
+        if (Objects.isNull(baseEntity)) {
+            log.warn("[ R2MO ] - setAudit(BaseEntity, UUID, boolean): 传入实体为空，无法设置审计字段 \n" +
+                " --> createdBy, createdAt, updatedBy, updatedAt");
+            return;
+        }
         final LocalDateTime executeAt = LocalDateTime.now();
         if (Objects.nonNull(userId)) {
             baseEntity.setUpdatedBy(userId);
@@ -87,6 +105,11 @@ public class BaseProp {
      * @param baseEntity 目标实体
      */
     public static void setCode(final BaseEntity baseEntity) {
+        if (Objects.isNull(baseEntity)) {
+            log.warn("[ R2MO ] - setCode(BaseEntity): 传入实体为空，无法设置 Code 字段 \n" +
+                " --> code");
+            return;
+        }
         final String code = baseEntity.getCode();
         if (StrUtil.isEmpty(code)) {
             baseEntity.setCode(RandomUtil.randomString(16));
@@ -107,8 +130,22 @@ public class BaseProp {
      */
     public static void copyScope(final BaseEntity target,
                                  final BaseEntity source) {
-        Objects.requireNonNull(target);
-        Objects.requireNonNull(source);
+        if (Objects.isNull(target) || Objects.isNull(source)) {
+            log.warn(" [ R2MO ] - copyScope(BaseEntity, BaseEntity): 传入实体为空，无法拷贝范围字段 \n" +
+                " --> appId, tenantId");
+            return;
+        }
+        target.setAppId(source.getAppId());
+        target.setTenantId(source.getTenantId());
+    }
+
+    public static void copyScope(final AbstractNormObject target,
+                                 final BaseEntity source) {
+        if (Objects.isNull(target) || Objects.isNull(source)) {
+            log.warn(" [ R2MO ] - copyScope(AbstractNormObject, BaseEntity): 传入实体为空，无法拷贝范围字段 \n" +
+                " --> appId, tenantId");
+            return;
+        }
         target.setAppId(source.getAppId());
         target.setTenantId(source.getTenantId());
     }
@@ -127,8 +164,24 @@ public class BaseProp {
      */
     public static void copyAudit(final BaseEntity target,
                                  final BaseEntity source) {
-        Objects.requireNonNull(target);
-        Objects.requireNonNull(source);
+        if (Objects.isNull(target) || Objects.isNull(source)) {
+            log.warn(" [ R2MO ] - copyAudit(BaseEntity, BaseEntity): 传入实体为空，无法拷贝审计字段 \n" +
+                " --> createdBy, createdAt, updatedBy, updatedAt");
+            return;
+        }
+        target.setCreatedBy(source.getCreatedBy());
+        target.setCreatedAt(source.getCreatedAt());
+        target.setUpdatedBy(source.getUpdatedBy());
+        target.setUpdatedAt(source.getUpdatedAt());
+    }
+
+    public static void copyAudit(final AbstractNormObject target,
+                                 final BaseEntity source) {
+        if (Objects.isNull(target) || Objects.isNull(source)) {
+            log.warn(" [ R2MO ] - copyAudit(AbstractNormObject, BaseEntity): 传入实体为空，无法拷贝审计字段 \n" +
+                " --> createdBy, createdAt, updatedBy, updatedAt");
+            return;
+        }
         target.setCreatedBy(source.getCreatedBy());
         target.setCreatedAt(source.getCreatedAt());
         target.setUpdatedBy(source.getUpdatedBy());
@@ -150,8 +203,10 @@ public class BaseProp {
      */
     public static void copyFull(final BaseEntity target,
                                 final BaseEntity source) {
-        Objects.requireNonNull(target);
-        Objects.requireNonNull(source);
+        if (Objects.isNull(target) || Objects.isNull(source)) {
+            log.warn(" [ R2MO ] - copyFull(BaseEntity, BaseEntity): 传入实体为空，无法拷贝全字段！");
+            return;
+        }
         target.setLanguage(source.getLanguage());
         target.setVersion(source.getVersion());
         target.setEnabled(source.isEnabled());
