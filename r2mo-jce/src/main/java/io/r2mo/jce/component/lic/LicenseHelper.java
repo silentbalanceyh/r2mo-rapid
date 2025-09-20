@@ -2,7 +2,7 @@ package io.r2mo.jce.component.lic;
 
 import io.r2mo.base.io.HStore;
 import io.r2mo.jce.common.HED;
-import io.r2mo.jce.component.lic.domain.LicenseLocation;
+import io.r2mo.jce.component.lic.domain.LicenseConfiguration;
 import io.r2mo.jce.constant.AlgLicense;
 import io.r2mo.typed.cc.Cc;
 
@@ -44,23 +44,16 @@ public class LicenseHelper {
 
     public void generateAsym(final String directory, final AlgLicense license) {
         final KeyPair generated = HED.generate(license);
-        final LicenseLocation location = this.location(directory, license);
-
-        this.store.write(location.ioPrivate(), generated.getPrivate());
-        this.store.write(location.ioPublic(), generated.getPublic());
+        final LicenseConfiguration configuration = new LicenseConfiguration();
+        configuration.ioContext(directory).algSign(license.value());
+        this.store.write(configuration.ioPrivate(), generated.getPrivate());
+        this.store.write(configuration.ioPublic(), generated.getPublic());
     }
 
     private void generateSym(final String directory, final AlgLicense license) {
         final SecretKey generated = HED.generate(license);
-        final LicenseLocation location = this.location(directory, license);
-
-        this.store.write(location.ioSecret(), generated);
-    }
-
-    public LicenseLocation location(final String directory,
-                                    final AlgLicense license) {
-        final LicenseLocation location = new LicenseLocation();
-        location.ioContext(directory).algorithm(license.value());
-        return location;
+        final LicenseConfiguration configuration = new LicenseConfiguration();
+        configuration.ioContext(directory).algEnc(license.value());
+        this.store.write(configuration.ioSecret(), generated);
     }
 }

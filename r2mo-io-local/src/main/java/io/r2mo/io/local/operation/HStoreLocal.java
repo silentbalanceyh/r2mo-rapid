@@ -4,12 +4,12 @@ import io.r2mo.base.io.HProgressor;
 import io.r2mo.base.io.HStore;
 import io.r2mo.io.common.AbstractHStore;
 import io.r2mo.typed.annotation.SPID;
+import io.r2mo.typed.common.Binary;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.security.PrivateKey;
@@ -59,8 +59,8 @@ public class HStoreLocal extends AbstractHStore {
     }
 
     @Override
-    public boolean write(final String filename, final OutputStream out, final HProgressor progress) {
-        return LocalHighway.write(filename, out, progress);
+    public Binary inBinary(final String filename, final HProgressor progress) {
+        return LocalHighway.read(filename, progress);
     }
 
     @Override

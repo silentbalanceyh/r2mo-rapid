@@ -8,9 +8,9 @@ import io.r2mo.base.io.transfer.token.TransferTokenService;
 import io.r2mo.io.component.node.StoreInit;
 import io.r2mo.io.modeling.TransferResponse;
 import io.r2mo.io.service.TransferLargeService;
+import io.r2mo.typed.common.Binary;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,12 +32,12 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
     }
 
     @Override
-    public TransferResult runDownload(final String token, final OutputStream fileData, final StoreChunk chunk) {
+    public Binary runDownload(final String token, final StoreChunk chunk) {
         return null;
     }
 
     @Override
-    public TransferResult runDownload(final String token, final OutputStream fileData, final FileRange range) {
+    public Binary runDownload(final String token, final FileRange range) {
         return null;
     }
 

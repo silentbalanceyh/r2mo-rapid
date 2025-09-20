@@ -6,7 +6,6 @@ import io.r2mo.jce.constant.AlgLicenseSpec;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -30,75 +29,99 @@ import java.util.Objects;
  */
 @Data
 @Accessors(fluent = true)
-public class LicenseLocation implements Serializable {
+public class LicenseConfiguration implements LicenseOk {
     /**
      * 上下文根路径会在客户端进行计算，计算结果作为 License 的根路径，可执行相关后续流程做路径计算，
      * 计算流程依靠外层处理，而不是本身。
      */
     private String ioContext;           // 上下文路径
-
+    // ------------ 签名相关信息
     private String ioPrivate;           // 私钥路径
     private String ioPublic;            // 公钥路径
-    private String ioSecret;            // 对称密钥路径（加密用）
-    private AlgLicenseSpec algorithm;   // License算法
+    private AlgLicenseSpec algSign;     // 签名算法
+    // ------------ 加密相关信息
+    private String ioSecret;            // 对称密钥
+    private AlgLicenseSpec algEnc;      // 加密算法
     private boolean encrypted;          // 是否加密
-    // License ID
+    // ------------ License ID
     private String licenseId;
 
     public String ioLicenseDirectory() {
-        return HUri.UT.resolve(this.ioContext, this.licenseId);
+        return HUri.UT.resolve(this.contextOfLic(), this.licenseId);
+    }
+
+    public LicenseConfiguration algEnc(final AlgLicenseSpec algEnc) {
+        this.algEnc = algEnc;
+        if (Objects.nonNull(this.algEnc)) {
+            this.encrypted = true;
+        }
+        return this;
     }
 
     public String ioPrivate() {
         if (Objects.nonNull(this.ioPrivate)) {
-            return HUri.UT.resolve(this.ioContext, this.ioPrivate);
+            return HUri.UT.resolve(this.contextOfCert(), this.ioPrivate);
         }
-        return this.ioPem("_private.pem");
+        return this.ioPem("_private.pem", this.algSign);
     }
 
     public String ioPublic() {
         if (Objects.nonNull(this.ioPublic)) {
-            return HUri.UT.resolve(this.ioContext, this.ioPublic);
+            return HUri.UT.resolve(this.contextOfCert(), this.ioPublic);
         }
-        return this.ioPem("_public.pem");
+        return this.ioPem("_public.pem", this.algSign);
     }
 
     public String ioSecret() {
         if (Objects.nonNull(this.ioSecret)) {
-            return HUri.UT.resolve(this.ioContext, this.ioSecret);
+            return HUri.UT.resolve(this.contextOfCert(), this.ioSecret);
         }
-        return this.ioPem("_secret.pem");
+        return this.ioPem("_secret.pem", this.algEnc);
     }
 
-    private String ioPem(final String suffix) {
-        final String generated = this.ioAlgorithm() + suffix;
+    private String ioPem(final String suffix, final AlgLicenseSpec spec) {
+        final String generated = this.ioAlg(spec) + suffix;
         if (StrUtil.isEmpty(this.ioContext)) {
             return generated;
         }
-        return HUri.UT.resolve(this.ioContext, generated);
+        return HUri.UT.resolve(this.contextOfCert(), generated);
     }
 
-    public String ioAlgorithm() {
-        if (Objects.isNull(this.algorithm)) {
+    private String contextOfCert() {
+        return HUri.UT.resolve(this.ioContext, "cert");
+    }
+
+    private String contextOfLic() {
+        return HUri.UT.resolve(this.ioContext, "lic");
+    }
+
+    private String ioAlg(final AlgLicenseSpec spec) {
+        if (Objects.isNull(spec)) {
             return "";
         }
-        return this.algorithm.alg() + "_" + this.algorithm.length();
+        return spec.alg() + "_" + spec.length();
     }
 
+    @Override
     public boolean isOk() {
         if (Objects.isNull(this.licenseId)) {
-            return false;
+            return true;
         }
-        return Objects.nonNull(this.algorithm);
+        return Objects.isNull(this.algSign);
     }
 
     @Override
     public String toString() {
-        final StringBuilder content = new StringBuilder("[ LicenseLocation ]");
+        final StringBuilder content = new StringBuilder("[ LicenseConfiguration ]");
         content.append("\n  |- Context    : ").append(this.ioContext);
-        content.append("\n  |- Algorithm  : ").append(this.ioAlgorithm());
+        content.append("\n  |- AlgSign    : ").append(this.ioAlg(this.algSign));
         content.append("\n  |- PrivateKey : ").append(this.ioPrivate());
         content.append("\n  |- PublicKey  : ").append(this.ioPublic());
+        content.append("\n  |- Encrypted  : ").append(this.encrypted);
+        if (this.encrypted) {
+            content.append("\n  |- AlgEncrypt : ").append(this.ioAlg(this.algEnc));
+            content.append("\n  |- SecretKey  : ").append(this.ioSecret());
+        }
         if (StrUtil.isNotEmpty(this.licenseId)) {
             content.append("\n  |- LicenseDir : ").append(this.ioLicenseDirectory());
         }

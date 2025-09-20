@@ -8,9 +8,9 @@ import io.r2mo.base.io.transfer.token.TransferTokenService;
 import io.r2mo.io.component.node.StoreInit;
 import io.r2mo.io.modeling.TransferResponse;
 import io.r2mo.io.service.TransferDirectoryService;
+import io.r2mo.typed.common.Binary;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ class LocalDirectoryService extends AbstractTransferService implements TransferD
     }
 
     @Override
-    public TransferResult runDownload(final String token, final OutputStream fileData) {
+    public Binary runDownload(final String token) {
         return null;
     }
 

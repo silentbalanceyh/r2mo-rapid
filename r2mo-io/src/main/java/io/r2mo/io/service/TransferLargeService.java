@@ -6,9 +6,9 @@ import io.r2mo.base.io.transfer.HTransferService;
 import io.r2mo.base.io.transfer.TransferRequest;
 import io.r2mo.base.io.transfer.TransferResult;
 import io.r2mo.io.modeling.TransferResponse;
+import io.r2mo.typed.common.Binary;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -39,24 +39,22 @@ public interface TransferLargeService extends HTransferService<TransferRequest, 
     /**
      * 运行文件下载
      *
-     * @param token    令牌
-     * @param fileData 文件数据流
-     * @param chunk    分片信息
+     * @param token 令牌
+     * @param chunk 分片信息
      *
      * @return 下载结果
      */
-    TransferResult runDownload(String token, OutputStream fileData, StoreChunk chunk);
+    Binary runDownload(String token, StoreChunk chunk);
 
     /**
      * 运行文件下载，带范围
      *
-     * @param token    令牌
-     * @param fileData 文件数据流
-     * @param range    范围
+     * @param token 令牌
+     * @param range 范围
      *
      * @return 下载结果
      */
-    TransferResult runDownload(String token, OutputStream fileData, FileRange range);
+    Binary runDownload(String token, FileRange range);
 
     /**
      * 已上传的分片列表

@@ -74,7 +74,7 @@ public abstract class AbstractLicenseService implements LicenseService {
     private LicenseFile.LicenseFileBuilder create(final LicenseData data) {
         return LicenseFile.builder()
             .name(data.getName())
-            .code(data.getCode())
+            .code(data.getCode()).id(data.getId())
             .licenseId(data.getLicenseId());
     }
 

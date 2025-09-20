@@ -6,9 +6,9 @@ import io.r2mo.base.io.transfer.HTransferService;
 import io.r2mo.base.io.transfer.TransferRequest;
 import io.r2mo.base.io.transfer.TransferResult;
 import io.r2mo.io.modeling.TransferResponse;
+import io.r2mo.typed.common.Binary;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * 文件的上传下载，已继承方法
@@ -38,21 +38,19 @@ public interface TransferFileService extends HTransferService<TransferRequest, T
     /**
      * 运行文件下载
      *
-     * @param token    令牌
-     * @param fileData 文件数据流
+     * @param token 令牌
      *
      * @return 下载结果
      */
-    TransferResult runDownload(String token, OutputStream fileData);
+    Binary runDownload(String token);
 
     /**
      * 运行文件下载，带范围
      *
-     * @param token    令牌
-     * @param fileData 文件数据流
-     * @param range    范围
+     * @param token 令牌
+     * @param range 范围
      *
      * @return 下载结果
      */
-    TransferResult runDownload(String token, OutputStream fileData, FileRange range);
+    Binary runDownload(String token, FileRange range);
 }

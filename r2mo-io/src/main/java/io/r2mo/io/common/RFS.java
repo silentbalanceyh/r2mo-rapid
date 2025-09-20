@@ -12,6 +12,7 @@ import io.r2mo.io.service.TransferDirectoryService;
 import io.r2mo.io.service.TransferFileService;
 import io.r2mo.io.service.TransferLargeService;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.common.Binary;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
@@ -53,40 +54,40 @@ public class RFS {
     }
 
     // ---------------- 下载
-    public TransferResult ioDownload(final TransferRequest request, final OutputStream outStream) {
+    public Binary ioDownload(final TransferRequest request) {
         final boolean isDirectory = request.getIsDirectory();
         if (isDirectory) {
             final TransferDirectoryService service = this.serviceDirectory();
             final TransferResponse response = service.initialize(request);
-            return service.runDownload(response.getToken(), outStream);
+            return service.runDownload(response.getToken());
         } else {
             final TransferFileService service = this.serviceFile();
             final TransferResponse response = service.initialize(request);
-            return service.runDownload(response.getToken(), outStream);
+            return service.runDownload(response.getToken());
         }
     }
 
-    public TransferResult ioDownload(final TransferRequest request, final OutputStream outStream, final FileRange range) {
+    public Binary ioDownload(final TransferRequest request, final FileRange range) {
         final boolean isMultipart = request.getIsMultipart();
         if (isMultipart) {
             final TransferLargeService service = this.serviceLarge();
             final TransferResponse response = service.initialize(request);
-            return service.runDownload(response.getToken(), outStream, range);
+            return service.runDownload(response.getToken(), range);
         } else {
             final TransferFileService service = this.serviceFile();
             final TransferResponse response = service.initialize(request);
-            return service.runDownload(response.getToken(), outStream, range);
+            return service.runDownload(response.getToken(), range);
         }
     }
 
-    public TransferResult ioDownload(final TransferRequest request, final OutputStream outStream, final StoreChunk chunk) {
+    public Binary ioDownload(final TransferRequest request, final OutputStream outStream, final StoreChunk chunk) {
         final boolean isMultipart = request.getIsMultipart();
         if (!isMultipart) {
             throw new IllegalArgumentException("[ R2MO ] 非分片传输不可以使用分片下载！");
         }
         final TransferLargeService service = this.serviceLarge();
         final TransferResponse response = service.initialize(request);
-        return service.runDownload(response.getToken(), outStream, chunk);
+        return service.runDownload(response.getToken(), chunk);
     }
 
     // ---------------- 上传

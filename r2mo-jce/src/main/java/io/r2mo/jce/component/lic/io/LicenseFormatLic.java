@@ -19,11 +19,12 @@ import java.util.Map;
  * Code       = ABCD1234EFGH5678
  *
  * [BODY]
- * data       = Xj8dsakD98a...
+ * Xj8dsakD98a...
+ * AbcdEfghIjkl...
  * </pre>
  *
  * - [HEAD]：元信息（id、name、code）
- * - [BODY]：主体数据（data，优先为加密数据）
+ * - [BODY]：主体数据（优先为加密数据）
  * - 不包含签名（签名单独存储为 *.sig）
  *
  * @author lang
@@ -31,25 +32,47 @@ import java.util.Map;
  */
 class LicenseFormatLic implements LicenseFormat {
 
+    private static final String HEAD_SECTION = "[HEAD]";
+    private static final String BODY_SECTION = "[BODY]";
+    private static final Integer MAX_LINE_LENGTH = 80;
+
     @Override
     public String format(final LicenseFile file) {
         final StringBuilder sb = new StringBuilder();
 
         // HEAD 区块
-        sb.append("[HEAD]\n");
-        sb.append(LicTitle.LICENSE_ID).append(" = ").append(file.licenseId()).append("\n");
-        sb.append(LicTitle.NAME).append(" = ").append(file.name()).append("\n");
-        sb.append(LicTitle.CODE).append(" = ").append(file.code()).append("\n\n");
+        sb.append(HEAD_SECTION).append("\n");
+
+        // 定义 key-value 映射
+        final Map<String, String> headMap = new LinkedHashMap<>();
+        headMap.put(LicTitle.LICENSE_ID, file.licenseId());
+        headMap.put(LicTitle.NAME, file.name());
+        headMap.put(LicTitle.CODE, file.code());
+
+        // 计算最大 key 长度
+        final int maxKeyLen = headMap.keySet().stream()
+            .mapToInt(String::length)
+            .max()
+            .orElse(0);
+
+        // 按对齐规则写入
+        headMap.forEach((k, v) -> {
+            sb.append(String.format("%-" + maxKeyLen + "s = %s%n", k, v));
+        });
+
+        sb.append("\n");
 
         // BODY 区块
-        sb.append("[BODY]\n");
+        sb.append(BODY_SECTION).append("\n");
         final byte[] content = (file.encrypted() != null) ? file.encrypted() : file.data();
         if (content != null) {
-            sb.append("data = ").append(Base64.toBase64String(content)).append("\n");
+            final String base64 = Base64.toBase64String(content);
+            sb.append(this.wrapBase64(base64)).append("\n");
         }
 
         return sb.toString();
     }
+
 
     @Override
     public LicenseFile parse(final String content) {
@@ -57,6 +80,8 @@ class LicenseFormatLic implements LicenseFormat {
         final String[] lines = content.split("\\r?\\n");
 
         String section = null;
+        final StringBuilder dataBuf = new StringBuilder();
+
         for (String line : lines) {
             line = line.trim();
             if (line.isEmpty() || line.startsWith("#")) {
@@ -67,17 +92,36 @@ class LicenseFormatLic implements LicenseFormat {
                 continue;
             }
 
-            final String[] kv = line.split("=", 2);
-            if (kv.length == 2) {
-                map.put(section + ":" + kv[0].trim(), kv[1].trim());
+            if (BODY_SECTION.equals(section)) {
+                // Base64 数据行
+                if (line.matches("^[A-Za-z0-9+/=]+$")) {
+                    dataBuf.append(line);
+                }
+            } else if (HEAD_SECTION.equals(section)) {
+                final String[] kv = line.split("=", 2);
+                if (kv.length == 2) {
+                    map.put(HEAD_SECTION + ":" + kv[0].trim(), kv[1].trim());
+                }
             }
         }
 
         return LicenseFile.builder()
-            .licenseId(map.get("[HEAD]:" + LicTitle.LICENSE_ID))
-            .name(map.get("[HEAD]:" + LicTitle.NAME))
-            .code(map.get("[HEAD]:" + LicTitle.CODE))
-            .encrypted(map.containsKey("[BODY]:data") ? Base64.decode(map.get("[BODY]:data")) : null)
+            .licenseId(map.get(HEAD_SECTION + ":" + LicTitle.LICENSE_ID))
+            .name(map.get(HEAD_SECTION + ":" + LicTitle.NAME))
+            .code(map.get(HEAD_SECTION + ":" + LicTitle.CODE))
+            .encrypted(!dataBuf.isEmpty() ? Base64.decode(dataBuf.toString()) : null)
             .build();
+    }
+
+    /**
+     * Base64 长文本换行
+     */
+    private String wrapBase64(final String base64) {
+        final StringBuilder wrapped = new StringBuilder();
+        for (int i = 0; i < base64.length(); i += MAX_LINE_LENGTH) {
+            final int end = Math.min(i + MAX_LINE_LENGTH, base64.length());
+            wrapped.append(base64, i, end).append("\n");
+        }
+        return wrapped.toString().trim();
     }
 }

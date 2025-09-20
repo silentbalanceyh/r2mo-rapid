@@ -12,12 +12,12 @@ import io.r2mo.io.local.transfer.TransDownload;
 import io.r2mo.io.local.transfer.TransUpload;
 import io.r2mo.io.modeling.TransferResponse;
 import io.r2mo.io.service.TransferFileService;
+import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.common.Ref;
 import io.r2mo.typed.exception.web._400BadRequestException;
 import io.r2mo.typed.exception.web._404NotFoundException;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -71,18 +71,17 @@ class LocalFileService extends AbstractTransferService implements TransferFileSe
 
 
     @Override
-    public TransferResult runDownload(final String token, final OutputStream fileData) {
+    public Binary runDownload(final String token) {
         final StoreFile found = this.findStoreFile(token);
 
 
         // 执行文件下载
-        final boolean download = TransDownload.of().read(found, fileData);
-        return download ? TransferResult.SUCCESS : TransferResult.FAILURE;
+        return TransDownload.of().read(found);
     }
 
 
     @Override
-    public TransferResult runDownload(final String token, final OutputStream fileData, final FileRange range) {
+    public Binary runDownload(final String token, final FileRange range) {
         return null;
     }
 

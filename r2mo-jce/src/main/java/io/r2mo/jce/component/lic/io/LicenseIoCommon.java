@@ -1,13 +1,14 @@
 package io.r2mo.jce.component.lic.io;
 
 import io.r2mo.base.io.HStore;
+import io.r2mo.jce.component.lic.domain.LicenseConfiguration;
 import io.r2mo.jce.component.lic.domain.LicenseData;
 import io.r2mo.jce.component.lic.domain.LicenseFile;
-import io.r2mo.jce.component.lic.domain.LicenseLocation;
+import io.r2mo.jce.component.lic.domain.LicensePath;
 import io.r2mo.jce.constant.LicFormat;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.common.Binary;
 
-import java.io.InputStream;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -30,28 +31,37 @@ class LicenseIoCommon extends AbstractLicenseIo implements LicenseIo {
     }
 
     @Override
-    public InputStream writeTo(final LicenseLocation location, final LicenseFile fileData) {
-        this.ensureLocation(location);
-        this.ensureFileData(fileData);
+    public Binary writeTo(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
+        this.ensureConfiguration(configuration);
+        this.ensureFile(licenseFile);
 
-        return this.executor(fileData.format()).writeTo(location, fileData);
+        return this.executor(licenseFile.format()).writeTo(licenseFile, configuration);
     }
 
-    private void ensureLocation(final LicenseLocation location) {
-        if (Objects.isNull(location)) {
-            throw new IllegalArgumentException("[ R2MO ] LicenseLocation 不能为空！");
+    private void ensureConfiguration(final LicenseConfiguration configuration) {
+        if (Objects.isNull(configuration)) {
+            throw new IllegalArgumentException("[ R2MO ] LicenseConfiguration 不能为空！");
         }
-        if (!location.isOk()) {
-            throw new IllegalArgumentException("[ R2MO ] LicenseLocation 参数不完整，无法执行操作！");
+        if (configuration.isOk()) {
+            throw new IllegalArgumentException("[ R2MO ] LicenseConfiguration 参数不完整，无法执行操作！");
         }
     }
 
-    private void ensureFileData(final LicenseFile fileData) {
-        if (Objects.isNull(fileData)) {
+    private void ensureFile(final LicenseFile licenseFile) {
+        if (Objects.isNull(licenseFile)) {
             throw new IllegalArgumentException("[ R2MO ] LicenseFile 不能为空！");
         }
-        if (!fileData.isOk()) {
+        if (licenseFile.isOk()) {
             throw new IllegalArgumentException("[ R2MO ] LicenseFile 参数不完整，无法执行操作！");
+        }
+    }
+
+    private void ensurePath(final LicensePath path) {
+        if (Objects.isNull(path)) {
+            throw new IllegalArgumentException("[ R2MO ] LicensePath 不能为空！");
+        }
+        if (path.isOk()) {
+            throw new IllegalArgumentException("[ R2MO ] LicensePath 参数不完整，无法执行操作！");
         }
     }
 
@@ -64,17 +74,18 @@ class LicenseIoCommon extends AbstractLicenseIo implements LicenseIo {
     }
 
     @Override
-    public LicenseFile readIn(final LicenseLocation location, final LicFormat format) {
-        this.ensureLocation(location);
+    public LicenseFile readIn(final LicensePath path, final LicenseConfiguration configuration) {
+        this.ensureConfiguration(configuration);
+        this.ensurePath(path);
 
-        return this.executor(format).readIn(location, format);
+        return this.executor(path.format()).readIn(path, configuration);
     }
 
     @Override
-    public LicenseData verify(final LicenseLocation location, final LicenseFile fileData) {
-        this.ensureLocation(location);
-        this.ensureFileData(fileData);
+    public LicenseData verify(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
+        this.ensureConfiguration(configuration);
+        this.ensureFile(licenseFile);
 
-        return this.executor(fileData.format()).verify(location, fileData);
+        return this.executor(licenseFile.format()).verify(licenseFile, configuration);
     }
 }

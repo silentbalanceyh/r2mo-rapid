@@ -2,13 +2,13 @@ package io.r2mo.base.io;
 
 import cn.hutool.core.io.IoUtil;
 import io.r2mo.function.Fn;
+import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JBase;
 
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -74,12 +74,6 @@ public interface HStore extends Serializable {
 
     boolean write(String filename, InputStream in, HProgressor progress);
 
-    default boolean write(final String filename, final OutputStream out) {
-        return this.write(filename, out, null);
-    }
-
-    /* 文件读取 */
-    boolean write(String filename, OutputStream out, HProgressor progress);
 
     boolean isExist(String path);
 
@@ -201,6 +195,13 @@ public interface HStore extends Serializable {
     default InputStream inStream(final Path path) {
         throw new _501NotSupportException("[ R2MO ] 当前实现类不支持 Path 类型：HStore.inStream(Path");
     }
+
+    default Binary inBinary(final String filename) {
+        return this.inBinary(filename, null);
+    }
+
+    /* 文件读取 */
+    Binary inBinary(String filename, HProgressor progress);
 
     // ---------------- 公私钥专用
     PrivateKey inPrivate(String filename);
