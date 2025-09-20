@@ -1,4 +1,4 @@
-package io.r2mo.jce.component.lic;
+package io.r2mo.jce.constant;
 
 /**
  * @author lang : 2025-09-20

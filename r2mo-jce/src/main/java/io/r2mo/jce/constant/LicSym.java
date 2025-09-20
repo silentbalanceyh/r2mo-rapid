@@ -1,7 +1,5 @@
 package io.r2mo.jce.constant;
 
-import io.r2mo.jce.component.lic.AlgLicenseSpec;
-
 /**
  * 企业许可的常用对称加密算法（分组 + 子枚举版，带评分与推荐度）
  *

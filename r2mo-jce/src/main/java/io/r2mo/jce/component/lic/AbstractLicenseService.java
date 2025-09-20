@@ -1,10 +1,12 @@
 package io.r2mo.jce.component.lic;
 
+import io.r2mo.base.io.HStore;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.jce.common.HED;
 import io.r2mo.jce.component.lic.domain.LicenseData;
 import io.r2mo.jce.component.lic.domain.LicenseFile;
 import io.r2mo.jce.constant.AlgLicense;
+import io.r2mo.jce.constant.AlgLicenseSpec;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -16,15 +18,15 @@ public abstract class AbstractLicenseService implements LicenseService {
 
     private final AlgLicenseSpec spec;
     private final AlgLicenseSpec ALG_ENCRYPT = AlgLicense.AES.value();
-    private final HEDKeyPair kp = HEDKeyPair.of();
 
     protected AbstractLicenseService(final AlgLicenseSpec spec) {
         this.spec = spec;
     }
 
     @Override
-    public boolean generate(final String directory) {
-        this.kp.generate(directory, this.spec);
+    public boolean generate(final String directory, final HStore store) {
+        final LicenseKeyPair kp = LicenseKeyPair.of(store);
+        kp.generate(directory, this.spec);
         return true;
     }
 
@@ -38,7 +40,7 @@ public abstract class AbstractLicenseService implements LicenseService {
      * @return License文件对象
      */
     @Override
-    public LicenseFile build(final LicenseData data, final PrivateKey privateKey) {
+    public LicenseFile encrypt(final LicenseData data, final PrivateKey privateKey) {
         // 1. 序列化License数据
         final byte[] byteData = R2MO.serialize(data);
 
@@ -57,7 +59,7 @@ public abstract class AbstractLicenseService implements LicenseService {
     }
 
     @Override
-    public LicenseData extract(final LicenseFile file, final PublicKey publicKey) {
+    public LicenseData decrypt(final LicenseFile file, final PublicKey publicKey) {
         // 1. 取出加密数据
         final byte[] encrypted = file.encrypted();
 

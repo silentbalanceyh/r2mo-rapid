@@ -1,5 +1,6 @@
 package io.r2mo.jce.component.lic;
 
+import io.r2mo.base.io.HStore;
 import io.r2mo.jce.component.lic.domain.LicenseData;
 import io.r2mo.jce.component.lic.domain.LicenseFile;
 import io.r2mo.jce.constant.AlgLicense;
@@ -23,11 +24,11 @@ public interface LicenseService {
         return CCT_LIC_SERVICE.pick(constructor, license.name());
     }
 
-    boolean generate(String directory);
+    boolean generate(String directory, HStore store);
 
-    LicenseFile build(LicenseData data, PrivateKey privateKey);
+    LicenseFile encrypt(LicenseData data, PrivateKey privateKey);
 
-    LicenseData extract(LicenseFile file, PublicKey publicKey);
+    LicenseData decrypt(LicenseFile file, PublicKey publicKey);
 }
 
 /**

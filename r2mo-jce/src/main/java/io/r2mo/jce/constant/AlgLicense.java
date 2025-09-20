@@ -1,6 +1,5 @@
 package io.r2mo.jce.constant;
 
-import io.r2mo.jce.component.lic.AlgLicenseSpec;
 import lombok.experimental.Accessors;
 
 /**

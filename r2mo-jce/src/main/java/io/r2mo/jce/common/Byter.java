@@ -1,6 +1,6 @@
 package io.r2mo.jce.common;
 
-import io.r2mo.jce.component.lic.AlgLicenseSpec;
+import io.r2mo.jce.constant.AlgLicenseSpec;
 import io.r2mo.typed.cc.Cc;
 
 import javax.crypto.SecretKey;

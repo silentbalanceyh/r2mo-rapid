@@ -1,7 +1,7 @@
 package io.r2mo.jce.common;
 
 import io.r2mo.function.Fn;
-import io.r2mo.jce.component.lic.AlgLicenseSpec;
+import io.r2mo.jce.constant.AlgLicenseSpec;
 import io.r2mo.typed.constant.DefaultConstantValue;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
