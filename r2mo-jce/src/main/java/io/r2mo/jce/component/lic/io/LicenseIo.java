@@ -1,11 +1,16 @@
-package io.r2mo.jce.component.lic;
+package io.r2mo.jce.component.lic.io;
 
+import io.r2mo.base.io.HStore;
+import io.r2mo.jce.component.lic.LicenseService;
 import io.r2mo.jce.component.lic.domain.LicenseData;
 import io.r2mo.jce.component.lic.domain.LicenseFile;
 import io.r2mo.jce.component.lic.domain.LicenseLocation;
+import io.r2mo.jce.constant.LicFormat;
+import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.AbstractException;
 
 import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * 根据路径地址读取 License 信息和写入 License 信息的专用接口
@@ -17,6 +22,13 @@ import java.io.InputStream;
  * @author lang : 2025-09-20
  */
 public interface LicenseIo {
+    Cc<String, LicenseIo> CC_IO = Cc.openThread();
+
+    static LicenseIo of(final HStore store) {
+        Objects.requireNonNull(store, "[ R2MO ] HStore 不能为空，当前服务必须对接存储！");
+        return CC_IO.pick(() -> new LicenseIoCommon(store), String.valueOf(store.hashCode()));
+    }
+
     /**
      * 将 License 文件写入到指定位置，执行流程：
      * <pre>
@@ -54,10 +66,11 @@ public interface LicenseIo {
      * </pre>
      *
      * @param location 路径对象
+     * @param format   License 文件格式
      *
      * @return 返回 License 文件对象
      */
-    LicenseFile readIn(LicenseLocation location);
+    LicenseFile readIn(LicenseLocation location, LicFormat format);
 
 
     /**

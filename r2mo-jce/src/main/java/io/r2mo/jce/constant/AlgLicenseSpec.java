@@ -13,4 +13,6 @@ public interface AlgLicenseSpec {
     default String algSign() {
         return null;
     }
+
+    boolean isAsymmetric();
 }

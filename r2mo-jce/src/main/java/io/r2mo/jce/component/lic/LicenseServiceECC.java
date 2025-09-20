@@ -1,6 +1,6 @@
 package io.r2mo.jce.component.lic;
 
-import io.r2mo.jce.constant.LicAsym;
+import io.r2mo.jce.constant.AlgLicense;
 
 /**
  * @author lang : 2025-09-20
@@ -8,6 +8,6 @@ import io.r2mo.jce.constant.LicAsym;
 class LicenseServiceECC extends AbstractLicenseService {
 
     LicenseServiceECC() {
-        super(LicAsym.AlgLicenseEcc.ECDSA_P256);
+        super(AlgLicense.ECC);
     }
 }

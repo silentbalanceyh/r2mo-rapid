@@ -71,6 +71,11 @@ public final class LicAsym {
         public String algSign() {
             return this.algSign;
         }
+
+        @Override
+        public boolean isAsymmetric() {
+            return true;
+        }
     }
 
     /** 现代曲线 EdDSA / XDH 系列 */
@@ -147,6 +152,11 @@ public final class LicAsym {
         public String algSign() {
             return this.algSign;
         }
+
+        @Override
+        public boolean isAsymmetric() {
+            return true;
+        }
     }
 
     /** RSA 系列 */
@@ -213,6 +223,11 @@ public final class LicAsym {
         public String algSign() {
             return this.algSign;
         }
+
+        @Override
+        public boolean isAsymmetric() {
+            return true;
+        }
     }
 
     /** 国密 SM2 系列 */
@@ -258,6 +273,11 @@ public final class LicAsym {
         @Override
         public String algSign() {
             return this.algSign;
+        }
+
+        @Override
+        public boolean isAsymmetric() {
+            return true;
         }
     }
 }

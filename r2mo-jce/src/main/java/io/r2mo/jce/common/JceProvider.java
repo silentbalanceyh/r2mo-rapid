@@ -3,6 +3,7 @@ package io.r2mo.jce.common;
 import io.r2mo.function.Fn;
 import io.r2mo.jce.constant.AlgLicenseSpec;
 import io.r2mo.typed.constant.DefaultConstantValue;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.*;
@@ -32,17 +33,13 @@ import java.util.Objects;
  * @author lang
  * @since 2025-09-19
  */
-public final class JceProvider {
+@Slf4j
+final class JceProvider {
 
-    private static final Provider PROVIDER;
+    private static Provider PROVIDER;
 
     static {
-        Provider p = Security.getProvider(DefaultConstantValue.DEFAULT_SEC_PROVIDER);
-        if (Objects.isNull(p)) {
-            p = new BouncyCastleProvider();
-            Security.addProvider(p);
-        }
-        PROVIDER = p;
+        configure();
     }
 
     private JceProvider() {
@@ -53,8 +50,19 @@ public final class JceProvider {
      *
      * @return 单例 Provider
      */
-    public static Provider provider() {
+    static Provider provider() {
+        configure();
         return PROVIDER;
+    }
+
+    static void configure() {
+        Provider p = Security.getProvider(DefaultConstantValue.DEFAULT_SEC_PROVIDER);
+        if (Objects.isNull(p)) {
+            p = new BouncyCastleProvider();
+            Security.addProvider(p);
+            log.info("[ R2MO ] 使用安全提供者: {}, 版本: {}", p.getName(), p.getVersionStr());
+        }
+        PROVIDER = p;
     }
 
     // ========================= 对称加密 =========================
@@ -66,7 +74,7 @@ public final class JceProvider {
      *
      * @return Cipher 实例
      */
-    public static Cipher ofCipher(final String algorithm) {
+    static Cipher ofCipher(final String algorithm) {
         return Fn.jvmOr(() -> Cipher.getInstance(algorithm, PROVIDER));
     }
 
@@ -77,7 +85,7 @@ public final class JceProvider {
      *
      * @return SecretKey 实例
      */
-    public static SecretKey ofSecretKey(final AlgLicenseSpec spec) {
+    static SecretKey ofSecretKey(final AlgLicenseSpec spec) {
         return Fn.jvmOr(() -> {
             final KeyGenerator kg = KeyGenerator.getInstance(spec.alg(), PROVIDER);
             kg.init(spec.length());
@@ -92,7 +100,7 @@ public final class JceProvider {
      *
      * @return SecretKeyFactory 实例
      */
-    public static SecretKeyFactory ofSecretKeyFactory(final String algorithm) {
+    static SecretKeyFactory ofSecretKeyFactory(final String algorithm) {
         return Fn.jvmOr(() -> SecretKeyFactory.getInstance(algorithm, PROVIDER));
     }
 
@@ -103,7 +111,7 @@ public final class JceProvider {
      *
      * @return Mac 实例
      */
-    public static Mac ofMac(final String algorithm) {
+    static Mac ofMac(final String algorithm) {
         return Fn.jvmOr(() -> Mac.getInstance(algorithm, PROVIDER));
     }
 
@@ -116,7 +124,7 @@ public final class JceProvider {
      *
      * @return KeyFactory 实例
      */
-    public static KeyFactory ofKeyFactory(final String type) {
+    static KeyFactory ofKeyFactory(final String type) {
         return Fn.jvmOr(() -> KeyFactory.getInstance(type, PROVIDER));
     }
 
@@ -127,7 +135,7 @@ public final class JceProvider {
      *
      * @return KeyPair 实例
      */
-    public static KeyPair ofKeyPair(final AlgLicenseSpec spec) {
+    static KeyPair ofKeyPair(final AlgLicenseSpec spec) {
         return Fn.jvmOr(() -> {
             final KeyPairGenerator kpg = KeyPairGenerator.getInstance(spec.alg(), PROVIDER);
             kpg.initialize(spec.length());
@@ -142,7 +150,7 @@ public final class JceProvider {
      *
      * @return Signature 实例
      */
-    public static Signature ofSignature(final String algorithm) {
+    static Signature ofSignature(final String algorithm) {
         return Fn.jvmOr(() -> Signature.getInstance(algorithm, PROVIDER));
     }
 
@@ -153,7 +161,7 @@ public final class JceProvider {
      *
      * @return KeyAgreement 实例
      */
-    public static KeyAgreement ofKeyAgreement(final String algorithm) {
+    static KeyAgreement ofKeyAgreement(final String algorithm) {
         return Fn.jvmOr(() -> KeyAgreement.getInstance(algorithm, PROVIDER));
     }
 
@@ -166,7 +174,7 @@ public final class JceProvider {
      *
      * @return MessageDigest 实例
      */
-    public static MessageDigest ofMessageDigest(final String algorithm) {
+    static MessageDigest ofMessageDigest(final String algorithm) {
         return Fn.jvmOr(() -> MessageDigest.getInstance(algorithm, PROVIDER));
     }
 
@@ -177,7 +185,7 @@ public final class JceProvider {
      *
      * @return AlgorithmParameters 实例
      */
-    public static AlgorithmParameters ofAlgorithmParameters(final String algorithm) {
+    static AlgorithmParameters ofAlgorithmParameters(final String algorithm) {
         return Fn.jvmOr(() -> AlgorithmParameters.getInstance(algorithm, PROVIDER));
     }
 
@@ -188,7 +196,7 @@ public final class JceProvider {
      *
      * @return AlgorithmParameterGenerator 实例
      */
-    public static AlgorithmParameterGenerator ofAlgorithmParameterGenerator(final String algorithm) {
+    static AlgorithmParameterGenerator ofAlgorithmParameterGenerator(final String algorithm) {
         return Fn.jvmOr(() -> AlgorithmParameterGenerator.getInstance(algorithm, PROVIDER));
     }
 }

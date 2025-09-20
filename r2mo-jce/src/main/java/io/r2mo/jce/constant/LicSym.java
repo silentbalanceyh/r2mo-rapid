@@ -63,6 +63,11 @@ public final class LicSym {
         public String algCipher() {
             return this.algCipher;
         }
+
+        @Override
+        public boolean isAsymmetric() {
+            return false;
+        }
     }
 
     /** ChaCha20 系列 */
@@ -102,6 +107,11 @@ public final class LicSym {
         public String algCipher() {
             return this.algCipher;
         }
+
+        @Override
+        public boolean isAsymmetric() {
+            return false;
+        }
     }
 
     /** 国密 SM4 系列 */
@@ -140,6 +150,11 @@ public final class LicSym {
         @Override
         public String algCipher() {
             return this.algCipher;
+        }
+
+        @Override
+        public boolean isAsymmetric() {
+            return false;
         }
     }
 }

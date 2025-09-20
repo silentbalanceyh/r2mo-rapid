@@ -63,9 +63,4 @@ public enum AlgLicense {
     public String identifier() {
         return (this.asymmetric ? "ASYM@" : "SYM@") + this.name() + "/" + this.spec.alg();
     }
-
-    // ================= 公共接口 =================
-
-    // ================= 子枚举定义 =================
-
 }

@@ -39,7 +39,9 @@ public class LicenseLocation implements Serializable {
 
     private String ioPrivate;           // 私钥路径
     private String ioPublic;            // 公钥路径
+    private String ioSecret;            // 对称密钥路径（加密用）
     private AlgLicenseSpec algorithm;   // License算法
+    private boolean encrypted;          // 是否加密
     // License ID
     private String licenseId;
 
@@ -48,24 +50,32 @@ public class LicenseLocation implements Serializable {
     }
 
     public String ioPrivate() {
-        return this.ioKeyPair("_private.pem");
+        if (Objects.nonNull(this.ioPrivate)) {
+            return HUri.UT.resolve(this.ioContext, this.ioPrivate);
+        }
+        return this.ioPem("_private.pem");
     }
 
     public String ioPublic() {
-        return this.ioKeyPair("_public.pem");
+        if (Objects.nonNull(this.ioPublic)) {
+            return HUri.UT.resolve(this.ioContext, this.ioPublic);
+        }
+        return this.ioPem("_public.pem");
     }
 
-    private String ioKeyPair(final String suffix) {
-        final String privateFile = this.ioAlgorithm() + suffix;
+    public String ioSecret() {
+        if (Objects.nonNull(this.ioSecret)) {
+            return HUri.UT.resolve(this.ioContext, this.ioSecret);
+        }
+        return this.ioPem("_secret.pem");
+    }
+
+    private String ioPem(final String suffix) {
+        final String generated = this.ioAlgorithm() + suffix;
         if (StrUtil.isEmpty(this.ioContext)) {
-            return privateFile;
+            return generated;
         }
-        if (Objects.isNull(this.ioPrivate)) {
-            return HUri.UT.resolve(this.ioContext, privateFile);
-        } else {
-            final String privatePath = HUri.UT.resolve(this.ioPrivate, privateFile);
-            return HUri.UT.resolve(this.ioContext, privatePath);
-        }
+        return HUri.UT.resolve(this.ioContext, generated);
     }
 
     public String ioAlgorithm() {
@@ -73,5 +83,25 @@ public class LicenseLocation implements Serializable {
             return "";
         }
         return this.algorithm.alg() + "_" + this.algorithm.length();
+    }
+
+    public boolean isOk() {
+        if (Objects.isNull(this.licenseId)) {
+            return false;
+        }
+        return Objects.nonNull(this.algorithm);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder content = new StringBuilder("[ LicenseLocation ]");
+        content.append("\n  |- Context    : ").append(this.ioContext);
+        content.append("\n  |- Algorithm  : ").append(this.ioAlgorithm());
+        content.append("\n  |- PrivateKey : ").append(this.ioPrivate());
+        content.append("\n  |- PublicKey  : ").append(this.ioPublic());
+        if (StrUtil.isNotEmpty(this.licenseId)) {
+            content.append("\n  |- LicenseDir : ").append(this.ioLicenseDirectory());
+        }
+        return content.toString();
     }
 }

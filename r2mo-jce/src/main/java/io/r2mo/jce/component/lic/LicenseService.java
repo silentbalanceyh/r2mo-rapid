@@ -6,6 +6,7 @@ import io.r2mo.jce.component.lic.domain.LicenseFile;
 import io.r2mo.jce.constant.AlgLicense;
 import io.r2mo.typed.cc.Cc;
 
+import javax.crypto.SecretKey;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +29,11 @@ public interface LicenseService {
 
     LicenseFile encrypt(LicenseData data, PrivateKey privateKey);
 
+    LicenseFile encrypt(LicenseData data, PrivateKey privateKey, SecretKey secretKey);
+
     LicenseData decrypt(LicenseFile file, PublicKey publicKey);
+
+    LicenseData decrypt(LicenseFile file, PublicKey publicKey, SecretKey secretKey);
 }
 
 /**

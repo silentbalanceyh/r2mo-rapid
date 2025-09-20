@@ -1,7 +1,7 @@
 package io.r2mo.jce.common;
 
 import io.r2mo.jce.constant.AlgHash;
-import io.r2mo.jce.constant.LicAsym;
+import io.r2mo.jce.constant.AlgLicense;
 
 import java.security.KeyPair;
 
@@ -14,6 +14,10 @@ import java.security.KeyPair;
 public final class HED extends HEDBase {
 
     private HED() {
+    }
+
+    public static void initialize() {
+        JceProvider.configure();
     }
     // ==================== 强推荐算法 ====================
 
@@ -39,7 +43,35 @@ public final class HED extends HEDBase {
      * @return KeyPair (EC P-256)
      */
     public static KeyPair generateEC() {
-        return generate(LicAsym.AlgLicenseEcc.ECDSA_P256);
+        return generate(AlgLicense.ECC);
+    }
+
+    /**
+     * 生成 SM2 密钥对
+     *
+     * <p><b>默认参数：</b>SM2 曲线（256 位），符合中国国家密码标准 GM/T 0003。</p>
+     *
+     * <p><b>背景：</b>SM2 是基于椭圆曲线密码学（ECC）的公钥密码算法，广泛应用于数字签名、密钥交换和加密。</p>
+     *
+     * <p><b>优势：</b></p>
+     * <ul>
+     *   <li>合规性：在中国的政府、金融和电信等领域被强制要求使用。</li>
+     *   <li>安全性：基于椭圆曲线，提供与 ECC 类似的高安全性。</li>
+     *   <li>生态支持：和 SM3（哈希算法）、SM4（对称加密算法）常常结合使用。</li>
+     * </ul>
+     *
+     * <p><b>劣势：</b></p>
+     * <ul>
+     *   <li>国际兼容性较差，主要在国内合规场景使用。</li>
+     *   <li>与 RSA/ECC 相比，跨国系统集成时可能存在兼容性障碍。</li>
+     * </ul>
+     *
+     * <p><b>常见应用：</b>电子政务系统、金融支付平台、国产操作系统、国密 TLS 协议。</p>
+     *
+     * @return KeyPair (SM2)
+     */
+    public static KeyPair generateSM2() {
+        return generate(AlgLicense.SM2);
     }
 
     /**
@@ -64,7 +96,7 @@ public final class HED extends HEDBase {
      * @return KeyPair (RSA 3072)
      */
     public static KeyPair generateRSA() {
-        return generate(LicAsym.AlgLicenseRsa.RSA_3072);
+        return generate(AlgLicense.RSA);
     }
 
     /**
@@ -87,36 +119,13 @@ public final class HED extends HEDBase {
      * @return KeyPair (Ed25519)
      */
     public static KeyPair generateEd25519() {
-        return generate(LicAsym.AlgLicenseModern.ED25519);
+        return generate(AlgLicense.ED25519);
     }
     // endregion
 
     // ===== 编解码
 
     // region encode 系列的基础工具接口
-
-    /**
-     * 生成 XDH (X25519) 密钥对
-     *
-     * <p><b>默认参数：</b>X25519 曲线。</p>
-     *
-     * <p><b>背景：</b>X25519 是基于 Curve25519 的密钥交换算法，
-     * 已成为现代 TLS 1.3 的默认选择之一，用于高效的椭圆曲线 Diffie–Hellman (ECDH)。</p>
-     *
-     * <p><b>优势：</b></p>
-     * <ul>
-     *   <li>高性能：比传统 ECDH 更快。</li>
-     *   <li>安全性强：避免弱曲线问题，默认安全参数。</li>
-     *   <li>简洁：密钥长度固定（32B），实现简单。</li>
-     * </ul>
-     *
-     * <p><b>常见应用：</b>TLS 1.3、VPN (WireGuard)、安全消息协议。</p>
-     *
-     * @return KeyPair (X25519)
-     */
-    public static KeyPair generateX25519() {
-        return generate(LicAsym.AlgLicenseModern.X25519);
-    }
 
     // Base64
     public static String encodeBase64(final String data) {
@@ -267,6 +276,4 @@ public final class HED extends HEDBase {
     }
 
     // endregion
-
-    // ===== 非对称加密解密
 }

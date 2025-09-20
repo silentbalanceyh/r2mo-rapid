@@ -1,22 +1,28 @@
-package io.r2mo.jce.component.lic;
+package io.r2mo.jce.component.lic.io;
 
+import io.r2mo.base.io.HStore;
 import io.r2mo.jce.component.lic.domain.LicenseData;
 import io.r2mo.jce.component.lic.domain.LicenseFile;
 import io.r2mo.jce.component.lic.domain.LicenseLocation;
+import io.r2mo.jce.constant.LicFormat;
 
 import java.io.InputStream;
 
 /**
  * @author lang : 2025-09-20
  */
-public class LicenseIoImpl implements LicenseIo {
+class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
+    LicenseIoLic(final HStore store) {
+        super(store);
+    }
+
     @Override
     public InputStream writeTo(final LicenseLocation location, final LicenseFile fileData) {
         return null;
     }
 
     @Override
-    public LicenseFile readIn(final LicenseLocation location) {
+    public LicenseFile readIn(final LicenseLocation location, final LicFormat format) {
         return null;
     }
 

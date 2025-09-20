@@ -1,6 +1,7 @@
 package io.r2mo.jce.common;
 
 import io.r2mo.jce.constant.AlgHash;
+import io.r2mo.jce.constant.AlgLicense;
 import io.r2mo.jce.constant.AlgLicenseSpec;
 
 import javax.crypto.SecretKey;
@@ -80,7 +81,16 @@ class HEDBase {
         return Byter.ofSec(spec).decode(bytes);
     }
 
-    public static KeyPair generate(final AlgLicenseSpec spec) {
+    @SuppressWarnings("unchecked")
+    public static <T> T generate(final AlgLicense license) {
+        return (T) (license.isAsymmetric() ? genKeyPair(license.value()) : genSecretKey(license.value()));
+    }
+
+    public static SecretKey genSecretKey(final AlgLicenseSpec spec) {
+        return JceProvider.ofSecretKey(spec);
+    }
+
+    public static KeyPair genKeyPair(final AlgLicenseSpec spec) {
         return JceProvider.ofKeyPair(spec);
     }
 

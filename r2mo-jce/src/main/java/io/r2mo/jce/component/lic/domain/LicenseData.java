@@ -3,6 +3,7 @@ package io.r2mo.jce.component.lic.domain;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -23,6 +24,7 @@ import java.util.UUID;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class LicenseData extends AbstractNormObject implements Serializable {
     private String licenseId;       // 许可证ID
     private String name;            // 许可证名称
