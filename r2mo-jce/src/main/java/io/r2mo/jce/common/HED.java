@@ -1,6 +1,5 @@
 package io.r2mo.jce.common;
 
-import io.r2mo.jce.component.lic.AlgLicenseSpec;
 import io.r2mo.jce.constant.AlgHash;
 import io.r2mo.jce.constant.LicAsym;
 
@@ -12,13 +11,9 @@ import java.security.KeyPair;
  *
  * @author lang : 2025-09-19
  */
-public final class HED {
+public final class HED extends HEDBase {
 
     private HED() {
-    }
-
-    public static KeyPair generate(final AlgLicenseSpec spec) {
-        return JceProvider.ofKeyPair(spec);
     }
     // ==================== 强推荐算法 ====================
 
@@ -94,6 +89,11 @@ public final class HED {
     public static KeyPair generateEd25519() {
         return generate(LicAsym.AlgLicenseModern.ED25519);
     }
+    // endregion
+
+    // ===== 编解码
+
+    // region encode 系列的基础工具接口
 
     /**
      * 生成 XDH (X25519) 密钥对
@@ -117,11 +117,6 @@ public final class HED {
     public static KeyPair generateX25519() {
         return generate(LicAsym.AlgLicenseModern.X25519);
     }
-    // endregion
-
-    // ===== 编解码
-
-    // region encode 系列的基础工具接口
 
     // Base64
     public static String encodeBase64(final String data) {
@@ -149,10 +144,6 @@ public final class HED {
     public static String decodeURL(final String data) {
         return Coder.of(CoderURL::new).decode(data);
     }
-
-    // endregion
-
-    // region encode 关于选择算法之后的公私钥专用接口
 
     // endregion
 
@@ -277,7 +268,5 @@ public final class HED {
 
     // endregion
 
-    public static String encrypt(final String data, final AlgHash algorithm) {
-        return EDHasher.encrypt(data, algorithm);
-    }
+    // ===== 非对称加密解密
 }

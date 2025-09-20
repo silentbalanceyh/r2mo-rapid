@@ -228,7 +228,7 @@ public final class LicAsym {
          * <p>综合评分：16/25 ★★★☆☆
          * <p>推荐度：🟨 中立（适合国密合规场景，国际兼容性较差）
          */
-        SM2_DEFAULT("SM2", 256, "SM2", "SM3withSM2");
+        SM2("SM2", 256, "SM2", "SM3withSM2");
 
         private final String alg;
         private final int length;

@@ -8,12 +8,24 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
+ * <pre>
+ *     继承属性
+ *     - id
+ *     - appId
+ *     - tenantId
+ *     - createdAt
+ *     - createdBy
+ *     - updatedAt
+ *     - updatedBy
+ * </pre>
+ *
  * @author lang : 2025-09-19
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class LicenseData extends AbstractNormObject implements Serializable {
-    private String name;            // 许可证ID
+    private String licenseId;       // 许可证ID
+    private String name;            // 许可证名称
     private String code;            // 许可证编号
     private String version;         // 许可证版本
 
@@ -29,4 +41,13 @@ public class LicenseData extends AbstractNormObject implements Serializable {
     private UUID ownerId;           // 拥有者ID
     private String ownerName;       // 拥有者名称（企业名、姓名）
     private String ownerTitle;      // 拥有者头衔（职位）
+
+    /**
+     * 路径计算依靠此方法
+     *
+     * @return License ID
+     */
+    public String licenseId() {
+        return this.licenseId;
+    }
 }

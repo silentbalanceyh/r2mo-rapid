@@ -53,14 +53,16 @@ public class ProviderOfFactory {
         if (instances.isEmpty()) {
             log.warn("[ R2MO ] SPI 实现类未找到: {}", clazz.getName());
             return null;
-        } else if (instances.size() > 1) {
-            log.warn("[ R2MO ] SPI 实现类不唯一: {}, {}", clazz.getName(), instances.size());
-            return null;
         }
         if (StrUtil.isBlank(name)) {
+            // 如果没有指定名称，并且有多个实现类，则返回空
+            if (1 < instances.size()) {
+                log.warn("[ R2MO ] SPI 实现类不唯一: {}, {}", clazz.getName(), instances.size());
+                return null;
+            }
             return instances.get(0);
         } else {
-            return instances.stream().filter(item -> {
+            final T found = instances.stream().filter(item -> {
                 final Class<?> implClass = item.getClass();
                 final SPID annoSPI = implClass.getDeclaredAnnotation(SPID.class);
                 if (Objects.isNull(annoSPI)) {
@@ -69,6 +71,9 @@ public class ProviderOfFactory {
                 final String implName = annoSPI.value();
                 return StrUtil.equals(name, implName);
             }).findAny().orElse(null);
+            log.info("[ R2MO ] SPI 实现类按名称查找: interface = {} / SPID = {} / {}",
+                clazz.getName(), name, Objects.isNull(found) ? null : found.getClass().getName());
+            return found;
         }
     }
 

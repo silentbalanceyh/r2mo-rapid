@@ -10,5 +10,7 @@ public interface AlgLicenseSpec {
 
     String algCipher();
 
-    String algSign();
+    default String algSign() {
+        return null;
+    }
 }
