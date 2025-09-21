@@ -10,7 +10,7 @@ import java.util.Objects;
 
 /**
  * LicenseConfiguration
- * 用于描述 License 的配置，包括路径计算规则、签名/加密算法、以及 License ID 的定位。
+ * 用于描述 License 的配置，包括路径计算规则、签名/加密算法、以及 License LicenseID 的定位。
  * 核心职责：
  * <pre>
  * 1. 提供公钥、私钥文件的路径计算规则（证书目录）
@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @Data
 @Accessors(fluent = true)
-public class LicenseConfiguration implements LicenseOk {
+public class LicenseConfiguration implements LicenseID.Valid {
     /**
      * 上下文根路径 🔴
      * - 必须：所有路径的计算基准目录

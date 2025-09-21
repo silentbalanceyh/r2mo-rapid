@@ -6,6 +6,7 @@ import io.r2mo.jce.component.lic.domain.LicenseConfiguration;
 import io.r2mo.jce.component.lic.domain.LicenseData;
 import io.r2mo.jce.component.lic.domain.LicenseFile;
 import io.r2mo.jce.component.lic.domain.LicensePath;
+import io.r2mo.jce.constant.LicFormat;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.exception.AbstractException;
@@ -81,7 +82,7 @@ public interface LicenseIo {
     Binary writeTo(LicenseFile licenseFile, LicenseConfiguration configuration);
 
     /**
-     * 📥 读取 License 文件（内部使用）
+     * 📥 读取 License 文件（服务端文件读取场景）
      * 流程：
      * <pre>
      * 1. 📂 路径计算
@@ -96,12 +97,46 @@ public interface LicenseIo {
      *    - 将文件内容封装为 {@link LicenseFile}
      * </pre>
      *
-     * @param path          License 路径定义
+     * 应用场景：
+     * - 服务端本地校验：从磁盘或 HStore 加载文件
+     * - 管理后台：展示或导出 License 内容
+     *
+     * @param path          License 路径定义（含 LicenseId 等）
      * @param configuration 配置对象（路径、算法等）
      *
-     * @return 读取到的 LicenseFile
+     * @return 封装好的 {@link LicenseFile}
      */
     LicenseFile readIn(LicensePath path, LicenseConfiguration configuration);
+
+    /**
+     * 📥 读取 License 文件（客户端传输数据场景）
+     * 流程：
+     * <pre>
+     * 1. 📄 内容解析
+     *    - 根据 {@link LicFormat} 解析字符串内容
+     *    - 解析 HEAD 部分（LicenseId、Name、Code）
+     *    - 解析 BODY 部分（Base64 数据 -> data/encrypted）
+     *
+     * 2. 📦 封装结果
+     *    - 将解析结果构造为 {@link LicenseFile}
+     * </pre>
+     *
+     * 应用场景：
+     * - 客户端上传：通过 API 上传 *.lic 内容
+     * - 跨服务传输：通过 MQ/HTTP 携带 License 数据
+     * - 无本地文件系统场景：直接在内存中解析内容
+     *
+     * ⚠️ 注意：
+     * - 此方法的数据源来自外部客户端传输，必须在业务层保证 Checksum 与 LicenseId 一致性
+     * - 若解析失败或数据损坏，应抛出 {@link AbstractException}
+     *
+     * @param content       License 文件的原始字符串内容
+     * @param format        解析格式（{@link LicFormat}）
+     * @param configuration 配置对象（路径、算法等）
+     *
+     * @return 封装好的 {@link LicenseFile}
+     */
+    LicenseFile readIn(String content, LicFormat format, LicenseConfiguration configuration);
 
     /**
      * 🔍 校验 License 文件

@@ -39,7 +39,7 @@ public class LicenseData extends AbstractNormObject implements Serializable {
     /**
      * 许可证ID 🔴
      * - 必须：全局唯一标识，用于追踪和校验许可证
-     * - 设计：可使用 UUID 或数据库生成的唯一 ID
+     * - 设计：可使用 UUID 或数据库生成的唯一 LicenseID
      * - 通用性：所有许可系统的核心字段，适用于 SaaS、离线授权、硬件绑定
      */
     private String licenseId;
@@ -153,7 +153,7 @@ public class LicenseData extends AbstractNormObject implements Serializable {
     /**
      * 路径计算依靠此方法
      *
-     * @return License ID
+     * @return License LicenseID
      */
     public String licenseId() {
         return this.licenseId;

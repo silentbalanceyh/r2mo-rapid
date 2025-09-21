@@ -7,7 +7,7 @@ import io.r2mo.typed.cc.Cc;
 /**
  * @author lang : 2025-09-20
  */
-public interface LicenseFormat {
+interface LicenseFormat {
 
     Cc<String, LicenseFormat> CCT_FORMAT = Cc.openThread();
 
@@ -20,5 +20,5 @@ public interface LicenseFormat {
 
     String format(LicenseFile file);
 
-    LicenseFile parse(String data);
+    LicenseFile parse(String data, boolean encrypted);
 }

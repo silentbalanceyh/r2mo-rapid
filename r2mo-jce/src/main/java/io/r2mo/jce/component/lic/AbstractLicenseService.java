@@ -32,7 +32,7 @@ public abstract class AbstractLicenseService implements LicenseService {
 
     /**
      * 此处包含了 License 文件的ID，此处的 LicenseId 来自 LicenseData 的 核心字段，此字段用于 License 中
-     * 的路径处理，最终输出也会是对应的路径信息，所以此处的 ID 一定是路径上合法的值。
+     * 的路径处理，最终输出也会是对应的路径信息，所以此处的 LicenseID 一定是路径上合法的值。
      *
      * @param data       License数据
      * @param privateKey 私钥

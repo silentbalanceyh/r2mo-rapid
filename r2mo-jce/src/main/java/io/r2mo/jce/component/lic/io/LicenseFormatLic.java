@@ -14,7 +14,7 @@ import java.util.Map;
  * 示例文件：
  *
  * [HEAD]
- * License-ID = LIC-1234567890ABCDEF
+ * License-LicenseID = LIC-1234567890ABCDEF
  * Name       = Enterprise-License
  * Code       = ABCD1234EFGH5678
  *
@@ -75,7 +75,38 @@ class LicenseFormatLic implements LicenseFormat {
 
 
     @Override
-    public LicenseFile parse(final String content) {
+    public LicenseFile parse(final String content, final boolean encrypted) {
+        final ParsedContent parsed = this.parseContent(content);
+
+        final LicenseFile.LicenseFileBuilder builder = LicenseFile.builder()
+            .licenseId(parsed.head.get(HEAD_SECTION + ":" + LicTitle.LICENSE_ID))
+            .name(parsed.head.get(HEAD_SECTION + ":" + LicTitle.NAME))
+            .code(parsed.head.get(HEAD_SECTION + ":" + LicTitle.CODE));
+
+        if (encrypted) {
+            builder.encrypted(parsed.body);
+        } else {
+            builder.data(parsed.body);
+        }
+        return builder.build();
+    }
+
+    /**
+     * Base64 长文本换行
+     */
+    private String wrapBase64(final String base64) {
+        final StringBuilder wrapped = new StringBuilder();
+        for (int i = 0; i < base64.length(); i += MAX_LINE_LENGTH) {
+            final int end = Math.min(i + MAX_LINE_LENGTH, base64.length());
+            wrapped.append(base64, i, end).append("\n");
+        }
+        return wrapped.toString().trim();
+    }
+
+    /**
+     * 公共解析逻辑
+     */
+    private ParsedContent parseContent(final String content) {
         final Map<String, String> map = new LinkedHashMap<>();
         final String[] lines = content.split("\\r?\\n");
 
@@ -92,36 +123,32 @@ class LicenseFormatLic implements LicenseFormat {
                 continue;
             }
 
-            if (BODY_SECTION.equals(section)) {
-                // Base64 数据行
-                if (line.matches("^[A-Za-z0-9+/=]+$")) {
-                    dataBuf.append(line);
-                }
-            } else if (HEAD_SECTION.equals(section)) {
+            if (HEAD_SECTION.equals(section)) {
                 final String[] kv = line.split("=", 2);
                 if (kv.length == 2) {
                     map.put(HEAD_SECTION + ":" + kv[0].trim(), kv[1].trim());
                 }
+            } else if (BODY_SECTION.equals(section)) {
+                if (line.matches("^[A-Za-z0-9+/=]+$")) {
+                    dataBuf.append(line);
+                }
             }
         }
 
-        return LicenseFile.builder()
-            .licenseId(map.get(HEAD_SECTION + ":" + LicTitle.LICENSE_ID))
-            .name(map.get(HEAD_SECTION + ":" + LicTitle.NAME))
-            .code(map.get(HEAD_SECTION + ":" + LicTitle.CODE))
-            .encrypted(!dataBuf.isEmpty() ? Base64.decode(dataBuf.toString()) : null)
-            .build();
+        final byte[] body = !dataBuf.isEmpty() ? Base64.decode(dataBuf.toString()) : new byte[0];
+        return new ParsedContent(map, body);
     }
 
     /**
-     * Base64 长文本换行
+     * 内部解析结果：包含 HEAD 属性 和 BODY 数据
      */
-    private String wrapBase64(final String base64) {
-        final StringBuilder wrapped = new StringBuilder();
-        for (int i = 0; i < base64.length(); i += MAX_LINE_LENGTH) {
-            final int end = Math.min(i + MAX_LINE_LENGTH, base64.length());
-            wrapped.append(base64, i, end).append("\n");
+    private static class ParsedContent {
+        final Map<String, String> head;
+        final byte[] body;
+
+        ParsedContent(final Map<String, String> head, final byte[] body) {
+            this.head = head;
+            this.body = body;
         }
-        return wrapped.toString().trim();
     }
 }

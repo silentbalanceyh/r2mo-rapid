@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author lang : 2025-09-20
@@ -14,16 +15,18 @@ import java.util.Objects;
 @Data
 @Accessors(fluent = true)
 @Builder
-public class LicensePath implements LicenseOk {
+public class LicensePath implements LicenseID.Valid, LicenseID {
     private String fileLicense;
     private String fileSign;
     private String fileKey;
     private LicFormat format;       // 许可证格式
+    private String licenseId;
+    private UUID id;
 
     @Override
     public boolean isOk() {
         return Objects.isNull(this.format)
-            || !StrUtil.isNotEmpty(this.fileLicense)
+            || Objects.isNull(this.id)
             || !StrUtil.isNotEmpty(this.fileSign);
     }
 }

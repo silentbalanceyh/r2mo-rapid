@@ -82,6 +82,14 @@ class LicenseIoCommon extends AbstractLicenseIo implements LicenseIo {
     }
 
     @Override
+    public LicenseFile readIn(final String content, final LicFormat format, final LicenseConfiguration configuration) {
+        this.ensureConfiguration(configuration);
+        Objects.requireNonNull(format, "[ R2MO ] LicFormat 不能为空！");
+
+        return this.executor(format).readIn(content, format, configuration);
+    }
+
+    @Override
     public LicenseData verify(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
         this.ensureConfiguration(configuration);
         this.ensureFile(licenseFile);

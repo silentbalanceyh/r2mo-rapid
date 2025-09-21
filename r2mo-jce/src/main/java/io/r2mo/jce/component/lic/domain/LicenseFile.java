@@ -3,6 +3,7 @@ package io.r2mo.jce.component.lic.domain;
 import io.r2mo.jce.constant.LicFormat;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.crypto.SecretKey;
@@ -15,10 +16,14 @@ import java.util.UUID;
 @Data
 @Accessors(fluent = true)
 @Builder
-public class LicenseFile implements LicenseOk {
+@ToString
+public class LicenseFile implements LicenseID.Valid, LicenseID {
+    @ToString.Exclude
     private byte[] data;            // 许可证数据
+    @ToString.Exclude
     private byte[] signature;       // 许可证签名
     // ====================== 加密部分的核心数据
+    @ToString.Exclude
     private byte[] encrypted;       // 加密后的许可证数据
     private LicFormat format;       // 许可证格式
     private SecretKey key;          // 对称加密的密钥（临时生成的）
@@ -38,5 +43,11 @@ public class LicenseFile implements LicenseOk {
             return true;
         }
         return Objects.isNull(this.licenseId);
+    }
+
+    public void loadMetadata(final LicenseFile securityFile) {
+        this.id = securityFile.id;
+        this.key = securityFile.key;
+        this.signature = securityFile.signature;
     }
 }
