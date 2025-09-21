@@ -22,10 +22,5 @@ public class HEDMock {
         kp.generate(directory, AlgLicense.ECC);
         kp.generate(directory, AlgLicense.ED25519);
         kp.generate(directory, AlgLicense.SM2);
-
-        // 加密密钥
-        kp.generate(directory, AlgLicense.AES);
-        kp.generate(directory, AlgLicense.CHACHA20);
-        kp.generate(directory, AlgLicense.SM4);
     }
 }

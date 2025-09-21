@@ -1,5 +1,10 @@
 package io.r2mo.typed.common;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.io.InputStream;
 import java.io.Serializable;
 
@@ -12,25 +17,19 @@ import java.io.Serializable;
  *
  * @author lang : 2025-09-20
  */
+@Data
+@Accessors(fluent = true)
 public class Binary implements Serializable {
-
+    @Setter(AccessLevel.NONE)
     private final InputStream stream;
     private long length = 0;
+    private String mime = "application/octet-stream";
 
     public Binary(final InputStream stream) {
         this.stream = stream;
     }
 
-    public InputStream in() {
+    public InputStream stream() {
         return this.stream;
-    }
-
-    public Binary length(final long length) {
-        this.length = length;
-        return this;
-    }
-
-    public long length() {
-        return this.length;
     }
 }

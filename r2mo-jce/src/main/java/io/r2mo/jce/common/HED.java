@@ -276,4 +276,117 @@ public final class HED extends HEDBase {
     }
 
     // endregion
+
+    /**
+     * 获取当前机器指纹（可读友好的冒号分隔字符串）
+     *
+     * <p><b>概述</b>：该方法会收集本机若干环境/硬件信息（如主机名、首个可用网卡 MAC、操作系统与 JVM 信息），
+     * 将这些信息拼接成一个原始输入串，再交由底层 {@code EDHasher.encrypt(..., AlgHash.SHA256)}
+     * 计算 SHA-256 摘要，最后把得到的十六进制摘要规范化为常见的「冒号分隔」格式返回。</p>
+     *
+     * <pre>
+     * 生成流程（高亮步骤）：
+     *  1️⃣  收集信息：
+     *       - 🖥️ OS 信息：os.name / os.arch / os.version
+     *       - 🌐 主机名：InetAddress.getLocalHost().getHostName()
+     *       - 🪪 第一个可用网卡的 MAC（排除 loopback）
+     *       - ☕ JVM 信息：java.vendor / java.version
+     *
+     *  2️⃣  将上述字段拼接为原始字符串（按约定的键值/分隔符），例如：
+     *       "HOST=dev-01;MAC=a1b2c3d4e5f6;OS=Linux_x86_64_5.4;JVM=AdoptOpenJDK_11.0.16"
+     *
+     *  3️⃣  使用 EDHasher.encrypt(rawString, AlgHash.SHA256) 计算 SHA-256（返回 hex 字符串）
+     *
+     *  4️⃣  将 hex 字符串规范化为冒号分组形式（两字符一组、小写），例如：
+     *       "a1:b2:c3:d4:e5:f6:7a:8b:..." （共 32 组，31 个 ':'，长度 = 95）
+     * </pre>
+     *
+     * <h3>🔎 输出格式</h3>
+     * <ul>
+     *   <li>返回值示例（冒号分隔，全部小写）：<code>"3f:7a:91:22:cd:88:11:09:56:3a:..."</code></li>
+     *   <li>来源于 SHA-256（32 字节）按字节两字符一组并以 ':' 连接。</li>
+     * </ul>
+     *
+     * <h3>✅ 使用建议</h3>
+     * <ul>
+     *   <li>对外显示 / 调试 ：优先使用 {@code fingerString()}，因为冒号分隔对人工检查更友好。</li>
+     *   <li>比较指纹时请使用规范化比较（见下面的比较示例），避免直接使用 String.equals() 导致大小写或分隔符问题。</li>
+     * </ul>
+     *
+     * <h3>⚠️ 稳定性 & 风险</h3>
+     * <ul>
+     *   <li>该指纹 <b>通常</b> 在同一台物理机上保持稳定；但下列操作可能导致变化：更换/禁用网卡、重装或升级操作系统、修改主机名、升级 JVM、运行于某些云/容器环境（MAC 可能是动态的）。</li>
+     *   <li>在虚拟化或容器化环境中不建议仅依赖单一指纹做强绑定，建议结合服务器端策略或容错匹配。</li>
+     * </ul>
+     *
+     * <h3>🔐 安全建议</h3>
+     * <ul>
+     *   <li>不要把指纹当作秘密密钥直接下发或作为加密凭证。若用于验证/绑定，建议在服务端用 HMAC（带服务器密钥）或对指纹进行加密存储。</li>
+     *   <li>比较指纹建议使用 {@link java.security.MessageDigest#isEqual(byte[], byte[])} 对比解码后的字节数组以减少定时攻击风险（如需）。</li>
+     * </ul>
+     *
+     * <h3>📌 示例：如何把冒号格式与 raw hex 做安全比较</h3>
+     * <pre>
+     * // 假设 s1/s2 分别为两端获取到的冒号格式指纹（fingerString()）
+     * String hex1 = s1.replace(\":\", \"\");   // 去除冒号
+     * String hex2 = s2.replace(\":\", \"\");
+     * byte[] b1 = hexToBytes(hex1);
+     * byte[] b2 = hexToBytes(hex2);
+     * boolean same = java.security.MessageDigest.isEqual(b1, b2);
+     * </pre>
+     *
+     * <h3>🧾 异常/返回</h3>
+     * <ul>
+     *   <li>方法为便捷包装，内部会调用 {@code HEDFinger.fingerString()}。遇到底层异常（如网络接口读取失败、哈希失败）会抛出 {@link RuntimeException}。</li>
+     *   <li>该方法为无状态、线程安全的静态工具方法，可并发调用。</li>
+     * </ul>
+     *
+     * @return 冒号分隔的机器指纹字符串（小写 hex，形如 {@code aa:bb:cc:...}）
+     * @since 2025-09-21
+     */
+    public static String fingerString() {
+        return HEDFinger.fingerString();
+    }
+
+    /**
+     * 获取当前机器指纹的原始十六进制表示（连续 hex 字符串）
+     *
+     * <p><b>概述</b>：与 {@link #fingerString()} 同源（收集相同字段并用 {@code EDHasher.encrypt(..., AlgHash.SHA256)} 计算 SHA-256 摘要），
+     * 但直接返回不带分隔符的十六进制字符串，适合机器存储、索引或作为数据库字段。</p>
+     *
+     * <pre>
+     * 输出说明：
+     *  - 格式：连续十六进制字符（小写），长度通常为 64（代表 32 字节的 SHA-256 摘要）
+     *  - 示例： "a1f9e58c7d29311f39b57c7a8d0f4e21d6b84a0b2c3d45f2f11e0f5c9d7a2e33"
+     * </pre>
+     *
+     * <h3>📌 何时使用 fingerHex()</h3>
+     * <ul>
+     *   <li>作为数据库字段（VARCHAR(64)）保存或索引时优先使用此方法。</li>
+     *   <li>在网络协议或文件中作为规范化标识传输时优先使用 raw hex（减少分隔字符带来的协议处理）。</li>
+     * </ul>
+     *
+     * <h3>比较/校验示例</h3>
+     * <pre>
+     * String h1 = HEDFinger.fingerHex();
+     * String h2 = otherSourceHex;
+     * // 推荐：先把 hex 转成字节数组再用 MessageDigest.isEqual 比较
+     * byte[] b1 = hexToBytes(h1);
+     * byte[] b2 = hexToBytes(h2);
+     * boolean same = java.security.MessageDigest.isEqual(b1, b2);
+     * </pre>
+     *
+     * <h3>⚠️ 注意事项（与 fingerString 相同）</h3>
+     * <ul>
+     *   <li>指纹并非 100% 永久不变：主机名、网卡、OS/JVM 变化都会影响结果。</li>
+     *   <li>在云/容器化环境使用需谨慎，建议结合其他绑定/校验机制。</li>
+     * </ul>
+     *
+     * @return 十六进制字符串（不含分隔符，通常长度 = 64）
+     * @since 2025-09-21
+     */
+    public static String fingerHex() {
+        return HEDFinger.fingerHex();
+    }
+
 }

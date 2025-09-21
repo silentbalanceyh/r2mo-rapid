@@ -10,6 +10,7 @@ import io.r2mo.jce.constant.AlgLicense;
 import javax.crypto.SecretKey;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Objects;
 
 /**
  * @author lang : 2025-09-20
@@ -62,12 +63,13 @@ public abstract class AbstractLicenseService implements LicenseService {
         final byte[] signature = HED.sign(byteData, privateKey, this.license.value());
 
         // 3. 加密数据（AES）
-        final byte[] encrypted = HED.encrypt(byteData, privateKey, secretKey.getAlgorithm());
+        final byte[] encrypted = HED.encrypt(byteData, secretKey, secretKey.getAlgorithm());
 
         // 4. 构建License文件对象（格式放到上层去处理）
         return this.create(data)
             .data(byteData).encrypted(encrypted)    // 数据 / 加密数据
             .signature(signature)                   // 数字签名
+            .key(secretKey)                         // ---> 加密时将密钥写入到此处
             .build();
     }
 
@@ -78,8 +80,23 @@ public abstract class AbstractLicenseService implements LicenseService {
             .licenseId(data.getLicenseId());
     }
 
-    @Override
-    public LicenseData decrypt(final LicenseFile file, final PublicKey publicKey, final SecretKey secretKey) {
+    // 不带 SecretKey 的解密
+    private LicenseData decryptInternal(final LicenseFile file, final PublicKey publicKey) {
+        // 1. 取出加密数据
+        final byte[] data = file.data();
+
+        // 2. 验签（验证原始数据 + 签名是否匹配）
+        final boolean verified = HED.verify(data, file.signature(), publicKey, this.license.value());
+        if (!verified) {
+            throw new SecurityException("[ R2MO ] License 签名验证失败，文件可能被篡改！");
+        }
+
+        // 3. 反序列化回 LicenseData
+        return R2MO.deserialize(data);
+    }
+
+    // 带 SecretKey 的解密
+    private LicenseData decryptInternal(final LicenseFile file, final PublicKey publicKey, final SecretKey secretKey) {
         // 1. 取出加密数据
         final byte[] encrypted = file.encrypted();
 
@@ -101,16 +118,11 @@ public abstract class AbstractLicenseService implements LicenseService {
 
     @Override
     public LicenseData decrypt(final LicenseFile file, final PublicKey publicKey) {
-        // 1. 取出加密数据
-        final byte[] decrypted = file.data();
-
-        // 2. 验签（验证原始数据 + 签名是否匹配）
-        final boolean verified = HED.verify(decrypted, file.signature(), publicKey, this.license.value());
-        if (!verified) {
-            throw new SecurityException("[ R2MO ] License 签名验证失败，文件可能被篡改！");
+        final SecretKey secretKey = file.key();
+        if (Objects.nonNull(secretKey)) {
+            return this.decryptInternal(file, publicKey, secretKey);
+        } else {
+            return this.decryptInternal(file, publicKey);
         }
-
-        // 3. 反序列化回 LicenseData
-        return R2MO.deserialize(decrypted);
     }
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.crypto.SecretKey;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -17,8 +18,10 @@ import java.util.UUID;
 public class LicenseFile implements LicenseOk {
     private byte[] data;            // 许可证数据
     private byte[] signature;       // 许可证签名
+    // ====================== 加密部分的核心数据
     private byte[] encrypted;       // 加密后的许可证数据
     private LicFormat format;       // 许可证格式
+    private SecretKey key;          // 对称加密的密钥（临时生成的）
 
     // ====================== 下边部分是格式化所需
     private String licenseId;       // 许可证ID

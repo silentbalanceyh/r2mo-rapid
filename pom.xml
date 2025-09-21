@@ -94,6 +94,8 @@
         <jsr250.version>3.0.0</jsr250.version>
         <jsr.servlet.version>6.1.0</jsr.servlet.version>
         <jsr.validation.version>3.1.1</jsr.validation.version>
+        <jsr.xml.bind.version>4.0.4</jsr.xml.bind.version>
+
 
         <!-- ======================= Apache Commons   =========================== -->
         <commons-lang3.version>3.18.0</commons-lang3.version>
@@ -251,6 +253,12 @@
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-io</artifactId>
                 <version>${r2mo.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jsr.xml.bind.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
             <dependency>

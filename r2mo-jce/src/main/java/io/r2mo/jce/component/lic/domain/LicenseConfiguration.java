@@ -9,45 +9,88 @@ import lombok.experimental.Accessors;
 import java.util.Objects;
 
 /**
- * 构造路径信息，这些路径包括
+ * LicenseConfiguration
+ * 用于描述 License 的配置，包括路径计算规则、签名/加密算法、以及 License ID 的定位。
+ * 核心职责：
  * <pre>
- *     1. Public / Private 路径
- *     2. 当前 License 的路径
- *        *.lic  -> 发放给客户的 License
- *        *.sig  -> License 对应的签名文件
- *     3. *.pub / *.pem
- *        对应的公钥文件，此文件应该直接发给客户让客户可嵌入到自己的软件中，它的用途
- *        - 验证签名是否正常
- * </pre>
- * 路径说明
- * <pre>
- *     1. 公私钥路径直接依靠配置来指定（不同应用会不同）
- *     2. License 路径依靠 License ID 来指定，在根路径 ioContext 之下提供相关路径
+ * 1. 提供公钥、私钥文件的路径计算规则（证书目录）
+ * 2. 提供 License 文件路径计算规则（license 目录）
+ * 3. 记录签名与加密算法的配置，便于后续校验与解密
+ * 4. 提供简化的 toString() 输出，方便调试与日志打印
  * </pre>
  *
- * @author lang : 2025-09-20
+ * 目录规范：
+ * <pre>
+ * - {@link LicenseConfiguration#ioContext}/cert : 存放公私钥文件（*.pem）
+ * - {@link LicenseConfiguration#ioContext}/lic  : 存放 License 文件（*.lic, *.sig, *.key）
+ * </pre>
+ *
+ * @author lang
+ * @since 2025-09-20
  */
 @Data
 @Accessors(fluent = true)
 public class LicenseConfiguration implements LicenseOk {
     /**
-     * 上下文根路径会在客户端进行计算，计算结果作为 License 的根路径，可执行相关后续流程做路径计算，
-     * 计算流程依靠外层处理，而不是本身。
+     * 上下文根路径 🔴
+     * - 必须：所有路径的计算基准目录
+     * - 设计：由外层环境注入（客户端/服务端不同）
+     * - 通用性：适用于任何需要组织证书与许可文件的场景
      */
-    private String ioContext;           // 上下文路径
-    // ------------ 签名相关信息
-    private String ioPrivate;           // 私钥路径
-    private String ioPublic;            // 公钥路径
-    private AlgLicenseSpec algSign;     // 签名算法
-    // ------------ 加密相关信息
-    private String ioSecret;            // 对称密钥
-    private AlgLicenseSpec algEnc;      // 加密算法
-    private boolean encrypted;          // 是否加密
-    // ------------ License ID
-    private String licenseId;
+    private String ioContext;
 
-    public String ioLicenseDirectory() {
-        return HUri.UT.resolve(this.contextOfLic(), this.licenseId);
+    // ------------ 签名相关信息 ------------
+
+    /**
+     * 私钥路径 🔵
+     * - 可选：如未指定，则自动根据签名算法生成默认路径
+     * - 设计：指向 cert 目录下的 *_private.pem
+     * - 通用性：仅服务端需要，客户端通常不会持有
+     */
+    private String ioPrivate;
+
+    /**
+     * 公钥路径 🔵
+     * - 可选：如未指定，则自动根据签名算法生成默认路径
+     * - 设计：指向 cert 目录下的 *_public.pem
+     * - 通用性：客户端使用，用于验签
+     */
+    private String ioPublic;
+
+    /**
+     * 签名算法 🔴
+     * - 必须：决定私钥/公钥生成与验证的方式
+     * - 通用性：RSA / ECDSA 等签名机制，所有许可系统必备
+     */
+    private AlgLicenseSpec algSign;
+
+    // ------------ 加密相关信息 ------------
+
+    /**
+     * 加密算法 🔵
+     * - 可选：用于决定加密 License 内容时采用的对称算法
+     * - 设计：如 AES-256，配合密钥文件一起下发
+     * - 通用性：适用于需要保护 License 明文的系统
+     */
+    private AlgLicenseSpec algEnc;
+
+    /**
+     * 是否加密 🔵
+     * - 可选：标识 License 是否经过加密
+     * - 设计：当 algEnc != null 时自动置为 true
+     * - 通用性：防止 License 内容被直接篡改或伪造
+     */
+    private boolean encrypted;
+
+    // ------------ 工具方法 ------------
+
+    /**
+     * License 文件目录
+     *
+     * @return ioContext/lic/{licenseId}
+     */
+    public String contextLicense() {
+        return HUri.UT.resolve(this.ioContext, "lic");
     }
 
     public LicenseConfiguration algEnc(final AlgLicenseSpec algEnc) {
@@ -58,25 +101,28 @@ public class LicenseConfiguration implements LicenseOk {
         return this;
     }
 
+    /**
+     * 计算私钥文件路径
+     *
+     * @return ioContext/cert/{ioPrivate 或者 默认生成名}
+     */
     public String ioPrivate() {
         if (Objects.nonNull(this.ioPrivate)) {
-            return HUri.UT.resolve(this.contextOfCert(), this.ioPrivate);
+            return HUri.UT.resolve(this.contextCert(), this.ioPrivate);
         }
         return this.ioPem("_private.pem", this.algSign);
     }
 
+    /**
+     * 计算公钥文件路径
+     *
+     * @return ioContext/cert/{ioPublic 或者 默认生成名}
+     */
     public String ioPublic() {
         if (Objects.nonNull(this.ioPublic)) {
-            return HUri.UT.resolve(this.contextOfCert(), this.ioPublic);
+            return HUri.UT.resolve(this.contextCert(), this.ioPublic);
         }
         return this.ioPem("_public.pem", this.algSign);
-    }
-
-    public String ioSecret() {
-        if (Objects.nonNull(this.ioSecret)) {
-            return HUri.UT.resolve(this.contextOfCert(), this.ioSecret);
-        }
-        return this.ioPem("_secret.pem", this.algEnc);
     }
 
     private String ioPem(final String suffix, final AlgLicenseSpec spec) {
@@ -84,15 +130,11 @@ public class LicenseConfiguration implements LicenseOk {
         if (StrUtil.isEmpty(this.ioContext)) {
             return generated;
         }
-        return HUri.UT.resolve(this.contextOfCert(), generated);
+        return HUri.UT.resolve(this.contextCert(), generated);
     }
 
-    private String contextOfCert() {
+    private String contextCert() {
         return HUri.UT.resolve(this.ioContext, "cert");
-    }
-
-    private String contextOfLic() {
-        return HUri.UT.resolve(this.ioContext, "lic");
     }
 
     private String ioAlg(final AlgLicenseSpec spec) {
@@ -104,27 +146,16 @@ public class LicenseConfiguration implements LicenseOk {
 
     @Override
     public boolean isOk() {
-        if (Objects.isNull(this.licenseId)) {
-            return true;
-        }
         return Objects.isNull(this.algSign);
     }
 
     @Override
     public String toString() {
-        final StringBuilder content = new StringBuilder("[ LicenseConfiguration ]");
-        content.append("\n  |- Context    : ").append(this.ioContext);
-        content.append("\n  |- AlgSign    : ").append(this.ioAlg(this.algSign));
-        content.append("\n  |- PrivateKey : ").append(this.ioPrivate());
-        content.append("\n  |- PublicKey  : ").append(this.ioPublic());
-        content.append("\n  |- Encrypted  : ").append(this.encrypted);
-        if (this.encrypted) {
-            content.append("\n  |- AlgEncrypt : ").append(this.ioAlg(this.algEnc));
-            content.append("\n  |- SecretKey  : ").append(this.ioSecret());
-        }
-        if (StrUtil.isNotEmpty(this.licenseId)) {
-            content.append("\n  |- LicenseDir : ").append(this.ioLicenseDirectory());
-        }
-        return content.toString();
+        return "[ LicenseConfiguration ]" + "\n  |- Context    : " + this.ioContext +
+            "\n  |- AlgSign    : " + this.ioAlg(this.algSign) +
+            "\n  |- PrivateKey : " + this.ioPrivate() +
+            "\n  |- PublicKey  : " + this.ioPublic() +
+            "\n  |- Encrypted  : " + this.encrypted +
+            "\n  |- AlgEncrypt : " + this.ioAlg(this.algEnc);
     }
 }

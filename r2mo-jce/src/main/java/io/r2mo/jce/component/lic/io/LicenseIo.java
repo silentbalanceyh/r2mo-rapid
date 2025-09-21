@@ -10,17 +10,35 @@ import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.exception.AbstractException;
 
-import java.io.InputStream;
 import java.util.Objects;
 
 /**
- * 根据路径地址读取 License 信息和写入 License 信息的专用接口
+ * License IO 接口
+ * 📌 职责：
  * <pre>
- *     1. 写入 License / {@link LicenseFile}
- *     2. 读取 {@link LicenseFile}
+ * 1. 🔑 写入 License（签发端）
+ *    - 使用私钥对 License 明文签名
+ *    - （可选）对内容进行加密，保护敏感信息
+ *    - 将结果存储到文件系统（*.dat / *.lic / *.sig）
+ *    - 打包成 zip 分发给客户
+ *
+ * 2. 📦 读取 License（内部调用）
+ *    - 根据路径信息加载已生成的 lic/sig/dat 文件
+ *    - 封装成 LicenseFile 供上层使用
+ *
+ * 3. ✅ 校验 License（验证端）
+ *    - 校验上传的 License 文件与服务端存储一致性（Checksum）
+ *    - 使用公钥验证签名是否有效
+ *    - （可选）执行解密，还原 LicenseData
+ *    - 返回给业务层用于授权逻辑判断
  * </pre>
  *
- * @author lang : 2025-09-20
+ * ⚠️ 注意：
+ * - 任何校验失败必须抛出 {@link AbstractException}
+ * - 业务层必须保证 Checksum 与 LicenseId 绑定，防止篡改
+ *
+ * @author lang
+ * @since 2025-09-20
  */
 public interface LicenseIo {
     Cc<String, LicenseIo> CC_IO = Cc.openThread();
@@ -31,65 +49,85 @@ public interface LicenseIo {
     }
 
     /**
-     * 将 License 文件写入到指定位置，执行流程：
+     * ✍️ 写入 License 文件
+     * 流程：
      * <pre>
-     *     流程：
-     *     1. 根据实际内容计算 {@link LicenseConfiguration} 相关位置信息
-     *        - 私钥位置 {@link LicenseConfiguration#ioPrivate()}
-     *     2. 调用 {@link LicenseService} 执行构造操作，生成 LicenseFile 对象
-     *     3. 将 LicenseFile 中的数据提取
-     *        - {@link LicenseFile#data()} -> *.dat
-     *        - {@link LicenseFile#encrypted()} -> *.lic ( 内容中要带上 LicenseId )
-     *        - {@link LicenseFile#signature()} -> *.sig
-     *     4. 将数据写入到指定位置 {@link LicenseConfiguration#ioLicenseDirectory()}，文件名使用
-     *     5. 在指定位置打包 *.zip 文件，然后将此文件 *.zip 转换成 {@link InputStream}
+     * 1. 📂 路径计算
+     *    - 根据 {@link LicenseConfiguration} 得到存储路径
+     *    - 私钥路径：{@link LicenseConfiguration#ioPrivate()}
+     *
+     * 2. 📝 构造 LicenseFile
+     *    - 调用 {@link LicenseService} 生成 LicenseFile 对象
+     *    - 包含原始数据、加密数据、签名
+     *
+     * 3. 📄 数据提取
+     *    - data() -> *.dat
+     *    - encrypted() -> *.lic（含 LicenseId）
+     *    - signature() -> *.sig
+     *
+     * 4. 💾 文件存储
+     *    - 写入到 {@link LicenseConfiguration#contextLicense()}
+     *
+     * 5. 📦 打包分发
+     *    - 将 *.dat / *.lic / *.sig 打包成 *.zip
+     *    - 转换为 {@link Binary} 数据流返回
      * </pre>
      *
      * @param licenseFile   License 文件对象
-     * @param configuration 路径对象
+     * @param configuration 配置对象（路径、算法等）
      *
-     * @return 返回 zip 压缩之后的 InputStream 数据流
+     * @return 压缩包 zip 的数据流
      */
     Binary writeTo(LicenseFile licenseFile, LicenseConfiguration configuration);
 
-
     /**
-     * （内部调用）从指定位置读取 LicenseFile 文件，执行流程：
+     * 📥 读取 License 文件（内部使用）
+     * 流程：
      * <pre>
-     *     流程：
-     *     1. 根据实际内容计算 {@link LicenseConfiguration} 相关位置信息
-     *     2. 根据路径信息加载 {@link LicenseFile} 文件对象
-     *        - *.lic -> {@link LicenseFile#encrypted()} / 要解析 LicenseId
-     *        - *.sig -> {@link LicenseFile#signature()}
-     *        - *.dat -> {@link LicenseFile#data()}
-     *     3. 返回 LicenseFile 对象
+     * 1. 📂 路径计算
+     *    - 根据 {@link LicenseConfiguration} 确定 License 目录
+     *
+     * 2. 📄 文件加载
+     *    - *.lic -> LicenseFile.encrypted()
+     *    - *.sig -> LicenseFile.signature()
+     *    - *.dat -> LicenseFile.data()
+     *
+     * 3. 📦 封装结果
+     *    - 将文件内容封装为 {@link LicenseFile}
      * </pre>
      *
-     * @param configuration 路径对象
-     * @param path          License 文件格式
+     * @param path          License 路径定义
+     * @param configuration 配置对象（路径、算法等）
      *
-     * @return 返回 License 文件对象
+     * @return 读取到的 LicenseFile
      */
     LicenseFile readIn(LicensePath path, LicenseConfiguration configuration);
 
-
     /**
+     * 🔍 校验 License 文件
+     * 流程：
      * <pre>
-     *     流程：
-     *     1. 用户上传 *.lic 文件进行初次校验，Checksum 必须一致
-     *     2. 根据 LicenseId 计算 {@link LicenseConfiguration} 相关位置信息
-     *        - 获取服务端存储的 *.sig 文件
-     *        - 公钥位置 {@link LicenseConfiguration#ioPublic()}
-     *     3. 校验当前签名是否合法，如果合法则直接转换成 {@link LicenseData} 给上层服务对象使用
+     * 1. 🔑 Checksum 校验
+     *    - 上传的 *.lic 必须与 LicenseId 对应
+     *    - 防止文件被篡改（业务层保证）
+     *
+     * 2. 📂 路径解析
+     *    - 根据 {@link LicenseConfiguration} 定位 sig、公钥
+     *
+     * 3. ✅ 签名校验
+     *    - 使用公钥 {@link LicenseConfiguration#ioPublic()} 验证签名
+     *
+     * 4. 🔓 内容解密（如果加密）
+     *    - 使用对称密钥解密 lic 内容
+     *
+     * 5. 📦 转换数据
+     *    - 构造 {@link LicenseData} 返回业务层使用
      * </pre>
-     * 注：此处的 Checksum 校验是为了防止用户上传的文件被篡改，必须和 LicenseId 相关联，而且不在当前服务内校验，而是在业务层校验，
-     * Checksum 在业务层的 License 实体中进行存储，License 实体在应用的业务逻辑上处理，至于异常，所有位置都可以直接抛出
-     * {@link AbstractException} 的自定义异常。
      *
-     * @param configuration 路径对象
-     * @param licenseFile   License 文件对象
+     * @param licenseFile   待验证的 License 文件
+     * @param configuration 配置对象（路径、算法等）
      *
-     * @return 正常返回 {@link LicenseData} / 异常抛出 {@link AbstractException}
+     * @return 成功时返回 {@link LicenseData}；失败抛出 {@link AbstractException}
      */
     LicenseData verify(LicenseFile licenseFile, LicenseConfiguration configuration);
 }

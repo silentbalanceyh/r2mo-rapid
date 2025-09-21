@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author lang : 2025-08-28
  */
-public interface HStore extends Serializable {
+public interface HStore extends HStoreMeta, Serializable {
 
     String DEFAULT_ID = "spi.io.store.DEFAULT";
 
@@ -72,18 +72,19 @@ public interface HStore extends Serializable {
         return this.write(filename, in, null);
     }
 
+    default boolean write(final String filename, final Binary binary) {
+        return this.write(filename, binary.stream(), null);
+    }
+
+    default boolean write(final String filename, final Binary binary, final HProgressor progressor) {
+        return this.write(filename, binary.stream(), progressor);
+    }
+
+    default boolean write(final String filename, final byte[] data) {
+        return this.write(filename, IoUtil.toStream(data), null);
+    }
+
     boolean write(String filename, InputStream in, HProgressor progress);
-
-
-    boolean isExist(String path);
-
-    boolean isDirectory(String path);
-
-    boolean isFile(String path);
-
-    boolean isEmpty(String path);
-
-    boolean isSame(String path1, String path2);
 
     /**
      * 核心方法，从一个 filename 读取 URL，此路径作为读取数据和写入数据的核心桥梁方法，基本上所有的读取和写入都基于 URL 来完成，只要将
@@ -201,7 +202,17 @@ public interface HStore extends Serializable {
     }
 
     /* 文件读取 */
-    Binary inBinary(String filename, HProgressor progress);
+    Binary inBinary(String filename, HProgressor progressRef);
+
+    /*
+     * 压缩流，只有压缩流才会存在直接读取多个文件的场景，其他场景下不可能使用某种方式将多个文件合并为一个文件
+     * 流来执行相关读取，所以这种场景下依旧使用同样的函数签名，但是传入的参数变为 Set<String> 来表示多个文件
+     * */
+    default Binary inBinary(final Set<String> files) {
+        return this.inBinary(files, null);
+    }
+
+    Binary inBinary(Set<String> files, HProgressor progressRef);
 
     // ---------------- 公私钥专用
     PrivateKey inPrivate(String filename);
@@ -222,3 +233,4 @@ public interface HStore extends Serializable {
 
     boolean write(String filename, SecretKey key);
 }
+

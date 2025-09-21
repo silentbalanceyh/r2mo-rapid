@@ -42,7 +42,7 @@ class JBaseUtil {
         // 配置项：忽略空值
         MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-        // Non-standard JSON but we allow C style comments in our JSON
+        // Non-standard JSON but we allow C style comments stream our JSON
         // 配置项：允许注释
         MAPPER.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 

@@ -13,7 +13,7 @@ import java.util.Comparator;
  * @author lang : 2025-09-06
  */
 @SuppressWarnings("all")
-class LocalCompare {
+class MetaCompare {
 
     /**
      * 包域访问权限的比较方法

@@ -2,7 +2,6 @@ package io.r2mo.io.local.operation;
 
 import io.r2mo.base.io.HProgressor;
 import io.r2mo.base.io.HStore;
-import io.r2mo.io.common.AbstractHStore;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.common.Binary;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 @SPID(HStore.DEFAULT_ID)
 @Slf4j
-public class HStoreLocal extends AbstractHStore {
+public class HStoreLocal extends HStoreLocalMeta {
 
     @Override
     public String pHome() {
@@ -64,28 +63,8 @@ public class HStoreLocal extends AbstractHStore {
     }
 
     @Override
-    public boolean isExist(final String path) {
-        return LocalIs.isExist(path);
-    }
-
-    @Override
-    public boolean isDirectory(final String path) {
-        return LocalIs.isDirectory(path);
-    }
-
-    @Override
-    public boolean isFile(final String path) {
-        return LocalIs.isFile(path);
-    }
-
-    @Override
-    public boolean isEmpty(final String path) {
-        return LocalIs.isEmpty(path);
-    }
-
-    @Override
-    public boolean isSame(final String path1, final String path2) {
-        return LocalCompare.isSame(path1, path2);
+    public Binary inBinary(final Set<String> files, final HProgressor progress) {
+        return LocalZip.inBinary(files, progress);
     }
 
     @Override
@@ -131,7 +110,7 @@ public class HStoreLocal extends AbstractHStore {
 
     @Override
     public PrivateKey inPrivate(final InputStream in) {
-        return LocalSecurity.inPrivate(in);
+        return SecurityIn.inPrivate(in);
     }
 
     @Override
@@ -141,7 +120,7 @@ public class HStoreLocal extends AbstractHStore {
 
     @Override
     public PublicKey inPublic(final InputStream in) {
-        return LocalSecurity.inPublic(in);
+        return SecurityIn.inPublic(in);
     }
 
     @Override
@@ -151,25 +130,25 @@ public class HStoreLocal extends AbstractHStore {
 
     @Override
     public SecretKey inSecret(final InputStream in) {
-        return LocalSecurity.inSecret(in);
+        return SecurityIn.inSecret(in);
     }
 
     @Override
     public boolean write(final String filename, final PrivateKey key) {
         log.info("[ R2MO ] （非对称）写入私钥 PrivateKey 到文件：{}", filename);
-        return this.write(filename, LocalSecurity.inPrivate(key));
+        return this.write(filename, SecurityIn.inPrivate(key));
     }
 
     @Override
     public boolean write(final String filename, final PublicKey key) {
         log.info("[ R2MO ] （非对称）写入公钥 PublicKey 到文件：{}", filename);
-        return this.write(filename, LocalSecurity.inPublic(key));
+        return this.write(filename, SecurityIn.inPublic(key));
     }
 
     @Override
     public boolean write(final String filename, final SecretKey key) {
         log.info("[ R2MO ] （对称）写入密钥 SecretKey 到文件：{}", filename);
-        return this.write(filename, LocalSecurity.inSecret(key));
+        return this.write(filename, SecurityIn.inSecret(key));
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * @author lang : 2025-09-20
  */
-class LocalSecurityMap {
+class SecurityMap {
     static final Map<String, String> ALG_MAP = new HashMap<>();
 
     static {

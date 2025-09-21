@@ -27,13 +27,24 @@ public interface LicenseService {
 
     boolean generate(String directory, HStore store);
 
+    /**
+     * 核心生成流程以及方法
+     * <pre>
+     *     1. 一个带 {@link SecretKey} 参数，一个不带，如果带了就做加密处理
+     *     2. {@link LicenseData} 中拥有 License 的核心数据
+     *     3. 使用 {@link PrivateKey} 对 LicenseData 进行签名
+     * </pre>
+     *
+     * @param data       License数据
+     * @param privateKey 私钥
+     *
+     * @return License文件对象
+     */
     LicenseFile encrypt(LicenseData data, PrivateKey privateKey);
 
     LicenseFile encrypt(LicenseData data, PrivateKey privateKey, SecretKey secretKey);
 
     LicenseData decrypt(LicenseFile file, PublicKey publicKey);
-
-    LicenseData decrypt(LicenseFile file, PublicKey publicKey, SecretKey secretKey);
 }
 
 /**

@@ -109,8 +109,8 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
             case START -> query.likeRight(column, leaf.value());      // like 'value%'
             case END -> query.likeLeft(column, leaf.value());         // like '%value'
             // Fix Issue 1: 存在类型转换的软处理流程
-            case IN -> this.meta.in(leaf, query);                         // in (value1, value2, ...)
-            case NOT_IN -> query.notIn(column, leaf.value());         // not in (value1, value2, ...)
+            case IN -> this.meta.in(leaf, query);                         // stream (value1, value2, ...)
+            case NOT_IN -> query.notIn(column, leaf.value());         // not stream (value1, value2, ...)
             case NULL -> query.isNull(column);                        // is null
             case NOT_NULL -> query.isNotNull(column);                 // is not null
         }

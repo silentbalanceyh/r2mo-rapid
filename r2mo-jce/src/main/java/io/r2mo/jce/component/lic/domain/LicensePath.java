@@ -15,14 +15,15 @@ import java.util.Objects;
 @Accessors(fluent = true)
 @Builder
 public class LicensePath implements LicenseOk {
-    private String licenseFile;
-    private String signFile;
+    private String fileLicense;
+    private String fileSign;
+    private String fileKey;
     private LicFormat format;       // 许可证格式
 
     @Override
     public boolean isOk() {
         return Objects.isNull(this.format)
-            || !StrUtil.isNotEmpty(this.licenseFile)
-            || !StrUtil.isNotEmpty(this.signFile);
+            || !StrUtil.isNotEmpty(this.fileLicense)
+            || !StrUtil.isNotEmpty(this.fileSign);
     }
 }

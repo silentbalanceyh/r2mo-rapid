@@ -1,5 +1,7 @@
 package io.r2mo.io.local.operation;
 
+import io.r2mo.function.Fn;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,30 +9,40 @@ import java.nio.file.Paths;
 /**
  * @author lang : 2025-09-06
  */
-class LocalIs {
+class MetaIs {
 
-    static boolean isExist(final String filename) {
-        final Path path = Paths.get(filename);
+    static boolean isHidden(final String fullPath) {
+        final Path path = Paths.get(fullPath);
+        return Fn.jvmOr(() -> Files.exists(path) && Files.isHidden(path));
+    }
+
+    static boolean isReadOnly(final String fullPath) {
+        final Path path = Paths.get(fullPath);
+        return Files.exists(path) && !Files.isWritable(path);
+    }
+
+    static boolean isExist(final String fullPath) {
+        final Path path = Paths.get(fullPath);
         return Files.exists(path);
     }
 
-    static boolean isDirectory(final String filename) {
-        final Path path = Paths.get(filename);
+    static boolean isDirectory(final String fullPath) {
+        final Path path = Paths.get(fullPath);
         return Files.isDirectory(path);
     }
 
-    static boolean isFile(final String filename) {
-        final Path path = Paths.get(filename);
+    static boolean isFile(final String fullPath) {
+        final Path path = Paths.get(fullPath);
         return Files.isRegularFile(path);
     }
 
-    static boolean isEmpty(final String filename) {
-        if (filename == null || filename.isEmpty()) {
+    static boolean isEmpty(final String fullPath) {
+        if (fullPath == null || fullPath.isEmpty()) {
             return true; // 空文件名认为是空
         }
 
         try {
-            final Path path = Paths.get(filename);
+            final Path path = Paths.get(fullPath);
 
             // 检查路径是否存在
             if (!Files.exists(path)) {

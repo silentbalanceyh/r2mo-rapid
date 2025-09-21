@@ -6,7 +6,6 @@ import io.r2mo.jce.component.lic.domain.LicenseConfiguration;
 import io.r2mo.jce.constant.AlgLicense;
 import io.r2mo.typed.cc.Cc;
 
-import javax.crypto.SecretKey;
 import java.security.KeyPair;
 import java.util.Objects;
 
@@ -35,25 +34,10 @@ public class LicenseHelper {
      */
     public void generate(final String directory, final AlgLicense license) {
         Objects.requireNonNull(this.store, "[ R2MO ] 此方法要求 HStore 不能为空");
-        if (license.isAsymmetric()) {
-            this.generateAsym(directory, license);
-        } else {
-            this.generateSym(directory, license);
-        }
-    }
-
-    public void generateAsym(final String directory, final AlgLicense license) {
         final KeyPair generated = HED.generate(license);
         final LicenseConfiguration configuration = new LicenseConfiguration();
         configuration.ioContext(directory).algSign(license.value());
         this.store.write(configuration.ioPrivate(), generated.getPrivate());
         this.store.write(configuration.ioPublic(), generated.getPublic());
-    }
-
-    private void generateSym(final String directory, final AlgLicense license) {
-        final SecretKey generated = HED.generate(license);
-        final LicenseConfiguration configuration = new LicenseConfiguration();
-        configuration.ioContext(directory).algEnc(license.value());
-        this.store.write(configuration.ioSecret(), generated);
     }
 }

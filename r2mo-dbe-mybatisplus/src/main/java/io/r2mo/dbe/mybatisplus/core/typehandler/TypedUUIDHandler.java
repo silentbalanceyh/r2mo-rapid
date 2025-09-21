@@ -32,9 +32,13 @@ public class TypedUUIDHandler extends BaseTypeHandler<Object> {
 
     /** 宽松解析：支持去掉分隔符的 32 位十六进制 / 标准 36 位 / 大小写均可 */
     private static UUID parseUuidLenient(final String s) throws SQLException {
-        if (s == null) return null;
+        if (s == null) {
+            return null;
+        }
         final String str = s.trim();
-        if (str.isEmpty()) return null;
+        if (str.isEmpty()) {
+            return null;
+        }
 
         // 无连字符的 32 位：转为标准形式 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         final String hex32 = str.replace("-", "");
@@ -99,7 +103,7 @@ public class TypedUUIDHandler extends BaseTypeHandler<Object> {
             return;
         }
         // 理论到不了这里（NonNull 分支），给出明确异常
-        throw new SQLException("Null UUID is not allowed in setNonNullParameter");
+        throw new SQLException("Null UUID is not allowed stream setNonNullParameter");
     }
 
     @Override
@@ -149,7 +153,9 @@ public class TypedUUIDHandler extends BaseTypeHandler<Object> {
     }
 
     private Object readUuid(final Object dbVal) throws SQLException {
-        if (dbVal == null) return null;
+        if (dbVal == null) {
+            return null;
+        }
 
         if (dbVal instanceof UUID) {
             return dbVal;

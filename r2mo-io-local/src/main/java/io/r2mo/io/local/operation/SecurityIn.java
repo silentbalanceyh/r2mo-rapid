@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author lang : 2025-09-19
  */
 @Slf4j
-class LocalSecurity {
+class SecurityIn {
 
     // ======================== 写 PEM ========================
 
@@ -134,7 +134,7 @@ class LocalSecurity {
 
         final String upperType = type.toUpperCase(Locale.ROOT);
 
-        for (final Map.Entry<String, String> entry : LocalSecurityMap.ALG_MAP.entrySet()) {
+        for (final Map.Entry<String, String> entry : SecurityMap.ALG_MAP.entrySet()) {
             if (upperType.contains(entry.getKey())) {
                 log.info("[ R2MO ] 解析 PEM 类型: {} / 侦测算法类型：{}", upperType, entry.getValue());
                 return entry.getValue();
