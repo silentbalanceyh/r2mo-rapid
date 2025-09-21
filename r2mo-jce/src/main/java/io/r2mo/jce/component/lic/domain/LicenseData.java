@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -74,7 +75,7 @@ public class LicenseData extends AbstractNormObject implements Serializable {
      * - 设计：可与 appId 对应，用于区分不同产品线
      * - 通用性：适用于多产品企业（如同一客户买了不同模块）
      */
-    private String issuedApp;
+    private UUID issuedApp;
 
     /**
      * 产品名称 🔵
@@ -89,7 +90,7 @@ public class LicenseData extends AbstractNormObject implements Serializable {
      * - 设计：用于追踪签发批次，配合到期时间做有效性校验
      * - 通用性：所有许可系统必备字段
      */
-    private String issuedAt;
+    private LocalDateTime issuedAt;
 
     /**
      * 过期时间 🔴
@@ -97,7 +98,7 @@ public class LicenseData extends AbstractNormObject implements Serializable {
      * - 设计：到期后许可失效，强制更新或续期
      * - 通用性：普遍存在于商业软件、SaaS、订阅模式
      */
-    private String expireAt;
+    private LocalDateTime expireAt;
 
     /**
      * 最大用户数 🔵

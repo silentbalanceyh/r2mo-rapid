@@ -31,7 +31,18 @@ class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
     }
 
     @Override
-    public Binary writeTo(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
+    public Binary writeZip(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
+        final Set<String> files = this.writePath(licenseFile, configuration);
+        /*
+         * Step 4 | 打包输出
+         * - 将 .lic / .sig / (可选 .key) 打包为 ZIP
+         * - 返回 Binary，可直接落盘或传输
+         */
+        return this.store.inBinary(files);
+    }
+
+    @Override
+    public Set<String> writePath(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
         /*
          * Step 1 | 写入许可文件 (.lic)
          * - 将 LicenseFile 格式化为文本
@@ -74,13 +85,7 @@ class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
                 files.add(keyPath);
             }
         }
-
-        /*
-         * Step 4 | 打包输出
-         * - 将 .lic / .sig / (可选 .key) 打包为 ZIP
-         * - 返回 Binary，可直接落盘或传输
-         */
-        return this.store.inBinary(files);
+        return files;
     }
 
     @Override
@@ -159,7 +164,6 @@ class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
         return licenseFile;
     }
 
-
     @Override
     public LicenseData verify(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
         /*
@@ -186,7 +190,7 @@ class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
             if (Objects.isNull(secretKey)) {
                 throw new IllegalArgumentException("[ R2MO ] License 使用加密，但密钥文件缺失，无法解密！");
             }
-            stored = HED.decrypt(licenseFile.encrypted(), secretKey, secretKey.getAlgorithm());
+            stored = HED.decrypt(licenseFile.encrypted(), secretKey);
         } else {
             stored = licenseFile.data();
         }

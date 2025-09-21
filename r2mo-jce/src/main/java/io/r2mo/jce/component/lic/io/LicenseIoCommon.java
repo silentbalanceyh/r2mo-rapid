@@ -10,6 +10,7 @@ import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Binary;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
@@ -31,11 +32,19 @@ class LicenseIoCommon extends AbstractLicenseIo implements LicenseIo {
     }
 
     @Override
-    public Binary writeTo(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
+    public Binary writeZip(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
         this.ensureConfiguration(configuration);
         this.ensureFile(licenseFile);
 
-        return this.executor(licenseFile.format()).writeTo(licenseFile, configuration);
+        return this.executor(licenseFile.format()).writeZip(licenseFile, configuration);
+    }
+
+    @Override
+    public Set<String> writePath(final LicenseFile licenseFile, final LicenseConfiguration configuration) {
+        this.ensureConfiguration(configuration);
+        this.ensureFile(licenseFile);
+
+        return this.executor(licenseFile.format()).writePath(licenseFile, configuration);
     }
 
     private void ensureConfiguration(final LicenseConfiguration configuration) {

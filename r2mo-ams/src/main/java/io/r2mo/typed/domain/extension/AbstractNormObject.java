@@ -53,7 +53,6 @@ public abstract class AbstractNormObject implements BaseScope, BaseAudit, Serial
         if (other == null) {
             return;
         }
-        this.id = other.id;
         this.appId = other.appId;
         this.tenantId = other.tenantId;
         this.createdAt = other.createdAt;
@@ -66,7 +65,6 @@ public abstract class AbstractNormObject implements BaseScope, BaseAudit, Serial
         if (other == null) {
             return;
         }
-        other.id = this.id;
         other.appId = this.appId;
         other.tenantId = this.tenantId;
         other.createdAt = this.createdAt;

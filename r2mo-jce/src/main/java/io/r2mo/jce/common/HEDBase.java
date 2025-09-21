@@ -98,8 +98,16 @@ class HEDBase {
         return EDExecutor.of(algorithm).encrypt(data, privateKey);
     }
 
+    public static byte[] encrypt(final byte[] data, final PrivateKey privateKey) {
+        return encrypt(data, privateKey, privateKey.getAlgorithm());
+    }
+
     public static byte[] encrypt(final byte[] data, final PrivateKey privateKey, final AlgLicenseSpec spec) {
         return encrypt(data, privateKey, spec.algCipher());
+    }
+
+    public static byte[] decrypt(final byte[] data, final PublicKey publicKey) {
+        return decrypt(data, publicKey, publicKey.getAlgorithm());
     }
 
     public static byte[] decrypt(final byte[] data, final PublicKey publicKey, final AlgLicenseSpec spec) {
@@ -110,8 +118,13 @@ class HEDBase {
         return EDExecutor.of(algorithm).decrypt(data, publicKey);
     }
 
+
     public static byte[] encrypt(final byte[] data, final SecretKey secretKey, final String algorithm) {
         return EDExecutor.of(algorithm).encrypt(data, secretKey);
+    }
+
+    public static byte[] encrypt(final byte[] data, final SecretKey secretKey) {
+        return encrypt(data, secretKey, secretKey.getAlgorithm());
     }
 
     public static byte[] encrypt(final byte[] data, final SecretKey secretKey, final AlgLicenseSpec spec) {
@@ -120,6 +133,10 @@ class HEDBase {
 
     public static byte[] decrypt(final byte[] data, final SecretKey secretKey, final String algorithm) {
         return EDExecutor.of(algorithm).decrypt(data, secretKey);
+    }
+
+    public static byte[] decrypt(final byte[] data, final SecretKey secretKey) {
+        return decrypt(data, secretKey, secretKey.getAlgorithm());
     }
 
     public static byte[] decrypt(final byte[] data, final SecretKey secretKey, final AlgLicenseSpec spec) {

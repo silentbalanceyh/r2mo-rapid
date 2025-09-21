@@ -12,6 +12,7 @@ import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.exception.AbstractException;
 
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * License IO 接口
@@ -79,7 +80,9 @@ public interface LicenseIo {
      *
      * @return 压缩包 zip 的数据流
      */
-    Binary writeTo(LicenseFile licenseFile, LicenseConfiguration configuration);
+    Binary writeZip(LicenseFile licenseFile, LicenseConfiguration configuration);
+
+    Set<String> writePath(LicenseFile licenseFile, LicenseConfiguration configuration);
 
     /**
      * 📥 读取 License 文件（服务端文件读取场景）

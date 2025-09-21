@@ -82,6 +82,19 @@ public class LicenseConfiguration implements LicenseID.Valid {
      */
     private boolean encrypted;
 
+    // ------------ 激活码的 Hash 算法 ------------
+    /**
+     * 激活码的 Hash 算法 🟢
+     * - 可选：用于生成激活码时的哈希摘要算法
+     * - 设计：在签发 Activation 时，对载荷内容计算哈希值，
+     * 再结合签名机制保证内容完整性与防篡改
+     * - 通用性：支持多种哈希算法（如 SHA-256、SHA3-512），
+     * 便于在不同安全等级的系统中灵活选择
+     * - 典型应用：
+     * 1. 客户端校验激活码是否被篡改
+     * 2. 防止激活码重复使用（结合 nonce）
+     */
+    private AlgLicenseSpec algActive;
     // ------------ 工具方法 ------------
 
     /**

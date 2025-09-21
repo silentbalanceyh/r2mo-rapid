@@ -101,7 +101,7 @@ public abstract class AbstractLicenseService implements LicenseService {
         final byte[] encrypted = file.encrypted();
 
         // 2. 解密（AES）
-        final byte[] decrypted = HED.decrypt(encrypted, secretKey, secretKey.getAlgorithm());
+        final byte[] decrypted = HED.decrypt(encrypted, secretKey);
         if (decrypted == null || decrypted.length == 0) {
             throw new SecurityException("[ R2MO ] License 解密失败，密钥可能不匹配！");
         }
