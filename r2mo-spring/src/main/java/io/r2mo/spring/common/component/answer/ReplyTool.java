@@ -53,8 +53,6 @@ class ReplyTool {
             final String mime = binary.mime();
             final String ext = FILE_EXTENSION.getOrDefault(mime, "dat");
             filename = "file." + ext;
-        } else {
-            filename = "file.dat";
         }
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
             "attachment; filename=\"" + filename + "\"");
