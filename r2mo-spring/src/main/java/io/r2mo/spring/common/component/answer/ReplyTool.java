@@ -58,6 +58,13 @@ class ReplyTool {
             "attachment; filename=\"" + filename + "\"");
     }
 
+    static void onFileEnd(final HttpServletResponse response) {
+        response.setHeader("Content-Transfer-Encoding", "binary");
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
+        response.setHeader(HttpHeaders.PRAGMA, "no-cache");
+        response.setHeader(HttpHeaders.EXPIRES, "0");
+    }
+
     static void writeText(final Reader reader, final Writer writer) {
         writeText(reader, writer, Reply.BUFFER_SIZE);
     }

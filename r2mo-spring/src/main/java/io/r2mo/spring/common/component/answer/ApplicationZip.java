@@ -25,6 +25,10 @@ class ApplicationZip implements Reply {
         ReplyTool.onLength(binary, response);
 
 
+        // Fix PostCat
+        ReplyTool.onFileEnd(response);
+
+
         // 缓冲区大小设置
         ReplyTool.writeStream(binary.stream(), Fn.jvmOr(response::getOutputStream));
         return true;
