@@ -77,7 +77,7 @@ class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
          */
         final SecretKey key = licenseFile.key();
         if (Objects.nonNull(key)) {
-            final byte[] keyBytes = HED.encodeSecretKey(key, configuration.algEnc());
+            final byte[] keyBytes = HED.encodeSecretKey(key, configuration.algEnc().value());
             if (Objects.nonNull(keyBytes) && keyBytes.length > 0) {
                 final String keyPath = this.nameKey(licenseFile, configuration);
                 this.store.write(keyPath, keyBytes);
@@ -152,7 +152,7 @@ class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
             final String keyPath = this.nameKey(path, configuration);
             final byte[] keyBytes = this.store.inBytes(keyPath);
             if (Objects.nonNull(keyBytes) && keyBytes.length > 0) {
-                final SecretKey key = HED.decodeSecretKey(keyBytes, configuration.algEnc());
+                final SecretKey key = HED.decodeSecretKey(keyBytes, configuration.algEnc().value());
                 licenseFile.key(key);
                 log.info("[ R2MO ] 读取密钥文件：{}", keyPath);
             }
@@ -201,7 +201,7 @@ class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
          * 🚨 异常点：如果签名不匹配，说明 License 文件可能被篡改
          */
         final byte[] signature = licenseFile.signature();
-        final boolean verified = HED.verify(stored, signature, publicKey, configuration.algSign());
+        final boolean verified = HED.verify(stored, signature, publicKey, configuration.algSign().value());
         if (!verified) {
             throw new _401UnauthorizedException("[ R2MO ] License 签名验证失败，文件可能被篡改！");
         }

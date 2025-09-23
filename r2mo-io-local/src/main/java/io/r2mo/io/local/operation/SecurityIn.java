@@ -4,6 +4,7 @@ import cn.hutool.core.io.IoUtil;
 import io.r2mo.function.Fn;
 import io.r2mo.typed.constant.DefaultConstantValue;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -13,9 +14,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Locale;
@@ -27,7 +26,15 @@ import java.util.Objects;
  */
 @Slf4j
 class SecurityIn {
-
+    // Fix: java.security.NoSuchProviderException: no such provider: BC
+    static {
+        Provider p = Security.getProvider(DefaultConstantValue.DEFAULT_SEC_PROVIDER);
+        if (Objects.isNull(p)) {
+            p = new BouncyCastleProvider();
+            Security.addProvider(p);
+            log.info("[ R2MO ] 使用安全提供者: {}, 版本: {}", p.getName(), p.getVersionStr());
+        }
+    }
     // ======================== 写 PEM ========================
 
     static InputStream inPublic(final PublicKey publicKey) {

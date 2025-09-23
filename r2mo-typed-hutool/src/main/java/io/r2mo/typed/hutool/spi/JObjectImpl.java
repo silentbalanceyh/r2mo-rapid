@@ -71,13 +71,16 @@ class JObjectImpl implements JObject {
 
     @Override
     public JObject put(final String key, final Object value) {
+        Objects.requireNonNull(key, "[ R2MO ] JSON 键不能为空");
         this.data.set(key, JUtilImpl.boxOut(value));
         return this;
     }
 
     @Override
     public JObject put(final Map<String, Object> map) {
-        map.forEach(this::put);
+        if (Objects.nonNull(map)) {
+            map.forEach(this::put);
+        }
         return this;
     }
 

@@ -86,12 +86,13 @@ class PreActiveServiceCommon implements PreActiveService {
         final JObject serialized = UT.serializeJson(activation);
 
         // Step 3 | 签名
-        final PrivateKey privateKey = this.store.inPrivate(configuration.ioPrivate());
+        final String path = this.store.pHome(configuration.ioPrivate());
+        final PrivateKey privateKey = this.store.inPrivate(path);
         if (Objects.isNull(privateKey)) {
             throw new _401UnauthorizedException("[ R2MO ] 私钥不存在，无法生成激活码签名！");
         }
         final byte[] data = serialized.encode().getBytes(StandardCharsets.UTF_8);
-        final byte[] signature = HED.sign(data, privateKey, configuration.algSign());
+        final byte[] signature = HED.sign(data, privateKey, configuration.algSign().value());
         final String signBase64 = Base64.toBase64String(signature);
         activation.setSignature(signBase64);
 
@@ -138,7 +139,8 @@ class PreActiveServiceCommon implements PreActiveService {
         final byte[] signature = Base64.decode(signBase64);
 
         // Step 2 | 加载公钥
-        final PublicKey publicKey = this.store.inPublic(configuration.ioPublic());
+        final String path = this.store.pHome(configuration.ioPublic());
+        final PublicKey publicKey = this.store.inPublic(path);
         if (Objects.isNull(publicKey)) {
             throw new _401UnauthorizedException("[ R2MO ] 公钥不存在，无法验证激活码合法性！");
         }
@@ -151,7 +153,7 @@ class PreActiveServiceCommon implements PreActiveService {
         final byte[] data = serialized.encode().getBytes(StandardCharsets.UTF_8);
 
         // Step 4 | 验签
-        final boolean verified = HED.verify(data, signature, publicKey, configuration.algSign());
+        final boolean verified = HED.verify(data, signature, publicKey, configuration.algSign().value());
         if (!verified) {
             throw new _401UnauthorizedException("[ R2MO ] 激活码签名验证失败，文件可能被篡改！");
         }

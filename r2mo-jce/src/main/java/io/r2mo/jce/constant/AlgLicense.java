@@ -47,6 +47,27 @@ public enum AlgLicense {
         this.spec = spec;
     }
 
+    /**
+     * 根据名称查找算法枚举（不区分大小写）
+     *
+     * @param name 算法名称，如 "RSA", "ECC", "AES" 等
+     *
+     * @return 对应的 AlgLicense 枚举值，如果未找到则返回 null
+     */
+    public static AlgLicense fromName(final String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+
+        for (final AlgLicense alg : AlgLicense.values()) {
+            if (alg.name().equalsIgnoreCase(name)) {
+                return alg;
+            }
+        }
+
+        return null;
+    }
+
     /** 是否为非对称算法 */
     public boolean isAsymmetric() {
         return this.asymmetric;

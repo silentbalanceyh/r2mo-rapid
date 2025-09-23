@@ -2,8 +2,12 @@ package io.r2mo.jce.component.lic.domain;
 
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.io.HUri;
+import io.r2mo.jce.constant.AlgHash;
+import io.r2mo.jce.constant.AlgLicense;
 import io.r2mo.jce.constant.AlgLicenseSpec;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.Objects;
@@ -62,7 +66,7 @@ public class LicenseConfiguration implements LicenseID.Valid {
      * - 必须：决定私钥/公钥生成与验证的方式
      * - 通用性：RSA / ECDSA 等签名机制，所有许可系统必备
      */
-    private AlgLicenseSpec algSign;
+    private AlgLicense algSign;
 
     // ------------ 加密相关信息 ------------
 
@@ -72,7 +76,7 @@ public class LicenseConfiguration implements LicenseID.Valid {
      * - 设计：如 AES-256，配合密钥文件一起下发
      * - 通用性：适用于需要保护 License 明文的系统
      */
-    private AlgLicenseSpec algEnc;
+    private AlgLicense algEnc;
 
     /**
      * 是否加密 🔵
@@ -94,8 +98,11 @@ public class LicenseConfiguration implements LicenseID.Valid {
      * 1. 客户端校验激活码是否被篡改
      * 2. 防止激活码重复使用（结合 nonce）
      */
-    private AlgLicenseSpec algActive;
+    private AlgHash algActive;
     // ------------ 工具方法 ------------
+
+    @Getter(AccessLevel.NONE)
+    private String ioLicense;
 
     /**
      * License 文件目录
@@ -103,10 +110,13 @@ public class LicenseConfiguration implements LicenseID.Valid {
      * @return ioContext/lic/{licenseId}
      */
     public String contextLicense() {
-        return HUri.UT.resolve(this.ioContext, "lic");
+        if (Objects.isNull(this.ioLicense)) {
+            return HUri.UT.resolve(this.ioContext, "lic");
+        }
+        return HUri.UT.resolve(this.ioContext, this.ioLicense);
     }
 
-    public LicenseConfiguration algEnc(final AlgLicenseSpec algEnc) {
+    public LicenseConfiguration algEnc(final AlgLicense algEnc) {
         this.algEnc = algEnc;
         if (Objects.nonNull(this.algEnc)) {
             this.encrypted = true;
@@ -138,7 +148,7 @@ public class LicenseConfiguration implements LicenseID.Valid {
         return this.ioPem("_public.pem", this.algSign);
     }
 
-    private String ioPem(final String suffix, final AlgLicenseSpec spec) {
+    private String ioPem(final String suffix, final AlgLicense spec) {
         final String generated = this.ioAlg(spec) + suffix;
         if (StrUtil.isEmpty(this.ioContext)) {
             return generated;
@@ -150,10 +160,11 @@ public class LicenseConfiguration implements LicenseID.Valid {
         return HUri.UT.resolve(this.ioContext, "cert");
     }
 
-    private String ioAlg(final AlgLicenseSpec spec) {
-        if (Objects.isNull(spec)) {
+    private String ioAlg(final AlgLicense license) {
+        if (Objects.isNull(license)) {
             return "";
         }
+        final AlgLicenseSpec spec = license.value();
         return spec.alg() + "_" + spec.length();
     }
 
@@ -165,10 +176,12 @@ public class LicenseConfiguration implements LicenseID.Valid {
     @Override
     public String toString() {
         return "[ LicenseConfiguration ]" + "\n  |- Context    : " + this.ioContext +
+            "\n  |- LicenseDir : " + this.contextLicense() +
             "\n  |- AlgSign    : " + this.ioAlg(this.algSign) +
             "\n  |- PrivateKey : " + this.ioPrivate() +
             "\n  |- PublicKey  : " + this.ioPublic() +
             "\n  |- Encrypted  : " + this.encrypted +
-            "\n  |- AlgEncrypt : " + this.ioAlg(this.algEnc);
+            "\n  |- AlgEncrypt : " + this.ioAlg(this.algEnc) +
+            "\n  |- AlgActive  : " + (Objects.nonNull(this.algActive) ? this.algActive : "N/A");
     }
 }

@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
@@ -35,6 +36,11 @@ public interface HStore extends HStoreMeta, Serializable {
 
     /* 提取根目录 */
     String pHome();
+
+    default String pHome(final String path) {
+        Objects.requireNonNull(path, "[ R2MO ] 目录路径不能为空");
+        return HUri.UT.resolve(pHome(), path);
+    }
 
     /* 拷贝：cp */
     boolean cp(String name, String renamed);

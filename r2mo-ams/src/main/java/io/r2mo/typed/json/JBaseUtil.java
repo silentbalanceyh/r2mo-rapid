@@ -49,6 +49,9 @@ class JBaseUtil {
         // 配置项：关闭日期作为时间戳
         MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
+        // 启用特性排序 -> 序列化数据相同时结果一致
+        MAPPER.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+
         // 配置项：忽略未知的属性
         MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 

@@ -36,7 +36,7 @@ public class LicenseHelper {
         Objects.requireNonNull(this.store, "[ R2MO ] 此方法要求 HStore 不能为空");
         final KeyPair generated = HED.generate(license);
         final LicenseConfiguration configuration = new LicenseConfiguration();
-        configuration.ioContext(directory).algSign(license.value());
+        configuration.ioContext(directory).algSign(license);
         this.store.write(configuration.ioPrivate(), generated.getPrivate());
         this.store.write(configuration.ioPublic(), generated.getPublic());
     }

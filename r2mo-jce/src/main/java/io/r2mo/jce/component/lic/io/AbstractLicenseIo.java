@@ -36,8 +36,8 @@ abstract class AbstractLicenseIo implements LicenseIo {
 
     private String nameLicense(final LicenseID licenseFile,
                                final LicenseConfiguration configuration) {
-        return configuration.contextLicense() +
+        return this.store.pHome(configuration.contextLicense() +
             "/" + licenseFile.licenseId() +
-            "/" + licenseFile.id();
+            "/" + licenseFile.id());
     }
 }

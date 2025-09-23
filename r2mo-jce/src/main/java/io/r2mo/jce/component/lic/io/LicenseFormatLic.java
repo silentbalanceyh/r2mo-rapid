@@ -14,7 +14,7 @@ import java.util.Map;
  * 示例文件：
  *
  * [HEAD]
- * License-LicenseID = LIC-1234567890ABCDEF
+ * LicenseID  = LIC-1234567890ABCDEF
  * Name       = Enterprise-License
  * Code       = ABCD1234EFGH5678
  *
