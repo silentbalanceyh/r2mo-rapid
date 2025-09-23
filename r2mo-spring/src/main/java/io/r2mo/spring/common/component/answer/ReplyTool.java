@@ -59,7 +59,8 @@ class ReplyTool {
     }
 
     static void onFileEnd(final HttpServletResponse response) {
-        response.setHeader("Content-Transfer-Encoding", "binary");
+        // 早期：response.setHeader("Content-Transfer-Encoding", "binary");
+        response.setHeader(HttpHeaders.CONTENT_ENCODING, "identity");
         response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
         response.setHeader(HttpHeaders.PRAGMA, "no-cache");
         response.setHeader(HttpHeaders.EXPIRES, "0");
