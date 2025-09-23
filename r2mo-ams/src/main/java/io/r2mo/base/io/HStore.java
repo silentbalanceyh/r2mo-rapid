@@ -1,6 +1,7 @@
 package io.r2mo.base.io;
 
 import cn.hutool.core.io.IoUtil;
+import io.r2mo.base.io.common.FileMem;
 import io.r2mo.function.Fn;
 import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.exception.web._501NotSupportException;
@@ -39,7 +40,7 @@ public interface HStore extends HStoreMeta, Serializable {
 
     default String pHome(final String path) {
         Objects.requireNonNull(path, "[ R2MO ] 目录路径不能为空");
-        return HUri.UT.resolve(pHome(), path);
+        return HUri.UT.resolve(this.pHome(), path);
     }
 
     /* 拷贝：cp */
@@ -215,10 +216,18 @@ public interface HStore extends HStoreMeta, Serializable {
      * 流来执行相关读取，所以这种场景下依旧使用同样的函数签名，但是传入的参数变为 Set<String> 来表示多个文件
      * */
     default Binary inBinary(final Set<String> files) {
-        return this.inBinary(files, null);
+        return this.inBinary(files, Set.of(), null);
     }
 
-    Binary inBinary(Set<String> files, HProgressor progressRef);
+    default Binary inBinary(final Set<String> files, final HProgressor progressRef) {
+        return this.inBinary(files, Set.of(), progressRef);
+    }
+
+    default Binary inBinary(final Set<String> files, final Set<FileMem> memSet) {
+        return this.inBinary(files, memSet, null);
+    }
+
+    Binary inBinary(Set<String> files, Set<FileMem> memSet, HProgressor progressRef);
 
     // ---------------- 公私钥专用
     PrivateKey inPrivate(String filename);
