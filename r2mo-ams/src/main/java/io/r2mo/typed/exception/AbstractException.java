@@ -43,7 +43,7 @@ public abstract class AbstractException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "[ R2MO-ERR-" + this.getCode() + " ] " + this.messageContent;
+        return "[ R2MO-ERR" + this.getCode() + " ] " + this.messageContent;
     }
 
     public abstract int getCode();

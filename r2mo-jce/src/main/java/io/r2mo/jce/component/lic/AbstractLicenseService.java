@@ -6,6 +6,7 @@ import io.r2mo.jce.common.HED;
 import io.r2mo.jce.component.lic.domain.LicenseData;
 import io.r2mo.jce.component.lic.domain.LicenseFile;
 import io.r2mo.jce.constant.AlgLicense;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.security.PrivateKey;
@@ -15,6 +16,7 @@ import java.util.Objects;
 /**
  * @author lang : 2025-09-20
  */
+@Slf4j
 public abstract class AbstractLicenseService implements LicenseService {
 
     private final AlgLicense license;
@@ -41,6 +43,7 @@ public abstract class AbstractLicenseService implements LicenseService {
      */
     @Override
     public LicenseFile encrypt(final LicenseData data, final PrivateKey privateKey) {
+        log.info("[ R2MO ] 非加密 / 签名数据：{}", data);
         // 1. 序列化License数据
         final byte[] byteData = R2MO.serialize(data);
 
@@ -56,6 +59,7 @@ public abstract class AbstractLicenseService implements LicenseService {
 
     @Override
     public LicenseFile encrypt(final LicenseData data, final PrivateKey privateKey, final SecretKey secretKey) {
+        log.info("[ R2MO ] 加密 / 签名数据：{}", data);
         // 1. 序列化License数据
         final byte[] byteData = R2MO.serialize(data);
 

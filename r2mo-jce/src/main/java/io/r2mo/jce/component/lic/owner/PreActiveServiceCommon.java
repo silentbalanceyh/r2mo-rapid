@@ -11,6 +11,7 @@ import io.r2mo.typed.domain.builder.BuilderOf;
 import io.r2mo.typed.exception.web._401UnauthorizedException;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.json.JUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.encoders.Base64;
 
 import java.nio.charset.StandardCharsets;
@@ -44,6 +45,7 @@ import java.util.Objects;
  * @author lang
  * @since 2025-09-21
  */
+@Slf4j
 class PreActiveServiceCommon implements PreActiveService {
     private static final JUtil UT = SPI.V_UTIL;
     protected final HStore store;
@@ -91,6 +93,7 @@ class PreActiveServiceCommon implements PreActiveService {
         if (Objects.isNull(privateKey)) {
             throw new _401UnauthorizedException("[ R2MO ] 私钥不存在，无法生成激活码签名！");
         }
+        log.info("[ R2MO ] 激活码签名数据：{}", serialized.encode());
         final byte[] data = serialized.encode().getBytes(StandardCharsets.UTF_8);
         final byte[] signature = HED.sign(data, privateKey, configuration.algSign().value());
         final String signBase64 = Base64.toBase64String(signature);
@@ -150,6 +153,7 @@ class PreActiveServiceCommon implements PreActiveService {
         BeanUtil.copyProperties(code, unsignedCode);
         unsignedCode.setSignature(null);
         final JObject serialized = UT.serializeJson(unsignedCode);
+        log.info("[ R2MO ] 激活码验证数据：{}", serialized.encode());
         final byte[] data = serialized.encode().getBytes(StandardCharsets.UTF_8);
 
         // Step 4 | 验签

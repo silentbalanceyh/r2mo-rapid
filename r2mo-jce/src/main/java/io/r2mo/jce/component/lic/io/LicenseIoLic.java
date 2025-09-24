@@ -171,7 +171,8 @@ class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
          * - 从存储中读取公钥，用于后续签名验证
          * 🚨 异常点：如果公钥文件不存在，无法继续校验
          */
-        final PublicKey publicKey = this.store.inPublic(configuration.ioPublic());
+        final String publicKeyPath = this.store.pHome(configuration.ioPublic());
+        final PublicKey publicKey = this.store.inPublic(publicKeyPath);
         if (Objects.isNull(publicKey)) {
             throw new IllegalArgumentException("[ R2MO ] 公钥文件不存在，无法验证 License！");
         }

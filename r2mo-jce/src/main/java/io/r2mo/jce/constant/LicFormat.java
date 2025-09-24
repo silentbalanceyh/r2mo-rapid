@@ -1,5 +1,7 @@
 package io.r2mo.jce.constant;
 
+import io.r2mo.base.io.common.FileHelper;
+
 /**
  * License 文件存储格式（带默认扩展名）。
  *
@@ -86,6 +88,37 @@ public enum LicFormat {
 
     LicFormat(final String extension) {
         this.extension = extension;
+    }
+
+    /**
+     * 根据文件名解析对应的 License 格式
+     *
+     * @param filename 文件名（如 license.json, my.lic）
+     *
+     * @return 对应的 LicFormat，如果无法识别则返回 null
+     */
+    public static LicFormat format(final String filename) {
+        if (filename == null || filename.isEmpty()) {
+            return null;
+        }
+
+        String extension = FileHelper.fileExtension(filename);
+        if (extension.isEmpty()) {
+            return null;
+        }
+
+        // 确保扩展名以点开头
+        if (!extension.startsWith(".")) {
+            extension = "." + extension;
+        }
+
+        for (final LicFormat format : values()) {
+            if (format.extension.equalsIgnoreCase(extension)) {
+                return format;
+            }
+        }
+
+        return null;
     }
 
     /** 返回默认扩展名（包含点，例如 ".json"） */
