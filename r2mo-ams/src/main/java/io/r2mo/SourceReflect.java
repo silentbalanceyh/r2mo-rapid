@@ -52,6 +52,14 @@ public final class SourceReflect {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static <V, T> V value(final T entity, final String field) {
+        if (entity == null) {
+            return null;
+        }
+        return value(entity, field, (Class<T>) entity.getClass());
+    }
+
     /**
      * 获取实体对象中指定字段的值
      *

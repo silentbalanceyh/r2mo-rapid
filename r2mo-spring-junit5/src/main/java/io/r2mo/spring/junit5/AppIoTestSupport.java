@@ -4,6 +4,7 @@ import io.r2mo.io.common.HFS;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.typed.json.JUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AppIoTestSupport {
+
+    protected static JUtil UT = SPI.V_UTIL;
 
     protected HFS fs() {
         return HFS.of();
