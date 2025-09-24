@@ -77,6 +77,13 @@ public abstract class AbstractLicenseService implements LicenseService {
             .build();
     }
 
+    /**
+     * LicenseFile 构建器
+     *
+     * @param data License数据
+     *
+     * @return LicenseFile构建器
+     */
     private LicenseFile.LicenseFileBuilder create(final LicenseData data) {
         return LicenseFile.builder()
             .name(data.getName())

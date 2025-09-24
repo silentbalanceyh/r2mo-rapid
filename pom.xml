@@ -58,6 +58,7 @@
 
         <!-- 🌷 数据类型实现 -->
         <module>r2mo-typed-hutool</module>
+        <module>r2mo-typed-vertx</module>
 
         <!-- 🌷 IO 详细实现 -->
         <module>r2mo-io</module>
@@ -96,6 +97,8 @@
         <jsr.validation.version>3.1.1</jsr.validation.version>
         <jsr.xml.bind.version>4.0.4</jsr.xml.bind.version>
 
+        <!-- ======================= Vertx =========================== -->
+        <vertx.version>5.0.4</vertx.version>
 
         <!-- ======================= Apache Commons   =========================== -->
         <commons-lang3.version>3.18.0</commons-lang3.version>
@@ -141,6 +144,7 @@
                     <additionalOptions>
                         <additionalOption>-Xdoclint:none</additionalOption>
                     </additionalOptions>
+                    <failOnError>false</failOnError>
                 </configuration>
                 <executions>
                     <execution>
@@ -253,6 +257,12 @@
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-io</artifactId>
                 <version>${r2mo.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.vertx/vertx-core -->
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-core</artifactId>
+                <version>${vertx.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
             <dependency>
