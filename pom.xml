@@ -74,12 +74,14 @@
         <module>r2mo-spring-json</module>
         <module>r2mo-spring-excel</module>
 
+        <!-- 🌷 Vertx 模块专用 -->
+        <module>r2mo-vertx</module>
+
         <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
         <module>r2mo-boot-spring</module>
+        <module>r2mo-boot-vertx</module>
 
-        <module>r2mo-spring-junit5</module>
-        <module>r2mo-vertx</module><!-- JUnit 测试相关 -->
-
+        <module>r2mo-spring-junit5</module><!-- JUnit 测试相关 -->
     </modules>
     <properties>
         <r2mo.version>1.0-M16</r2mo.version>
@@ -114,7 +116,7 @@
         <jackson.version>2.20.0</jackson.version>
 
         <!-- ======================= Database Access =========================== -->
-        <mysql.version>8.4.0</mysql.version>
+        <mysql.version>9.4.0</mysql.version>
 
         <flyway.version>11.11.2</flyway.version>
 
@@ -131,6 +133,9 @@
         <!-- ======================= JUnit =========================== -->
         <junit.jupiter.version>5.12.2</junit.jupiter.version>
         <junit.platform.version>1.12.2</junit.platform.version>
+
+        <!-- ======================= Google ========================== -->
+        <google.protobuf.version>4.32.1</google.protobuf.version>
 
         <!-- ====== Maven Plugins ===== -->
         <maven.plugin.staging>1.7.0</maven.plugin.staging>
@@ -552,23 +557,11 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
                 <version>${netty.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.netty</groupId>
-                        <artifactId>netty-resolver</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler-proxy</artifactId>
                 <version>${netty.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.netty</groupId>
-                        <artifactId>netty-codec-http</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -591,16 +584,6 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport</artifactId>
                 <version>${netty.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.netty</groupId>
-                        <artifactId>netty-resolver</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.netty</groupId>
-                        <artifactId>netty-buffer</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -616,6 +599,16 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-unix-common</artifactId>
                 <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${google.protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java-util</artifactId>
+                <version>${google.protobuf.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

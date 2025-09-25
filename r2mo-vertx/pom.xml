@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>r2mo-vertx</artifactId>
-    <name>R2MO::Vertx</name>
+    <name>R2MO::Vertx / ${vertx.version}</name>
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>

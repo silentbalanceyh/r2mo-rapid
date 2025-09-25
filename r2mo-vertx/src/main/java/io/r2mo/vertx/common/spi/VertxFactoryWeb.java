@@ -6,11 +6,12 @@ import io.r2mo.base.web.ForStatus;
 import io.r2mo.base.web.i18n.ForLocaleCommon;
 import io.r2mo.spi.FactoryWeb;
 import io.r2mo.typed.cc.Cc;
-import io.r2mo.typed.exception.web._501NotSupportException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author lang : 2025-09-25
  */
+@Slf4j
 public class VertxFactoryWeb implements FactoryWeb {
     private static final Cc<String, ForStatus> CCT_STATUS = Cc.openThread();
     private static final Cc<String, ForLocale> CCT_LOCALE = Cc.openThread();
@@ -27,6 +28,7 @@ public class VertxFactoryWeb implements FactoryWeb {
 
     @Override
     public ForAbort ofAbort() {
-        throw new _501NotSupportException("[ R2MO ] 由于 Vertx 采用了特殊的 Request/Response 结构，不支持此接口！");
+        log.error("[ R2MO ] 由于 Vertx 采用了特殊的 Request/Response 结构，不支持此接口！");
+        return null;
     }
 }
