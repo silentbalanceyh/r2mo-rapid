@@ -1,39 +1,38 @@
-package io.r2mo.typed.hutool.spi;
+package io.r2mo.typed.vertx.spi;
 
-import cn.hutool.json.JSONObject;
 import io.r2mo.function.Fn;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
+import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
- * @author lang : 2025-08-28
+ * @author lang : 2025-09-25
  */
-class JObjectImpl implements JObject {
-    private final JSONObject data;
+class JObjectVertx implements JObject {
+    private final JsonObject data;
 
-    JObjectImpl() {
-        this.data = new JSONObject();
+    JObjectVertx() {
+        this.data = new JsonObject();
     }
 
-    JObjectImpl(final JSONObject data) {
+    JObjectVertx(final JsonObject data) {
         this.data = data;
     }
 
-    JObjectImpl(final String jsonStr) {
-        this.data = new JSONObject(jsonStr);
+    JObjectVertx(final String jsonStr) {
+        this.data = new JsonObject(jsonStr);
     }
 
     @Override
     public int getInt(final String key, final int defaultValue) {
-        return this.data.getInt(key, defaultValue);
+        return this.data.getInteger(key, defaultValue);
     }
 
     @Override
@@ -43,17 +42,17 @@ class JObjectImpl implements JObject {
 
     @Override
     public boolean getBool(final String key, final boolean defaultValue) {
-        return this.data.getBool(key, defaultValue);
+        return this.data.getBoolean(key, defaultValue);
     }
 
     @Override
     public String getString(final String key, final String defaultValue) {
-        return this.data.getStr(key, defaultValue);
+        return this.data.getString(key, defaultValue);
     }
 
     @Override
     public Object get(final String key) {
-        return this.data.getObj(key);
+        return this.data.getValue(key);
     }
 
     @Override
@@ -66,7 +65,7 @@ class JObjectImpl implements JObject {
         if (Objects.isNull(value)) {
             return null;
         }
-        return JUtilImpl.boxIn(value);
+        return JUtilVertx.boxIn(value);
     }
 
     @Override
@@ -77,7 +76,7 @@ class JObjectImpl implements JObject {
     @Override
     public JObject put(final String key, final Object value) {
         Objects.requireNonNull(key, "[ R2MO ] JSON 键不能为空");
-        this.data.set(key, JUtilImpl.boxOut(value));
+        this.data.put(key, JUtilVertx.boxOut(value));
         return this;
     }
 
@@ -94,12 +93,12 @@ class JObjectImpl implements JObject {
 
     @Override
     public Map<String, Object> toMap() {
-        return new HashMap<>(this.data);
+        return this.data.getMap();
     }
 
     @Override
     public Stream<Map.Entry<String, Object>> itKv() {
-        return this.data.entrySet().stream();
+        return this.data.stream();
     }
 
     @Override
@@ -108,13 +107,35 @@ class JObjectImpl implements JObject {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public JsonObject data() {
+        return this.data;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public JObject subset(final String... fields) {
+        final JObject subset = new JObjectVertx();
+        Arrays.stream(fields)
+            .filter(this::containsKey)
+            .forEach(field -> subset.put(field, this.get(field)));
+        return subset;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public JObject copy() {
+        return new JObjectVertx(Fn.jvmOr(() -> this.data.copy()));
+    }
+
+    @Override
     public String encode() {
-        return this.data.toString();
+        return this.data.encode();
     }
 
     @Override
     public String encodePretty() {
-        return this.data.toStringPretty();
+        return this.data.encodePrettily();
     }
 
     @Override
@@ -123,29 +144,7 @@ class JObjectImpl implements JObject {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public JSONObject data() {
-        return this.data;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public JObject subset(final String... fields) {
-        final JObject subset = new JObjectImpl();
-        Arrays.stream(fields)
-            .filter(this::containsKey)
-            .forEach(field -> subset.put(field, this.get(field)));
-        return subset;
-    }
-
-    @Override
     public String toString() {
         return this.encode();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public JObject copy() {
-        return new JObjectImpl(Fn.jvmOr(this.data::clone));
     }
 }

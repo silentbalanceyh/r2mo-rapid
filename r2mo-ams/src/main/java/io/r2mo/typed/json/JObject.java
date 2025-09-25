@@ -1,6 +1,7 @@
 package io.r2mo.typed.json;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -14,6 +15,13 @@ public interface JObject extends JBase {
 
     default int getInt(final String key) {
         return this.getInt(key, -1);
+    }
+
+    // 读取 long 值
+    long getLong(String key, long defaultValue);
+
+    default long getLong(final String key) {
+        return this.getLong(key, -1L);
     }
 
     // 读取 bool 值
@@ -53,7 +61,12 @@ public interface JObject extends JBase {
     JObject put(String key, Object value);
 
     // 批量添加 key = value
-    JObject put(Map<String, Object> map);
+    default JObject put(final Map<String, Object> map) {
+        if (Objects.nonNull(map)) {
+            map.forEach(this::put);
+        }
+        return this;
+    }
 
     default JObject put(final JObject source) {
         return this.put(source.toMap());

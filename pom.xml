@@ -76,9 +76,9 @@
 
         <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
         <module>r2mo-bootstrap</module>
+        
+        <module>r2mo-spring-junit5</module><!-- JUnit 测试相关 -->
 
-        <!-- JUnit 测试相关 -->
-        <module>r2mo-spring-junit5</module>
     </modules>
     <properties>
         <r2mo.version>1.0-M16</r2mo.version>

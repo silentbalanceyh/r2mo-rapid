@@ -1,9 +1,11 @@
 package io.r2mo.base.util;
 
 import io.r2mo.typed.common.Compared;
+import io.r2mo.typed.json.JObject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Ams 工具类 Tool
@@ -11,6 +13,14 @@ import java.util.Map;
  * @author lang : 2025-09-20
  */
 public class R2MO {
+
+    public static <T> T valueT(final T value, final Supplier<T> constructorFn) {
+        return UTJson.valueT(value, constructorFn);
+    }
+
+    public static <T> T valueT(final JObject jsonJ, final String field, final Supplier<T> constructorFn) {
+        return UTJson.valueT(jsonJ, field, constructorFn);
+    }
 
     public static byte[] serialize(final Object object) {
         return UTJvm.serialize(object);

@@ -13,16 +13,26 @@ import java.util.Objects;
  */
 public interface JUtil {
     // -------------- 判断函数
-    boolean isEmpty(JArray jsonA);
-
-    boolean isEmpty(JObject jsonJ);
-
-    default boolean isNotEmpty(JArray jsonA) {
-        return !isEmpty(jsonA);
+    default boolean isEmpty(final JArray jsonA) {
+        if (Objects.isNull(jsonA)) {
+            return true;
+        }
+        return jsonA.isEmpty();
     }
 
-    default boolean isNotEmpty(JObject jsonJ) {
-        return !isEmpty(jsonJ);
+    default boolean isEmpty(final JObject jsonJ) {
+        if (Objects.isNull(jsonJ)) {
+            return true;
+        }
+        return jsonJ.isEmpty();
+    }
+
+    default boolean isNotEmpty(final JArray jsonA) {
+        return !this.isEmpty(jsonA);
+    }
+
+    default boolean isNotEmpty(final JObject jsonJ) {
+        return !this.isEmpty(jsonJ);
     }
 
     boolean isJObject(Object value);
@@ -47,7 +57,6 @@ public interface JUtil {
     <E> Collection<E> toCollection(Object value);
 
     String toYaml(JBase json);
-
 
     // -------------- 序列化反序列化
 
