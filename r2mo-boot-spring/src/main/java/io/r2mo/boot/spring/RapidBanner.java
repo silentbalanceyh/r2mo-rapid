@@ -1,4 +1,4 @@
-package io.r2mo.bootstrap;
+package io.r2mo.boot.spring;
 
 /**
  * @author lang : 2025-08-28

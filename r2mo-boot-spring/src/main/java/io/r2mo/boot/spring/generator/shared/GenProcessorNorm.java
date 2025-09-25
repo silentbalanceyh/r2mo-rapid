@@ -1,4 +1,4 @@
-package io.r2mo.generator.shared;
+package io.r2mo.boot.spring.generator.shared;
 
 import io.r2mo.base.generator.GenConfig;
 import io.r2mo.base.generator.GenProcessor;

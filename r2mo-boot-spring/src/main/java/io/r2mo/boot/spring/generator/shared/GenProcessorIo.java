@@ -1,4 +1,4 @@
-package io.r2mo.generator.shared;
+package io.r2mo.boot.spring.generator.shared;
 
 import io.r2mo.base.generator.AbstractGenProcessor;
 import io.r2mo.base.generator.GenConfig;
@@ -23,11 +23,11 @@ class GenProcessorIo extends AbstractGenProcessor {
 
         // 获取源代码路径
         final GenField fieldGen = this.getFieldGenerator(config);
-        if(Objects.isNull(fieldGen)){
+        if (Objects.isNull(fieldGen)) {
             dataModel.put("fieldsRequest", "");
             dataModel.put("fieldsResponse", "");
             dataModel.put("enumsImport", "");
-        }else {
+        } else {
             final String req = fieldGen.generateReq(entity, config);
             dataModel.put("fieldsRequest", req);
             final String resp = fieldGen.generateResp(entity, config);
@@ -51,7 +51,7 @@ class GenProcessorIo extends AbstractGenProcessor {
     private GenField getFieldGenerator(final GenConfig config) {
         final String name = config.getMetadata().getSpi();
         final GenProcessor processor = SPI.findOne(GenProcessor.class, name);
-        if(Objects.isNull(processor)){
+        if (Objects.isNull(processor)) {
             return null;
         }
         return processor.getFieldProcessor();

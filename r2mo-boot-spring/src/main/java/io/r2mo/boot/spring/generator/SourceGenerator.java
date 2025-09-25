@@ -1,11 +1,11 @@
-package io.r2mo.generator;
+package io.r2mo.boot.spring.generator;
 
 import io.r2mo.SourceReflect;
 import io.r2mo.base.generator.GenConfig;
 import io.r2mo.base.generator.GenMeta;
 import io.r2mo.base.generator.GenProcessor;
+import io.r2mo.boot.spring.generator.shared.GenProcessorNorm;
 import io.r2mo.function.Fn;
-import io.r2mo.generator.shared.GenProcessorNorm;
 import io.r2mo.spi.SPI;
 import lombok.extern.slf4j.Slf4j;
 

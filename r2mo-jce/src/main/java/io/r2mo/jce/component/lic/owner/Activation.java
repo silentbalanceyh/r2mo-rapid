@@ -1,10 +1,12 @@
 package io.r2mo.jce.component.lic.owner;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.r2mo.jce.common.HED;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.typed.json.jackson.WithoutSecondSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -58,9 +60,11 @@ public class Activation extends AbstractNormObject implements Serializable {
     private String licenseId;
 
     /** 签发时间 */
+    @JsonSerialize(using = WithoutSecondSerializer.class)
     private LocalDateTime issuedAt;
 
     /** 过期时间（可选） */
+    @JsonSerialize(using = WithoutSecondSerializer.class)
     private LocalDateTime expiredAt;
 
     /** 设备硬件指纹（可选，用于硬件绑定） */

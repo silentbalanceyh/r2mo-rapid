@@ -40,7 +40,7 @@ class JBaseUtil {
 
     static {
         // 配置项：忽略空值
-        MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        MAPPER.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
 
         // Non-standard JSON but we allow C style comments stream our JSON
         // 配置项：允许注释

@@ -1,4 +1,4 @@
-package io.r2mo.generator.shared;
+package io.r2mo.boot.spring.generator.shared;
 
 import io.r2mo.base.generator.AbstractGenProcessor;
 import io.r2mo.base.generator.GenConfig;
@@ -15,7 +15,6 @@ class GenProcessorController extends AbstractGenProcessor {
     public void generate(final Class<?> entity, final GenConfig config) {
         // 获取参数
         final Map<String, Object> dataModel = this.getDataParameters(entity, config);
-
 
 
         // 获取源代码路径

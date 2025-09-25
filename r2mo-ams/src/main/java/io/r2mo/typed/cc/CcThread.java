@@ -35,4 +35,10 @@ class CcThread<V> implements Cc<String, V> {
     public boolean isEmpty() {
         return this.store.isEmpty();
     }
+
+    @Override
+    public boolean remove(final String key) {
+        this.store.remove(key);
+        return true;
+    }
 }

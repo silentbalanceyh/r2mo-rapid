@@ -34,4 +34,10 @@ class CcSingle<K, V> implements Cc<K, V> {
     public boolean isEmpty() {
         return this.store.isEmpty();
     }
+
+    @Override
+    public boolean remove(final K key) {
+        this.store.remove(key);
+        return true;
+    }
 }

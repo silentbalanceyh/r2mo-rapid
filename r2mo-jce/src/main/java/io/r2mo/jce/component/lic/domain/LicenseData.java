@@ -1,6 +1,8 @@
 package io.r2mo.jce.component.lic.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
+import io.r2mo.typed.json.jackson.WithoutSecondSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -90,6 +92,7 @@ public class LicenseData extends AbstractNormObject implements Serializable {
      * - 设计：用于追踪签发批次，配合到期时间做有效性校验
      * - 通用性：所有许可系统必备字段
      */
+    @JsonSerialize(using = WithoutSecondSerializer.class)
     private LocalDateTime issuedAt;
 
     /**
@@ -98,6 +101,7 @@ public class LicenseData extends AbstractNormObject implements Serializable {
      * - 设计：到期后许可失效，强制更新或续期
      * - 通用性：普遍存在于商业软件、SaaS、订阅模式
      */
+    @JsonSerialize(using = WithoutSecondSerializer.class)
     private LocalDateTime expireAt;
 
     /**

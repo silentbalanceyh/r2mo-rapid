@@ -5,5 +5,5 @@ package io.r2mo.function;
  */
 @FunctionalInterface
 public interface Actuator {
-    void exec() throws Throwable;
+    void exec() throws Exception;
 }
