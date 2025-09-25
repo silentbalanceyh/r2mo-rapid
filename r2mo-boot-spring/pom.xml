@@ -9,19 +9,13 @@
         <version>1.0-M16</version>
     </parent>
 
-    <artifactId>r2mo-bootstrap</artifactId>
-    <name>R2MO::Bootstrap</name>
+    <artifactId>r2mo-boot-spring</artifactId>
+    <name>R2MO::Boot::Spring</name>
     <dependencies>
         <!-- DBE -->
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-dbe</artifactId>
-            <version>${r2mo.version}</version>
-        </dependency>
-        <!-- Spring -->
-        <dependency>
-            <groupId>io.zerows</groupId>
-            <artifactId>r2mo-spring</artifactId>
             <version>${r2mo.version}</version>
         </dependency>
         <!-- IO -->
@@ -30,10 +24,16 @@
             <artifactId>r2mo-io</artifactId>
             <version>${r2mo.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-spring</artifactId>
+            <version>${r2mo.version}</version>
+        </dependency>
         <!-- JCE -->
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-jce</artifactId>
+            <version>${r2mo.version}</version>
         </dependency>
         <!--
         MySQL 部分的处理流程 /

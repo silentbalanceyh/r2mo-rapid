@@ -1,4 +1,4 @@
-package io.r2mo.spring.common.exception.web;
+package io.r2mo.typed.exception.web;
 
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.exception.WebException;

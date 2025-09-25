@@ -1,8 +1,8 @@
 package io.r2mo.spring.common.component.answer;
 
-import io.r2mo.spring.common.exception.web._415MediaNotSupportException;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Binary;
+import io.r2mo.typed.exception.web._415MediaNotSupportException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 

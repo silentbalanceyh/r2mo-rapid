@@ -1,12 +1,8 @@
 package io.r2mo.spring.common.exception;
 
 import io.r2mo.base.web.FailOr;
-import io.r2mo.spring.common.exception.web._405MethodBadException;
-import io.r2mo.spring.common.exception.web._415MediaNotSupportException;
 import io.r2mo.typed.exception.WebException;
-import io.r2mo.typed.exception.web._400BadRequestException;
-import io.r2mo.typed.exception.web._401UnauthorizedException;
-import io.r2mo.typed.exception.web._403ForbiddenException;
+import io.r2mo.typed.exception.web.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
