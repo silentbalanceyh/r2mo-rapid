@@ -1,9 +1,8 @@
 package io.r2mo.function;
 
 import io.r2mo.typed.exception.AbstractException;
+import io.r2mo.typed.exception.JvmException;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Objects;
 
 /**
  * @author lang : 2025-09-02
@@ -11,30 +10,51 @@ import java.util.Objects;
 @Slf4j
 public class Fn {
 
+    public static <T extends AbstractException> void jvmKo(final java.util.function.Supplier<Boolean> condFn,
+                                                           final Class<T> classE, final Object... args) {
+        FnOut.jvmKo(condFn.get(), classE, args);
+    }
+
+    public static <T extends AbstractException> void jvmKo(final boolean checked,
+                                                           final Class<T> classE, final Object... args) {
+        FnOut.jvmKo(checked, classE, args);
+    }
+
+    public static <IO extends AutoCloseable, R> R jvmAs(
+        final Supplier<IO> openFn, final Function<IO, R> executor, final Supplier<JvmException> jvmFn) {
+        return FnIo.jvmIo(openFn, executor, jvmFn);
+    }
+
+    public static <R> R jvmAs(final Supplier<R> supplier, final Supplier<JvmException> jvmFn) {
+        return FnIo.jvmIo(supplier, jvmFn);
+    }
+
+    public static void jvmAs(final Actuator actuator, final Supplier<JvmException> jvmFn) {
+        FnIo.jvmIo(actuator, jvmFn);
+    }
+
+    public static <T, R> R jvmAs(final Function<T, R> executor, final Supplier<JvmException> jvmFn) {
+        return FnIo.jvmIo(executor, jvmFn);
+    }
+
     public static void jvmAt(final Actuator actuator) {
-        jvmOr(input -> {
-            actuator.exec();
-            return null;
-        }, null);
+        FnJvm.jvmAt(actuator);
     }
 
     public static <T> void jvmAt(final Consumer<T> consumer) {
-        Fn.<T, Object>jvmOr(input -> {
-            consumer.accept(input);
-            return null;
-        }, null);
+        FnJvm.jvmAt(consumer);
     }
 
     public static <T> Boolean jvmIf(final Predicate<T> predicate) {
-        return Fn.<T, Boolean>jvmOr(predicate::test, null);
+        return FnJvm.jvmOr(predicate::test, null);
     }
 
     public static <T> T jvmOr(final Supplier<T> supplier) {
-        return Fn.jvmOr(input -> supplier.get(), null);
+        return FnJvm.jvmOr(supplier, null);
     }
 
     public static <T> T jvmOr(final Supplier<T> supplier, final T defaultValue) {
-        return Fn.<T, T>jvmOr(input -> supplier.get(), defaultValue);
+        return FnJvm.jvmOr(supplier, defaultValue);
     }
 
     public static <T, R> R jvmOr(final Function<T, R> function) {
@@ -42,17 +62,6 @@ public class Fn {
     }
 
     public static <T, R> R jvmOr(final Function<T, R> function, final R defaultValue) {
-        try {
-            final R ret = function.apply(null);
-            return Objects.isNull(ret) ? defaultValue : ret;
-        } catch (final AbstractException ex) {
-            log.error("[ R2MO ] Fn.jvmAt 基本抽象异常: ", ex);
-            // 自定义异常
-            throw ex;
-        } catch (final Throwable ex) {
-            // 环境变量开启时打印异常堆栈
-            log.error("[ R2MO ] Fn.jvmAt JVM异常: ", ex);
-            return defaultValue;
-        }
+        return FnJvm.jvmOr(function, defaultValue);
     }
 }

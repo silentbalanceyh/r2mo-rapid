@@ -16,5 +16,5 @@ public interface WebState {
 
     int state();
 
-    <T extends Enum<T>> T value();
+    <T> T value();
 }

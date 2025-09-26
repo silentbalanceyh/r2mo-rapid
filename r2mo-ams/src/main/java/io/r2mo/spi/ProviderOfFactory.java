@@ -5,10 +5,7 @@ import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -16,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author lang : 2025-08-28
  */
 @Slf4j
-public class ProviderOfFactory {
+class ProviderOfFactory {
 
     private static final Cc<String, FactoryObject> CCT_OBJECT_FACTORY = Cc.openThread();
 
@@ -85,6 +82,55 @@ public class ProviderOfFactory {
             instances.add(instance);
         }
         return instances;
+    }
+
+    static <T> List<T> findMany(final Class<T> clazz, final ClassLoader loader) {
+        final List<T> list = new ArrayList<>();
+        ServiceLoader<T> factories;
+        if (loader != null) {
+            /*
+             * 1. 外部传入了 ClassLoader，这种情况直接使用外部的 ClassLoader 加载
+             */
+            factories = ServiceLoader.load(clazz, loader);
+        } else {
+            /*
+             * 2. 外部没有传入 ClassLoader，则直接使用 TCCL 加载
+             */
+            final ClassLoader TCCL = Thread.currentThread().getContextClassLoader();
+            factories = ServiceLoader.load(clazz, TCCL);
+        }
+        if (factories.iterator().hasNext()) {
+            /* 「OK」上边二选一已拿到信息，则直接遍历提取 */
+            factories.iterator().forEachRemaining(list::add);
+            return list;
+        }
+
+
+        /*
+         * 3. 默认使用 TCCL，但在 OSGi 环境中可能不够，因此尝试使用加载此类的类加载器，所以为了兼容 osgi 环境，需要使用
+         *    - clazz 的类加载器
+         *    - USPI.class 的类加载器
+         */
+        final ClassLoader clazzLoader = clazz.getClassLoader();
+        factories = ServiceLoader.load(clazz, clazzLoader);
+        if (factories.iterator().hasNext()) {
+            /* 「OK」上边已拿到信息，则直接遍历提取 */
+            factories.iterator().forEachRemaining(list::add);
+            return list;
+        }
+
+
+        /*
+         * 4. 直接使用 SPI.class 的类加载器（特殊情况）
+         */
+        final ClassLoader spiLoader = SPI.class.getClassLoader();
+        factories = ServiceLoader.load(clazz, spiLoader);
+        if (factories.iterator().hasNext()) {
+            factories.iterator().forEachRemaining(list::add);
+            return list;
+        }
+
+        return Collections.emptyList();
     }
 
     private static <T> T findOneInternal(final Class<T> clazz) {

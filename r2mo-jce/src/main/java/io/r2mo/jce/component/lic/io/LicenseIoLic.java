@@ -117,7 +117,7 @@ class LicenseIoLic extends AbstractLicenseIo implements LicenseIo {
          * 【逻辑说明】
          * Step 1 | 加载许可文件 (.lic)
          *   - 如果 path 未设置 fileLicense，则仅返回空 LicenseFile
-         *   - 否则读取 .lic 文件，并调用 readIn(content, format, config) 解析
+         *   - 否则读取 .lic 文件，并调用 readIn(content, formatFail, config) 解析
          *   - ⚠️ 注意：缺失 .lic 文件，流程无法继续
          */
         final LicenseFile licenseFile;

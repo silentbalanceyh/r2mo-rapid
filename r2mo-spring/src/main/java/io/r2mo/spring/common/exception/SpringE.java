@@ -30,6 +30,10 @@ public class SpringE {
         return CC_ERROR.pick(() -> new SpringE(code, message), code);
     }
 
+    public static SpringE of(final int code) {
+        return CC_ERROR.pick(() -> new SpringE(code, "E" + Math.abs(code)), code);
+    }
+
     public SpringE state(final HttpStatus status) {
         this.state = SPI.V_STATUS.fail(status);
         return this;

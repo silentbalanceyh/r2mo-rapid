@@ -30,6 +30,10 @@ public class VertxE {
         return CC_ERROR.pick(() -> new VertxE(code, message), code);
     }
 
+    public static VertxE of(final int code) {
+        return CC_ERROR.pick(() -> new VertxE(code, "E" + Math.abs(code)), code);
+    }
+
     public VertxE state(final HttpResponseStatus status) {
         this.state = SPI.V_STATUS.fail(status);
         return this;
