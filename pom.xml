@@ -202,7 +202,6 @@
                 <artifactId>r2mo-vertx</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
-            <!-- io.zerows -->
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>rachel-momo-stack</artifactId>
