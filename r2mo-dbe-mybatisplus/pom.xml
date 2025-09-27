@@ -6,11 +6,11 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>r2mo-rapid</artifactId>
-        <version>1.0-M16</version>
+        <version>1.0-M17</version>
     </parent>
 
     <artifactId>r2mo-dbe-mybatisplus</artifactId>
-    <name>R2MO::DBE::MyBatis-Plus / ${mybatis-plus.version}</name>
+    <name>R2MO::DBE::MyBatis-Plus</name>
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>

@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>r2mo-rapid</artifactId>
-        <version>1.0-M16</version>
+        <version>1.0-M17</version>
     </parent>
 
     <artifactId>r2mo-ams</artifactId>
@@ -65,16 +65,4 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <!-- Import Stack -->
-            <dependency>
-                <groupId>io.zerows</groupId>
-                <artifactId>r2mo-work-stack</artifactId>
-                <version>${r2mo.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
