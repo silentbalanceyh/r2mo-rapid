@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>r2mo-typed-hutool</artifactId>
-    <name>R2MO::Typed::Hutool / ${hutool.version}</name>
+    <name>R2MO::Typed::Hutool / ${util.hutool.version}</name>
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>

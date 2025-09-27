@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>r2mo-spring-junit5</artifactId>
-    <name>R2MO::Spring::JUnit 5 / ${junit.jupiter.version}</name>
+    <name>R2MO::Spring::JUnit 5 / ${junit.version}</name>
     <dependencies>
         <!-- Bootstrap 依赖 -->
         <dependency>

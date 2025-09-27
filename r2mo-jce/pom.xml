@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>r2mo-jce</artifactId>
-    <name>R2MO::JCE / ${bouncycastle.version}</name>
+    <name>R2MO::JCE / ${secure-bcprov-jdk18on.version}</name>
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>

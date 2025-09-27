@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>r2mo-spring</artifactId>
-    <name>R2MO::Spring</name>
+    <name>R2MO::Spring ${spring-boot.version}</name>
     <properties>
         <!-- Cloud 相关内容在此处配置相关版本，若不引用 r2mo-spring 则基本和 Spring 无关 -->
     </properties>
