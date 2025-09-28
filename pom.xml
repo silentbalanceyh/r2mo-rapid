@@ -84,7 +84,7 @@
         <module>r2mo-spring-junit5</module>
     </modules>
     <properties>
-        <rachel-momo.version>1.0.1</rachel-momo.version>
+        <rachel-momo.version>1.0.2</rachel-momo.version>
         <r2mo.version>1.0-M17</r2mo.version>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -199,7 +199,7 @@
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
-                <artifactId>r2mo-vertx</artifactId>
+                <artifactId>r2mo-vertx-doc</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
             <dependency>
