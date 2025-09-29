@@ -5,6 +5,7 @@ import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
@@ -52,6 +53,11 @@ class JObjectVertx implements JObject {
 
     @Override
     public Object get(final String key) {
+        final Object value = this.data.getValue(key);
+        if (value instanceof JsonObject ||
+            value instanceof JsonArray) {
+            return JUtilVertx.boxIn(value);
+        }
         return this.data.getValue(key);
     }
 

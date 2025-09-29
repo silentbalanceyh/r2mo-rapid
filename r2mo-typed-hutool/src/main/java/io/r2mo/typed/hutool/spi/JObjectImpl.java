@@ -1,5 +1,6 @@
 package io.r2mo.typed.hutool.spi;
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import io.r2mo.function.Fn;
 import io.r2mo.spi.SPI;
@@ -53,6 +54,16 @@ class JObjectImpl implements JObject {
 
     @Override
     public Object get(final String key) {
+        /*
+         * Fix: class cn.hutool.json.JSONObject/JSONArray
+         *      cannot be cast to class io.r2mo.typed.json.JObject/JArray
+         * 此处需要在拆开时执行解包，才可以和 getJObject 以及 getJArray 统一且保持一致
+         */
+        final Object value = this.data.get(key);
+        if (value instanceof JSONObject ||
+            value instanceof JSONArray) {
+            return JUtilImpl.boxIn(value);
+        }
         return this.data.getObj(key);
     }
 
