@@ -31,7 +31,7 @@ public class VertxE {
     }
 
     public static VertxE of(final int code) {
-        return CC_ERROR.pick(() -> new VertxE(code, "E" + Math.abs(code)), code);
+        return CC_ERROR.pick(() -> new VertxE(code, String.valueOf(code)), code);
     }
 
     public VertxE state(final HttpResponseStatus status) {

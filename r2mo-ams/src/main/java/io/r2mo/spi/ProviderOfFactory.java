@@ -142,6 +142,7 @@ class ProviderOfFactory {
             }
             return instance;
         }
+        log.error("[ R2MO ] SPI 实现类未找到: {}", clazz.getName());
         return null;
     }
 }

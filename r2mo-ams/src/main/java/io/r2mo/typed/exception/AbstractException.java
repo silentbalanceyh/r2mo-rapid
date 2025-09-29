@@ -47,10 +47,14 @@ public abstract class AbstractException extends RuntimeException {
         this.messageArgs = messageArgs;
 
         final ForLocale localization = SPI.SPI_WEB.ofLocale();
-
-        if (messageKey != null && messageKey.matches("^E\\d+$")) {
+        /*
+         * 此处不使用格式的模式处理，从 String 输入的角度考虑，不直接使用 code 来执行相关解析
+         * 中间会存在推断的情况，保证整数模式下直接可解析 code 调用底层的 Message
+         */
+        if (messageKey != null && messageKey.matches("^[+-][1-9]\\d*$")) {
             // ✅ 异常码模式（如 E11002） -> 使用 getCode()
-            this.messageContent = localization.formatFail(this.getCode(), messageArgs);
+            final int messageCode = Integer.parseInt(messageKey);
+            this.messageContent = localization.formatFail(messageCode, messageArgs);
         } else {
             // ✅ 模板模式（如 FAIL_ORDER_NOT_FOUND, "Order {} not found"）
             this.messageContent = localization.formatInfo(messageKey, messageArgs);

@@ -73,15 +73,15 @@
         <module>r2mo-spring-mybatisplus</module>
         <module>r2mo-spring-json</module>
         <module>r2mo-spring-excel</module>
+        <module>r2mo-spring-junit5</module>
 
         <!-- 🌷 Vertx 模块专用 -->
         <module>r2mo-vertx</module>
+        <module>r2mo-vertx-junit5</module>
 
         <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
         <module>r2mo-boot-spring</module>
         <module>r2mo-boot-vertx</module>
-
-        <module>r2mo-spring-junit5</module>
     </modules>
     <properties>
         <rachel-momo.version>1.0.5</rachel-momo.version>
@@ -169,6 +169,11 @@
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-boot-spring</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-boot-vertx</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
             <!-- 统一抽象接口 -->
