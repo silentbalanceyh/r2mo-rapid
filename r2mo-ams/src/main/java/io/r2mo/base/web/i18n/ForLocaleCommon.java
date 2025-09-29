@@ -83,6 +83,8 @@ public class ForLocaleCommon implements ForLocale {
     private static final Pattern SLF4J_PATTERN = Pattern.compile("\\{}");
     private static final String BASE_INFO = "MessageInfo";
     private static final String BASE_FAIL = "MessageFail";
+    private static final ResourceBundle.Control COMBINED =
+        new ForLocaleBundle(ResourceBundle.Control.TTL_NO_EXPIRATION_CONTROL, false);
 
     /** 缓存 messageKey 是否存在于 i18n 文件 */
     private static final ConcurrentHashMap<String, Boolean> CACHE_I18N = new ConcurrentHashMap<>();
@@ -109,7 +111,7 @@ public class ForLocaleCommon implements ForLocale {
     private static String lookup(final String baseName, final String key, final Locale locale) {
         try {
             final ResourceBundle bundle = ResourceBundle.getBundle(baseName,
-                locale != null ? locale : DEFAULT_LOCALE);
+                locale != null ? locale : DEFAULT_LOCALE, COMBINED);
             return bundle.getString(key);
         } catch (final MissingResourceException ex) {
             return null;
