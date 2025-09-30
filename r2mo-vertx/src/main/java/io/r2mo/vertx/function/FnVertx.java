@@ -1,7 +1,9 @@
 package io.r2mo.vertx.function;
 
 import io.r2mo.function.Fn;
+import io.r2mo.typed.exception.WebException;
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonObject;
 
 /**
  * 此处要和上层的 Fn 进行一个区分，在引入过程中，避免冲突
@@ -89,5 +91,9 @@ public class FnVertx {
      */
     public static <T> Future<T> failOut(final Class<?> exceptionCls, final Object... args) {
         return FnOut.failOut(exceptionCls, args);
+    }
+
+    public static JsonObject adapt(final WebException error) {
+        return FnAdaptor.adapt(error);
     }
 }

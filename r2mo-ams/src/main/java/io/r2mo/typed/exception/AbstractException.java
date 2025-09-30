@@ -20,6 +20,8 @@ public abstract class AbstractException extends RuntimeException {
 
     private String messageContent;
 
+    private String messageDisplay;
+
     /**
      * 国际化消息构造函数 🌐
      *
@@ -55,6 +57,9 @@ public abstract class AbstractException extends RuntimeException {
             // ✅ 异常码模式（如 E11002） -> 使用 getCode()
             final int messageCode = Integer.parseInt(messageKey);
             this.messageContent = localization.formatFail(messageCode, messageArgs);
+            // 确保异常码与 getCode() 返回值一致
+            final String infoKey = "I" + Math.abs(messageCode);
+            this.messageDisplay = localization.formatInfo(infoKey, messageArgs);
         } else {
             // ✅ 模板模式（如 FAIL_ORDER_NOT_FOUND, "Order {} not found"）
             this.messageContent = localization.formatInfo(messageKey, messageArgs);
@@ -97,6 +102,10 @@ public abstract class AbstractException extends RuntimeException {
     @Override
     public String getMessage() {
         return "[ R2MO" + this.getCode() + " ] " + this.messageContent;
+    }
+
+    public String getInfo() {
+        return this.messageDisplay;
     }
 
     public abstract int getCode();

@@ -85,6 +85,15 @@ class SpringForStatus implements ForStatus {
         return this.vStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
+    @Override
+    public WebState valueOf(final int code) {
+        HttpStatus status = HttpStatus.resolve(code);
+        if (status == null) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return this.vStatus(status);
+    }
+
     private WebState vStatus(final HttpStatus status) {
         return CC_STATE.pick(() -> new SpringHttpState(status), status.value());
     }

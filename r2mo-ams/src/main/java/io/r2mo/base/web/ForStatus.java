@@ -33,4 +33,6 @@ public interface ForStatus {
     WebState V405();
 
     WebState V415();
+
+    WebState valueOf(int code);
 }

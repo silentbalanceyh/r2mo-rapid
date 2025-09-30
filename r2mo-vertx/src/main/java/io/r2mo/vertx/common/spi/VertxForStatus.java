@@ -85,6 +85,12 @@ public class VertxForStatus implements ForStatus {
         return this.vStatus(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
+    @Override
+    public WebState valueOf(final int code) {
+        final HttpResponseStatus status = HttpResponseStatus.valueOf(code);
+        return this.vStatus(status);
+    }
+
     private WebState vStatus(final HttpResponseStatus status) {
         return CC_STATE.pick(() -> new VertxHttpState(status), status.code());
     }
