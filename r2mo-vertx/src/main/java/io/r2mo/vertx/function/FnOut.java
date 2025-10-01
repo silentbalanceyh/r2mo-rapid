@@ -4,6 +4,11 @@ import io.r2mo.SourceReflect;
 import io.r2mo.typed.exception.JvmException;
 import io.r2mo.typed.exception.WebException;
 import io.vertx.core.Future;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * 统一从“异常类型 + 构造参数”生产 Vert.x 的失败 Future，或回落为成功 Future 的工具方法。
@@ -38,6 +43,7 @@ import io.vertx.core.Future;
  * @author lang
  * @since 2025-09-29
  */
+@Slf4j
 final class FnOut {
 
     /**
@@ -88,4 +94,15 @@ final class FnOut {
 
     // 工具类不需要实例化
     private FnOut() { /* no-op */ }
+
+    @SuppressWarnings("all")
+    static <T> Function<Throwable, T> otherwiseFn(final Supplier<T> supplier) {
+        return error -> {
+            if (Objects.nonNull(error)) {
+                log.error("[ R2MO ] Otherwise 异常输出", error);
+                error.printStackTrace();
+            }
+            return supplier.get();
+        };
+    }
 }
