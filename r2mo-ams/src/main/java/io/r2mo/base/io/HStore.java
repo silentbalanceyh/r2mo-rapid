@@ -18,6 +18,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
@@ -159,6 +160,17 @@ public interface HStore extends HStoreMeta, Serializable {
         }
         return Fn.jvmOr(url::openStream, null);
     }
+
+    // -> filename -> InputStream -> Properties
+    default Properties inProperties(final String filename) {
+        return this.inProperties(this.inStream(filename));
+    }
+
+    default Properties inProperties(final URL url) {
+        return this.inProperties(this.inStream(url));
+    }
+
+    Properties inProperties(InputStream in);
 
     <T extends JBase> T inYaml(URL url);
 

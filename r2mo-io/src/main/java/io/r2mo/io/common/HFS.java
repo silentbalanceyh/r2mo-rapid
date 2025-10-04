@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
@@ -161,6 +162,15 @@ public class HFS {
         return this.store.inStream(url);
     }
 
+    /* 读取 Properties */
+    public Properties inProperties(final String filename) {
+        return this.store.inProperties(filename);
+    }
+
+    public Properties inProperties(final URL url) {
+        return this.store.inProperties(url);
+    }
+
     public <T extends JBase> T inJson(final String filename) {
         return this.store.inJson(filename);
     }
@@ -175,6 +185,31 @@ public class HFS {
 
     public <T extends JBase> T inYaml(final URL url) {
         return this.store.inYaml(url);
+    }
+
+    // ---------------- 公私密钥读取
+    public PublicKey inPublic(final String filename) {
+        return this.store.inPublic(filename);
+    }
+
+    public PublicKey inPublic(final InputStream in) {
+        return this.store.inPublic(in);
+    }
+
+    public PrivateKey inPrivate(final String filename) {
+        return this.store.inPrivate(filename);
+    }
+
+    public PrivateKey inPrivate(final InputStream in) {
+        return this.store.inPrivate(in);
+    }
+
+    public SecretKey inSecret(final String filename) {
+        return this.store.inSecret(filename);
+    }
+
+    public SecretKey inSecret(final InputStream in) {
+        return this.store.inSecret(in);
     }
 
     // ---------------- 下边方法不适合在网络或分布式环境中使用
@@ -216,29 +251,5 @@ public class HFS {
 
     public <T extends JBase> T inYaml(final Path path) {
         return this.store.inYaml(path);
-    }
-
-    public PublicKey inPublic(final String filename) {
-        return this.store.inPublic(filename);
-    }
-
-    public PublicKey inPublic(final InputStream in) {
-        return this.store.inPublic(in);
-    }
-
-    public PrivateKey inPrivate(final String filename) {
-        return this.store.inPrivate(filename);
-    }
-
-    public PrivateKey inPrivate(final InputStream in) {
-        return this.store.inPrivate(in);
-    }
-
-    public SecretKey inSecret(final String filename) {
-        return this.store.inSecret(filename);
-    }
-
-    public SecretKey inSecret(final InputStream in) {
-        return this.store.inSecret(in);
     }
 }

@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Properties;
 
 /**
  * @author lang : 2025-09-02
@@ -70,5 +71,15 @@ public abstract class AbstractHStore implements HStore {
     public <T extends JBase> T inYaml(final Path path) {
         final String content = this.ioYaml(this.inStream(path));
         return JBase.parse(content);
+    }
+
+    @Override
+    public Properties inProperties(final InputStream in) {
+        if (Objects.isNull(in)) {
+            throw new IllegalArgumentException("[ R2MO ] 输入 Stream 为 null");
+        }
+        final Properties properties = new Properties();
+        Fn.jvmAt(() -> properties.load(in));
+        return properties;
     }
 }
