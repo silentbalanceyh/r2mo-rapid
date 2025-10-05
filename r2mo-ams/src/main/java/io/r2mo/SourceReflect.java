@@ -1,5 +1,6 @@
 package io.r2mo;
 
+import cn.hutool.core.util.StrUtil;
 import io.r2mo.function.Fn;
 import io.r2mo.typed.cc.Cc;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
 /**
@@ -31,7 +33,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public final class SourceReflect {
-
+    private static final Cc<String, Class<?>> CLASS_CACHE = Cc.open();
     /**
      * 类到单例对象的缓存（轻量级容器）
      */
@@ -332,5 +334,73 @@ public final class SourceReflect {
             // 旧代码保留：部分子类未声明泛型时返回 null
             return null;
         }
+    }
+
+    public static Class<?> clazz(final String name) {
+        return clazz(name, null, null);
+    }
+
+    public static Class<?> clazz(final String name, final Class<?> instanceCls) {
+        return clazz(name, instanceCls, null);
+    }
+
+    public static Class<?> clazz(final String className, final Class<?> defaultClass, final ClassLoader loader) {
+        if (StrUtil.isBlank(className)) {
+            return defaultClass;
+        }
+        /*
+         * 这里我们不能直接调用 `clazz(name)`，因为 getJvm 在当前方法中会抛出异常。我们应该捕获 `ClassNotFoundException` 并直接返回 null。
+         */
+        final ConcurrentMap<String, Class<?>> cCache = CLASS_CACHE.get();
+        Class<?> clazz = cCache.get(className);
+        if (Objects.isNull(clazz)) {
+            /* 优先考虑使用非空类加器加载 */
+            try {
+                if (Objects.nonNull(loader)) {
+                    clazz = loader.loadClass(className);
+                }
+            } catch (final Throwable ex) {
+                log.error("[ ZERO ] (Module) 类加载异常，详情: {}", ex.getMessage());
+            }
+        }
+
+
+        // 如果 clazz 为空，则考虑从当前线程中再加载
+        if (Objects.isNull(clazz)) {
+            try {
+                clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+            } catch (final Throwable ex) {
+                log.error("[ ZERO ] (Program) 类加载异常，详情: {}", ex.getMessage());
+            }
+        }
+
+
+        // 从当前类加载器中加载
+        if (Objects.isNull(clazz)) {
+            try {
+                clazz = ClassLoader.getSystemClassLoader().loadClass(className);
+            } catch (final Throwable ex) {
+                log.error("[ ZERO ] (System) 类加载异常，详情: {}", ex.getMessage());
+            }
+        }
+
+
+        // 从平台类加载器中加载
+        if (Objects.isNull(clazz)) {
+            try {
+                clazz = ClassLoader.getPlatformClassLoader().loadClass(className);
+            } catch (final Throwable ex) {
+                log.error("[ ZERO ] (Platform) 类加载异常，详情: {}", ex.getMessage());
+            }
+        }
+
+
+        // 全程扫描完成，依旧没有
+        if (Objects.isNull(clazz)) {
+            clazz = defaultClass;
+        } else {
+            cCache.put(className, clazz);
+        }
+        return clazz;
     }
 }
