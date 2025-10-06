@@ -3,7 +3,9 @@ package io.r2mo.io.common;
 import io.r2mo.base.io.HStore;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
+import io.r2mo.typed.json.JObject;
 
 import javax.crypto.SecretKey;
 import java.io.File;
@@ -185,6 +187,14 @@ public class HFS {
 
     public <T extends JBase> T inYaml(final URL url) {
         return this.store.inYaml(url);
+    }
+
+    public JObject ymlForJ(final String yamlString) {
+        return this.store.ymlForJ(yamlString);
+    }
+
+    public JArray ymlForA(final String yamlString) {
+        return this.store.ymlForA(yamlString);
     }
 
     // ---------------- 公私密钥读取

@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>r2mo-vertx-junit5</artifactId>
-    <name>R2MO::Vertx::Junit5</name>
+    <name>R2MO::Vertx::JUnit 5</name>
 
     <dependencies>
         <!-- Bootstrap 依赖 -->

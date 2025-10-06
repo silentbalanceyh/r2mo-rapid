@@ -5,7 +5,9 @@ import io.r2mo.base.io.common.FileMem;
 import io.r2mo.function.Fn;
 import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.exception.web._501NotSupportException;
+import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
+import io.r2mo.typed.json.JObject;
 
 import javax.crypto.SecretKey;
 import java.io.File;
@@ -125,6 +127,10 @@ public interface HStore extends HStoreMeta, Serializable {
     default <T extends JBase> T inJson(final URL url) {
         return JBase.parse(this.inString(url));
     }
+
+    JObject ymlForJ(String yaml);
+
+    JArray ymlForA(String yaml);
 
     /* 文件读取 */
     // -> filename -> InputStream -> String

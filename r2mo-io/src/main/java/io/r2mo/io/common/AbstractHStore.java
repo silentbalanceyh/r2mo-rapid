@@ -1,11 +1,14 @@
 package io.r2mo.io.common;
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.r2mo.base.io.HStore;
 import io.r2mo.function.Fn;
+import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
+import io.r2mo.typed.json.JObject;
 
 import java.io.File;
 import java.io.InputStream;
@@ -44,7 +47,18 @@ public abstract class AbstractHStore implements HStore {
         }
         final JsonNode node = Fn.jvmOr(() -> YAML.readTree(in));
         if (Objects.isNull(node)) {
-            throw new IllegalStateException("[ R2MO ] Yaml 解析结果为 null");
+            throw new IllegalStateException("[ R2MO ] Yaml (in) 解析结果失败，为 null");
+        }
+        return node.toString();
+    }
+
+    private String ioYaml(final String content) {
+        if (StrUtil.isEmpty(content)) {
+            return null;
+        }
+        final JsonNode node = Fn.jvmOr(() -> YAML.readTree(content));
+        if (Objects.isNull(node)) {
+            throw new IllegalStateException("[ R2MO ] Yaml (String) 解析结果失败，为 null");
         }
         return node.toString();
     }
@@ -71,6 +85,18 @@ public abstract class AbstractHStore implements HStore {
     public <T extends JBase> T inYaml(final Path path) {
         final String content = this.ioYaml(this.inStream(path));
         return JBase.parse(content);
+    }
+
+    @Override
+    public JArray ymlForA(final String yaml) {
+        final String parsed = this.ioYaml(yaml);
+        return JBase.parse(parsed);
+    }
+
+    @Override
+    public JObject ymlForJ(final String yaml) {
+        final String parsed = this.ioYaml(yaml);
+        return JBase.parse(parsed);
     }
 
     @Override
