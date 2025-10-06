@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.PrivateKey;
@@ -135,22 +136,33 @@ public interface HStore extends HStoreMeta, Serializable {
     /* 文件读取 */
     // -> filename -> InputStream -> String
     default String inString(final String filename) {
-        return IoUtil.read(this.inStream(filename), StandardCharsets.UTF_8);
+        return this.readSafe(this.inStream(filename), StandardCharsets.UTF_8);
     }
 
     // -> URL -> InputStream -> String
     default String inString(final URL url) {
-        return IoUtil.read(this.inStream(url), StandardCharsets.UTF_8);
+        return this.readSafe(this.inStream(url), StandardCharsets.UTF_8);
     }
 
     // -> filename -> InputStream -> byte[]
     default byte[] inBytes(final String filename) {
-        return IoUtil.readBytes(this.inStream(filename));
+        return this.readSafe(this.inStream(filename));
     }
 
     // -> URL -> InputStream -> byte[]
     default byte[] inBytes(final URL url) {
-        return IoUtil.readBytes(this.inStream(url));
+        return this.readSafe(this.inStream(url));
+    }
+
+    // 辅助方法：安全读取 InputStream 为 String
+    @SuppressWarnings("all")
+    private String readSafe(final InputStream inputStream, final Charset charset) {
+        return inputStream != null ? IoUtil.read(inputStream, charset) : null;
+    }
+
+    // 辅助方法：安全读取 InputStream 为 byte[]
+    private byte[] readSafe(final InputStream inputStream) {
+        return inputStream != null ? IoUtil.readBytes(inputStream) : null;
     }
 
     /* 文件 Stream 读取 */
@@ -199,19 +211,19 @@ public interface HStore extends HStoreMeta, Serializable {
     }
 
     default String inString(final File file) {
-        return IoUtil.read(this.inStream(file), StandardCharsets.UTF_8);
+        return this.readSafe(this.inStream(file), StandardCharsets.UTF_8);
     }
 
     default String inString(final Path file) {
-        return IoUtil.read(this.inStream(file), StandardCharsets.UTF_8);
+        return this.readSafe(this.inStream(file), StandardCharsets.UTF_8);
     }
 
     default byte[] inBytes(final File file) {
-        return IoUtil.readBytes(this.inStream(file));
+        return this.readSafe(this.inStream(file));
     }
 
     default byte[] inBytes(final Path path) {
-        return IoUtil.readBytes(this.inStream(path));
+        return this.readSafe(this.inStream(path));
     }
 
     default InputStream inStream(final File file) {
