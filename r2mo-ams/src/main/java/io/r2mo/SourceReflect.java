@@ -55,8 +55,8 @@ public final class SourceReflect {
      * @return 该类的单例对象，如果不存在则通过 {@link #instance(Class, Object[])} 构造并缓存
      */
     @SuppressWarnings("unchecked")
-    public static <T> T singleton(final Class<T> clazzImpl) {
-        return (T) SINGLETONS.pick(() -> instance(clazzImpl), clazzImpl);
+    public static <T> T singleton(final Class<?> clazzImpl, final Object... params) {
+        return (T) SINGLETONS.pick(() -> instance(clazzImpl, params), clazzImpl);
     }
 
     /**
@@ -75,11 +75,12 @@ public final class SourceReflect {
      * @return 类实例
      * @throws IllegalStateException 当没有匹配的构造函数时抛出运行时异常
      */
-    public static <T> T instance(final Class<T> clazzImpl, final Object... args) {
+    @SuppressWarnings("unchecked")
+    public static <T> T instance(final Class<?> clazzImpl, final Object... args) {
         try {
             if (args == null || args.length == 0) {
                 // 无参构造
-                return clazzImpl.getDeclaredConstructor().newInstance();
+                return (T) clazzImpl.getDeclaredConstructor().newInstance();
             }
 
             // 获取所有构造函数（含 private）
@@ -239,6 +240,24 @@ public final class SourceReflect {
     public static <T, V> void value(final T instance, final Field field, final V value) {
         field.setAccessible(true);
         Fn.jvmAt(() -> field.set(instance, value));
+    }
+
+    /**
+     * 获取类中的 static 常量或变量（接口常量、静态公有/私有常量）
+     *
+     * @param clazz 类
+     * @param name  字段名
+     * @param <T>   返回值类型
+     *
+     * @return 字段值
+     */
+    @SuppressWarnings("all")
+    public static <T> T value(final Class<?> clazz, final String name) {
+        return Fn.jvmOr(() -> {
+            final Field field = clazz.getDeclaredField(name);
+            field.setAccessible(true);
+            return (T) field.get(null);
+        });
     }
 
     // -----------------------------------------------------------------------
