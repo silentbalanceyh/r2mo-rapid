@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -141,6 +142,35 @@ public class HFS {
     /* 文件读取 */
     public String inString(final String filename) {
         return this.store.inString(filename);
+    }
+
+    /**
+     * 特殊接口，只局限于 {@link HFS} 中的调用流程，和 {@link HStore} 在这种 IO 模式会有所区别，{@link HStore} 主要
+     * 是针对存储设备、存储介质进行抽象，而 {@link HFS} 相对比较具体，所以它提供了基于类路径 ClassPath 的部分操作，在接入
+     * 本地环境时会比较方便。
+     * 此接口加载流程
+     * <pre>
+     *     1. 优先考虑 {@link HStore} 之上的读取
+     *     2. 其次尝试从 ClassPath 中读取
+     * </pre>
+     * 在类路径读取过程中，如果引入了 OSGI 的热部署环境，还可以传入第二参数 owner 来指定读取的 Bundle
+     *
+     * @param filename 文件名
+     *
+     * @return 内容
+     */
+    public String inContent(final String filename) {
+        String content = null;
+        if (this.isExist(filename)) {
+            /* 文件已经存在，直接读取 */
+            content = this.inString(filename);
+        }
+        if (Objects.isNull(content)) {
+            /* 文件不存在或者没有读取到 */
+            final URL urlPath = Thread.currentThread().getContextClassLoader().getResource(filename);
+            content = this.inString(urlPath);
+        }
+        return content;
     }
 
     public String inString(final URL url) {
