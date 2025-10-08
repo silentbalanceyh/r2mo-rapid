@@ -17,6 +17,6 @@ public class JArrayDeserializer extends JsonDeserializer<JArray> {
     @Override
     public JArray deserialize(final JsonParser parser, final DeserializationContext context) throws IOException, JacksonException {
         final JsonNode node = parser.getCodec().readTree(parser);
-        return SPI.SPI_OBJECT.jsonArray(node.toString());
+        return SPI.A(node.toString());
     }
 }

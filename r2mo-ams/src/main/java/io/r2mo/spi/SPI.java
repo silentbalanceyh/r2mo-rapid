@@ -49,7 +49,7 @@ public class SPI {
     // ======================
 
     /** 🎭 对象工厂（Json 工具、对象处理） */
-    public static final FactoryObject SPI_OBJECT = ProviderOfFactory.forObject();
+    private static final FactoryObject SPI_OBJECT = ProviderOfFactory.forObject();
 
     /** 🗄️ 数据库操作工厂 */
     public static final FactoryDBAction SPI_DB = ProviderOfFactory.forDBAction();
@@ -93,9 +93,17 @@ public class SPI {
         return SPI_OBJECT.jsonObject();
     }
 
+    public static JObject J(final String json) {
+        return SPI_OBJECT.jsonObject(json);
+    }
+
     /** ✨ 快速构造一个空 JSON 数组 */
     public static JArray A() {
         return SPI_OBJECT.jsonArray();
+    }
+
+    public static JArray A(final String json) {
+        return SPI_OBJECT.jsonArray(json);
     }
 
 

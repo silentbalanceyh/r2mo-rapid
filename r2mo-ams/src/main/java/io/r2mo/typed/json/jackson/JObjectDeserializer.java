@@ -26,11 +26,11 @@ public class JObjectDeserializer extends JsonDeserializer<JObject> {
 
     private JObject parseNode(final JsonNode node, final ObjectMapper codec) {
         if (node == null || node.isNull()) {
-            return SPI.SPI_OBJECT.jsonObject();
+            return SPI.J();
         }
 
         if (node.isObject()) {
-            final JObject obj = SPI.SPI_OBJECT.jsonObject();
+            final JObject obj = SPI.J();
 
             // 使用 Iterator 替代 properties() 方法
             for (final Map.Entry<String, JsonNode> entry : node.properties()) {
@@ -55,7 +55,7 @@ public class JObjectDeserializer extends JsonDeserializer<JObject> {
         }
 
         if (node.isArray()) {
-            final JObject wrapper = SPI.SPI_OBJECT.jsonObject();
+            final JObject wrapper = SPI.J();
             wrapper.put("array", this.parseArray((ArrayNode) node, codec));
             return wrapper;
         }
@@ -68,25 +68,25 @@ public class JObjectDeserializer extends JsonDeserializer<JObject> {
                     final JsonNode nestedNode = codec.readTree(textValue);
                     return this.parseNode(nestedNode, codec);
                 } catch (final Exception e) {
-                    final JObject obj = SPI.SPI_OBJECT.jsonObject();
+                    final JObject obj = SPI.J();
                     obj.put("_value", textValue);
                     return obj;
                 }
             } else {
-                final JObject obj = SPI.SPI_OBJECT.jsonObject();
+                final JObject obj = SPI.J();
                 obj.put("_value", textValue);
                 return obj;
             }
         }
 
         // 其他基本类型
-        final JObject obj = SPI.SPI_OBJECT.jsonObject();
+        final JObject obj = SPI.J();
         obj.put("_value", node.toString());
         return obj;
     }
 
     private JArray parseArray(final ArrayNode arrayNode, final ObjectMapper codec) {
-        final JArray arr = SPI.SPI_OBJECT.jsonArray();
+        final JArray arr = SPI.A();
         for (final JsonNode element : arrayNode) {
             if (element.isObject()) {
                 arr.add(this.parseNode(element, codec));

@@ -112,9 +112,9 @@ class JBaseUtil {
         }
         final String content = json.trim();
         if (content.startsWith("[") && content.endsWith("]")) {
-            return (T) SPI.SPI_OBJECT.jsonArray(json);
+            return (T) SPI.A(json);
         } else if (content.startsWith("{") && content.endsWith("}")) {
-            return (T) SPI.SPI_OBJECT.jsonObject(json);
+            return (T) SPI.J(json);
         } else {
             throw new IllegalStateException("[ R2MO ] 无法解析该 JSON 内容：" + json);
         }
