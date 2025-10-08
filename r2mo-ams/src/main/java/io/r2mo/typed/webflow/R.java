@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * @author lang : 2025-08-28
  */
-public class R<T> implements SPI, Serializable {
+public class R<T> implements Serializable {
 
     @JsonIgnore
     private RSuccess<T> success;

@@ -1,6 +1,7 @@
 package io.r2mo.base.dbe.syntax;
 
 import io.r2mo.base.dbe.constant.QCV;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
 
 import java.io.Serializable;
@@ -43,7 +44,7 @@ public class QPager implements Serializable, QRequest {
     @Override
     @SuppressWarnings("all")
     public JObject data() {
-        final JObject data = SPI_OBJECT.jsonObject();
+        final JObject data = SPI.J();
         data.put(PAGE, this.page);
         data.put(SIZE, this.size);
         return data;

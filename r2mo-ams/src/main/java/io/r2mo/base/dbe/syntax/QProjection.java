@@ -1,6 +1,7 @@
 package io.r2mo.base.dbe.syntax;
 
 import io.r2mo.base.dbe.constant.QCV;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
 
 import java.io.Serializable;
@@ -39,7 +40,7 @@ public class QProjection implements Serializable, QRequest {
     @Override
     @SuppressWarnings("all")
     public JArray data() {
-        final JArray data = SPI_OBJECT.jsonArray();
+        final JArray data = SPI.A();
         data.addAll(this.filters);
         return data;
     }

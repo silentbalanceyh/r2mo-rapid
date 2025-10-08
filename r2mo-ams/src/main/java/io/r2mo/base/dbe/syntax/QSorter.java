@@ -53,7 +53,7 @@ public class QSorter implements Serializable, QRequest {
     @Override
     @SuppressWarnings("all")
     public JArray data() {
-        final JArray data = SPI_OBJECT.jsonArray();
+        final JArray data = SPI.A();
         this.fields.forEach(kv -> data.add(kv.key() + "," + (kv.value() ? "ASC" : "DESC")));
         return data;
     }

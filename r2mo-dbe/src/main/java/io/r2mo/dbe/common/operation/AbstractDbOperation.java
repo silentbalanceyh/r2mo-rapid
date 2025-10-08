@@ -6,7 +6,7 @@ import io.r2mo.spi.SPI;
 /**
  * @author lang : 2025-08-28
  */
-public class AbstractDbOperation<QR, T, EXECUTOR> implements SPI {
+public class AbstractDbOperation<QR, T, EXECUTOR> {
 
     private final Class<T> entityCls;
     private final EXECUTOR executor;

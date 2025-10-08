@@ -5,7 +5,11 @@ import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -43,6 +47,41 @@ class ProviderOfFactory {
 
     static ConcurrentMap<Class<?>, Class<?>> meta() {
         return META_CLASS;
+    }
+
+    /**
+     * 根据优先级查找最高优先级的 SPI 实现
+     *
+     * @param clazz SPI 接口类型
+     * @param <T>   SPI 接口类型
+     *
+     * @return 最高优先级的实现类实例
+     */
+    static <T> T findOneOf(final Class<T> clazz) {
+        final List<T> instances = findMany(clazz);
+        if (instances.isEmpty()) {
+            log.warn("[ R2MO ] SPI 实现类未找到: {}", clazz.getName());
+            return null;
+        }
+
+        final T highest = instances.stream().max((item1, item2) -> {
+            final Class<?> class1 = item1.getClass();
+            final Class<?> class2 = item2.getClass();
+            final SPID spid1 = class1.getDeclaredAnnotation(SPID.class);
+            final SPID spid2 = class2.getDeclaredAnnotation(SPID.class);
+
+            final int priority1 = Objects.nonNull(spid1) ? spid1.priority() : 0;
+            final int priority2 = Objects.nonNull(spid2) ? spid2.priority() : 0;
+
+            return Integer.compare(priority1, priority2);
+        }).orElse(null);
+
+        log.info("[ R2MO ] SPI 实现类按优先级查找: interface = {} / 优先级最高实例 = {} / 优先级 = {}",
+            clazz.getName(),
+            highest.getClass().getName(),
+            highest.getClass().getDeclaredAnnotation(SPID.class).priority());
+
+        return highest;
     }
 
     static <T> T findOne(final Class<T> clazz, final String name) {
@@ -131,6 +170,22 @@ class ProviderOfFactory {
         }
 
         return Collections.emptyList();
+    }
+
+    static <T> T findOverwrite(final List<T> found, final Class<T> clazzCls) {
+        if (2 < found.size()) {
+            log.error("[ ZERO ] 此方法要求 SPI 只能有一个或两个实现类。");
+            throw new IllegalArgumentException("[ ZERO ] SPI 查找数量有误：" + clazzCls + " / " + found.size());
+        }
+        // 只找到唯一的一个实现
+        if (1 == found.size()) {
+            return found.getFirst();
+        }
+        // 找到两个实现，要返回包名不是 io.zerows 的（默认）
+        return found.stream()
+            .filter(it -> !it.getClass().getPackageName().startsWith("io.zerows"))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("[ ZERO ] 没找到符合条件的 SPI！"));
     }
 
     private static <T> T findOneInternal(final Class<T> clazz) {
