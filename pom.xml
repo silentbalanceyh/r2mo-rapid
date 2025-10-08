@@ -102,6 +102,7 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <release>${java.version}</release>
                     <compilerArgs>
                         <arg>-Xlint:-options</arg>
                     </compilerArgs>

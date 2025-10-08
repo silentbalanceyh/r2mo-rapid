@@ -179,7 +179,7 @@ class ProviderOfFactory {
         }
         // 只找到唯一的一个实现
         if (1 == found.size()) {
-            return found.getFirst();
+            return found.get(0);
         }
         // 找到两个实现，要返回包名不是 io.zerows 的（默认）
         return found.stream()
