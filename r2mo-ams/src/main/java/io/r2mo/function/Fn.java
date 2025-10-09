@@ -41,8 +41,20 @@ public class Fn {
         FnJvm.jvmAt(actuator);
     }
 
+    public static void jvmAt(final boolean isOk, final Actuator actuator) {
+        if (isOk) {
+            jvmAt(actuator);
+        }
+    }
+
     public static <T> void jvmAt(final Consumer<T> consumer) {
         FnJvm.jvmAt(consumer);
+    }
+
+    public static <T> void jvmAt(final boolean isOk, final Consumer<T> consumer) {
+        if (isOk) {
+            jvmAt(consumer);
+        }
     }
 
     public static <T> Boolean jvmIf(final Predicate<T> predicate) {
