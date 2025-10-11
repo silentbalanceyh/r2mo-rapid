@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.zerows</groupId>
+  <artifactId>r2mo-jce</artifactId>
+  <version>1.0-M21</version>
+  <name>R2MO::JCE</name>
+  <description>R2MO Rapid Framework for Delivery</description>
+  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-jce</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <comments>The project itself is licensed under MIT License.</comments>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>lang.yu</name>
+      <email>silentbalanceyh@126.com</email>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-jce</connection>
+    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-jce</developerConnection>
+    <tag>v1.0-M21</tag>
+    <url>https://www.zerows.io/r2mo-jce</url>
+  </scm>
+  <distributionManagement>
+    <repository>
+      <id>oss</id>
+      <name>Maven Central Staging Repository</name>
+      <url>https://central.sonatype.com</url>
+    </repository>
+    <snapshotRepository>
+      <id>oss</id>
+      <name>Maven Central Snapshots Repository</name>
+      <url>https://central.sonatype.com</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.zerows</groupId>
+      <artifactId>r2mo-ams</artifactId>
+      <version>1.0-M21</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk18on</artifactId>
+      <version>1.82</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.9.0</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
