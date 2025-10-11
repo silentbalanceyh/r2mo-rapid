@@ -185,8 +185,7 @@ class ProviderOfFactory {
         // 找到两个实现，要返回包名不是 io.zerows 的（默认）
         return found.stream()
             .filter(it -> !it.getClass().getPackageName().startsWith("io.zerows"))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("[ ZERO ] 没找到符合条件的 SPI！"));
+            .findFirst().orElse(null);
     }
 
     private static <T> T findOneInternal(final Class<T> clazz) {
