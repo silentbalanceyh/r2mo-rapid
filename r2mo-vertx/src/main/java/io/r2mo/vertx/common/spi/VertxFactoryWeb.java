@@ -28,7 +28,7 @@ public class VertxFactoryWeb implements FactoryWeb {
 
     @Override
     public ForAbort ofAbort() {
-        log.error("[ R2MO ] 由于 Vertx 采用了特殊的 Request/Response 结构，不支持此接口！");
+        log.info("[ R2MO ] 由于 Vertx 采用了特殊的 Request/Response 结构，ForAbort 是基于 Servlet 的核心接口，此方法不支持！");
         return null;
     }
 }

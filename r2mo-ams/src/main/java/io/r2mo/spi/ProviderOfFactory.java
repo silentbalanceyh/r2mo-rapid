@@ -60,7 +60,7 @@ class ProviderOfFactory {
     static <T> T findOneOf(final Class<T> clazz) {
         final List<T> instances = findMany(clazz);
         if (instances.isEmpty()) {
-            log.warn("[ R2MO ] SPI 实现类未找到: {}", clazz.getName());
+            log.warn("[ R2MO ] SPI 实现类未找到（按优先级）: {}", clazz.getName());
             return null;
         }
 
@@ -76,10 +76,11 @@ class ProviderOfFactory {
             return Integer.compare(priority1, priority2);
         }).orElse(null);
 
+        final SPID spid = highest.getClass().getDeclaredAnnotation(SPID.class);
         log.info("[ R2MO ] SPI 实现类按优先级查找: interface = {} / 优先级最高实例 = {} / 优先级 = {}",
             clazz.getName(),
             highest.getClass().getName(),
-            highest.getClass().getDeclaredAnnotation(SPID.class).priority());
+            Objects.isNull(spid) ? null : spid.priority());
 
         return highest;
     }
@@ -87,7 +88,7 @@ class ProviderOfFactory {
     static <T> T findOne(final Class<T> clazz, final String name) {
         final List<T> instances = findMany(clazz);
         if (instances.isEmpty()) {
-            log.warn("[ R2MO ] SPI 实现类未找到: {}", clazz.getName());
+            log.warn("[ R2MO ] SPI 实现类未找到（按名称）: {}", clazz.getName());
             return null;
         }
         if (StrUtil.isBlank(name)) {
