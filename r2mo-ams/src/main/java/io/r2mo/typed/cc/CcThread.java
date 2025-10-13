@@ -57,7 +57,7 @@ class CcThread<V> implements Cc<String, V> {
 
     @Override
     public Collection<V> values() {
-        throw new UnsupportedOperationException("[ R2MO ] 线程级不支持 values() 方法调用！");
+        return this.store.values();
     }
 
     @Override
