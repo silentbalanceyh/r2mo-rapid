@@ -14,6 +14,11 @@ class CcUtil {
     }
 
     static <V> V poolThread(final ConcurrentMap<String, V> pool, final Supplier<V> poolFn, final String marker) {
+        final String keyOf = poolKey(marker);
+        return pool(pool, keyOf, poolFn);
+    }
+
+    static String poolKey(final String marker) {
         final String threadName = Thread.currentThread().getName();
         final String keyOf;
         if (marker == null || marker.isBlank()) {
@@ -21,7 +26,7 @@ class CcUtil {
         } else {
             keyOf = threadName.concat("@").concat(marker);
         }
-        return pool(pool, keyOf, poolFn);
+        return keyOf;
     }
 
     static <K, V> V pool(final ConcurrentMap<K, V> pool, final K key, final Supplier<V> poolFn) {
