@@ -2,6 +2,7 @@ package io.r2mo.base.io;
 
 import cn.hutool.core.io.IoUtil;
 import io.r2mo.base.io.common.FileMem;
+import io.r2mo.base.io.modeling.FileRange;
 import io.r2mo.function.Fn;
 import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.exception.web._501NotSupportException;
@@ -258,6 +259,8 @@ public interface HStore extends HStoreMeta, Serializable {
     }
 
     Binary inBinary(Set<String> files, Set<FileMem> memSet, HProgressor progressRef);
+
+    Binary inBinary(String filename, FileRange fileRange, HProgressor progressorRef);
 
     // ---------------- 公私钥专用
     PrivateKey inPrivate(String filename);

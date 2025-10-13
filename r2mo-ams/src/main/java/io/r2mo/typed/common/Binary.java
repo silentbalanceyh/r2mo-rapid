@@ -25,6 +25,8 @@ public class Binary implements Serializable {
     private long length = 0;
     private String mime = "application/octet-stream";
     private String filename;
+    private String checksum;
+
 
     public Binary(final InputStream stream) {
         this.stream = stream;

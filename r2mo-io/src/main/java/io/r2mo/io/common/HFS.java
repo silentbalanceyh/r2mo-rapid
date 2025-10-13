@@ -292,4 +292,8 @@ public class HFS {
     public <T extends JBase> T inYaml(final Path path) {
         return this.store.inYaml(path);
     }
+
+    public long fileSize(String path) {
+        return this.store.fileSize(path);
+    }
 }

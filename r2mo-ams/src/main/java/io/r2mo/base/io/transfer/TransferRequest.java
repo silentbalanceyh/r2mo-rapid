@@ -34,7 +34,7 @@ public class TransferRequest extends AbstractNormObject {
 
     // ============== 传输属性
     private TransferType type;              // 传输类型（上传还是下载）
-    private Boolean isDirectory;            // 是否目录
+    private Boolean isDirectory = false;            // 是否目录
     private Boolean isMultipart;            // 是否分片文件
     private Boolean isResume;               // 是否断点续传
     private FileRange range;                // 下载范围
@@ -48,6 +48,8 @@ public class TransferRequest extends AbstractNormObject {
     // isMultipart = true 时，使用 content
     private StoreChunk chunkData;           // 分片数据
     private Long chunkCount;                // 分片总数
+    private Long chunkSize;                 // 分片大小
+    private Long totalSize;                 //文件总大小
     // isDirectory = true 时，使用 filePaths
     private List<String> filePaths;         // 目录中文件路径列表
     private Long fileSize;                  // 尺寸信息
@@ -55,4 +57,6 @@ public class TransferRequest extends AbstractNormObject {
 
     // ============== 扩展信息
     private JObject parameters;             // 扩展参数
+    private String token;
+
 }

@@ -21,7 +21,7 @@ public class FileRange {
         return FileRange.builder()
             .start(start)
             .end(end)
-            .length(end - start + 1)
+            .length(end - start)
             .build();
     }
 
@@ -39,7 +39,7 @@ public class FileRange {
             return FileRange.builder()
                 .start(start)
                 .end(end)
-                .length(end != null ? end - start + 1 : null)
+                .length(end != null ? end - start : null)
                 .build();
         } catch (final Exception e) {
             return null;
