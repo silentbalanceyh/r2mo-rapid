@@ -3,6 +3,7 @@ package io.r2mo.io.modeling;
 import io.r2mo.base.io.transfer.TransferType;
 import io.r2mo.io.enums.TransferStatus;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 public class TransferProgress extends AbstractNormObject {
     private String token;                   // 传输令牌
     private UUID nodeId;                    // 节点ID
@@ -40,4 +42,6 @@ public class TransferProgress extends AbstractNormObject {
 
     private String errorMessage;            // 错误信息
     private String errorReason;             // 错误原因
+
+
 }

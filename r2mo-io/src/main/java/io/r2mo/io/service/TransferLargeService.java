@@ -30,28 +30,25 @@ public interface TransferLargeService extends HTransferService<TransferRequest, 
      *
      * @param token    令牌
      * @param fileData 文件数据流
-     * @param chunk    分片信息
-     *
+     * @param index    分片索引
      * @return 上传结果
      */
-    TransferResult runUpload(String token, InputStream fileData, StoreChunk chunk);
+    TransferResult runUpload(String token, InputStream fileData, int index);
 
     /**
      * 运行文件下载
      *
      * @param token 令牌
-     * @param chunk 分片信息
-     *
+     * @param index 分片索引
      * @return 下载结果
      */
-    Binary runDownload(String token, StoreChunk chunk);
+    Binary runDownload(String token, int index);
 
     /**
      * 运行文件下载，带范围
      *
      * @param token 令牌
      * @param range 范围
-     *
      * @return 下载结果
      */
     Binary runDownload(String token, FileRange range);
@@ -61,12 +58,12 @@ public interface TransferLargeService extends HTransferService<TransferRequest, 
      *
      * @return 分片列表
      */
-    List<StoreChunk> dataUploaded();
+    List<StoreChunk> dataUploaded(String token);
 
     /**
      * 等待上传的分片列表
      *
      * @return 分片列表
      */
-    List<StoreChunk> dataWaiting();
+    List<StoreChunk> dataWaiting(String token);
 }

@@ -3,6 +3,7 @@ package io.r2mo.io.local.operation;
 import io.r2mo.base.io.HProgressor;
 import io.r2mo.base.io.HStore;
 import io.r2mo.base.io.common.FileMem;
+import io.r2mo.base.io.modeling.FileRange;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.common.Binary;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +67,11 @@ public class HStoreLocal extends HStoreLocalMeta {
     @Override
     public Binary inBinary(final Set<String> files, final Set<FileMem> memSet, final HProgressor progress) {
         return LocalZip.inBinary(files, memSet, progress);
+    }
+
+    @Override
+    public Binary inBinary(String filename, FileRange fileRange,HProgressor progressorRef) {
+        return LocalRafReader.inBinary(filename,fileRange,progressorRef);
     }
 
     @Override
