@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>r2mo-rapid</artifactId>
-    <version>1.0-M21</version>
+    <version>1.0-M22</version>
     <name>R2MO::🧬 - ${r2mo.version} / 🧪 - Rachel Momo ${rachel-momo.version}</name>
     <!-- License -->
     <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
@@ -89,7 +89,7 @@
     </modules>
     <properties>
         <rachel-momo.version>1.0.7</rachel-momo.version>
-        <r2mo.version>1.0-M21</r2mo.version>
+        <r2mo.version>1.0-M22</r2mo.version>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
