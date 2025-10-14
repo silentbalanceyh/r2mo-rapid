@@ -93,8 +93,7 @@ class CcThread<V> implements Cc<String, V> {
 
     @Override
     public void forEach(final BiConsumer<String, V> consumer) {
-        // 此处的 key, value 处理中的 key 应该是当前线程关联的 key
-        this.keySet().forEach(key -> consumer.accept(key, this.get(key)));
+        throw new UnsupportedOperationException("[ R2MO ] 线程模式不支持方法 forEach(BiConsumer<String,V>) 的调用！");
     }
 
     @Override
