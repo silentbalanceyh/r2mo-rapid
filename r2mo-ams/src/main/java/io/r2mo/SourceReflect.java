@@ -59,6 +59,14 @@ public final class SourceReflect {
         return (T) SINGLETONS.pick(() -> instance(clazzImpl, params), clazzImpl);
     }
 
+    public static <T> T singleton(final String className, final Object... params) {
+        final Class<?> clazz = clazz(className);
+        if (Objects.isNull(clazz)) {
+            throw new IllegalStateException("[ R2MO ] 类不存在：" + className);
+        }
+        return singleton(clazz, params);
+    }
+
     /**
      * 创建类的新实例（支持带参构造函数、多构造重载）
      * <pre>
@@ -129,7 +137,13 @@ public final class SourceReflect {
         }
     }
 
-
+    public static <T> T instance(final String className, final Object... params) {
+        final Class<?> clazz = clazz(className);
+        if (Objects.isNull(clazz)) {
+            throw new IllegalStateException("[ R2MO ] 类不存在：" + className);
+        }
+        return instance(clazz, params);
+    }
     // -----------------------------------------------------------------------
     // 🟢 接口实现检查
     // -----------------------------------------------------------------------
