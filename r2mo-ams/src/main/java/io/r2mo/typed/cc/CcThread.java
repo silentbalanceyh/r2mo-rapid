@@ -22,22 +22,26 @@ class CcThread<V> implements Cc<String, V> {
 
     @Override
     public V get(final String key) {
-        return this.store.getOrDefault(key, null);
+        return this.getOrDefault(key, null);
     }
 
     @Override
     public V getOrDefault(final String key, final V defaultValue) {
-        throw new UnsupportedOperationException("[ R2MO ] 线程级不支持 getOrDefault(String, V) 方法调用！");
+        final String keyOf = CcUtil.keyOf(key);
+        return this.store.getOrDefault(keyOf, defaultValue);
     }
 
     @Override
     public Cc<String, V> put(final String key, final V value) {
-        throw new UnsupportedOperationException("[ R2MO ] 线程级不支持 put(String, V) 方法调用！");
+        final String keyOf = CcUtil.keyOf(key);
+        this.store.put(keyOf, value);
+        return this;
     }
 
     @Override
     public Cc<String, V> putAll(final Map<String, V> map) {
-        throw new UnsupportedOperationException("[ R2MO ] 线程级不支持 putAll(Map<String, V>) 方法调用！");
+        map.forEach(this::put);
+        return this;
     }
 
     @Override
@@ -52,7 +56,7 @@ class CcThread<V> implements Cc<String, V> {
 
     @Override
     public Set<String> keySet() {
-        throw new UnsupportedOperationException("[ R2MO ] 线程级不支持 keySet() 方法调用！");
+        return CcUtil.keySet();
     }
 
     @Override
@@ -67,7 +71,7 @@ class CcThread<V> implements Cc<String, V> {
 
     @Override
     public boolean containsKey(final String key) {
-        final String keyOf = CcUtil.poolKey(key);
+        final String keyOf = CcUtil.keyOf(key);
         return this.store.containsKey(keyOf);
     }
 
@@ -78,7 +82,7 @@ class CcThread<V> implements Cc<String, V> {
 
     @Override
     public boolean remove(final String key) {
-        this.store.remove(key);
+        this.store.remove(CcUtil.keyOf(key));
         return true;
     }
 
@@ -89,11 +93,12 @@ class CcThread<V> implements Cc<String, V> {
 
     @Override
     public void forEach(final BiConsumer<String, V> consumer) {
-        throw new UnsupportedOperationException("[ R2MO ] 线程级不支持 forEach(BiConsumer<String, V>) 方法调用！");
+        // 此处的 key, value 处理中的 key 应该是当前线程关联的 key
+        this.keySet().forEach(key -> consumer.accept(key, this.get(key)));
     }
 
     @Override
     public int size() {
-        throw new UnsupportedOperationException("[ R2MO ] 线程级不支持 size() 方法调用！");
+        return this.keySet().size();
     }
 }

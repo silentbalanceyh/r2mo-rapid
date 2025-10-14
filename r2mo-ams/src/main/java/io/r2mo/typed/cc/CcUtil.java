@@ -1,6 +1,8 @@
 package io.r2mo.typed.cc;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
 
@@ -9,22 +11,48 @@ import java.util.function.Supplier;
  */
 class CcUtil {
 
+    private static final ConcurrentMap<String, Set<String>> KEY_MAP = new ConcurrentHashMap<>();
+
     static <V> V poolThread(final ConcurrentMap<String, V> pool, final Supplier<V> poolFn) {
         return poolThread(pool, poolFn, null);
     }
 
     static <V> V poolThread(final ConcurrentMap<String, V> pool, final Supplier<V> poolFn, final String marker) {
-        final String keyOf = poolKey(marker);
+        final String keyOf = keyOf(marker);
         return pool(pool, keyOf, poolFn);
     }
 
-    static String poolKey(final String marker) {
+    /**
+     * 提取当前线程所有的 key set 集合
+     *
+     * @return key set 集合
+     */
+    static Set<String> keySet() {
+        final String threadName = Thread.currentThread().getName();
+        return KEY_MAP.getOrDefault(threadName, Set.of());
+    }
+
+    /**
+     * 生成线程级的 key 值
+     * <pre>
+     *      1. marker = null or blank -> key       = thread "name"
+     *      2. marker = not blank -> key           = thread "name@marker"
+     *      说明：当 marker 不为空时，表示当前线程下有多个不同
+     * </pre>
+     *
+     * @param marker 标记
+     *
+     * @return 线程级 key
+     */
+    static String keyOf(final String marker) {
         final String threadName = Thread.currentThread().getName();
         final String keyOf;
         if (marker == null || marker.isBlank()) {
             keyOf = threadName;
         } else {
             keyOf = threadName.concat("@").concat(marker);
+            // 在线程的 Map 中追加 thread name = Set<String> 的记录
+            KEY_MAP.computeIfAbsent(threadName, k -> ConcurrentHashMap.newKeySet()).add(marker);
         }
         return keyOf;
     }
