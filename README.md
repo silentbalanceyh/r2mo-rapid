@@ -6,34 +6,61 @@
 
 ## 介绍
 
-此库用于统一 `spring-cloud / spring-boot` 中的整体实现模型，提供如下功能：
+此库用于统一 `spring-cloud / spring-boot` 提供相对标准化的无业务脚手架，可快速开发和实施相关项目。
 
 ### 基础功能
 
 - 统一的 Json 数据结构类型
+    - [x] Hutool 中的 `JSONObject/JSONArray`
+    - [x] Vertx 中的 `JsonObject/JsonArray`
 - 统一的 Io 存储对接访问（存储抽象隔离）
+    - [x] 本地文件系统
+    - [ ] 🧪 FTP / SFTP
 - 统一的异常处理架构
-- 基于目前支持实现类的代码生成
-- 函数式编程模型支持
-- 快速编程
-    - `DBE` / Database Engine，提供数据库统一访问
-    - `HFS` / High-Level File System，存储设备统一方法
-    - `RFS` / Remote File System，基于底层抽象存储的上传下载
-    - `HED` / High-Level Encrypt Decrypt，加解密专用工具类
+    - [x] Web 异常
+    - [x] Remote 服务通信异常（Dubbo专用）
+    - [x] Secure 安全异常（Security专用）
+    - [x] 异常国际化支持 `ResourceBundle`
+    - [x] 🌟 `VertxE / SpringE` 异常定义 -> 统一管理带有错误码的异常处理
+- 统一的抽象数据层
+    - [x] 标准化的 `CRUD` 管理接口（具有幂等性的代码生成模型）
+    - [x] 🌟 JSON 语法的数据库查询分析引擎，简化查询，动态构造。
+    - [x] Mybatis Plus
+    - [ ] 🧪 Jooq 实现
+- 快速编程 🌟
+    - [x] 核心组件
+        - `Cc` Core Cache / 组件缓存架构：防止组件的重复创建
+        - `Fn` 函数式编程接口，兼容 lambda 处理 `Checked` 异常
+        - `R / WebRequest / WebResponse` 统一请求响应格式处理
+        - `ActResponse` 统一服务级响应处理
+        - `BuilderOf` 多元格式转换器，替换传统的 `Set/Get` 方法
+    - [x] 核心工具
+        - `DBE` / Database Engine，提供数据库统一访问
+        - `HFS` / High-Level File System，存储设备统一方法
+        - `RFS` / Remote File System，基于底层抽象存储的上传下载
+        - `HED` / High-Level Encrypt Decrypt，加解密专用工具类
+        - `SPI` / Service Provider Interface，基于 SPI 的核心扩展，可直接使用
 - 快速测试框架
-- 基于 Bouncy Castle 的增强安全算法 / 国密算法
+    - [x] JUnit 5
+    - [x] Mockito
+- 基于 Bouncy Castle 的增强安全算法 / 国密算法 🌟
+    - [x] 许可管理全流程
+    - [x] 数字签名
+    - [x] 常用加密、解密核心算法统一接口
+    - [x] 大文件上传下载
+- 双容器模型
+    - [x] Spring Boot 容器
+    - [x] Vert.x 容器
 
-### 业务功能
+> 部分实现模型只能二选一！
 
-- 基于建模常用的 CRUD 部分
-- 多租户 / 多应用 基模型，提供应用商店管理
-- 许可（激活码）底层服务，支持数字签名格式
+---
 
 ## 参考文档
 
-### 引入方式
+### 使用方式
 
-搭建经典的 `-domain/-provider/-api` 的结构，在父 POM 项目中继承
+搭建经典的 `-domain/-provider/-api` 的结构，在父 POM 项目中直接继承（推荐）
 
 ```xml
 
@@ -44,6 +71,8 @@
 </parent>
 ```
 
+只有使用继承的方式可保证 Maven 的插件版本管理，若插件版本想自定义，直接追加 Maven 的依赖即可。
+
 子项目 `-domain` 中引入
 
 ```xml
@@ -51,9 +80,16 @@
 <dependencies>
     <dependency>
         <groupId>io.zerows</groupId>
-        <artifactId>r2mo-bootstrap</artifactId>
+        <artifactId>r2mo-spring-boot</artifactId>
+        <version>${r2mo.version}</version>
     </dependency>
-    <!-- 实现部分自定 -->
+    <!-- 
+    实现部分：
+     - r2mo-spring-mybatisplus:         Spring 的 MyBatis-Plus 实现
+     - r2mo-spring-json:                Spring 的 Json 序列化配置实现
+     - r2mo-typed-hutool:               数据类型的统一实现（Hutool 的 JSONObject）
+     - r2mo-io-local:                   存储的核心实现，本地文件存储
+    -->
     <dependency>
         <groupId>io.zerows</groupId>
         <artifactId>r2mo-spring-mybatisplus</artifactId>
@@ -77,27 +113,18 @@
 </dependencies>
 ```
 
-- [QR] 语法参考：[QR查询引擎](https://lang-yu.gitbook.io/zero/000.index/010.jooq#id-3.1.-ji-ben-yu-fa)
+---
 
---- 
+### 引导文档
 
-## 功能矩阵
+> Spring 部分
 
-- Json 类型对接实现
+- [1.快速开始](docs/01-Environment.md)
+- [2.Domain 书写](docs/02-Domain.md)
+- [3.MyBatis-Plus / 代码生成](docs/03-Generator.md)
+- [4.异常定义](docs/04-Exception.md)
+- [5.查询引擎 DBE](docs/05-DBE.md)
 
-    - [x] Hutool 中的 `JSONObject`
-    - [x] Vertx 中的 `JsonObject`
-- 统一异常处理，提供三种核心异常类型，统一错误码
+Service/Controller 部分的编程代码可直接参考生成代码，也可自己编写！
 
-    - [x] Web 异常
-    - [x] Remote 服务通信异常（Dubbo专用）
-    - [x] Secure 安全异常（Security专用）
-- Io 类型对接和实现：
-
-    - [x] 本地文件系统
-    - [ ] FTP / SFTP
-- 数据库访问 DBE 实现
-
-    - [x] Mybatis Plus
-    - [ ] JPA
-    - [ ] JOOQ
+---
