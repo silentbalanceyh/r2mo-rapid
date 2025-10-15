@@ -120,7 +120,7 @@
 > Spring 部分
 
 - [1.快速开始](docs/01-Environment.md)
-- [2.Domain 书写](docs/02-Domain.md)
+- [2.Domain/Entity 书写](docs/02-Domain.md)
 - [3.MyBatis-Plus / 代码生成](docs/03-Generator.md)
 - [4.异常定义](docs/04-Exception.md)
 - [5.查询引擎 DBE](docs/05-DBE.md)
