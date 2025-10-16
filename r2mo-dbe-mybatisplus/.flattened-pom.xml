@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
   <artifactId>r2mo-dbe-mybatisplus</artifactId>
-  <version>1.0-M22</version>
+  <version>1.0-M23</version>
   <name>R2MO::DBE::MyBatis-Plus</name>
   <description>R2MO Rapid Framework for Delivery</description>
   <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-dbe-mybatisplus</url>
@@ -28,7 +28,7 @@
   <scm>
     <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-dbe-mybatisplus</connection>
     <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-dbe-mybatisplus</developerConnection>
-    <tag>v1.0-M22</tag>
+    <tag>v1.0-M23</tag>
     <url>https://www.zerows.io/r2mo-dbe-mybatisplus</url>
   </scm>
   <distributionManagement>
@@ -47,13 +47,13 @@
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-ams</artifactId>
-      <version>1.0-M22</version>
+      <version>1.0-M23</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-dbe</artifactId>
-      <version>1.0-M22</version>
+      <version>1.0-M23</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
