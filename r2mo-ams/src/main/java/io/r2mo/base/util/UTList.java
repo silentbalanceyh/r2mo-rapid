@@ -1,9 +1,20 @@
 package io.r2mo.base.util;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import io.r2mo.SourceReflect;
 import io.r2mo.typed.common.Compared;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 /**
  * 列表差异工具类
@@ -12,6 +23,46 @@ import java.util.*;
  * @since 2025-09-24
  */
 class UTList {
+
+    static <T> List<T> elementCombine(final List<T> oldList,
+                                      final List<T> newList,
+                                      final String field) {
+        // 统一返回“副本列表”，无副作用
+        if (oldList == null || oldList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // new -> Map(key, entity)
+        final Map<Object, T> newMap = (newList == null || newList.isEmpty())
+            ? Collections.emptyMap()
+            : elementMap(newList, field);
+
+        // 拷贝策略：忽略 null（不覆盖为 null），忽略拷贝错误
+        final CopyOptions opts = new CopyOptions()
+            .ignoreNullValue()
+            .ignoreError();
+
+        final List<T> result = new ArrayList<>(oldList.size());
+        for (final T oldItem : oldList) {
+            if (oldItem == null) {
+                result.add(null);
+                continue;
+            }
+            // 先基于旧元素创建一个“副本”
+            @SuppressWarnings("unchecked") final T merged = BeanUtil.copyProperties(oldItem, (Class<T>) oldItem.getClass());
+
+            // 如果新列表中存在同 key，则用新元素的“非空字段”覆盖到副本
+            final Object key = SourceReflect.value(oldItem, field);
+            if (key != null && !newMap.isEmpty()) {
+                final T newItem = newMap.get(key);
+                if (newItem != null) {
+                    BeanUtil.copyProperties(newItem, merged, opts);
+                }
+            }
+            result.add(merged);
+        }
+        return result;
+    }
 
     /**
      * 比较两个列表，找出新增、更新和删除的元素。
@@ -44,8 +95,8 @@ class UTList {
         }
 
         // 构建映射
-        final Map<Object, T> oldMap = elementMapByField(oldList, field);
-        final Map<Object, T> newMap = elementMapByField(newList, field);
+        final Map<Object, T> oldMap = elementMap(oldList, field);
+        final Map<Object, T> newMap = elementMap(newList, field);
 
         // 新列表 -> 新增 & 更新
         for (final Map.Entry<Object, T> entry : newMap.entrySet()) {
@@ -66,10 +117,10 @@ class UTList {
     }
 
     /** 根据指定字段构建 Map */
-    private static <T> Map<Object, T> elementMapByField(final List<T> list, final String field) {
-        final Map<Object, T> map = new HashMap<>();
-        for (final T item : list) {
-            final Object value = SourceReflect.value(item, field);
+    private static <K, V> Map<K, V> elementMap(final List<V> list, final String field) {
+        final Map<K, V> map = new HashMap<>();
+        for (final V item : list) {
+            final K value = SourceReflect.value(item, field);
             if (value != null) {
                 map.put(value, item);
             }
@@ -84,8 +135,8 @@ class UTList {
         if (list1 == null || list2 == null) {
             return Collections.emptyList();
         }
-        final Map<Object, T> map1 = elementMapByField(list1, field);
-        final Map<Object, T> map2 = elementMapByField(list2, field);
+        final Map<Object, T> map1 = elementMap(list1, field);
+        final Map<Object, T> map2 = elementMap(list2, field);
 
         final List<T> result = new ArrayList<>();
         for (final Object key : map1.keySet()) {
@@ -102,10 +153,10 @@ class UTList {
     static <T> List<T> elementUnion(final List<T> list1, final List<T> list2, final String field) {
         final Map<Object, T> map = new LinkedHashMap<>();
         if (list1 != null) {
-            map.putAll(elementMapByField(list1, field));
+            map.putAll(elementMap(list1, field));
         }
         if (list2 != null) {
-            map.putAll(elementMapByField(list2, field));
+            map.putAll(elementMap(list2, field));
         }
         return new ArrayList<>(map.values());
     }
@@ -117,9 +168,9 @@ class UTList {
         if (source == null) {
             return Collections.emptyList();
         }
-        final Map<Object, T> sourceMap = elementMapByField(source, field);
+        final Map<Object, T> sourceMap = elementMap(source, field);
         if (target != null) {
-            final Map<Object, T> targetMap = elementMapByField(target, field);
+            final Map<Object, T> targetMap = elementMap(target, field);
             targetMap.keySet().forEach(sourceMap::remove);
         }
         return new ArrayList<>(sourceMap.values());
@@ -195,4 +246,17 @@ class UTList {
         return list;
     }
 
+    static <K, V, E> ConcurrentMap<K, V> elementMap(final List<E> list, final Function<E, K> keyFn, final Function<E, V> valueFn) {
+        final ConcurrentMap<K, V> grouped = new ConcurrentHashMap<>();
+        if (Objects.nonNull(list)) {
+            list.stream().filter(Objects::nonNull).forEach(each -> {
+                final K key = keyFn.apply(each);
+                final V value = valueFn.apply(each);
+                if (Objects.nonNull(key) && Objects.nonNull(value)) {
+                    grouped.put(key, value);
+                }
+            });
+        }
+        return grouped;
+    }
 }

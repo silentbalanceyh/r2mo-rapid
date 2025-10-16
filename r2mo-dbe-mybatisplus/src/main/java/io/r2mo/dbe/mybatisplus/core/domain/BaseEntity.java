@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -119,15 +122,29 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
     @JsonProperty("cMetadata")
     private JObject cMetadata;
     // ---------------- 和表无关
-    /** （保留）搜索值 */
-    @JsonIgnore
-    @TableField(exist = false)
-    private String searchValue;
 
-    /** 请求参数 */
+    /** 扩展属性（不在数据库中） */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @TableField(exist = false)
-    private Map<String, Object> params = new HashMap<>();
+    private Map<String, Object> extension = new HashMap<>();
+
+    @JsonAnySetter            // 反序列化时：任何未匹配到属性的键都会进这里
+    public void putExtension(final String key, final Object value) {
+        // 避免把 orderComm 放进来（它已经被 setOrderComm 接住了）
+        if (this.ignoreExtension().contains(key)) {
+            return;
+        }
+        this.extension.put(key, value);
+    }
+
+    @JsonAnyGetter            // 序列化时：把 otherProps 的键值“摊平”到顶层 JSON
+    public Map<String, Object> getExtension() {
+        return this.extension;
+    }
+
+    protected Set<String> ignoreExtension() {
+        return Set.of();
+    }
 
     @Override
     public void app(final String appId) {
