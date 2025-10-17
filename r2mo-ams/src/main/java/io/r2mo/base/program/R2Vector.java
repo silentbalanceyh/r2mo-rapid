@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.r2mo.base.io.HStore;
+import io.r2mo.function.Fn;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Kv;
@@ -27,6 +28,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 
 /**
  * 🧩 原子部件
@@ -151,6 +154,19 @@ public class R2Vector implements Serializable {
         return this.mapping.getOrDefault(key, key);
     }
 
+    public void mapTo(final BiPredicate<String, String> kvFn,
+                      final BiConsumer<String, String> entryFn) {
+        this.mapping.forEach((in, out) -> {
+            if (kvFn.test(in, out)) {
+                Fn.jvmAt(() -> entryFn.accept(in, out));
+            }
+        });
+    }
+
+    public void mapTo(final BiConsumer<String, String> entryFn) {
+        this.mapTo((k, v) -> true, entryFn);
+    }
+
     /**
      * 输出 Json 对象中的属性 -> {@link Class} 定义中的字段
      * <pre>
@@ -166,6 +182,19 @@ public class R2Vector implements Serializable {
     public String mapBy(final String key) {
         // 若没有映射关系则返回原始 key
         return this.revert.getOrDefault(key, key);
+    }
+
+    public void mapBy(final BiPredicate<String, String> kvFn,
+                      final BiConsumer<String, String> entryFn) {
+        this.revert.forEach((in, out) -> {
+            if (kvFn.test(in, out)) {
+                Fn.jvmAt(() -> entryFn.accept(in, out));
+            }
+        });
+    }
+
+    public void mapBy(final BiConsumer<String, String> entryFn) {
+        this.mapBy((k, v) -> true, entryFn);
     }
 
     // --------------------- 数据库相关的操作 ----------------------
