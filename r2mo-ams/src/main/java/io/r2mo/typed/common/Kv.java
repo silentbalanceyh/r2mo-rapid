@@ -3,10 +3,10 @@ package io.r2mo.typed.common;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * 等价于 Map.Entry 的简易版
- *
- * @author lang : 2025-08-28
+/*
+ * [Data Structure]
+ * Definition for `key = get` pair here
+ * It stored `key = get` and act as Pair here for some spec usage
  */
 public final class Kv<K, V> {
     private K key;
