@@ -2,6 +2,7 @@ package io.r2mo.base.util;
 
 import io.r2mo.typed.json.JObject;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
@@ -25,5 +26,9 @@ public class R2MO extends _UtilDate {
 
     public static <T> T deserialize(final byte[] bytes) {
         return UTJvm.deserialize(bytes);
+    }
+
+    public static Collection<?> toCollection(final Object obj) {
+        return UTTrans.toCollection(obj);
     }
 }

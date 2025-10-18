@@ -39,13 +39,22 @@ public interface QCV {
         MIN
     }
 
+    interface Mark {
+        String DAY = "day";            // 天
+        String MONTH = "month";        // 月
+        String YEAR = "year";          // 年
+        String DATE = "date";          // 日期
+        String DATETIME = "datetime";  // 日期时间
+        String TIME = "time";          // 时间
+    }
+
     interface Op {
         String EQ = "=";                    // 等于
         String NEQ = "<>";                  // 不等于
         String GT = ">";                    // 大于
-        String GTE = ">=";                  // 大于等于
+        String GE = ">=";                  // 大于等于
         String LT = "<";                    // 小于
-        String LTE = "<=";                  // 小于等于
+        String LE = "<=";                  // 小于等于
         String NULL = "n";                  // 为空
         String NOT_NULL = "!n";             // 不为空
         String IN = "i";                    // 在...之中
@@ -53,14 +62,16 @@ public interface QCV {
         String START = "s";                 // 以...开始
         String END = "e";                   // 以...结束
         String CONTAIN = "c";               // 包含 / LIKE
+        String TRUE = "t";                  // 布尔值真
+        String FALSE = "f";                 // 布尔值假
         Set<String> VALUES = new HashSet<>() {
             {
                 this.add(Op.EQ);
                 this.add(Op.NEQ);
                 this.add(Op.GT);
-                this.add(Op.GTE);
+                this.add(Op.GE);
                 this.add(Op.LT);
-                this.add(Op.LTE);
+                this.add(Op.LE);
                 this.add(Op.NULL);
                 this.add(Op.NOT_NULL);
                 this.add(Op.IN);
@@ -68,6 +79,8 @@ public interface QCV {
                 this.add(Op.START);
                 this.add(Op.END);
                 this.add(Op.CONTAIN);
+                this.add(Op.TRUE);
+                this.add(Op.FALSE);
             }
         };
     }

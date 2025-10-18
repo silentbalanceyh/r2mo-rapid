@@ -1,11 +1,21 @@
 package io.r2mo.base.dbe.syntax;
 
 import io.r2mo.base.dbe.constant.QOp;
+import io.r2mo.base.util.R2MO;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author lang : 2025-08-28
  */
-class QValue implements QLeaf {
+public class QValue implements QLeaf {
 
     private final QOp op;
     private final String field;
@@ -69,5 +79,30 @@ class QValue implements QLeaf {
             "( " + this.field + " , " +
             this.op + " , " +
             this.value + " ) ";
+    }
+
+    // -------------- 特殊场景一定会用到的方法
+    public LocalDate toDate() {
+        return this.toDateInternal(R2MO::toDate);
+    }
+
+    public LocalDateTime toDateTime() {
+        return this.toDateInternal(R2MO::toDateTime);
+    }
+
+    public LocalTime toTime() {
+        return this.toDateInternal(R2MO::toTime);
+    }
+
+    public Collection<?> toCollection() {
+        return R2MO.toCollection(this.value);
+    }
+
+    private <T> T toDateInternal(final Function<Instant, T> convertFn) {
+        if (Objects.isNull(this.value)) {
+            return null;
+        }
+        final Date normalized = R2MO.parseFull(this.value.toString());
+        return convertFn.apply(normalized.toInstant());
     }
 }

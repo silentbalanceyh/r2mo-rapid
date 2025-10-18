@@ -11,12 +11,15 @@ public enum QOp {
     AND(QCV.Connector.AND.name()),
     OR(QCV.Connector.OR.name()),
 
+    // Extension for Jooq
+    TRUE(QCV.Op.TRUE),
+    FALSE(QCV.Op.FALSE),
     EQ(QCV.Op.EQ),
     NEQ(QCV.Op.NEQ),
     GT(QCV.Op.GT),
-    GTE(QCV.Op.GTE),
+    GTE(QCV.Op.GE),
     LT(QCV.Op.LT),
-    LTE(QCV.Op.LTE),
+    LTE(QCV.Op.LE),
     NULL(QCV.Op.NULL),
     NOT_NULL(QCV.Op.NOT_NULL),
     IN(QCV.Op.IN),
