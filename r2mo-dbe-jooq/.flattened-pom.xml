@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.zerows</groupId>
+  <artifactId>r2mo-dbe-jooq</artifactId>
+  <version>1.0-M23</version>
+  <name>R2MO::DBE::Jooq</name>
+  <description>R2MO Rapid Framework for Delivery</description>
+  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-dbe-jooq</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <comments>The project itself is licensed under MIT License.</comments>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>lang.yu</name>
+      <email>silentbalanceyh@126.com</email>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-dbe-jooq</connection>
+    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-dbe-jooq</developerConnection>
+    <tag>v1.0-M23</tag>
+    <url>https://www.zerows.io/r2mo-dbe-jooq</url>
+  </scm>
+  <distributionManagement>
+    <repository>
+      <id>oss</id>
+      <name>Maven Central Staging Repository</name>
+      <url>https://central.sonatype.com</url>
+    </repository>
+    <snapshotRepository>
+      <id>oss</id>
+      <name>Maven Central Snapshots Repository</name>
+      <url>https://central.sonatype.com</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.zerows</groupId>
+      <artifactId>r2mo-ams</artifactId>
+      <version>1.0-M23</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.zerows</groupId>
+      <artifactId>r2mo-dbe</artifactId>
+      <version>1.0-M23</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq</artifactId>
+      <version>3.20.8</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq-codegen</artifactId>
+      <version>3.20.8</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq-meta</artifactId>
+      <version>3.20.8</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.9.0</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -182,7 +182,10 @@ class ProviderOfFactory {
         if (1 == found.size()) {
             return found.get(0);
         }
-        // 找到两个实现，要返回包名不是 io.zerows 的（默认）
+        /*
+         * 找到两个实现，要返回包名不是 io.zerows 的（默认），此处 io.zerows 是项目本身的 groupId
+         * 下的实现类，通常作为默认实现存在，这个是整个 R2MO 和 ZERO 既定的法则
+         */
         return found.stream()
             .filter(it -> !it.getClass().getPackageName().startsWith("io.zerows"))
             .findFirst().orElse(null);

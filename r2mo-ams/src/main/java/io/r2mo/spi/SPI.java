@@ -97,6 +97,10 @@ public class SPI {
         return SPI_OBJECT.jsonObject(json);
     }
 
+    public static JObject J(final Object value) {
+        return SPI_OBJECT.jsonObject(value);
+    }
+
     /** ✨ 快速构造一个空 JSON 数组 */
     public static JArray A() {
         return SPI_OBJECT.jsonArray();
@@ -104,6 +108,10 @@ public class SPI {
 
     public static JArray A(final String json) {
         return SPI_OBJECT.jsonArray(json);
+    }
+
+    public static JArray A(final Object value) {
+        return SPI_OBJECT.jsonArray(value);
     }
 
 

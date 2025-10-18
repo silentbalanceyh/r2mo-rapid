@@ -13,9 +13,12 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import io.r2mo.base.dbe.Database;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Ref;
 import io.r2mo.typed.json.jackson.BigNumberSerializer;
+import io.r2mo.typed.json.jackson.DatabaseDeserializer;
+import io.r2mo.typed.json.jackson.DatabaseSerializer;
 import io.r2mo.typed.json.jackson.JArrayDeserializer;
 import io.r2mo.typed.json.jackson.JArraySerializer;
 import io.r2mo.typed.json.jackson.JObjectDeserializer;
@@ -101,6 +104,12 @@ class JBaseUtil {
         moduleJson.addDeserializer(UUID.class, new UUIDDeserializer());
         moduleJson.addSerializer(Ref.class, new RefSerializer());
         moduleJson.addDeserializer(Ref.class, new RefDeserializer());
+        /*
+         * 针对 Database 特殊反序列化和序列化，DBE 要使用，虽然不是所有的 DBE 都会用到这里的行为，但
+         * 对于需要 DIY 底层处理的过程中，提供 DS / Database 的基本管理，让整个流程变成可控。
+         */
+        moduleJson.addSerializer(Database.class, new DatabaseSerializer());
+        moduleJson.addDeserializer(Database.class, new DatabaseDeserializer());
         modules.add(moduleJson);
         return modules;
     }

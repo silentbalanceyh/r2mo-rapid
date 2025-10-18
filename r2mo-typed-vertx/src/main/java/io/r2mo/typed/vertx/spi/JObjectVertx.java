@@ -33,12 +33,26 @@ class JObjectVertx implements JObject {
 
     @Override
     public int getInt(final String key, final int defaultValue) {
-        return this.data.getInteger(key, defaultValue);
+        final Object valueObj = this.data.getValue(key);
+        if (Objects.isNull(valueObj)) {
+            return defaultValue;
+        }
+        if (valueObj instanceof Number) {
+            return ((Number) valueObj).intValue();
+        }
+        return Integer.parseInt(valueObj.toString());
     }
 
     @Override
     public long getLong(final String key, final long defaultValue) {
-        return this.data.getLong(key, defaultValue);
+        final Object valueObj = this.data.getValue(key);
+        if (Objects.isNull(valueObj)) {
+            return defaultValue;
+        }
+        if (valueObj instanceof Number) {
+            return ((Number) valueObj).longValue();
+        }
+        return Long.parseLong(valueObj.toString());
     }
 
     @Override

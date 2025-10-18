@@ -21,10 +21,10 @@ public class JObjectDeserializer extends JsonDeserializer<JObject> {
     @Override
     public JObject deserialize(final JsonParser parser, final DeserializationContext context) throws IOException {
         final JsonNode node = parser.getCodec().readTree(parser);
-        return this.parseNode(node, (ObjectMapper) parser.getCodec());
+        return parseNode(node, (ObjectMapper) parser.getCodec());
     }
 
-    private JObject parseNode(final JsonNode node, final ObjectMapper codec) {
+    static JObject parseNode(final JsonNode node, final ObjectMapper codec) {
         if (node == null || node.isNull()) {
             return SPI.J();
         }
@@ -38,9 +38,9 @@ public class JObjectDeserializer extends JsonDeserializer<JObject> {
                 final JsonNode child = entry.getValue();
 
                 if (child.isObject()) {
-                    obj.put(key, this.parseNode(child, codec));
+                    obj.put(key, parseNode(child, codec));
                 } else if (child.isArray()) {
-                    obj.put(key, this.parseArray((ArrayNode) child, codec));
+                    obj.put(key, parseArray((ArrayNode) child, codec));
                 } else if (child.isTextual()) {
                     obj.put(key, child.asText());
                 } else if (child.isNumber()) {
@@ -56,17 +56,17 @@ public class JObjectDeserializer extends JsonDeserializer<JObject> {
 
         if (node.isArray()) {
             final JObject wrapper = SPI.J();
-            wrapper.put("array", this.parseArray((ArrayNode) node, codec));
+            wrapper.put("array", parseArray((ArrayNode) node, codec));
             return wrapper;
         }
 
         // 处理根节点为文本的情况
         if (node.isTextual()) {
             final String textValue = node.asText();
-            if (this.isJsonString(textValue)) {
+            if (isJsonString(textValue)) {
                 try {
                     final JsonNode nestedNode = codec.readTree(textValue);
-                    return this.parseNode(nestedNode, codec);
+                    return parseNode(nestedNode, codec);
                 } catch (final Exception e) {
                     final JObject obj = SPI.J();
                     obj.put("_value", textValue);
@@ -85,13 +85,13 @@ public class JObjectDeserializer extends JsonDeserializer<JObject> {
         return obj;
     }
 
-    private JArray parseArray(final ArrayNode arrayNode, final ObjectMapper codec) {
+    private static JArray parseArray(final ArrayNode arrayNode, final ObjectMapper codec) {
         final JArray arr = SPI.A();
         for (final JsonNode element : arrayNode) {
             if (element.isObject()) {
-                arr.add(this.parseNode(element, codec));
+                arr.add(parseNode(element, codec));
             } else if (element.isArray()) {
-                arr.add(this.parseArray((ArrayNode) element, codec));
+                arr.add(parseArray((ArrayNode) element, codec));
             } else if (element.isTextual()) {
                 arr.add(element.asText());
             } else if (element.isNumber()) {
@@ -105,7 +105,7 @@ public class JObjectDeserializer extends JsonDeserializer<JObject> {
         return arr;
     }
 
-    private boolean isJsonString(final String str) {
+    private static boolean isJsonString(final String str) {
         if (str == null || str.length() < 2) {
             return false;
         }
