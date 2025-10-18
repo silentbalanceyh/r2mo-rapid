@@ -15,7 +15,7 @@ import org.jooq.DSLContext;
  */
 @SPID(DBContext.DEFAULT_CONTEXT_SPID)
 public class JooqContext implements DBContext {
-    static final Cc<String, Vertx> CC_VECTOR = Cc.open();
+    private static final Cc<String, Vertx> CC_VECTOR = Cc.open();
     private static final Cc<String, DSLContext> CC_JOOQ = Cc.open();
 
     @Override
@@ -41,6 +41,16 @@ public class JooqContext implements DBContext {
 
     @Override
     public Vertx vertx(final DBS dbs) {
+        return vertxStatic(dbs);
+    }
+
+    public static Vertx vertxStatic(final DBS dbs) {
         return CC_VECTOR.get(String.valueOf(dbs.hashCode()));
+    }
+
+    public static String cached(final Class<?> daoCls, final DBS dbs) {
+        return JooqContext.vertxStatic(dbs).hashCode() +
+            "@" + dbs.hashCode() +
+            "/" + daoCls.getName();
     }
 }
