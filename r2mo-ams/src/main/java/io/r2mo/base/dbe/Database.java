@@ -179,6 +179,18 @@ public class Database implements Serializable, JElement {
     }
 
     // -------------- 静态检查方法 -----------------
+
+    /**
+     * 目前版本所有连接池只允许 One Of 选择一个，若有多个可以考虑 user-cp 的方式实现多个连接池的功能，比如筛选和聚合
+     * <pre>
+     *     1. user-cp -> 自定义连接池 -> 动态选择
+     *     2. hikari  -> HikariCP 连接池
+     *     3. tomcat  -> Tomcat JDBC 连接池
+     *     4. dbcp2   -> Apache DBCP2 连接池
+     * </pre>
+     *
+     * @return 连接池名称
+     */
     public String findNameOfDBCP() {
         // 根据扩展看是否启用了连接池
         return this.extension.keySet().stream()
