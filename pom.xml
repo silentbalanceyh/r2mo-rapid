@@ -88,6 +88,7 @@
         <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
         <module>r2mo-boot-spring</module>
         <module>r2mo-boot-vertx</module>
+        <module>r2mo-vertx-jooq</module>
     </modules>
     <properties>
         <rachel-momo.version>1.0.7</rachel-momo.version>
@@ -255,7 +256,6 @@
                 <artifactId>r2mo-io</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
-
             <!--
             具体实现模块在环境中不做统一管理，由各自模块自行声明依赖版本
             - r2mo-dbe-mybatisplus

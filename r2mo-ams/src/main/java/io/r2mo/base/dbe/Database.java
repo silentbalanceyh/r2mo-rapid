@@ -17,6 +17,7 @@ import io.r2mo.typed.json.JUtil;
 import io.r2mo.typed.json.jackson.JObjectDeserializer;
 import io.r2mo.typed.json.jackson.JObjectSerializer;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -59,6 +60,10 @@ public class Database implements Serializable, JElement {
 
     @JsonIgnore
     private DBCrypto crypto;
+
+    @JsonIgnore
+    @Accessors(fluent = true, chain = true)
+    private String name;
 
 
     @JsonSerialize(using = JObjectSerializer.class)
