@@ -8,7 +8,6 @@ import io.r2mo.base.io.HStore;
 import io.r2mo.function.Fn;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
-import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.exception.web._404NotFoundException;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
@@ -22,9 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -38,18 +34,18 @@ import java.util.function.BiPredicate;
  *     场景一：实体类到 Json 对象的映射
  *     type: {@link Class}                  # 向量的绑定实体类，此处实体类只能有一个，不可以多个
  *     mapping:
- *       fieldT: fieldJ
+ *       field: fieldJson
  *
  *     场景二：数据列到 Json 对象的映射
  *     column:
- *       fieldD: fieldJ
+ *       field: fieldColumn
  *
  * </pre>
  * 详细说明：
  * <pre>
- *     - fieldT 必须是实体类中的字段名称
- *     - fieldD 数据库表中的列名
- *     - fieldJ 必须是输入 / 输出 Json 对象中的属性名
+ *     - field          必须是实体类中的字段名称
+ *     - fieldColumn    数据库表中的列名
+ *     - fieldJson      必须是输入 / 输出 Json 对象中的属性名
  * </pre>
  *
  * @author lang : 2025-10-17
@@ -61,53 +57,42 @@ public class R2Vector implements Serializable {
     @JsonDeserialize(using = ClassDeserializer.class)
     private Class<?> type;
 
+    @JsonIgnore
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private R2Mapping vField = new R2Mapping();
+
+
+    @JsonIgnore
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private R2Mapping vColumn = new R2Mapping();
+
     /**
-     * 由于可以重复，所以此处必须是这种结构才能真正被使用起来，此处的 mapping 是基础映射表，里面包含了 key = value 的基本映射关系，
-     * 如果 key 重复则直接存放在另外的变量中！序列化时只考虑 mapping 变量！
+     * field -> fieldJson
+     *
+     * @param mapping 映射表
      */
-    private final ConcurrentMap<String, String> mapping = new ConcurrentHashMap<>();
-
-    public void setMapping(final ConcurrentMap<String, String> mapping) {
-        if (Objects.isNull(mapping)) {
-            return;
-        }
-        this.mapping.clear();
-        this.revert.clear();
-
-        for (final Map.Entry<String, String> entry : mapping.entrySet()) {
-            final String k = entry.getKey();
-            final String v = entry.getValue();
-            this.mapping.put(k, v);         // 正向填充
-            if (Objects.isNull(v)) {
-                continue;
-            }
-            if (this.revert.containsKey(k)) {
-                // 扩展填充
-                this.extension.add(Kv.create(k, v));
-            }
-            this.revert.put(v, k);      // 逆向填充
-        }
+    public void mapping(final ConcurrentMap<String, String> mapping) {
+        this.vField.setMapping(mapping, true);
     }
 
-    @JsonIgnore
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private final ConcurrentMap<String, String> revert = new ConcurrentHashMap<>();
+    public void mapping(final ConcurrentMap<String, String> mapping, final boolean isClean) {
+        this.vField.setMapping(mapping, isClean);
+    }
 
-    @JsonIgnore
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private final ConcurrentMap<String, String> columnMapping = new ConcurrentHashMap<>();
+    /**
+     * field -> column
+     *
+     * @param mapping 映射表
+     */
+    public void mappingColumn(final ConcurrentMap<String, String> mapping) {
+        this.vColumn.setMapping(mapping, true);
+    }
 
-    @JsonIgnore
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private final ConcurrentMap<String, String> columnRevert = new ConcurrentHashMap<>();
-
-    @JsonIgnore
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private final List<Kv<String, String>> extension = new ArrayList<>();
+    public void mappingColumn(final ConcurrentMap<String, String> mapping, final boolean isClean) {
+        this.vColumn.setMapping(mapping, isClean);
+    }
 
     public static R2Vector of(final String mappingFile) {
         if (StrUtil.isEmpty(mappingFile)) {
@@ -124,7 +109,12 @@ public class R2Vector implements Serializable {
                 final URL url = Thread.currentThread().getContextClassLoader().getResource(filename);
                 data = STORE.inYaml(url);
             }
-            return SPI.V_UTIL.deserializeJson(data, R2Vector.class);
+            final JObject mapping = SPI.V_UTIL.valueJObject(data, "mapping");
+            final R2Vector vector = SPI.V_UTIL.deserializeJson(data, R2Vector.class);
+            final ConcurrentMap<String, String> mapData = new ConcurrentHashMap<>();
+            mapping.toMap().forEach((field, fieldJ) -> mapData.put(field, (String) fieldJ));
+            vector.mapping(mapData);
+            return vector;
         }, mappingFile);
     }
 
@@ -146,19 +136,19 @@ public class R2Vector implements Serializable {
      *
      */
     public ConcurrentMap<String, String> mapTo() {
-        return this.mapping;
+        return this.vField.mapTo();
     }
 
-    public String mapTo(final String key) {
-        // 若没有映射关系则返回原始 key
-        return this.mapping.getOrDefault(key, key);
+    public String mapTo(final String field) {
+        // 若没有映射关系则返回原始 field
+        return this.vField.mapTo(field);
     }
 
     public void mapTo(final BiPredicate<String, String> kvFn,
                       final BiConsumer<String, String> entryFn) {
-        this.mapping.forEach((in, out) -> {
-            if (kvFn.test(in, out)) {
-                Fn.jvmAt(() -> entryFn.accept(in, out));
+        this.vField.mapTo().forEach((field, fieldJson) -> {
+            if (kvFn.test(field, fieldJson)) {
+                Fn.jvmAt(() -> entryFn.accept(field, fieldJson));
             }
         });
     }
@@ -176,19 +166,19 @@ public class R2Vector implements Serializable {
      * @return 逆向映射表
      */
     public ConcurrentMap<String, String> mapBy() {
-        return this.revert;
+        return this.vField.mapBy();
     }
 
-    public String mapBy(final String key) {
-        // 若没有映射关系则返回原始 key
-        return this.revert.getOrDefault(key, key);
+    public String mapBy(final String fieldJson) {
+        // 若没有映射关系则返回原始 fieldJson
+        return this.vField.mapBy(fieldJson);
     }
 
     public void mapBy(final BiPredicate<String, String> kvFn,
                       final BiConsumer<String, String> entryFn) {
-        this.revert.forEach((in, out) -> {
-            if (kvFn.test(in, out)) {
-                Fn.jvmAt(() -> entryFn.accept(in, out));
+        this.vField.mapBy().forEach((fieldJson, field) -> {
+            if (kvFn.test(fieldJson, field)) {
+                Fn.jvmAt(() -> entryFn.accept(fieldJson, field));
             }
         });
     }
@@ -197,49 +187,24 @@ public class R2Vector implements Serializable {
         this.mapBy((k, v) -> true, entryFn);
     }
 
-    // --------------------- 数据库相关的操作 ----------------------
-    // 绑定数据，写数据
-    public R2Vector stored(final JObject data) {
-        if (Objects.isNull(data)) {
-            log.warn("[ R2MO ] 存储数据列时传入的 JObject 为空，跳过处理");
-            return this;
-        }
-        final Map<String, Object> mapColumn = data.toMap();
-        return this.stored(mapColumn);
-    }
-
-    public R2Vector stored(final Map<String, Object> data) {
-        if (Objects.isNull(data)) {
-            log.warn("[ R2MO ] 存储数据列时传入的 Map 为空，跳过处理");
-            return this;
-        }
-        for (final Map.Entry<String, Object> entry : data.entrySet()) {
-            final String k = entry.getKey();
-            final Object v = entry.getValue();
-            if (Objects.isNull(v)) {
-                continue;
-            }
-            final String value = Objects.toString(v);
-            this.columnMapping.put(k, value);
-            this.columnRevert.put(value, k);
-        }
-        return this;
-    }
-
     // 读取数据，读数据
-    public ConcurrentMap<String, String> mapToCol() {
-        return this.columnMapping;
+    public ConcurrentMap<String, String> mapToColumn() {
+        return this.vColumn.mapTo();
     }
 
-    public String mapToCol(final String key) {
-        return this.columnMapping.getOrDefault(key, null);
+    public String mapToColumn(final String field) {
+        return this.vColumn.mapTo(field, null);
     }
 
-    public ConcurrentMap<String, String> mapByCol() {
-        return this.columnRevert;
+    public ConcurrentMap<String, String> mapByColumn() {
+        return this.vColumn.mapBy();
     }
 
-    public String mapByCol(final String key) {
-        return this.columnRevert.getOrDefault(key, null);
+    public String mapByColumn(final String column) {
+        return this.vColumn.mapBy(column, null);
+    }
+
+    public boolean hasMapping() {
+        return !this.vField.mapTo().isEmpty();
     }
 }

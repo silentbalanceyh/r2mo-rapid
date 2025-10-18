@@ -9,6 +9,7 @@ class QValue implements QLeaf {
 
     private final QOp op;
     private final String field;
+    private String mark;    // 第三位标记，出现了 startAt,<,day 中第三位会出现数据转换，主要针对时间格式
 
     private final Object value;
     private Integer level = 0;
@@ -25,6 +26,11 @@ class QValue implements QLeaf {
         return new QValue(field, op, value);
     }
 
+    public QValue mark(final String mark) {
+        this.mark = mark;
+        return this;
+    }
+
     @Override
     public boolean isLeaf() {
         return true;
@@ -33,6 +39,11 @@ class QValue implements QLeaf {
     @Override
     public String field() {
         return this.field;
+    }
+
+    @Override
+    public String mark() {
+        return this.mark;
     }
 
     @Override

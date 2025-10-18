@@ -16,4 +16,6 @@ public interface QLeaf extends QNode {
     String field();
 
     Object value();
+
+    String mark();
 }

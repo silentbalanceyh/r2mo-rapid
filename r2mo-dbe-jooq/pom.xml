@@ -34,4 +34,19 @@
             <artifactId>jooq-meta</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>21</release>
+                    <source>21</source>
+                    <target>21</target>
+                    <compilerArgs>
+                        <arg>-Xlint:-options</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -7,9 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
@@ -310,9 +313,53 @@ public final class SourceReflect {
         if (Objects.isNull(fieldName)) {
             return null;
         }
-        return Stream.of(clazz.getDeclaredFields())
+        return Stream.of(fields(clazz))
             .filter(f -> fieldName.equals(f.getName()))
             .findAny().orElse(null);
+    }
+
+    /**
+     * 🔍 获取类及其所有父类中的非静态、非抽象字段
+     * <p>
+     * 🔄 此方法递归遍历类继承树，收集当前类及所有父类的非静态、非抽象字段。
+     *
+     * @param clazz 📚 目标类
+     *
+     * @return 📝 包含当前类及所有父类的非静态、非抽象字段数组
+     * @throws NullPointerException 🚨 当 clazz 为 null 时抛出
+     * @since 💡 1.1.0
+     */
+    public static Field[] fieldsN(final Class<?> clazz) {
+        Objects.requireNonNull(clazz);
+
+        final List<Field> allFields = new ArrayList<>();
+        Class<?> currentClass = clazz;
+
+        // 🔄 循环遍历类继承链，直到 Object 类
+        while (currentClass != null && !currentClass.equals(Object.class)) {
+            // 📥 使用现有的 fields 方法获取当前类的字段
+            final Field[] currentFields = fields(currentClass);
+            allFields.addAll(Arrays.asList(currentFields));
+            currentClass = currentClass.getSuperclass();
+        }
+
+        return allFields.toArray(new Field[0]);
+    }
+
+    /**
+     * 获取类中所有非静态、非抽象字段
+     *
+     * @param clazz 目标类
+     *
+     * @return 字段数组
+     */
+    public static Field[] fields(final Class<?> clazz) {
+        Objects.requireNonNull(clazz);
+        final Field[] fields = clazz.getDeclaredFields();
+        return Arrays.stream(fields)
+            .filter(item -> !Modifier.isStatic(item.getModifiers()))
+            .filter(item -> !Modifier.isAbstract(item.getModifiers()))
+            .toArray(Field[]::new);
     }
 
     // -----------------------------------------------------------------------

@@ -1,12 +1,13 @@
 package io.r2mo.vertx.jooq;
 
 import io.r2mo.base.dbe.DBS;
+import io.r2mo.base.dbe.Database;
 import io.r2mo.base.program.R2Vector;
+import io.r2mo.dbe.jooq.DBE;
+import io.r2mo.dbe.jooq.core.domain.JooqDatabase;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.exception.web._501NotSupportException;
 import io.vertx.core.Vertx;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import java.util.Objects;
 
@@ -19,27 +20,33 @@ import java.util.Objects;
 public class DBEx {
     private static final Cc<String, DBEx> CC_DBEX = Cc.openThread();
     private final DBS dbs;
-    private final Class<?> daoCls;
     private final Vertx vertxRef;
-    /**
-     * 正常而言，一旦带有 vector 在访问数据库过程中就不可能被拿掉，所以可以将 {@link R2Vector} 存储在 Meta 中使用，
-     * 一般是用于迁移，比如配置 pojoFile -> 旧数据库往新数据库做迁移，使用此映射来实现所有操作，直接加载了此处的
-     * {@link R2Vector} 之后就可以在 DB 的前置和后置工作做先处理部分事情来实现整体的映射流程
-     */
-    @Accessors(fluent = true, chain = true)
-    @Getter
-    @Setter
-    private R2Vector vector;
+    private final JooqMetaAsync metadata;
+    // Bridge
+    private final DBE<?> dbe;
+
+    public DBEx vector(final R2Vector vector) {
+        metadata.vector(vector);
+        return this;
+    }
 
     private DBEx(final Class<?> daoCls, final DBS dbs) {
+        // 提取 Database 引用，构造同步专用的 DSLContext
+        final Database database = dbs.getDatabase();
+        if (!(database instanceof final JooqDatabase jooqDatabase)) {
+            throw new _501NotSupportException("[ R2MO ] JOOQ 模式仅支持 JooqDatabase 类型的数据库引用！");
+        }
+
         this.dbs = dbs;
-        this.daoCls = daoCls;
         // 内部直接访问 Context 中的引用
         this.vertxRef = JooqContext.vertxStatic(dbs);
         Objects.requireNonNull(vertxRef, "[ R2MO ] 关键步骤 DBS 无法初始化 Vertx 引用！");
-        // 单个线程内的基本操作，访问 DBE 时可使用
-        // -> DBE 同步模式
-        // -> DBAsync 异步模式
+
+
+        final JooqMetaAsync metaAsync = new JooqMetaAsync(daoCls);
+        this.metadata = metaAsync;
+        // 同步初始化
+        this.dbe = DBE.of(metaAsync.entityClass(), jooqDatabase.getContext());
     }
 
     // -------------------- 静态创建方法 ----------------------

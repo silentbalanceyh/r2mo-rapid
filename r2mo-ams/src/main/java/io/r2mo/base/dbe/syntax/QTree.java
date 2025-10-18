@@ -78,7 +78,12 @@ public class QTree implements QRequest {
             final String[] split = field.split(",");
             final String f = split[0].trim();
             final QOp op = QOp.toOp(split[1].trim());
-            return QValue.of(f, op, value);
+            final QValue qValue = QValue.of(f, op, value);
+            if (2 < split.length) {
+                // 标记位设置
+                qValue.mark(split[2].trim());
+            }
+            return qValue;
         } else {
             // 默认 =
             return QValue.of(field, QOp.EQ, value);
