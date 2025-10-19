@@ -31,8 +31,8 @@ public class HikariCPFactory implements DBS.CPFactory {
             HikariBuilder.of().initialize(hikariConfig, database);
 
             // 构造数据源
-            try (final HikariDataSource dataSource = new HikariDataSource(hikariConfig)) {
-                return dataSource;
+            try {
+                return new HikariDataSource(hikariConfig);
             } catch (final Exception ex) {
                 log.error(ex.getMessage(), ex);
                 return null;

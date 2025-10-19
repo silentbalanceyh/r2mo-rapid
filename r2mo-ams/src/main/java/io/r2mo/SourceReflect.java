@@ -277,6 +277,34 @@ public final class SourceReflect {
         });
     }
 
+    /**
+     * 获取类中的 static 常量或变量（递归查找父类）（接口常量、静态公有/私有常量）
+     *
+     * @param clazz 类
+     * @param name  字段名
+     * @param <T>   返回值类型
+     *
+     * @return 字段值
+     */
+    @SuppressWarnings("all")
+    public static <T> T valueN(final Class<?> clazz, final String name) {
+        if (clazz == null) {
+            return null;
+        }
+
+        // 🔍 首先在当前类中查找
+        try {
+            final Field field = clazz.getDeclaredField(name);
+            field.setAccessible(true);
+            return (T) field.get(null);
+        } catch (NoSuchFieldException e) {
+            // 🔁 递归查找父类
+            return valueN(clazz.getSuperclass(), name);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     // -----------------------------------------------------------------------
     // 🟢 字段查找
     // -----------------------------------------------------------------------

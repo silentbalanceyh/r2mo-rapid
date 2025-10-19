@@ -45,8 +45,10 @@ import java.util.UUID;
 class JBaseUtil {
 
     private static final JsonMapper MAPPER = JsonMapper.builder()
-        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+        // 开启大小写敏感，防止属性混淆
+        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, false)
+        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, false)
+        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
         .build();
 
     static {

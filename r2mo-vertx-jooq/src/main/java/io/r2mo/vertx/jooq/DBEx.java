@@ -42,6 +42,10 @@ public class DBEx<T> {
         return this;
     }
 
+    public AsyncMeta metadata() {
+        return this.metadata;
+    }
+
     private DBEx(final Class<T> daoCls, final DBS dbs) {
         // 提取 Database 引用，构造同步专用的 DSLContext
         final Database database = dbs.getDatabase();
@@ -62,7 +66,7 @@ public class DBEx<T> {
         // 同步初始化
         this.dbe = DBE.of((Class<T>) metaAsync.metaEntity(), jooqDatabase.getContext());
         // 异步初始化
-        this.dbeAsync = AsyncDBE.of(daoCls, metaAsync);
+        this.dbeAsync = AsyncDBE.of((Class<T>) metaAsync.metaEntity(), metaAsync);
     }
 
     // -------------------- 静态创建方法 ----------------------

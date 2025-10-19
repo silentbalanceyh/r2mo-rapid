@@ -22,35 +22,44 @@ import java.util.Objects;
 @Slf4j
 public class AsyncMeta {
     private static final Cc<Class<?>, AsyncMeta> CC_META = Cc.open();
+    /*
+     * Fix Bug: DAO 类无法直接通过实体类反向获取
+     * [ R2MO ] 无法从实体类中提取元数据，追加一个映射关系向量，可直接通过实体类反向获取元数据信息
+     */
+    private static final Cc<Class<?>, Class<?>> CC_META_REF = Cc.open();
     private final Class<?> daoCls;
     private final JooqMeta metadata;
     @SuppressWarnings("all")
     private VertxDAO dao;
     @Getter
     @Accessors(fluent = true, chain = true)
-    private DSLContext context;
+    private final DSLContext context;
 
     public AsyncMeta vector(final R2Vector vector) {
         this.metadata.vector(vector);
         return this;
     }
 
-    private AsyncMeta(final Class<?> daoCls) {
+    private AsyncMeta(final Class<?> daoCls, final DSLContext context, final Vertx vertxRef) {
         this.daoCls = daoCls;
         if (!SourceReflect.isImplement(daoCls, VertxDAO.class)) {
             throw new _500ServerInternalException("[ R2MO ] 仅支持 VertxDAO 类型的 DAO 类：" + daoCls.getName());
         }
-        // 提取表名
-        final Table<?> table = SourceReflect.value(daoCls, "table");
-        // 提取实体类名
-        final Class<?> entityCls = SourceReflect.value(daoCls, "type");
-        this.metadata = JooqMeta.of(entityCls, table);
-    }
-
-    void configure(final DSLContext context, final Vertx vertxRef) {
         final Configuration configuration = context.configuration();
-        this.dao = SourceReflect.instance(this.daoCls, configuration, vertxRef);
+        @SuppressWarnings("all") final VertxDAO vertxDAO = SourceReflect.instance(this.daoCls, configuration, vertxRef);
+
+
+        // 设置上下文对象
         this.context = context;
+
+
+        // 提取表名
+        final Table<?> table = SourceReflect.value(vertxDAO, "table");
+        // 提取实体类名
+        final Class<?> entityCls = SourceReflect.value(vertxDAO, "type");
+        CC_META_REF.put(entityCls, daoCls);
+        this.dao = vertxDAO;
+        this.metadata = JooqMeta.of(entityCls, table);
     }
 
     @SuppressWarnings("all")
@@ -70,6 +79,10 @@ public class AsyncMeta {
         return Objects.requireNonNull(this.metadata).entityCls();
     }
 
+    public R2Vector metaVector() {
+        return Objects.requireNonNull(this.metadata).vector();
+    }
+
     public Table<?> metaTable() {
         return Objects.requireNonNull(this.metadata).table();
     }
@@ -87,14 +100,17 @@ public class AsyncMeta {
      */
     public static AsyncMeta of(final Class<?> daoCls, final DSLContext context, final Vertx vertxRef) {
         return CC_META.pick(() -> {
-            final AsyncMeta instance = new AsyncMeta(daoCls);
-            instance.configure(context, vertxRef);
+            final AsyncMeta instance = new AsyncMeta(daoCls, context, vertxRef);
             log.info("[ R2MO ] ( Jooq ) Async 异步初始化完成 hashCode = {}", instance.hashCode());
             return instance;
         }, daoCls);
     }
 
-    public static AsyncMeta getOr(final Class<?> daoCls) {
+    public static AsyncMeta getOr(final Class<?> daoOrEntity) {
+        if (CC_META.containsKey(daoOrEntity)) {
+            return CC_META.get(daoOrEntity);
+        }
+        final Class<?> daoCls = CC_META_REF.getOrDefault(daoOrEntity, daoOrEntity);
         return CC_META.getOrDefault(daoCls, null);
     }
 }

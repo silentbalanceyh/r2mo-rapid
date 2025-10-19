@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * @author lang : 2025-10-19
  */
-class _UtilNum extends _UtilDate {
+class _UtilNum extends _UtilJson {
 
     /**
      * 检查一个字符串是否正整数，正则表达式模式
