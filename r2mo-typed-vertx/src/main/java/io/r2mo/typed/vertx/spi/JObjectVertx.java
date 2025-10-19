@@ -118,6 +118,13 @@ class JObjectVertx implements JObject {
     }
 
     @Override
+    public boolean isNested() {
+        return this.data.fieldNames().stream()
+            .map(this.data::getValue)
+            .anyMatch(SPI.V_UTIL::isJObject);
+    }
+
+    @Override
     public Map<String, Object> toMap() {
         return this.data.getMap();
     }

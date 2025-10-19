@@ -19,6 +19,7 @@ import java.util.function.Function;
 @Slf4j
 public class QValue implements QLeaf {
 
+    private Class<?> type;
     private final QOp op;
     private final String field;
     private String mark;    // 第三位标记，出现了 startAt,<,day 中第三位会出现数据转换，主要针对时间格式
@@ -30,11 +31,18 @@ public class QValue implements QLeaf {
         this.field = field;
         this.op = null == op ? QOp.EQ : op;
         this.value = value;
+        if (Objects.nonNull(value)) {
+            this.type = value.getClass();
+        }
     }
 
 
     public static QValue of(final String field, final String op, final Object value) {
         return new QValue(field, QOp.toOp(op), value);
+    }
+
+    public static QValue of(final String field, final QOp op, final Object value) {
+        return new QValue(field, op, value);
     }
 
     /**
@@ -46,7 +54,16 @@ public class QValue implements QLeaf {
      * @return QValue 实例
      */
     public static QValue of(final String field, final Object value) {
+        // 特殊流程
         if (field.contains(",")) {
+
+
+            /*
+             * 基本解析：field,op,mark
+             *  field : 字段名
+             *  op    : 操作符
+             *  mark  : 标记位
+             */
             final String[] split = field.split(",");
             final String f = split[0].trim();
             final QOp op = QOp.toOp(split[1].trim());
@@ -57,24 +74,35 @@ public class QValue implements QLeaf {
             }
             return qValue;
         } else {
-            // 默认 =
-            return new QValue(field, QOp.EQ, value);
+
+
+            /* 特殊解析（默认模式），field 中不包含 op */
+            // 默认 = / in
+            if (R2MO.isCollection(value)) {
+                // 集合值使用 IN
+                return new QValue(field, QOp.IN, value);
+            } else {
+                // 等号使用 EQ
+                return new QValue(field, QOp.EQ, value);
+            }
         }
     }
 
-    /**
-     * 克隆一个 QValue 对象，并替换值
-     *
-     * @param qValue      原始 QValue
-     * @param valueLatest 最新值
-     *
-     * @return 新的 QValue 对象
-     */
-    public static QValue of(final QValue qValue, final Object valueLatest) {
+    public static QValue copyOf(final QValue qValue, final Object valueLatest) {
         Objects.requireNonNull(qValue, "[ R2MO ] 此方法要求 qValue 不能为 null");
         final QValue cloned = new QValue(qValue.field, qValue.op, valueLatest);
         cloned.mark = qValue.mark;
         cloned.level = qValue.level;
+        cloned.type = qValue.type;
+        return cloned;
+    }
+
+    public static QValue copyOf(final QValue qValue, final String field) {
+        Objects.requireNonNull(qValue, "[ R2MO ] 此方法要求 qValue 不能为 null");
+        final QValue cloned = new QValue(field, qValue.op, qValue.value);
+        cloned.mark = qValue.mark;
+        cloned.level = qValue.level;
+        cloned.type = qValue.type;
         return cloned;
     }
 
@@ -122,6 +150,17 @@ public class QValue implements QLeaf {
             "( " + this.field + " , " +
             this.op + " , " +
             this.value + " ) ";
+    }
+
+    @Override
+    public Class<?> type() {
+        return this.type;
+    }
+
+    @Override
+    public QValue type(final Class<?> type) {
+        this.type = type;
+        return this;
     }
 
     // -------------- 特殊场景一定会用到的方法

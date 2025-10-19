@@ -1,40 +1,60 @@
 package io.r2mo.dbe.jooq.spi;
 
+import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.dbe.operation.QrOne;
 import io.r2mo.base.dbe.syntax.QTree;
-import io.r2mo.dbe.common.operation.AbstractDbOperation;
-import org.jooq.Condition;
 import org.jooq.DSLContext;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
  * @author lang : 2025-10-18
  */
-class QrOneJooq<T> extends AbstractDbOperation<Condition, T, DSLContext> implements QrOne<T> {
+class QrOneJooq<T> extends AbstractDbJooq<T> implements QrOne<T> {
     QrOneJooq(final Class<T> entityCls, final DSLContext dslContext) {
         super(entityCls, dslContext);
     }
 
     @Override
     public Optional<T> execute(final QTree syntax) {
-        return Optional.empty();
+        if (Objects.isNull(syntax) || !syntax.isOk()) {
+            return Optional.empty();
+        }
+
+
+        return this.findOne(this.analyzer().where(syntax));
     }
 
     @Override
     public Optional<T> execute(final Serializable id) {
-        return Optional.empty();
+        if (Objects.isNull(id)) {
+            return Optional.empty();
+        }
+
+
+        return this.findOne(this.setter.whereId(id));
     }
 
     @Override
     public Optional<T> execute(final String field, final Object value) {
-        return Optional.empty();
+        if (StrUtil.isEmpty(field)) {
+            return Optional.empty();
+        }
+
+
+        return this.findOne(this.analyzer().where(field, value));
     }
 
     @Override
     public Optional<T> execute(final Map<String, Object> condition) {
-        return Optional.empty();
+        if (Objects.isNull(condition) || condition.isEmpty()) {
+            return Optional.empty();
+        }
+
+
+        return this.findOne(this.analyzer().where(condition));
     }
 }

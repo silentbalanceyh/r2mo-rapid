@@ -21,7 +21,7 @@ class ClauseInstant extends ClauseString {
 
         final Object normalized = R2MO.parseFull(value.toString());
         // 值更新
-        final QValue waitFor = QValue.of(qValue, normalized);
+        final QValue waitFor = QValue.copyOf(qValue, normalized);
         if (Objects.nonNull(qValue.mark())) {
             // mark 不为空的情况
             return ClauseFun.MARK_MAP.get(qValue.mark())

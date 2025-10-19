@@ -80,6 +80,8 @@ public interface JObject extends JBase {
 
     Set<String> fieldNames();
 
+    boolean isNested();     // 是否包含内嵌的 JObject 节点
+
     /**
      * 如果是通过转换，那此处的 toMap 一定是原生数据结构，Object 不应该包含{@link JArray} 和 {@link JObject} 两种类型，此处取决于在
      * put 过程中的一种承诺，即 put 进去的 value 只能是原生类型，不能是 {@link JArray} 和 {@link JObject}，否则无法做递归，最简单的

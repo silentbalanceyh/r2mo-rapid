@@ -110,6 +110,12 @@ class JObjectImpl implements JObject {
     }
 
     @Override
+    public boolean isNested() {
+        return this.data.values().stream()
+            .anyMatch(SPI.V_UTIL::isJObject);
+    }
+
+    @Override
     public Map<String, Object> toMap() {
         return new HashMap<>(this.data);
     }

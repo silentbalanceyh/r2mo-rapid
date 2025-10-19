@@ -6,7 +6,7 @@ package io.r2mo.base.dbe.syntax;
 public interface QLeaf extends QNode {
 
     default Class<?> type() {
-        return null;
+        return Object.class;
     }
 
     default QLeaf type(final Class<?> type) {

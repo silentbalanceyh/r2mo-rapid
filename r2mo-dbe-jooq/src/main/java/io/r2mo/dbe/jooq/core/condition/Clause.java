@@ -5,6 +5,7 @@ import io.r2mo.typed.cc.Cc;
 import org.jooq.Condition;
 import org.jooq.Field;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -14,6 +15,17 @@ import java.util.function.Supplier;
 public interface Clause {
 
     Cc<String, Clause> CC_SKELETON = Cc.openThread();
+
+    static Clause of(final QValue qValue) {
+        if (Objects.isNull(qValue)) {
+            return of(Object.class);
+        }
+        final Class<?> type = qValue.type();
+        if (Objects.isNull(type)) {
+            return of(Object.class);
+        }
+        return of(type);
+    }
 
     static Clause of(final Class<?> type) {
         return CC_SKELETON.pick(() -> Optional.ofNullable(ClauseFun.CLAUSE_MAP.get(type))

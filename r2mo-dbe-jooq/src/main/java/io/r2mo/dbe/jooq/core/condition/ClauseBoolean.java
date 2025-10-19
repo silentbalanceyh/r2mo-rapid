@@ -16,6 +16,6 @@ class ClauseBoolean extends ClauseString {
         if (R2MO.isBoolean(value)) {
             waitFor = ClauseFun.eachFn(waitFor, from -> Boolean.valueOf(from.toString()));
         }
-        return super.where(field, QValue.of(qValue, waitFor));
+        return super.where(field, QValue.copyOf(qValue, waitFor));
     }
 }

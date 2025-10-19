@@ -27,6 +27,6 @@ class ClauseNumber extends ClauseString {
                 }
             });
         }
-        return super.where(field, QValue.of(qValue, normalized));
+        return super.where(field, QValue.copyOf(qValue, normalized));
     }
 }

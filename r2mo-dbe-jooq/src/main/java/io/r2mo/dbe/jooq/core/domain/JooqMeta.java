@@ -1,7 +1,5 @@
 package io.r2mo.dbe.jooq.core.domain;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.SourceReflect;
 import io.r2mo.base.program.R2Vector;
@@ -12,21 +10,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record;
 import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -224,65 +213,8 @@ public class JooqMeta {
         return this.field.findColumn(fieldOr);
     }
 
-    // 拷贝数据 -----------------------------------------------------------
-    public <T> T copyFrom(final T target, final T updated) {
-        if (Objects.isNull(target) || Objects.isNull(updated)) {
-            return target;
-        }
-        final Set<String> pKeySet = this.keyPrimaryN();
-        BeanUtil.copyProperties(updated, target, CopyOptions.create()
-            .ignoreNullValue()
-            .ignoreError()
-            .setIgnoreProperties(pKeySet.toArray(new String[0]))
-        );
-        return target;
-    }
-
-    // 字段条件 ----------------------------------------------------------
-    @SuppressWarnings("unchecked")
-    public <ID> Condition whereId(final ID id) {
-        final UniqueKey<?> pKey = this.table.getPrimaryKey();
-        Objects.requireNonNull(pKey,
-            "[ R2MO ] 实体类 " + this.entityCls.getName() + " 未定义主键，无法执行 whereId！");
-        final TableField<? extends Record, ?>[] pKeyFields = pKey.getFieldsArray();
-        final Condition condition;
-        if (1 == pKeyFields.length) {
-            // 🔑 单主键情况 - 让 jOOQ 自动处理类型转换
-            final TableField<? extends Record, Object> singleField = (TableField<? extends Record, Object>) pKeyFields[0];
-            condition = singleField.eq(id);
-        } else {
-            // 多主键
-            condition = DSL.row(pKeyFields).equal((Record) id);
-        }
-        return condition;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> Condition whereOne(final T entity, final DSLContext dsl) {
-        Objects.requireNonNull(entity);
-        final Record record = dsl.newRecord(this.table, entity);
-        final Set<Condition> conditions = new HashSet<>();
-        final UniqueKey<?> pk = this.table.getPrimaryKey();
-        Objects.requireNonNull(pk,
-            "[ R2MO ] 实体类 " + this.entityCls.getName() + " 未定义主键，无法执行 whereOne！");
-        for (final TableField<?, ?> tableField : pk.getFields()) {
-            //exclude primary keys from update
-            final Condition condition = ((TableField<org.jooq.Record, Object>) tableField).eq(record.get(tableField));
-            conditions.add(condition);
-            // where = where.?nd(((TableField<org.jooq.Record, Object>) tableField).eq(record.get(tableField)));
-        }
-        return DSL.and(conditions);
-    }
-
-    @SuppressWarnings("all")
-    public Condition whereOne(final String field, final Object value) {
-        final Field column = this.findColumn(field);
-        if (value instanceof final Collection<?> collection) {
-            // IN
-            return column.in(collection);
-        } else {
-            // =
-            return column.eq(value);
-        }
+    // 此处静态方法，表示已经被缓存，不可以再创建新的 Meta 了
+    public static JooqMeta getOr(final Class<?> entityCls) {
+        return CC_META.getOrDefault(entityCls, null);
     }
 }
