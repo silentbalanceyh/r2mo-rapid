@@ -2,6 +2,8 @@ package io.r2mo.dbe.jooq.core.condition;
 
 import io.r2mo.base.dbe.constant.QCV;
 import io.r2mo.base.dbe.syntax.QValue;
+import io.r2mo.spi.SPI;
+import io.r2mo.typed.json.JArray;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -15,6 +17,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -22,6 +25,18 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings("all")
 class ClauseFun {
+    static Object eachFn(final Object value, final Function<Object, Object> convert) {
+        if (value instanceof final JArray array) {
+            final JArray result = SPI.A();
+            array.toList().stream().map(convert)
+                .filter(Objects::nonNull)
+                .forEach(result::add);
+            return result;
+        } else {
+            return convert.apply(value);
+        }
+    }
+
     private static Condition dateOr(final Field field,
                                     final Supplier<Condition> dateSupplier,
                                     final Supplier<Condition> otherSupplier) {

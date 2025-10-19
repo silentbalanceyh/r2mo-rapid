@@ -2,6 +2,7 @@ package io.r2mo.base.dbe.syntax;
 
 import io.r2mo.base.dbe.constant.QOp;
 import io.r2mo.base.util.R2MO;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.util.function.Function;
 /**
  * @author lang : 2025-08-28
  */
+@Slf4j
 public class QValue implements QLeaf {
 
     private final QOp op;
@@ -30,11 +32,52 @@ public class QValue implements QLeaf {
         this.value = value;
     }
 
-    static QValue of(final String field,
-                     final QOp op,
-                     final Object value) {
-        return new QValue(field, op, value);
+
+    public static QValue of(final String field, final String op, final Object value) {
+        return new QValue(field, QOp.toOp(op), value);
     }
+
+    /**
+     * 直接根据 key = value 解析构建 QValue
+     *
+     * @param field 字段名，支持 field,op,mark 三位构建
+     * @param value 值
+     *
+     * @return QValue 实例
+     */
+    public static QValue of(final String field, final Object value) {
+        if (field.contains(",")) {
+            final String[] split = field.split(",");
+            final String f = split[0].trim();
+            final QOp op = QOp.toOp(split[1].trim());
+            final QValue qValue = new QValue(f, op, value);
+            if (2 < split.length) {
+                // 标记位设置
+                qValue.mark(split[2].trim());
+            }
+            return qValue;
+        } else {
+            // 默认 =
+            return new QValue(field, QOp.EQ, value);
+        }
+    }
+
+    /**
+     * 克隆一个 QValue 对象，并替换值
+     *
+     * @param qValue      原始 QValue
+     * @param valueLatest 最新值
+     *
+     * @return 新的 QValue 对象
+     */
+    public static QValue of(final QValue qValue, final Object valueLatest) {
+        Objects.requireNonNull(qValue, "[ R2MO ] 此方法要求 qValue 不能为 null");
+        final QValue cloned = new QValue(qValue.field, qValue.op, valueLatest);
+        cloned.mark = qValue.mark;
+        cloned.level = qValue.level;
+        return cloned;
+    }
+
 
     public QValue mark(final String mark) {
         this.mark = mark;

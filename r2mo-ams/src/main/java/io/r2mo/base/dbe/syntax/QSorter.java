@@ -82,4 +82,8 @@ public class QSorter implements Serializable, QRequest {
         this.fields.clear();
         return this;
     }
+
+    public List<Kv<String, Boolean>> items() {
+        return this.fields;
+    }
 }

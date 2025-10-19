@@ -65,29 +65,9 @@ public class QTree implements QRequest {
             final JObject branchJ = ut.toJObject(value);
             node = this.initialize(branchJ, level);
         } else {
-            node = this.initialize(field, value).level(level);
+            node = QValue.of(field, value).level(level);
         }
         return node;
-    }
-
-    /**
-     * {@link QLeaf}
-     */
-    private QNode initialize(final String field, final Object value) {
-        if (field.contains(",")) {
-            final String[] split = field.split(",");
-            final String f = split[0].trim();
-            final QOp op = QOp.toOp(split[1].trim());
-            final QValue qValue = QValue.of(f, op, value);
-            if (2 < split.length) {
-                // 标记位设置
-                qValue.mark(split[2].trim());
-            }
-            return qValue;
-        } else {
-            // 默认 =
-            return QValue.of(field, QOp.EQ, value);
-        }
     }
 
     /**

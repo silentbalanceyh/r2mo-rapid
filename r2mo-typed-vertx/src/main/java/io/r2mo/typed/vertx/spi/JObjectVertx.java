@@ -11,6 +11,7 @@ import io.vertx.core.json.JsonObject;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -109,6 +110,11 @@ class JObjectVertx implements JObject {
     @Override
     public boolean containsKey(final String key) {
         return this.data.containsKey(key);
+    }
+
+    @Override
+    public Set<String> fieldNames() {
+        return this.data.fieldNames();
     }
 
     @Override

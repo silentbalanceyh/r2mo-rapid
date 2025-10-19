@@ -21,5 +21,10 @@ public interface Clause {
             .orElseGet(ClauseString::new), type.getName());
     }
 
-    Condition where(final Field<?> field, final QValue value);
+    Condition where(Field<?> field, QValue qValue);
+
+    @SuppressWarnings("all") // 兼容遗留系统，此处的处理方式不能变更
+    default Condition where(final Field columnName, final String fieldName, final String op, final Object value) {
+        return this.where(columnName, QValue.of(fieldName, op, value));
+    }
 }

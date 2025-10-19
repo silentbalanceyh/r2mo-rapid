@@ -2,6 +2,7 @@ package io.r2mo.typed.json;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -76,6 +77,8 @@ public interface JObject extends JBase {
 
     // 判断 key 属性是否存在
     boolean containsKey(String key);
+
+    Set<String> fieldNames();
 
     /**
      * 如果是通过转换，那此处的 toMap 一定是原生数据结构，Object 不应该包含{@link JArray} 和 {@link JObject} 两种类型，此处取决于在

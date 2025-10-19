@@ -12,12 +12,12 @@ import java.util.Optional;
  */
 class ClauseString implements Clause {
     @Override
-    public Condition where(final Field<?> field, final QValue value) {
+    public Condition where(final Field<?> field, final QValue qValue) {
         // 根据 QValue 的操作符和标记来生成相应的条件
-        final QOp op = value.op();
+        final QOp op = qValue.op();
         return Optional.ofNullable(op.value())
             .map(ClauseFun.NORM_MAP::get)
-            .map(func -> func.apply(field, value))
+            .map(func -> func.apply(field, qValue))
             .orElse(null);
     }
 }

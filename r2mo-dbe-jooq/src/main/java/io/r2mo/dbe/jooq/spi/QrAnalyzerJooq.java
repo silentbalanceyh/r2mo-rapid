@@ -21,7 +21,6 @@ class QrAnalyzerJooq implements QrAnalyzer<Condition> {
         this.meta = meta;
     }
 
-
     @Override
     public Condition whereIn(final String field, final Object... values) {
         // final Field column = this.meta.findColumn(field);
