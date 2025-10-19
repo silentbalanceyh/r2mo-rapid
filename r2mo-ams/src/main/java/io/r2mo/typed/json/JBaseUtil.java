@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -44,11 +45,16 @@ import java.util.UUID;
  */
 class JBaseUtil {
 
+
     private static final JsonMapper MAPPER = JsonMapper.builder()
         // 开启大小写敏感，防止属性混淆
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, false)
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, false)
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
+        // 👇 关键：全局命名策略固定为 lowerCamelCase
+        .propertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
+        // 👇 建议：使用标准 Bean 命名推断（避免历史规则导致大小写异常）
+        .configure(MapperFeature.USE_STD_BEAN_NAMING, true)
         .build();
 
     static {
