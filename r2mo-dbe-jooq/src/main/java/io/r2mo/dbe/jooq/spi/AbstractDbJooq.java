@@ -1,6 +1,5 @@
 package io.r2mo.dbe.jooq.spi;
 
-import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.dbe.common.operation.AbstractDbOperation;
 import io.r2mo.dbe.jooq.core.domain.JooqMeta;
 import io.r2mo.dbe.jooq.core.domain.JooqObject;
@@ -26,11 +25,6 @@ public class AbstractDbJooq<T> extends AbstractDbOperation<Condition, T, DSLCont
         super(entityCls, context);
         this.meta = JooqMeta.getOr(entityCls);
         this.setter = new JooqObject(this.meta, context);
-    }
-
-    @Override
-    protected QrAnalyzer<Condition> analyzer() {
-        return super.analyzer();
     }
 
     @SuppressWarnings("all")

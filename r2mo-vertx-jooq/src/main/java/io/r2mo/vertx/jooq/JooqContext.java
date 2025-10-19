@@ -19,6 +19,7 @@ public class JooqContext implements DBContext {
     private static final Cc<String, DSLContext> CC_JOOQ = Cc.open();
 
     @Override
+    @SuppressWarnings("unchecked")
     public <DSL> DSL configure(final DBS dbs, final Vertx vertx) {
         final Database database = dbs.getDatabase();
         if (database instanceof final JooqDatabase jooqDatabase) {
@@ -26,8 +27,9 @@ public class JooqContext implements DBContext {
             final String key = String.valueOf(dbs.hashCode());
             CC_VECTOR.put(key, vertx);
             CC_JOOQ.put(key, context);
+            return (DSL) context;
         }
-        throw new _501NotSupportException("[ R2MO ] 此操作仅支持 JooqDatabase 类型！");
+        throw new _501NotSupportException("[ R2MO ] configure 操作仅支持 JooqDatabase 类型！");
     }
 
     @Override
@@ -36,7 +38,7 @@ public class JooqContext implements DBContext {
         if (database instanceof final JooqDatabase jooqDatabase) {
             return (DSL) jooqDatabase.getContext();
         }
-        throw new _501NotSupportException("[ ZERO ] 此操作仅支持 JooqDatabase 类型！");
+        throw new _501NotSupportException("[ ZERO ] context 操作仅支持 JooqDatabase 类型！");
     }
 
     @Override

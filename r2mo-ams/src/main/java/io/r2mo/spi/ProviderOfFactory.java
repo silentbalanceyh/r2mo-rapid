@@ -108,7 +108,7 @@ class ProviderOfFactory {
                 final String implName = annoSPI.value();
                 return StrUtil.equals(name, implName);
             }).findAny().orElse(null);
-            log.info("[ R2MO ] SPI 实现类按名称查找: interface = {} / SPID = {} / {}",
+            log.info("[ R2MO ] \t\t\t\t\uD83D\uDCCC SPI 实现类按名称查找: interface = {} / SPID = {} / {}",
                 clazz.getName(), name, Objects.isNull(found) ? null : found.getClass().getName());
             return found;
         }

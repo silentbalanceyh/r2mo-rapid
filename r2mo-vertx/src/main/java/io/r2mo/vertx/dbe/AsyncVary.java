@@ -18,19 +18,19 @@ public interface AsyncVary<T, CONDITION> {
      *
      * @return 分页结果
      */
-    Future<Pagination<T>> findPage(QQuery query);
+    Future<Pagination<T>> findPageAsync(QQuery query);
 
-    Future<Boolean> removeBy(CONDITION condition);
+    Future<Boolean> removeByAsync(CONDITION condition);
 
-    Future<List<T>> findMany(CONDITION condition);
+    Future<List<T>> findManyAsync(CONDITION condition);
 
-    Future<List<T>> findAll();
+    Future<List<T>> findAllAsync();
 
-    Future<T> findOne(CONDITION condition);
+    Future<T> findOneAsync(CONDITION condition);
 
-    Future<Boolean> removeById(Serializable id);
+    Future<Boolean> removeByIdAsync(Serializable id);
 
-    Future<T> save(Future<T> queried, T latest);
+    Future<T> saveAsync(Future<T> queried, T latest);
 
-    Future<T> update(Future<T> queried, T latest);
+    Future<T> updateAsync(Future<T> queried, T latest);
 }

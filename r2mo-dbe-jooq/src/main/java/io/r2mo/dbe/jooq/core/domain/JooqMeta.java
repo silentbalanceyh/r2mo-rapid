@@ -151,10 +151,6 @@ public class JooqMeta {
         this.entityCls = entityCls;
     }
 
-    public static JooqMeta of(final Class<?> entityCls, final Table<?> table) {
-        return CC_META.pick(() -> new JooqMeta(entityCls).table(table), entityCls);
-    }
-
     public TreeSet<String> fieldSet() {
         // mapTo 返回的是 field -> column 的映射关系
         return new TreeSet<>(this.vector.mapToColumn().keySet());
@@ -213,6 +209,35 @@ public class JooqMeta {
         return this.field.findColumn(fieldOr);
     }
 
+    // ------------------------------------- 静态方法 -------------------------------------
+
+    public static JooqMeta of(final Class<?> entityCls, final Table<?> table) {
+        return CC_META.pick(() -> {
+            final JooqMeta meta = new JooqMeta(entityCls).table(table);
+            log.info("[ R2MO ] ( Jooq ) 同步 meta 初始化完成：{} / {}, hashCode = {}",
+                entityCls.getName(), table.getName(), meta.hashCode());
+            return meta;
+        }, entityCls);
+    }
+
+    /**
+     * 如果是使用了 r2mo-vertx-jooq，它内部的 JooqMetaAsync 会直接从 VertxDao 中分析出表名，所以在调用 {@link JooqMeta#of(Class, Table)}
+     * 时就直接将表名初始化了，所以才可以从这个方法中根据 实体类直接获取Meta 信息，否则会返回 null。如果只是单纯使用 r2mo-dbe-jooq，则无法通过此方
+     * 法获取 Meta 信息，若要获取必须保证有一个地方可以直接分析实体类构造 {@link Table} 信息然后传入 {@link JooqMeta#of(Class, Table)}方法中
+     * 进行缓存。
+     * <pre>
+     *     {@link Table} 的构造方式
+     *     - 直接通过 {@link Table} 对象中的 getName() 获取
+     *     - 获取静态字段中的表实例信息，表实例一定是静态字段
+     *     - 通过反射的方式获取表名
+     *     - 可结合 JPA 注解获取表名
+     * </pre>
+     * ⚠️ 注意：此方法不会创建新的 Meta 实例，只会返回已经缓存的实例，一定要初始化！初始化！初始化！
+     *
+     * @param entityCls 实体类
+     *
+     * @return Meta 信息
+     */
     // 此处静态方法，表示已经被缓存，不可以再创建新的 Meta 了
     public static JooqMeta getOr(final Class<?> entityCls) {
         return CC_META.getOrDefault(entityCls, null);

@@ -13,13 +13,13 @@ import java.util.Map;
  */
 public interface AsyncMany<T> {
 
-    Future<List<T>> execute(QQuery query);
+    Future<List<T>> executeAsync(QQuery query);
 
-    Future<List<T>> execute(QTree tree);
+    Future<List<T>> executeAsync(QTree tree);
 
-    Future<List<T>> execute(Serializable... ids);
+    Future<List<T>> executeAsync(Serializable... ids);
 
-    Future<List<T>> execute(String field, Object value);
+    Future<List<T>> executeAsync(String field, Object value);
 
-    Future<List<T>> execute(Map<String, Object> condition);
+    Future<List<T>> executeAsync(Map<String, Object> condition);
 }

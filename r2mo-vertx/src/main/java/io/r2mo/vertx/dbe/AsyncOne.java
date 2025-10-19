@@ -11,11 +11,11 @@ import java.util.Map;
  */
 public interface AsyncOne<T> {
 
-    Future<T> execute(QTree syntax);
+    Future<T> executeAsync(QTree syntax);
 
-    Future<T> execute(Serializable id);
+    Future<T> executeAsync(Serializable id);
 
-    Future<T> execute(String field, Object value);
+    Future<T> executeAsync(String field, Object value);
 
-    Future<T> execute(Map<String, Object> condition);
+    Future<T> executeAsync(Map<String, Object> condition);
 }

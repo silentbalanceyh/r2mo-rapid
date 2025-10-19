@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface AsyncDb<T> {
 
-    Future<T> execute(T entity, OpType opType);
+    Future<T> executeAsync(T entity, OpType opType);
 
-    Future<List<T>> execute(List<T> entities, OpType opType, int batchSize);
+    Future<List<T>> executeAsync(List<T> entities, OpType opType, int batchSize);
 }

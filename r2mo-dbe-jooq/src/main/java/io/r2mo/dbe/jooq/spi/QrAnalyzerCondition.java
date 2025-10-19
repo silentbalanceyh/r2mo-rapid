@@ -23,10 +23,10 @@ import java.util.Objects;
 /**
  * @author lang : 2025-10-19
  */
-class QrAnalyzerCondition implements QrAnalyzer<Condition> {
+public class QrAnalyzerCondition implements QrAnalyzer<Condition> {
     private final JooqMeta meta;
 
-    QrAnalyzerCondition(final Class<?> entityCls, final DSLContext context) {
+    public QrAnalyzerCondition(final Class<?> entityCls, final DSLContext context) {
         this.meta = JooqMeta.getOr(entityCls);
         Objects.requireNonNull(this.meta, "[ R2MO ] 无法从实体类中提取元数据：" + entityCls.getName());
     }

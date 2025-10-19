@@ -7,15 +7,15 @@ import io.r2mo.base.dbe.operation.QrAnalyzer;
  */
 public interface FactoryDBAsync {
 
-    <T, EXECUTOR> AsyncAggr opAggr(Class<T> entityCls, EXECUTOR executor);
+    <T, METADATA> AsyncAggr opAggr(Class<T> entityCls, METADATA executor);
 
-    <T, EXECUTOR> AsyncDb<T> opDb(Class<T> entityCls, EXECUTOR executor);
+    <T, METADATA> AsyncDb<T> opDb(Class<T> entityCls, METADATA executor);
 
-    <T, EXECUTOR, CONDITION> AsyncVary<T, CONDITION> opVary(Class<T> entityCls, EXECUTOR executor);
+    <T, METADATA, CONDITION> AsyncVary<T, CONDITION> opVary(Class<T> entityCls, METADATA executor);
 
-    <T, EXECUTOR> AsyncOne<T> qrOne(Class<T> entityCls, EXECUTOR executor);
+    <T, METADATA> AsyncOne<T> qrOne(Class<T> entityCls, METADATA executor);
 
-    <T, EXECUTOR> AsyncMany<T> qrMany(Class<T> entityCls, EXECUTOR executor);
+    <T, METADATA> AsyncMany<T> qrMany(Class<T> entityCls, METADATA executor);
 
-    <T, EXECUTOR, CONDITION> QrAnalyzer<CONDITION> qrAnalyzer(Class<T> entityCls, EXECUTOR executor);
+    <T, METADATA, CONDITION> QrAnalyzer<CONDITION> qrAnalyzer(Class<T> entityCls, METADATA executor);
 }
