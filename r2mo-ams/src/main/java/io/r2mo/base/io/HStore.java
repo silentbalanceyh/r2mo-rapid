@@ -3,7 +3,6 @@ package io.r2mo.base.io;
 import cn.hutool.core.io.IoUtil;
 import io.r2mo.base.io.common.FileMem;
 import io.r2mo.base.io.modeling.FileRange;
-import io.r2mo.function.Fn;
 import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JArray;
@@ -12,6 +11,8 @@ import io.r2mo.typed.json.JObject;
 
 import javax.crypto.SecretKey;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
@@ -177,7 +178,15 @@ public interface HStore extends HStoreMeta, Serializable {
         if (null == url) {
             return null;
         }
-        return Fn.jvmOr(url::openStream, null);
+        // 吞掉异常：java.io.FileNotFoundException: xxx (No such file or directory)
+        try {
+            return url.openStream();
+        } catch (final FileNotFoundException e) {
+            return null; // 不存在 -> 返回 null，不打印栈
+        } catch (final IOException e) {
+            // 其它 IO 问题也按需吞掉或打 debug
+            return null;
+        }
     }
 
     // -> filename -> InputStream -> Properties

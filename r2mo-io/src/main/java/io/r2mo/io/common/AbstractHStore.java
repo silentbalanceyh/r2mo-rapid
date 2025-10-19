@@ -9,6 +9,8 @@ import io.r2mo.function.Fn;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
@@ -43,11 +45,13 @@ public abstract class AbstractHStore implements HStore {
 
     private String ioYaml(final InputStream in) {
         if (Objects.isNull(in)) {
-            throw new IllegalArgumentException("[ R2MO ] 输入 Stream 为 null");
+            this.log().warn("[ R2MO ] 输入 Stream 为 null，无法解析 Yaml 内容");
+            return null;
         }
         final JsonNode node = Fn.jvmOr(() -> YAML.readTree(in));
         if (Objects.isNull(node)) {
-            throw new IllegalStateException("[ R2MO ] Yaml (in) 解析结果失败，为 null");
+            this.log().warn("[ R2MO ] Yaml (in) 解析结果失败，为 null");
+            return null;
         }
         return node.toString();
     }
@@ -58,9 +62,14 @@ public abstract class AbstractHStore implements HStore {
         }
         final JsonNode node = Fn.jvmOr(() -> YAML.readTree(content));
         if (Objects.isNull(node)) {
-            throw new IllegalStateException("[ R2MO ] Yaml (String) 解析结果失败，为 null");
+            this.log().warn("[ R2MO ] Yaml (String) 解析结果失败，为 null");
+            return null;
         }
         return node.toString();
+    }
+
+    protected Logger log() {
+        return LoggerFactory.getLogger(this.getClass());
     }
 
     @Override

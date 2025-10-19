@@ -22,6 +22,18 @@ class PolyDB<E> extends PolyBase<E, List<E>> {
         return PolyPhase.OUTPUT;
     }
 
+    /**
+     * 🔄 将实体对象映射为 {@link JsonObject}
+     * <p>
+     * ⚡️ 空值优化：为空的时候不做任何处理，减少网络带宽
+     * 🎯 字段映射：根据向量配置进行字段名称转换
+     * 📦 数据压缩：只包含非空字段，优化传输效率
+     *
+     * @param input 📥 待映射的实体对象
+     *
+     * @return 📤 映射后的 {@link JsonObject}
+     * @since 💡 1.0.0
+     */
     @Override
     public JsonObject mapOne(final E input) {
         final JsonObject serialized = R2MO.serializeJ(input);
@@ -29,13 +41,11 @@ class PolyDB<E> extends PolyBase<E, List<E>> {
             return serialized;
         }
 
-        
+
         final JsonObject mapped = new JsonObject();
         this.vector.mapBy((fieldJson, field) -> {
             final Object value = serialized.getValue(field);
-            if (Objects.isNull(value)) {
-                mapped.putNull(fieldJson);
-            } else {
+            if (Objects.nonNull(value)) {
                 mapped.put(fieldJson, value);
             }
         });
