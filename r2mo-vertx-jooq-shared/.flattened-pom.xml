@@ -3,21 +3,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
-  <artifactId>r2mo-vertx-jooq</artifactId>
+  <artifactId>r2mo-vertx-jooq-shared</artifactId>
   <version>1.0-M23</version>
-  <name>R2MO::Vertx::Jooq</name>
-  <description>参考在线项目：
-        -- vertx-jooq: 这个项目已经两年多没有更新，为了保证整体兼容性，重新编译
-        |-- 项目地址：https://github.com/jklingsporn/vertx-jooq.git
-        |-- 内嵌项目 /
-        |----- vertx-jooq-shared
-        |----- vertx-jooq-classic
-        1. 集成到 R2MO 体系中，追加实现方案：
-        -- / r2mo-vertx-jooq-jdbc
-        -- / r2mo-vertx-jooq-reactive（后续考虑，暂时不计划）
-        2. 单独开启一个项目：r2mo-vertx-jooq-generate 用于代码生成
-        3. 移除 rx 模式和 mutiny 模式的支持</description>
-  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-vertx-jooq</url>
+  <name>R2MO::Vertx::Jooq::Shared</name>
+  <description>R2MO Rapid Framework for Delivery</description>
+  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-vertx-jooq-shared</url>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -36,10 +26,10 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-vertx-jooq</connection>
-    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-vertx-jooq</developerConnection>
+    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-vertx-jooq-shared</connection>
+    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-vertx-jooq-shared</developerConnection>
     <tag>v1.0-M23</tag>
-    <url>https://www.zerows.io/r2mo-vertx-jooq</url>
+    <url>https://www.zerows.io/r2mo-vertx-jooq-shared</url>
   </scm>
   <distributionManagement>
     <repository>
@@ -56,7 +46,13 @@
   <dependencies>
     <dependency>
       <groupId>io.zerows</groupId>
-      <artifactId>r2mo-vertx-jooq-jdbc</artifactId>
+      <artifactId>r2mo-vertx</artifactId>
+      <version>1.0-M23</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.zerows</groupId>
+      <artifactId>r2mo-dbe-jooq</artifactId>
       <version>1.0-M23</version>
       <scope>compile</scope>
     </dependency>

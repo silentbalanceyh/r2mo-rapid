@@ -11,20 +11,39 @@
 
     <artifactId>r2mo-vertx-jooq</artifactId>
     <name>R2MO::Vertx::Jooq</name>
+    <description>
+        参考在线项目：
+        -- vertx-jooq: 这个项目已经两年多没有更新，为了保证整体兼容性，重新编译
+        |-- 项目地址：https://github.com/jklingsporn/vertx-jooq.git
+        |-- 内嵌项目 /
+        |----- vertx-jooq-shared
+        |----- vertx-jooq-classic
+        1. 集成到 R2MO 体系中，追加实现方案：
+        -- / r2mo-vertx-jooq-jdbc
+        -- / r2mo-vertx-jooq-reactive（后续考虑，暂时不计划）
+        2. 单独开启一个项目：r2mo-vertx-jooq-generate 用于代码生成
+        3. 移除 rx 模式和 mutiny 模式的支持
+    </description>
     <dependencies>
+        <!--
+          它们之间的依赖关系
+            - r2mo-vertx-jooq
+              |== r2mo-vertx-jooq-jdbc         =  原来的 -classic-jdbc
+                  |== r2mo-vertx-jooq-shared   =  原来的 -shared / -classic
+                        |== r2mo-vertx
+                        |== r2mo-dbe-jooq
+            - r2mo-vertx-jooq-generate         =  原来的 -generate
+              |== r2mo-vertx-jooq-jdbc
+                  |== r2mo-vertx-jooq-shared
+                        |== r2mo-vertx
+                        |== r2mo-dbe-jooq
+            1. 代码生成项目可独立于 r2mo-vertx-jooq 之外单独使用
+            2. 消费端 / 真实访问过程中只要引入 r2mo-vertx-jooq 即可
+        -->
         <dependency>
             <groupId>io.zerows</groupId>
-            <artifactId>r2mo-vertx</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zerows</groupId>
-            <artifactId>r2mo-dbe-jooq</artifactId>
+            <artifactId>r2mo-vertx-jooq-jdbc</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <!-- Jooq 实现方案 -->
-        <dependency>
-            <groupId>io.github.jklingsporn</groupId>
-            <artifactId>vertx-jooq-classic-jdbc</artifactId>
         </dependency>
     </dependencies>
     <build>

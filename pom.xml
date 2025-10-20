@@ -83,12 +83,15 @@
 
         <!-- 🌷 Vertx 模块专用 -->
         <module>r2mo-vertx</module>
+        <module>r2mo-vertx-jooq-shared</module>
+        <module>r2mo-vertx-jooq-jdbc</module><!-- 经典版的实现，近似于 Provider 架构-->
+        <module>r2mo-vertx-jooq-generate</module>
+        <module>r2mo-vertx-jooq</module>
         <module>r2mo-vertx-junit5</module>
 
         <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
         <module>r2mo-boot-spring</module>
         <module>r2mo-boot-vertx</module>
-        <module>r2mo-vertx-jooq</module>
     </modules>
     <properties>
         <rachel-momo.version>1.0.7</rachel-momo.version>
@@ -268,6 +271,12 @@
             - r2mo-spring-excel
             - r2mo-spring-junit5
             - r2mo-vertx-junit5
+            -->
+            <!--
+            以下部分也不做统一管理，可自己选择版本
+            - r2mo-vertx-jooq
+            - r2mo-vertx-jooq-jdbc
+            - r2mo-vertx-jooq-generate
             -->
         </dependencies>
     </dependencyManagement>
