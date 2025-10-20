@@ -1,6 +1,7 @@
 package io.r2mo.vertx.jooq.generate.builder;
 
 import io.r2mo.vertx.jooq.classic.VertxDAO;
+import io.r2mo.vertx.jooq.classic.jdbc.JDBCClassicQueryExecutor;
 import io.r2mo.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
@@ -44,6 +45,11 @@ public class VertxGeneratorBuilder {
     private static final ConcurrentMap<APIType, String> API_DAO = new ConcurrentHashMap<>() {
         {
             this.put(APIType.CLASSIC, VertxDAO.class.getName());
+        }
+    };
+    private static final ConcurrentMap<APIType, String> API_EXECUTOR = new ConcurrentHashMap<>() {
+        {
+            this.put(APIType.CLASSIC, JDBCClassicQueryExecutor.class.getName());
         }
     };
 
@@ -239,58 +245,53 @@ public class VertxGeneratorBuilder {
         @Override
         public DIStep withJDBCDriver() {
             this.base.setRenderDAOExtendsDelegate(AbstractVertxDAO.class::getName);
-            switch (this.base.apiType) {
-                case CLASSIC:
-                    return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.jdbc.classic.JDBCClassicQueryExecutor;")))
-                        .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                        .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                            out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                "@param vertx the vertx instance");
-                            out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, this.base.namedInjectionStrategy.apply(schema), Configuration.class, this.base.renderFQVertxName());
-                            out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, this.base.renderQueryExecutor(tableRecord, pType, tType), pType);
-                            out.tab(1).println("}");
-                        })
-                    );
-                case RX:
-                    return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.rx.jdbc.JDBCRXQueryExecutor;")))
-                        .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                        .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                            out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                "@param vertx the vertx instance");
-                            out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, this.base.namedInjectionStrategy.apply(schema), Configuration.class, this.base.renderFQVertxName());
-                            out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, this.base.renderQueryExecutor(tableRecord, pType, tType), pType);
-                            out.tab(1).println("}");
-                        })
-                    );
-                case RX3:
-                    return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.rx3.jdbc.JDBCRXQueryExecutor;")))
-                        .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                        .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                            out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                "@param vertx the vertx instance");
-                            out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, this.base.namedInjectionStrategy.apply(schema), Configuration.class, this.base.renderFQVertxName());
-                            out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, this.base.renderQueryExecutor(tableRecord, pType, tType), pType);
-                            out.tab(1).println("}");
-                        })
-                    );
-                case MUTINY:
-                    return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.mutiny.jdbc.JDBCMutinyQueryExecutor;")))
-                        .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCMutinyQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                        .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                            out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                "@param vertx the vertx instance");
-                            out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, this.base.namedInjectionStrategy.apply(schema), Configuration.class, this.base.renderFQVertxName());
-                            out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, this.base.renderQueryExecutor(tableRecord, pType, tType), pType);
-                            out.tab(1).println("}");
-                        })
-                    );
-                default:
-                    throw new UnsupportedOperationException(this.base.apiType.toString());
-            }
+            return switch (this.base.apiType) {
+                case CLASSIC -> new DIStepImpl(this.base
+                    .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import " + API_EXECUTOR.get(APIType.CLASSIC) + ";")))
+                    .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                    .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
+                        out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                            "@param vertx the vertx instance");
+                        out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, this.base.namedInjectionStrategy.apply(schema), Configuration.class, this.base.renderFQVertxName());
+                        out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, this.base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                        out.tab(1).println("}");
+                    })
+                );
+                case RX -> new DIStepImpl(this.base
+                    .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.rx.jdbc.JDBCRXQueryExecutor;")))
+                    .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                    .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
+                        out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                            "@param vertx the vertx instance");
+                        out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, this.base.namedInjectionStrategy.apply(schema), Configuration.class, this.base.renderFQVertxName());
+                        out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, this.base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                        out.tab(1).println("}");
+                    })
+                );
+                case RX3 -> new DIStepImpl(this.base
+                    .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.rx3.jdbc.JDBCRXQueryExecutor;")))
+                    .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                    .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
+                        out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                            "@param vertx the vertx instance");
+                        out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, this.base.namedInjectionStrategy.apply(schema), Configuration.class, this.base.renderFQVertxName());
+                        out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, this.base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                        out.tab(1).println("}");
+                    })
+                );
+                case MUTINY -> new DIStepImpl(this.base
+                    .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.mutiny.jdbc.JDBCMutinyQueryExecutor;")))
+                    .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCMutinyQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                    .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
+                        out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                            "@param vertx the vertx instance");
+                        out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, this.base.namedInjectionStrategy.apply(schema), Configuration.class, this.base.renderFQVertxName());
+                        out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, this.base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                        out.tab(1).println("}");
+                    })
+                );
+                default -> throw new UnsupportedOperationException(this.base.apiType.toString());
+            };
         }
 
 
