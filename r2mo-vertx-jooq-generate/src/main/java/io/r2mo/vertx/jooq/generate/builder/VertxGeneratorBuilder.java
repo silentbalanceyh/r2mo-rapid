@@ -156,7 +156,7 @@ public class VertxGeneratorBuilder {
                         return String.format("Single<%s>", tType);
                     }
                 })
-                .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.rx.VertxDAO<%s,%s,%s>", rType, pType, tType))
+                .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.r2mo.vertx.jooq.rx.VertxDAO<%s,%s,%s>", rType, pType, tType))
             );
         }
 
@@ -190,7 +190,7 @@ public class VertxGeneratorBuilder {
                         return String.format("Single<%s>", tType);
                     }
                 })
-                .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.rx3.VertxDAO<%s,%s,%s>", rType, pType, tType))
+                .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.r2mo.vertx.jooq.rx3.VertxDAO<%s,%s,%s>", rType, pType, tType))
             );
         }
 
@@ -223,7 +223,7 @@ public class VertxGeneratorBuilder {
                         return String.format("Uni<%s>", tType);
                     }
                 })
-                .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.mutiny.VertxDAO<%s,%s,%s>", rType, pType, tType))
+                .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.r2mo.vertx.jooq.mutiny.VertxDAO<%s,%s,%s>", rType, pType, tType))
             );
         }
     }
@@ -254,7 +254,7 @@ public class VertxGeneratorBuilder {
                     );
                 case RX:
                     return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.jdbc.JDBCRXQueryExecutor;")))
+                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.rx.jdbc.JDBCRXQueryExecutor;")))
                         .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                         .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                             out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
@@ -266,7 +266,7 @@ public class VertxGeneratorBuilder {
                     );
                 case RX3:
                     return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx3.jdbc.JDBCRXQueryExecutor;")))
+                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.rx3.jdbc.JDBCRXQueryExecutor;")))
                         .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                         .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                             out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
@@ -278,7 +278,7 @@ public class VertxGeneratorBuilder {
                     );
                 case MUTINY:
                     return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.mutiny.jdbc.JDBCMutinyQueryExecutor;")))
+                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.mutiny.jdbc.JDBCMutinyQueryExecutor;")))
                         .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCMutinyQueryExecutor<%s,%s,%s>", rType, pType, tType))
                         .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                             out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
@@ -296,7 +296,7 @@ public class VertxGeneratorBuilder {
 
         @Override
         public DIStep withPostgresReactiveDriver() {
-            this.base.setRenderDAOExtendsDelegate(() -> "io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
+            this.base.setRenderDAOExtendsDelegate(() -> "io.r2mo.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
             this.base.addOverwriteDAODelegate((schema, out, className, tableIdentifier, tableRecord, pType, tType) -> {
                 if (schema.getDatabase().getDialect().family().equals(SQLDialect.MYSQL) || schema.getDatabase().getDialect().family().equals(SQLDialect.MARIADB)) {
                     out.println();
@@ -419,7 +419,7 @@ public class VertxGeneratorBuilder {
             switch (this.base.apiType) {
                 case CLASSIC:
                     return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.classic.reactivepg.ReactiveClassicQueryExecutor;")))
+                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.classic.reactivepg.ReactiveClassicQueryExecutor;")))
                         .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
                         .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                             /*
@@ -441,7 +441,7 @@ public class VertxGeneratorBuilder {
                     );
                 case RX:
                     return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;")))
+                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;")))
                         .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                         .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                             /*
@@ -462,7 +462,7 @@ public class VertxGeneratorBuilder {
                     );
                 case RX3:
                     return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx3.reactivepg.ReactiveRXQueryExecutor;")))
+                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.rx3.reactivepg.ReactiveRXQueryExecutor;")))
                         .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                         .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                             /*
@@ -483,7 +483,7 @@ public class VertxGeneratorBuilder {
                     );
                 case MUTINY:
                     return new DIStepImpl(this.base
-                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.mutiny.reactive.ReactiveMutinyQueryExecutor;")))
+                        .setWriteDAOImportsDelegate(this.base.writeDAOImportsDelegate.andThen(out -> out.println("import io.r2mo.vertx.jooq.mutiny.reactive.ReactiveMutinyQueryExecutor;")))
                         .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveMutinyQueryExecutor<%s,%s,%s>", rType, pType, tType))
                         .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                             /*
@@ -525,9 +525,9 @@ public class VertxGeneratorBuilder {
                     ComponentBasedVertxGenerator.logger.info("Generate DaoModule ... ");
                     final String daoClassName = switch (this.base.apiType) {
                         case CLASSIC -> API_DAO.get(APIType.CLASSIC);
-                        case RX -> "io.github.jklingsporn.vertx.jooq.rx.VertxDAO";
-                        case RX3 -> "io.github.jklingsporn.vertx.jooq.rx3.VertxDAO";
-                        case MUTINY -> "io.github.jklingsporn.vertx.jooq.mutiny.VertxDAO";
+                        case RX -> "io.r2mo.vertx.jooq.rx.VertxDAO";
+                        case RX3 -> "io.r2mo.vertx.jooq.rx3.VertxDAO";
+                        case MUTINY -> "io.r2mo.vertx.jooq.mutiny.VertxDAO";
                         default -> throw new UnsupportedOperationException(this.base.apiType.toString());
                     };
                     final File moduleFile = this.base.generateTargetFile(schema, ".tables.modules", "DaoModule.java");
