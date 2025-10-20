@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.r2mo.base.secure.EDCrypto;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.enums.DatabaseType;
@@ -59,7 +60,7 @@ public class Database implements Serializable, JElement {
     private String driverClassName = "com.mysql.cj.jdbc.Driver";
 
     @JsonIgnore
-    private DBCrypto crypto;
+    private EDCrypto crypto;
 
     @JsonIgnore
     @Accessors(fluent = true, chain = true)
@@ -127,7 +128,7 @@ public class Database implements Serializable, JElement {
         /*
          * 不在考虑使用与否，只是单纯用组件处理，屏蔽环境变量
          */
-        final List<DBCrypto> cryptoList = SPI.findMany(DBCrypto.class);
+        final List<EDCrypto> cryptoList = SPI.findMany(EDCrypto.class);
         if (cryptoList.isEmpty()) {
             return this.password;
         }
@@ -140,7 +141,7 @@ public class Database implements Serializable, JElement {
             if (Objects.isNull(spid)) {
                 return false;
             }
-            return DBCrypto.FOR_DATABASE.equals(spid.value());
+            return EDCrypto.FOR_DATABASE.equals(spid.value());
         }).findAny().orElse(null);
         if (Objects.isNull(this.crypto)) {
             return this.password;

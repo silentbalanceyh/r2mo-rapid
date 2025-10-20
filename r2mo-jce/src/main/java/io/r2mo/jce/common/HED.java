@@ -1,5 +1,7 @@
 package io.r2mo.jce.common;
 
+import io.r2mo.jce.component.secure.AlgNorm;
+import io.r2mo.jce.component.secure.ED;
 import io.r2mo.jce.constant.AlgHash;
 import io.r2mo.jce.constant.AlgLicense;
 
@@ -389,4 +391,37 @@ public final class HED extends HEDBase {
         return HEDFinger.fingerHex();
     }
 
+    // -------------- 编程过程中的快速模式 --------------
+
+    public static String encryptByPublic(final String input, final String keyContent, final AlgNorm algNorm) {
+        return ED.encryptOfPublic(algNorm).encrypt(input, keyContent);
+    }
+
+    public static String decryptByPrivate(final String input, final String keyContent, final AlgNorm algNorm) {
+        return ED.encryptOfPublic(algNorm).decrypt(input, keyContent);
+    }
+
+    public static String encryptByPrivate(final String input, final String keyContent, final AlgNorm algNorm) {
+        return ED.encryptOfPrivate(algNorm).encrypt(input, keyContent);
+    }
+
+    public static String decryptByPublic(final String input, final String keyContent, final AlgNorm algNorm) {
+        return ED.encryptOfPrivate(algNorm).decrypt(input, keyContent);
+    }
+
+    public static String encryptRSAPublic(final String input, final String keyContent) {
+        return encryptByPublic(input, keyContent, AlgNorm.RSA);
+    }
+
+    public static String decryptRSAPrivate(final String input, final String keyContent) {
+        return decryptByPrivate(input, keyContent, AlgNorm.RSA);
+    }
+
+    public static String encryptRSAPrivate(final String input, final String keyContent) {
+        return encryptByPrivate(input, keyContent, AlgNorm.RSA);
+    }
+
+    public static String decryptRSAPublic(final String input, final String keyContent) {
+        return decryptByPrivate(input, keyContent, AlgNorm.RSA);
+    }
 }
