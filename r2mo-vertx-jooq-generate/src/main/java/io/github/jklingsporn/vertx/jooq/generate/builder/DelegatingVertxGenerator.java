@@ -14,101 +14,102 @@ import java.util.stream.Collectors;
 
 /**
  * A {@code VertxGenerator} that delegates all methods to another {@code VertxGenerator}.
+ *
  * @author jensklingsporn
  */
 public class DelegatingVertxGenerator extends VertxGenerator {
 
     private final ComponentBasedVertxGenerator delegate;
 
-    public DelegatingVertxGenerator(ComponentBasedVertxGenerator delegate) {
+    public DelegatingVertxGenerator(final ComponentBasedVertxGenerator delegate) {
         this.delegate = delegate;
         delegate.setActiveGenerator(this);
     }
 
     @Override
-    protected boolean handleCustomTypeToJson(TypedElementDefinition<?> column, String getter, String columnType, String javaMemberName, JavaWriter out) {
-        return delegate.handleCustomTypeToJson(column, getter, columnType, javaMemberName, out);
+    protected boolean handleCustomTypeToJson(final TypedElementDefinition<?> column, final String getter, final String columnType, final String javaMemberName, final JavaWriter out) {
+        return this.delegate.handleCustomTypeToJson(column, getter, columnType, javaMemberName, out);
     }
 
     @Override
-    protected boolean handleCustomTypeFromJson(TypedElementDefinition<?> column, String setter, String columnType, String javaMemberName, JavaWriter out) {
-        return delegate.handleCustomTypeFromJson(column, setter, columnType, javaMemberName, out);
+    protected boolean handleCustomTypeFromJson(final TypedElementDefinition<?> column, final String setter, final String columnType, final String javaMemberName, final JavaWriter out) {
+        return this.delegate.handleCustomTypeFromJson(column, setter, columnType, javaMemberName, out);
     }
 
     @Override
-    protected String renderFindOneType(String pType) {
-        return delegate.renderFindOneType(pType);
+    protected String renderFindOneType(final String pType) {
+        return this.delegate.renderFindOneType(pType);
     }
 
     @Override
-    protected String renderFindManyType(String pType) {
-        return delegate.renderFindManyType(pType);
+    protected String renderFindManyType(final String pType) {
+        return this.delegate.renderFindManyType(pType);
     }
 
     @Override
     protected String renderExecType() {
-        return delegate.renderExecType();
+        return this.delegate.renderExecType();
     }
 
     @Override
-    protected String renderInsertReturningType(String tType) {
-        return delegate.renderInsertReturningType(tType);
+    protected String renderInsertReturningType(final String tType) {
+        return this.delegate.renderInsertReturningType(tType);
     }
 
     @Override
-    protected String renderQueryExecutor(String rType, String pType, String tType) {
-        return delegate.renderQueryExecutor(rType,pType,tType);
+    protected String renderQueryExecutor(final String rType, final String pType, final String tType) {
+        return this.delegate.renderQueryExecutor(rType, pType, tType);
     }
 
     @Override
-    protected String renderDAOInterface(String rType, String pType, String tType) {
-        return delegate.renderDAOInterface(rType,pType,tType);
+    protected String renderDAOInterface(final String rType, final String pType, final String tType) {
+        return this.delegate.renderDAOInterface(rType, pType, tType);
     }
 
     @Override
-    protected void writeDAOImports(JavaWriter out) {
-        delegate.writeDAOImports(out);
+    protected void writeDAOImports(final JavaWriter out) {
+        this.delegate.writeDAOImports(out);
     }
 
     @Override
-    protected void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType, String schema) {
-        delegate.writeDAOConstructor(out, className, tableIdentifier, rType, pType, tType, schema);
+    protected void writeDAOConstructor(final JavaWriter out, final String className, final String tableIdentifier, final String rType, final String pType, final String tType, final String schema) {
+        this.delegate.writeDAOConstructor(out, className, tableIdentifier, rType, pType, tType, schema);
     }
 
     @Override
-    protected void overwriteDAOMethods(SchemaDefinition schema, JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
-        delegate.overwriteDAOMethods(schema, out, className, tableIdentifier, rType, pType, tType);
+    protected void overwriteDAOMethods(final SchemaDefinition schema, final JavaWriter out, final String className, final String tableIdentifier, final String rType, final String pType, final String tType) {
+        this.delegate.overwriteDAOMethods(schema, out, className, tableIdentifier, rType, pType, tType);
     }
 
     @Override
     protected String renderDaoExtendsClassName() {
-        return delegate.renderDaoExtendsClassName();
+        return this.delegate.renderDaoExtendsClassName();
     }
 
     @Override
-    protected void writeDAOClassAnnotation(JavaWriter out) {
-        delegate.writeDAOClassAnnotation(out);
+    protected void writeDAOClassAnnotation(final JavaWriter out) {
+        this.delegate.writeDAOClassAnnotation(out);
     }
 
     @Override
-    protected void writeDAOConstructorAnnotation(JavaWriter out) {
-        delegate.writeDAOConstructorAnnotation(out);
+    protected void writeDAOConstructorAnnotation(final JavaWriter out) {
+        this.delegate.writeDAOConstructorAnnotation(out);
     }
 
     @Override
-    protected Collection<JavaWriter> writeExtraData(SchemaDefinition definition, Function<File, JavaWriter> writerGenerator) {
-        return delegate.writeExtraDataDelegates.stream().map(d->d.apply(definition,writerGenerator)).collect(Collectors.toList());
+    protected Collection<JavaWriter> writeExtraData(final SchemaDefinition definition, final Function<File, JavaWriter> writerGenerator) {
+        return this.delegate.writeExtraDataDelegates.stream().map(d -> d.apply(definition, writerGenerator)).collect(Collectors.toList());
     }
 
     @Override
-    public void setStrategy(GeneratorStrategy strategy) {
+    public void setStrategy(final GeneratorStrategy strategy) {
         super.setStrategy(strategy);
-        delegate.setStrategy(strategy);
+        this.delegate.setStrategy(strategy);
     }
 
     @Override
-    protected void generatePojoClassAnnotations(JavaWriter out, TableDefinition schema) {
-        delegate.generatePojoClassAnnotations(out,schema);
+    protected void generatePojoClassAnnotations(final JavaWriter out, final TableDefinition schema) {
+        this.delegate.generatePojoClassAnnotations(out, schema);
     }
 }
 

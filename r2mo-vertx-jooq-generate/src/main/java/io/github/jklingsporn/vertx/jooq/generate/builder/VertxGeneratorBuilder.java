@@ -36,6 +36,7 @@ import java.util.function.Function;
  */
 public class VertxGeneratorBuilder {
 
+
     static final Map<String, String> SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP;
 
     static {

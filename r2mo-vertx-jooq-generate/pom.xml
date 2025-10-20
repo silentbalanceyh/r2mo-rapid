@@ -17,6 +17,18 @@
             <artifactId>r2mo-vertx-jooq-jdbc</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 其他实现也可以 -->
+        <!-- 脚本中出现过的其他类 -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.reactivestreams</groupId>
+            <artifactId>reactive-streams</artifactId>
+        </dependency>
     </dependencies>
 </project>

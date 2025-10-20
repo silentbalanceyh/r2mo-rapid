@@ -50,7 +50,7 @@ public class Database implements Serializable, JElement {
     // -------------- 实例选项 -----------------
     private String hostname;
     private String instance;
-    private Integer port;
+    private Integer port = 3306;
     private DatabaseType type = DatabaseType.MYSQL_8;
     private String url;
     private String username;

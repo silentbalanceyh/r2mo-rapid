@@ -49,18 +49,19 @@ import java.util.function.Function;
  * Besides these method there is also a constructor generated which takes a <code>JsonObject</code>.
  * It also generates DAOs which implement <code>VertxDAO</code> and allow you to execute CRUD-operations asynchronously.
  */
-public abstract class VertxGenerator extends JavaGenerator {
+@Deprecated
+public abstract class VertxPrevGenerator extends JavaGenerator {
 
-    private static final JooqLogger logger = JooqLogger.getLogger(VertxGenerator.class);
+    private static final JooqLogger logger = JooqLogger.getLogger(VertxPrevGenerator.class);
 
     private final boolean generateJson;
     protected VertxGeneratorStrategy vertxGeneratorStrategy;
 
-    public VertxGenerator() {
+    public VertxPrevGenerator() {
         this(true);
     }
 
-    public VertxGenerator(final boolean generateJson) {
+    public VertxPrevGenerator(final boolean generateJson) {
         this.generateJson = generateJson;
         this.setGeneratePojos(true);
     }
@@ -75,7 +76,7 @@ public abstract class VertxGenerator extends JavaGenerator {
      * @param out            the JavaWriter
      *
      * @return <code>true</code> if the column was handled.
-     * @see #generateFromJson(TableDefinition, JavaWriter, org.jooq.codegen.GeneratorStrategy.Mode)
+     * @see #generateFromJson(TableDefinition, JavaWriter, GeneratorStrategy.Mode)
      */
     protected boolean handleCustomTypeFromJson(final TypedElementDefinition<?> column, final String setter, final String columnType, final String javaMemberName, final JavaWriter out) {
         return false;
@@ -91,7 +92,7 @@ public abstract class VertxGenerator extends JavaGenerator {
      * @param out            the JavaWriter
      *
      * @return <code>true</code> if the column was handled.
-     * @see #generateToJson(TableDefinition, JavaWriter, org.jooq.codegen.GeneratorStrategy.Mode)
+     * @see #generateToJson(TableDefinition, JavaWriter, GeneratorStrategy.Mode)
      */
     protected boolean handleCustomTypeToJson(final TypedElementDefinition<?> column, final String getter, final String columnType, final String javaMemberName, final JavaWriter out) {
         return false;
