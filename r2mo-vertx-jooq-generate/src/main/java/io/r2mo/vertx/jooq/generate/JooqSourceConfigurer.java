@@ -24,6 +24,7 @@ import org.jooq.meta.trino.TrinoDatabase;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 /**
  * @author lang : 2025-10-20
@@ -77,16 +78,24 @@ public class JooqSourceConfigurer {
         return INSTANCE;
     }
 
+    private String resolveProperty(final String value, final Function<String, String> resolver) {
+        if (value == null || resolver == null) {
+            return value;
+        }
+        return resolver.apply(value);
+    }
+
     public Configuration configure(final JooqSourceConfiguration inputConfiguration) {
         final Database database = inputConfiguration.database();
+        final Function<String, String> resolver = inputConfiguration.resolver();
         final String databaseClass = DATABASE.get(database.getType());
         return new Configuration()
             // JDBC 连接配置
             .withJdbc(new Jdbc()
                 .withDriver(database.getDriverClassName())
                 .withUrl(database.getUrl())
-                .withUser(database.getUsername())
-                .withPassword(database.getPasswordDecrypted())
+                .withUser(this.resolveProperty(database.getUsername(), resolver))
+                .withPassword(this.resolveProperty(database.getPassword(), resolver))
                 // ✅ 直接用 Property，可变参数形式
                 .withProperties(
                     new Property().withKey("serverTimezone").withValue("Asia/Shanghai"),

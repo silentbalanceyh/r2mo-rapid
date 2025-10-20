@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jooq.codegen.GenerationTool;
 
+import java.util.function.Function;
+
 /**
  * 配置对接，根据自身配置来处理，连接到 {@link GenerationTool} 实现代码生成的核心逻辑
  * 1. 数据库的访问不采用静态配置，直接采用动态方式，保证生成代码不仅仅访问到原生的 DataBase
@@ -38,6 +40,11 @@ public class JooqSourceConfiguration {
      */
     @JsonIgnore
     private Database database = new Database();
+
+
+    @JsonIgnore
+    @Accessors(chain = true, fluent = true)
+    private Function<String, String> resolver;
     /*
      * 对应 Jooq 配置
         <strategy>

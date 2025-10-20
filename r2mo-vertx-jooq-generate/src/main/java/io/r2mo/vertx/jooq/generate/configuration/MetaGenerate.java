@@ -7,8 +7,10 @@ import io.r2mo.base.dbe.Database;
 import io.r2mo.typed.json.jackson.DatabaseDeserializer;
 import io.r2mo.typed.json.jackson.DatabaseSerializer;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
 /**
  * <pre>
@@ -22,6 +24,10 @@ public class MetaGenerate implements Serializable {
 
     @JsonIgnore
     private String schema;
+
+    @JsonIgnore
+    @Accessors(chain = true, fluent = true)
+    private Function<String, String> resolver;
 
     @JsonSerialize(using = DatabaseSerializer.class)
     @JsonDeserialize(using = DatabaseDeserializer.class)
