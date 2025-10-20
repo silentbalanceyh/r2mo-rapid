@@ -1,8 +1,8 @@
 package io.r2mo.vertx.jooq;
 
-import io.github.jklingsporn.vertx.jooq.classic.VertxDAO;
 import io.r2mo.base.dbe.constant.OpType;
 import io.r2mo.vertx.dbe.AsyncDb;
+import io.r2mo.vertx.jooq.classic.VertxDAO;
 import io.vertx.core.Future;
 
 import java.util.ArrayList;

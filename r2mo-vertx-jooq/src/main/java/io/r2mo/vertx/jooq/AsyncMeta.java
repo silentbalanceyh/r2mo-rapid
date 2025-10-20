@@ -1,11 +1,11 @@
 package io.r2mo.vertx.jooq;
 
-import io.github.jklingsporn.vertx.jooq.classic.VertxDAO;
 import io.r2mo.SourceReflect;
 import io.r2mo.base.program.R2Vector;
 import io.r2mo.dbe.jooq.core.domain.JooqMeta;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._500ServerInternalException;
+import io.r2mo.vertx.jooq.classic.VertxDAO;
 import io.vertx.core.Vertx;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -29,16 +29,11 @@ public class AsyncMeta {
     private static final Cc<Class<?>, Class<?>> CC_META_REF = Cc.open();
     private final Class<?> daoCls;
     private final JooqMeta metadata;
-    @SuppressWarnings("all")
-    private VertxDAO dao;
     @Getter
     @Accessors(fluent = true, chain = true)
     private final DSLContext context;
-
-    public AsyncMeta vector(final R2Vector vector) {
-        this.metadata.vector(vector);
-        return this;
-    }
+    @SuppressWarnings("all")
+    private VertxDAO dao;
 
     private AsyncMeta(final Class<?> daoCls, final DSLContext context, final Vertx vertxRef) {
         this.daoCls = daoCls;
@@ -61,33 +56,6 @@ public class AsyncMeta {
         this.dao = vertxDAO;
         this.metadata = JooqMeta.of(entityCls, table);
     }
-
-    @SuppressWarnings("all")
-    public VertxDAO executor() {
-        return this.dao;
-    }
-
-    public JooqMeta metaJooq() {
-        return this.metadata;
-    }
-
-    public Class<?> metaDao() {
-        return this.daoCls;
-    }
-
-    public Class<?> metaEntity() {
-        return Objects.requireNonNull(this.metadata).entityCls();
-    }
-
-    public R2Vector metaVector() {
-        return Objects.requireNonNull(this.metadata).vector();
-    }
-
-    public Table<?> metaTable() {
-        return Objects.requireNonNull(this.metadata).table();
-    }
-
-    // ------------------------------------- 静态方法 -------------------------------------
 
     /**
      * 此方法负责初始化，而且在全局内存中追加 entityCls = AsyncMeta 的映射关系
@@ -112,5 +80,37 @@ public class AsyncMeta {
         }
         final Class<?> daoCls = CC_META_REF.getOrDefault(daoOrEntity, daoOrEntity);
         return CC_META.getOrDefault(daoCls, null);
+    }
+
+    public AsyncMeta vector(final R2Vector vector) {
+        this.metadata.vector(vector);
+        return this;
+    }
+
+    @SuppressWarnings("all")
+    public VertxDAO executor() {
+        return this.dao;
+    }
+
+    public JooqMeta metaJooq() {
+        return this.metadata;
+    }
+
+    public Class<?> metaDao() {
+        return this.daoCls;
+    }
+
+    public Class<?> metaEntity() {
+        return Objects.requireNonNull(this.metadata).entityCls();
+    }
+
+    // ------------------------------------- 静态方法 -------------------------------------
+
+    public R2Vector metaVector() {
+        return Objects.requireNonNull(this.metadata).vector();
+    }
+
+    public Table<?> metaTable() {
+        return Objects.requireNonNull(this.metadata).table();
     }
 }

@@ -1,9 +1,9 @@
 package io.r2mo.vertx.jooq;
 
-import io.github.jklingsporn.vertx.jooq.classic.VertxDAO;
 import io.r2mo.base.dbe.constant.QCV;
 import io.r2mo.base.dbe.syntax.QTree;
 import io.r2mo.vertx.dbe.AsyncAggr;
+import io.r2mo.vertx.jooq.classic.VertxDAO;
 import io.vertx.core.Future;
 
 import java.util.Map;
