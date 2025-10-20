@@ -46,6 +46,7 @@ public class MetaGenerate implements Serializable {
         m.source = (this.source == null)
             ? other.source
             : this.source.merge(other.source);
+        m.resolver = other.resolver != null ? other.resolver : this.resolver;
         return m;
     }
 }
