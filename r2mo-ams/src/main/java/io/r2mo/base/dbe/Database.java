@@ -124,9 +124,13 @@ public class Database implements Serializable, JElement {
     }
 
     // -------------- 除开 Get / Set 的特殊方法 -----------------
+
     public String getPasswordDecrypted() {
         /*
-         * 不在考虑使用与否，只是单纯用组件处理，屏蔽环境变量
+         * 不在考虑使用与否，只是单纯用组件处理，屏蔽环境变量，此处的 EDCrypto 在处理加密解密过程中，和其他 SPI
+         * 不同，底层会存在默认实现类 io.r2mo.jce.component.secure.CryptoDatabase，但是这个实现类和其他
+         * SPI的不同点在于它是可选的方式加载，就是在启动器中来引入 SPI，而不是一开始就有一个默认引入的方式再使用
+         * SPI.findOverwrite 来覆盖默认实现，这是和其他 SPI 很大的不同。
          */
         final List<EDCrypto> cryptoList = SPI.findMany(EDCrypto.class);
         if (cryptoList.isEmpty()) {
