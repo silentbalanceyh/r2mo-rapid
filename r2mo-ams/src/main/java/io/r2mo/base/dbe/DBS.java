@@ -33,6 +33,17 @@ public interface DBS {
     }
 
     /**
+     * 默认数据源提取，提取之时一定要保证 {@link DBMany} 中已经存在 Master 数据源，这是目前的一种约定，若
+     * 系统没有提供 Master 数据源，则只能依靠用户自行管理数据源，为了跨数据源和多数据源实例方便使用而制定了
+     * 这样的机制，所有数据源底层依赖 {@link DBMany} 进行统一管理。
+     *
+     * @return 返回 Master 数据源
+     */
+    static DBS waitFor() {
+        return DBMany.of().get();
+    }
+
+    /**
      * @author lang : 2025-10-18
      */
     interface CPFactory {

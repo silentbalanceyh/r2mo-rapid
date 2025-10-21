@@ -2,6 +2,7 @@ package io.r2mo.vertx.jooq;
 
 import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.dbe.Database;
+import io.r2mo.base.program.R2Vector;
 import io.r2mo.dbe.jooq.core.domain.JooqDatabase;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
@@ -10,11 +11,13 @@ import io.r2mo.vertx.dbe.DBContext;
 import io.vertx.core.Vertx;
 import org.jooq.DSLContext;
 
+import java.util.Objects;
+
 /**
  * @author lang : 2025-10-18
  */
 @SPID(DBContext.DEFAULT_CONTEXT_SPID)
-public class JooqContext implements DBContext {
+public class AsyncDBContext implements DBContext {
     private static final Cc<String, Vertx> CC_VECTOR = Cc.open();
     private static final Cc<String, DSLContext> CC_JOOQ = Cc.open();
 
@@ -50,9 +53,15 @@ public class JooqContext implements DBContext {
         return CC_VECTOR.get(String.valueOf(dbs.hashCode()));
     }
 
-    public static String cached(final Class<?> daoCls, final DBS dbs) {
-        return JooqContext.vertxStatic(dbs).hashCode() +
-            "@" + dbs.hashCode() +
-            "/" + daoCls.getName();
+    public static String cached(final Class<?> daoCls, final DBS dbs, final R2Vector vector) {
+        if (Objects.isNull(vector)) {
+            return AsyncDBContext.vertxStatic(dbs).hashCode()
+                // Vertx + DBS + DAO
+                + "@" + dbs.hashCode() + "/" + daoCls.getName();
+        } else {
+            return AsyncDBContext.vertxStatic(dbs).hashCode()
+                // Vertx + DBS + DAO + Vector（映射对象）
+                + "@" + dbs.hashCode() + "/" + daoCls.getName() + "#" + vector.hashCode();
+        }
     }
 }

@@ -5,6 +5,12 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 
 /**
+ * 综合同异步双模型，实现前置和后置的 JSON 映射处理
+ * <pre>
+ *     1. 后置使用日志：After 注释
+ *     2. 前置使用日志：Before 注释
+ * </pre>
+ *
  * @author lang : 2025-10-20
  */
 class DBExJson<T> extends DBExFuture<T> {
@@ -20,6 +26,7 @@ class DBExJson<T> extends DBExFuture<T> {
         return (DBVector<T>) this.mapped;
     }
 
+    // region After: 后置类型映射处理
     public JsonArray findAllJ() {
         return this.mapped().outMany(this.dbe.findAll());
     }
@@ -27,4 +34,5 @@ class DBExJson<T> extends DBExFuture<T> {
     public Future<JsonArray> findAllJAsync() {
         return this.mapped().outMany(this.findAllAsync());
     }
+    // endregion
 }

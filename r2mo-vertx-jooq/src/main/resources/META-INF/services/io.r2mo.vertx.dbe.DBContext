@@ -1,1 +1,1 @@
-io.r2mo.vertx.jooq.JooqContext
+io.r2mo.vertx.jooq.AsyncDBContext

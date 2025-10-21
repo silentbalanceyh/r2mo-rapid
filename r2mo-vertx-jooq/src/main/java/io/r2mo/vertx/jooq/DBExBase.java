@@ -38,7 +38,7 @@ class DBExBase<T> {
 
         this.dbs = dbs;
         // 内部直接访问 Context 中的引用
-        this.vertxRef = JooqContext.vertxStatic(dbs);
+        this.vertxRef = AsyncDBContext.vertxStatic(dbs);
         Objects.requireNonNull(this.vertxRef, "[ R2MO ] 关键步骤 DBS 无法初始化 Vertx 引用！");
 
 
