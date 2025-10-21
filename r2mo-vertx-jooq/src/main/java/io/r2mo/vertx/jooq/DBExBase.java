@@ -64,15 +64,15 @@ class DBExBase<T> {
         this.dbeAsync = AsyncDBE.of((Class<T>) metaAsync.metaEntity(), metaAsync);
     }
 
-    protected DBS refDBS() {
+    public DBS refDBS() {
         return this.dbs;
     }
 
-    protected Vertx refVertx() {
+    public Vertx refVertx() {
         return this.vertxRef;
     }
 
-    protected AsyncMeta metadata() {
+    public AsyncMeta metadata() {
         return this.metadata;
     }
 

@@ -15,6 +15,8 @@ import org.jooq.DSLContext;
 import org.jooq.Table;
 
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author lang : 2025-10-18
@@ -90,6 +92,13 @@ public class AsyncMeta {
     @SuppressWarnings("all")
     public VertxDAO executor() {
         return this.dao;
+    }
+
+    public ConcurrentMap<String, Class<?>> metaTypes() {
+        if (Objects.isNull(this.metadata)) {
+            return new ConcurrentHashMap<>();
+        }
+        return this.metadata.fieldType();
     }
 
     public JooqMeta metaJooq() {
