@@ -16,4 +16,8 @@ class DBExFuture<T> extends DBExCommon<T> {
     public Future<List<T>> findAllAsync() {
         return this.dbeAsync.findAllAsync();
     }
+
+    public Future<Long> countAllAsync() {
+        return this.dbeAsync.countAllAsync();
+    }
 }

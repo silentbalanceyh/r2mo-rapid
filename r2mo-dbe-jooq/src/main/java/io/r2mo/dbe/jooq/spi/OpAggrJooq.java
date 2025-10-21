@@ -2,6 +2,7 @@ package io.r2mo.dbe.jooq.spi;
 
 import io.r2mo.base.dbe.constant.QCV;
 import io.r2mo.base.dbe.operation.OpAggr;
+import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.syntax.QTree;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -9,21 +10,25 @@ import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
  * @author lang : 2025-10-19
  */
 class OpAggrJooq<T> extends AbstractDbJooq<T> implements OpAggr {
+    private final QrAnalyzer<Condition> analyzer;
+
     protected OpAggrJooq(final Class<T> entityCls, final DSLContext context) {
         super(entityCls, context);
+        this.analyzer = new QrAnalyzerCondition(entityCls, context);
     }
 
     @Override
     public <N extends Number> Optional<N> execute(final String aggrField,
                                                   final Class<N> returnCls,
                                                   final QCV.Aggr aggr, final String field, final Object value) {
-        final Condition condition = this.analyzer().where(field, value);
+        final Condition condition = this.analyzer.where(field, value);
         return this.execute(aggrField, returnCls, aggr, condition);
     }
 
@@ -31,7 +36,7 @@ class OpAggrJooq<T> extends AbstractDbJooq<T> implements OpAggr {
     public <N extends Number> Optional<N> execute(final String aggrField,
                                                   final Class<N> returnCls,
                                                   final QCV.Aggr aggr, final QTree criteria) {
-        final Condition condition = this.analyzer().where(criteria);
+        final Condition condition = this.analyzer.where(criteria);
         return this.execute(aggrField, returnCls, aggr, condition);
     }
 
@@ -39,7 +44,7 @@ class OpAggrJooq<T> extends AbstractDbJooq<T> implements OpAggr {
     public <N extends Number> Optional<N> execute(final String aggrField,
                                                   final Class<N> returnCls,
                                                   final QCV.Aggr aggr, final Map<String, Object> map) {
-        final Condition condition = this.analyzer().where(map);
+        final Condition condition = this.analyzer.where(map);
         return this.execute(aggrField, returnCls, aggr, condition);
     }
 
@@ -62,7 +67,7 @@ class OpAggrJooq<T> extends AbstractDbJooq<T> implements OpAggr {
         final Condition condition) {
 
         // 🏗️ 获取字段
-        final Field<?> field = this.meta.findColumn(aggrField);
+        final Field<?> field = Objects.isNull(aggrField) ? DSL.field("*") : this.meta.findColumn(aggrField);
         final Field<N> aggrFunction = this.buildAggrFunction(field, aggr, returnCls);
 
         // 🔍 执行查询

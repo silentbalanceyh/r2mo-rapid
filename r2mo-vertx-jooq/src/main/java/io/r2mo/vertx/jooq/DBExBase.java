@@ -5,10 +5,8 @@ import io.r2mo.base.dbe.Database;
 import io.r2mo.dbe.jooq.DBE;
 import io.r2mo.dbe.jooq.core.domain.JooqDatabase;
 import io.r2mo.typed.exception.web._501NotSupportException;
-import io.r2mo.vertx.dbe.AsyncDBE;
 import io.vertx.core.Vertx;
 import lombok.experimental.Accessors;
-import org.jooq.Condition;
 
 import java.util.Objects;
 
@@ -27,7 +25,7 @@ class DBExBase<T> {
 
     // 桥接：同步和异步
     protected final DBE<T> dbe;
-    protected final AsyncDBE<Condition, T, AsyncMeta> dbeAsync;
+    protected final AsyncDBE<T> dbeAsync;
 
     protected DBExBase(final Class<T> daoCls, final DBS dbs) {
         // 提取 Database 引用，构造同步专用的 DSLContext

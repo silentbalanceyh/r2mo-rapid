@@ -4,8 +4,6 @@ import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.program.R2Vector;
 import io.r2mo.typed.cc.Cc;
 
-import java.util.Objects;
-
 /**
  * 异步模式的 DBE -> Async Database Engine, x - Extension（扩展）
  * <pre>
@@ -29,9 +27,10 @@ public class DBEx<T> extends DBExJson<T> {
 
     private DBEx(final Class<T> daoCls, final DBS dbs, final R2Vector vector) {
         super(daoCls, dbs);
-        if (Objects.nonNull(vector)) {
-            this.metadata().vector(vector);
-        }
+        /*
+         * 留给底层去处理 R2Vector 映射关系
+         */
+        this.metadata().vector(vector);
     }
 
     // -------------------- 静态创建方法 ----------------------

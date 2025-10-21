@@ -60,6 +60,10 @@ public class QrAnalyzerCondition implements QrAnalyzer<Condition> {
     // 此处 sorter 会忽略
     @Override
     public Condition where(final QTree tree, final QSorter sorter) {
+        // Fix: java.lang.NullPointerException: Cannot invoke "io.r2mo.base.dbe.syntax.QTree.data()" because "tree" is null
+        if (Objects.isNull(tree)) {
+            return DSL.trueCondition();
+        }
         final JObject treeJ = tree.data();
         return QrHelper.transform(treeJ, this.meta::findColumn);
     }
@@ -67,6 +71,9 @@ public class QrAnalyzerCondition implements QrAnalyzer<Condition> {
     // 此处只处理 QTree
     @Override
     public Condition where(final QQuery query) {
+        if (Objects.isNull(query)) {
+            return DSL.trueCondition();
+        }
         final QTree tree = query.criteria();
         if (Objects.isNull(tree)) {
             return DSL.trueCondition();

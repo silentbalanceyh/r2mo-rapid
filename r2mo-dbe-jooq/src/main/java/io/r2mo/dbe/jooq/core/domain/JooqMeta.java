@@ -67,7 +67,14 @@ public class JooqMeta {
     private final ConcurrentMap<String, Class<?>> fieldType = new ConcurrentHashMap<>();
 
     public JooqMeta vector(final R2Vector vector) {
-        final R2Vector combined = this.vectorCombine(this.vector, vector);
+        final R2Vector combined;
+        if (Objects.isNull(vector)) {
+            // 外层传入 null
+            combined = this.vector;
+        } else {
+            // 外层传入非 null，进行合并
+            combined = this.vectorCombine(this.vector, vector);
+        }
         Optional.ofNullable(this.key).ifPresent(key -> key.vector(combined));
         Optional.ofNullable(this.field).ifPresent(field -> field.vector(combined, this.fieldColumn));
         this.vector = combined;
