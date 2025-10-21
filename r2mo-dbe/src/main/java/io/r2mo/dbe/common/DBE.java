@@ -23,6 +23,18 @@ public abstract class DBE<QR, T, EXECUTOR> extends DBEAggr<QR, T, EXECUTOR> {
 
 
     // ---- findOne
+    public boolean findExist(final Serializable id) {
+        return this.findOne(id).isPresent();
+    }
+
+    public boolean findExist(final QTree criteria) {
+        return this.findOne(criteria).isPresent();
+    }
+
+    public boolean findExist(final JObject criteria) {
+        return this.findOne(criteria).isPresent();
+    }
+
     public Optional<T> findOne(final Serializable id) {
         return this.qrOne.execute(id);
     }

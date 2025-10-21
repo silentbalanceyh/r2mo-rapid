@@ -8,8 +8,12 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * 综合同异步双模型，实现前置和后置的 JSON 映射处理
@@ -318,4 +322,280 @@ class DBExJson<T> extends DBExFuture<T> {
     public Future<JsonObject> updateByAsyncJ(final JsonObject criteria, final JsonObject updated) {
         return this.updateByAsync(criteria, updated).compose(this.mapped()::oneTo);
     }
+
+    public T saveBy(final Serializable id, final JsonObject data) {
+        return this.saveBy(id, this.mapped().<T>one(data));
+    }
+
+    public JsonObject saveByJ(final Serializable id, final T entity) {
+        return this.mapped().one(this.saveBy(id, entity));
+    }
+
+    public JsonObject saveByJ(final Serializable id, final JsonObject data) {
+        return this.mapped().one(this.saveBy(id, data));
+    }
+
+    public Future<T> saveByAsync(final Serializable id, final JsonObject data) {
+        return this.mapped().<T>oneTo(data).compose(entity -> this.saveByAsync(id, entity));
+    }
+
+    public Future<JsonObject> saveByAsyncJ(final Serializable id, final T entity) {
+        return this.saveByAsync(id, entity).compose(this.mapped()::oneTo);
+    }
+
+    public Future<JsonObject> saveByAsyncJ(final Serializable id, final JsonObject data) {
+        return this.saveByAsync(id, data).compose(this.mapped()::oneTo);
+    }
+
+    public T saveBy(final JsonObject criteria, final T entity) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.saveBy(this.wrapTree(mappedCriteria), entity);
+    }
+
+    public T saveBy(final JsonObject criteria, final JsonObject data) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.saveBy(this.wrapTree(mappedCriteria), this.mapped().one(data));
+    }
+
+    public JsonObject saveByJ(final JsonObject criteria, final T entity) {
+        return this.mapped().one(this.saveBy(criteria, entity));
+    }
+
+    public JsonObject saveByJ(final JsonObject criteria, final JsonObject data) {
+        return this.mapped().one(this.saveBy(criteria, data));
+    }
+
+    public Future<T> saveByAsync(final JsonObject criteria, final T entity) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.saveByAsync(this.wrapTree(mappedCriteria), entity);
+    }
+
+    public Future<T> saveByAsync(final JsonObject criteria, final JsonObject data) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.saveByAsync(this.wrapTree(mappedCriteria), this.mapped().one(data));
+    }
+
+    public Future<JsonObject> saveByAsyncJ(final JsonObject criteria, final T entity) {
+        return this.saveByAsync(criteria, entity).compose(this.mapped()::oneTo);
+    }
+
+    public Future<JsonObject> saveByAsyncJ(final JsonObject criteria, final JsonObject data) {
+        return this.saveByAsync(criteria, data).compose(this.mapped()::oneTo);
+    }
+
+    public T remove(final JsonObject data) {
+        return this.remove(this.mapped().<T>one(data));
+    }
+
+    public JsonObject removeJ(final T entity) {
+        return this.mapped().one(this.remove(entity));
+    }
+
+    public JsonObject removeJ(final JsonObject data) {
+        return this.mapped().one(this.remove(data));
+    }
+
+    public Future<T> removeAsync(final JsonObject data) {
+        return this.mapped().<T>oneTo(data).compose(this::removeAsync);
+    }
+
+    public Future<JsonObject> removeAsyncJ(final T entity) {
+        return this.removeAsync(entity).compose(this.mapped()::oneTo);
+    }
+
+    public Future<JsonObject> removeAsyncJ(final JsonObject data) {
+        return this.removeAsync(data).compose(this.mapped()::oneTo);
+    }
+
+    public List<T> remove(final JsonArray data) {
+        return this.remove(this.mapped().many(data));
+    }
+
+    public JsonArray removeJ(final List<T> entities) {
+        return this.mapped().many(this.remove(entities));
+    }
+
+    public JsonArray removeJ(final JsonArray data) {
+        return this.mapped().many(this.remove(data));
+    }
+
+    public Future<List<T>> removeAsync(final JsonArray data) {
+        return this.removeAsync(this.mapped().many(data));
+    }
+
+    public Future<JsonArray> removeAsyncJ(final List<T> entities) {
+        return this.removeAsync(entities).compose(this.mapped()::manyTo);
+    }
+
+    public Future<JsonArray> removeAsyncJ(final JsonArray data) {
+        return this.removeAsync(data).compose(this.mapped()::manyTo);
+    }
+
+    public Boolean removeBy(final Collection<?> ids) {
+        this.remove(this.findMany(ids.toArray()));
+        return true;
+    }
+
+    public Boolean removeBy(final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.removeBy(this.wrapTree(mappedCriteria));
+    }
+
+    public Future<Boolean> removeByAsync(final Collection<?> ids) {
+        return this.findManyAsync(ids.toArray()).compose(this::removeAsync).map(true);
+    }
+
+    public Future<Boolean> removeByAsync(final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.removeByAsync(this.wrapTree(mappedCriteria));
+    }
+
+    public boolean findExist(final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.findExist(this.wrapTree(mappedCriteria));
+    }
+
+    public Future<Boolean> findExistAsync(final Serializable id) {
+        return this.findOneAsync(id)
+            .compose(exist -> Future.succeededFuture(Objects.nonNull(exist)));
+    }
+
+    public Future<Boolean> findExistAsync(final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.findOneAsync(this.wrapTree(mappedCriteria))
+            .compose(exist -> Future.succeededFuture(Objects.nonNull(exist)));
+    }
+
+    public Map<String, JsonArray> findGroupByJ(final String field) {
+        return this.mapResult(this.findGroupBy(field), this.mapped()::many);
+    }
+
+    public Future<Map<String, JsonArray>> findGroupByAsyncJ(final String field) {
+        return this.<String>findGroupByAsync(field)
+            .compose(list -> this.mapResultAsync(list, this.mapped()::many));
+    }
+
+    public Map<String, List<T>> findGroupBy(final JsonObject criteria, final String field) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.findGroupBy(this.wrapTree(mappedCriteria), field);
+    }
+
+    public Map<String, JsonArray> findGroupByJ(final JsonObject criteria, final String field) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.mapResult(this.findGroupBy(this.wrapTree(mappedCriteria), field), this.mapped()::many);
+    }
+
+    public Future<Map<String, List<T>>> findGroupByAsync(final JsonObject criteria, final String field) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.findGroupByAsync(this.wrapTree(mappedCriteria), field);
+    }
+
+    public Future<Map<String, JsonArray>> findGroupByAsyncJ(final JsonObject criteria, final String field) {
+        return this.findGroupByAsync(criteria, field)
+            .compose(list -> this.mapResultAsync(list, this.mapped()::many));
+    }
+
+    public Long count(final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.count(this.wrapTree(mappedCriteria)).orElse(0L);
+    }
+
+    public Future<Long> countAsync(final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.countAsync(this.wrapTree(mappedCriteria));
+    }
+
+    public ConcurrentMap<String, Long> countBy(final JsonObject criteria, final String field) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.countBy(this.wrapTree(mappedCriteria), field);
+    }
+
+    public Future<ConcurrentMap<String, Long>> countByAsync(final JsonObject criteria, final String field) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.countByAsync(this.wrapTree(mappedCriteria), field);
+    }
+
+    public BigDecimal sum(final String field, final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.sum(field, this.wrapTree(mappedCriteria)).orElse(BigDecimal.ZERO);
+    }
+
+    public Future<BigDecimal> sumAsync(final String field, final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.sumAsync(field, this.wrapTree(mappedCriteria));
+    }
+
+    public ConcurrentMap<String, BigDecimal> sumBy(final String field, final JsonObject criteria, final String groupBy) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.sumBy(field, this.wrapTree(mappedCriteria), groupBy);
+    }
+
+    public Future<ConcurrentMap<String, BigDecimal>> sumByAsync(final String field, final JsonObject criteria, final String groupBy) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.sumByAsync(field, this.wrapTree(mappedCriteria), groupBy);
+    }
+
+    // ---- AVG
+    public BigDecimal avg(final String field, final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.avg(field, this.wrapTree(mappedCriteria)).orElse(BigDecimal.ZERO);
+    }
+
+    public Future<BigDecimal> avgAsync(final String field, final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.avgAsync(field, this.wrapTree(mappedCriteria));
+    }
+
+    public ConcurrentMap<String, BigDecimal> avgBy(final String field, final JsonObject criteria, final String groupBy) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.avgBy(field, this.wrapTree(mappedCriteria), groupBy);
+    }
+
+    public Future<ConcurrentMap<String, BigDecimal>> avgByAsync(final String field, final JsonObject criteria, final String groupBy) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.avgByAsync(field, this.wrapTree(mappedCriteria), groupBy);
+    }
+
+    // ---- MIN
+    public BigDecimal min(final String field, final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.min(field, this.wrapTree(mappedCriteria)).orElse(BigDecimal.ZERO);
+    }
+
+    public Future<BigDecimal> minAsync(final String field, final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.minAsync(field, this.wrapTree(mappedCriteria));
+    }
+
+    public ConcurrentMap<String, BigDecimal> minBy(final String field, final JsonObject criteria, final String groupBy) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.minBy(field, this.wrapTree(mappedCriteria), groupBy);
+    }
+
+    public Future<ConcurrentMap<String, BigDecimal>> minByAsync(final String field, final JsonObject criteria, final String groupBy) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.minByAsync(field, this.wrapTree(mappedCriteria), groupBy);
+    }
+
+    // ---- MAX
+    public BigDecimal max(final String field, final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.max(field, this.wrapTree(mappedCriteria)).orElse(BigDecimal.ZERO);
+    }
+
+    public Future<BigDecimal> maxAsync(final String field, final JsonObject criteria) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.maxAsync(field, this.wrapTree(mappedCriteria));
+    }
+
+    public ConcurrentMap<String, BigDecimal> maxBy(final String field, final JsonObject criteria, final String groupBy) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.maxBy(field, this.wrapTree(mappedCriteria), groupBy);
+    }
+
+    public Future<ConcurrentMap<String, BigDecimal>> maxByAsync(final String field, final JsonObject criteria, final String groupBy) {
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
+        return this.maxByAsync(field, this.wrapTree(mappedCriteria), groupBy);
+    }
+
 }

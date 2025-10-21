@@ -75,6 +75,10 @@ class AsyncDBEAggr<QR, T, METADATA> {
         return this.opAggr.executeAsync(aggrField, BigDecimal.class, QCV.Aggr.SUM, condition);
     }
 
+    public Future<BigDecimal> sumAsync(final String aggrField) {
+        return this.sumAsync(aggrField, Map.of());
+    }
+
     public Future<BigDecimal> sumAsync(final String aggrField, final JObject criteriaJ) {
         return this.sumAsync(aggrField, QTree.of(criteriaJ));
     }
@@ -96,6 +100,10 @@ class AsyncDBEAggr<QR, T, METADATA> {
         return this.opAggr.executeAsync(aggrField, BigDecimal.class, QCV.Aggr.AVG, condition);
     }
 
+    public Future<BigDecimal> avgAsync(final String aggrField) {
+        return this.avgAsync(aggrField, Map.of());
+    }
+
     // ====== MIN ======
     public Future<BigDecimal> minAsync(final String aggrField, final String field, final Object value) {
         return this.opAggr.executeAsync(aggrField, BigDecimal.class, QCV.Aggr.MIN, field, value);
@@ -107,6 +115,10 @@ class AsyncDBEAggr<QR, T, METADATA> {
 
     public Future<BigDecimal> minAsync(final String aggrField, final Map<String, Object> condition) {
         return this.opAggr.executeAsync(aggrField, BigDecimal.class, QCV.Aggr.MIN, condition);
+    }
+
+    public Future<BigDecimal> minAsync(final String aggrField) {
+        return this.minAsync(aggrField, Map.of());
     }
 
     public Future<BigDecimal> minAsync(final String aggrField, final JObject criteriaJ) {
@@ -124,6 +136,10 @@ class AsyncDBEAggr<QR, T, METADATA> {
 
     public Future<BigDecimal> maxAsync(final String aggrField, final Map<String, Object> condition) {
         return this.opAggr.executeAsync(aggrField, BigDecimal.class, QCV.Aggr.MAX, condition);
+    }
+
+    public Future<BigDecimal> maxAsync(final String aggrField) {
+        return this.maxAsync(aggrField, Map.of());
     }
 
     public Future<BigDecimal> maxAsync(final String aggrField, final JObject criteriaJ) {
@@ -165,6 +181,10 @@ class AsyncDBEAggr<QR, T, METADATA> {
         return this.opAggr.executeAsync(aggrField, BigDecimal.class, QCV.Aggr.SUM, condition, groupBy);
     }
 
+    public Future<ConcurrentMap<String, BigDecimal>> sumByAsync(final String aggrField, final String groupBy) {
+        return this.sumByAsync(aggrField, Map.of(), groupBy);
+    }
+
     public Future<ConcurrentMap<String, BigDecimal>> sumByAsync(final String aggrField, final JObject criteriaJ, final String groupBy) {
         return this.sumByAsync(aggrField, QTree.of(criteriaJ), groupBy);
     }
@@ -180,6 +200,10 @@ class AsyncDBEAggr<QR, T, METADATA> {
 
     public Future<ConcurrentMap<String, BigDecimal>> avgByAsync(final String aggrField, final Map<String, Object> condition, final String groupBy) {
         return this.opAggr.executeAsync(aggrField, BigDecimal.class, QCV.Aggr.AVG, condition, groupBy);
+    }
+
+    public Future<ConcurrentMap<String, BigDecimal>> avgByAsync(final String aggrField, final String groupBy) {
+        return this.avgByAsync(aggrField, Map.of(), groupBy);
     }
 
     public Future<ConcurrentMap<String, BigDecimal>> avgByAsync(final String aggrField, final JObject criteriaJ, final String groupBy) {
@@ -199,6 +223,10 @@ class AsyncDBEAggr<QR, T, METADATA> {
         return this.opAggr.executeAsync(aggrField, BigDecimal.class, QCV.Aggr.MIN, condition, groupBy);
     }
 
+    public Future<ConcurrentMap<String, BigDecimal>> minByAsync(final String aggrField, final String groupBy) {
+        return this.minByAsync(aggrField, Map.of(), groupBy);
+    }
+
     public Future<ConcurrentMap<String, BigDecimal>> minByAsync(final String aggrField, final JObject criteriaJ, final String groupBy) {
         return this.minByAsync(aggrField, QTree.of(criteriaJ), groupBy);
     }
@@ -214,6 +242,10 @@ class AsyncDBEAggr<QR, T, METADATA> {
 
     public Future<ConcurrentMap<String, BigDecimal>> maxByAsync(final String aggrField, final Map<String, Object> condition, final String groupBy) {
         return this.opAggr.executeAsync(aggrField, BigDecimal.class, QCV.Aggr.MAX, condition, groupBy);
+    }
+
+    public Future<ConcurrentMap<String, BigDecimal>> maxByAsync(final String aggrField, final String groupBy) {
+        return this.maxByAsync(aggrField, Map.of(), groupBy);
     }
 
     public Future<ConcurrentMap<String, BigDecimal>> maxByAsync(final String aggrField, final JObject criteriaJ, final String groupBy) {

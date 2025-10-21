@@ -53,6 +53,10 @@ class DBExFuture<T> extends DBExCommon<T> {
         return this.dbeAsync.sumAsync(aggrField, condition);
     }
 
+    public Future<BigDecimal> sumAsync(final String aggrField) {
+        return this.dbeAsync.sumAsync(aggrField);
+    }
+
     public Future<BigDecimal> sumAsync(final String aggrField, final JObject criteriaJ) {
         return this.dbeAsync.sumAsync(aggrField, criteriaJ);
     }
@@ -68,6 +72,10 @@ class DBExFuture<T> extends DBExCommon<T> {
 
     public Future<BigDecimal> avgAsync(final String aggrField, final Map<String, Object> condition) {
         return this.dbeAsync.avgAsync(aggrField, condition);
+    }
+
+    public Future<BigDecimal> avgAsync(final String aggrField) {
+        return this.dbeAsync.avgAsync(aggrField);
     }
 
     public Future<BigDecimal> avgAsync(final String aggrField, final JObject criteriaJ) {
@@ -87,6 +95,10 @@ class DBExFuture<T> extends DBExCommon<T> {
         return this.dbeAsync.minAsync(aggrField, condition);
     }
 
+    public Future<BigDecimal> minAsync(final String aggrField) {
+        return this.dbeAsync.minAsync(aggrField);
+    }
+
     public Future<BigDecimal> minAsync(final String aggrField, final JObject criteriaJ) {
         return this.dbeAsync.minAsync(aggrField, criteriaJ);
     }
@@ -102,6 +114,10 @@ class DBExFuture<T> extends DBExCommon<T> {
 
     public Future<BigDecimal> maxAsync(final String aggrField, final Map<String, Object> condition) {
         return this.dbeAsync.maxAsync(aggrField, condition);
+    }
+
+    public Future<BigDecimal> maxAsync(final String aggrField) {
+        return this.dbeAsync.maxAsync(aggrField);
     }
 
     public Future<BigDecimal> maxAsync(final String aggrField, final JObject criteriaJ) {
@@ -142,6 +158,10 @@ class DBExFuture<T> extends DBExCommon<T> {
         return this.dbeAsync.sumByAsync(aggrField, condition, groupBy);
     }
 
+    public Future<ConcurrentMap<String, BigDecimal>> sumByAsync(final String aggrField, final String groupBy) {
+        return this.dbeAsync.sumByAsync(aggrField, groupBy);
+    }
+
     public Future<ConcurrentMap<String, BigDecimal>> sumByAsync(final String aggrField, final JObject criteriaJ, final String groupBy) {
         return this.dbeAsync.sumByAsync(aggrField, criteriaJ, groupBy);
     }
@@ -157,6 +177,10 @@ class DBExFuture<T> extends DBExCommon<T> {
 
     public Future<ConcurrentMap<String, BigDecimal>> avgByAsync(final String aggrField, final Map<String, Object> condition, final String groupBy) {
         return this.dbeAsync.avgByAsync(aggrField, condition, groupBy);
+    }
+
+    public Future<ConcurrentMap<String, BigDecimal>> avgByAsync(final String aggrField, final String groupBy) {
+        return this.dbeAsync.avgByAsync(aggrField, groupBy);
     }
 
     public Future<ConcurrentMap<String, BigDecimal>> avgByAsync(final String aggrField, final JObject criteriaJ, final String groupBy) {
@@ -176,6 +200,10 @@ class DBExFuture<T> extends DBExCommon<T> {
         return this.dbeAsync.minByAsync(aggrField, condition, groupBy);
     }
 
+    public Future<ConcurrentMap<String, BigDecimal>> minByAsync(final String aggrField, final String groupBy) {
+        return this.dbeAsync.minByAsync(aggrField, groupBy);
+    }
+
     public Future<ConcurrentMap<String, BigDecimal>> minByAsync(final String aggrField, final JObject criteriaJ, final String groupBy) {
         return this.dbeAsync.minByAsync(aggrField, criteriaJ, groupBy);
     }
@@ -191,6 +219,10 @@ class DBExFuture<T> extends DBExCommon<T> {
 
     public Future<ConcurrentMap<String, BigDecimal>> maxByAsync(final String aggrField, final Map<String, Object> condition, final String groupBy) {
         return this.dbeAsync.maxByAsync(aggrField, condition, groupBy);
+    }
+
+    public Future<ConcurrentMap<String, BigDecimal>> maxByAsync(final String aggrField, final String groupBy) {
+        return this.dbeAsync.maxByAsync(aggrField, groupBy);
     }
 
     public Future<ConcurrentMap<String, BigDecimal>> maxByAsync(final String aggrField, final JObject criteriaJ, final String groupBy) {

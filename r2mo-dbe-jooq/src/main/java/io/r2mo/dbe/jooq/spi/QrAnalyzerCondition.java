@@ -40,6 +40,12 @@ public class QrAnalyzerCondition implements QrAnalyzer<Condition> {
 
     @Override
     public Condition where(final Map<String, Object> condition) {
+        if (Objects.isNull(condition) || condition.isEmpty()) {
+            // 特殊不带条件的模式，只能通过 Map.of() 传递
+            return DSL.trueCondition();
+        }
+
+
         final List<Condition> conditions = new ArrayList<>();
         condition.forEach((k, v) -> {
             final Field<?> column = this.meta.findColumn(k);

@@ -6,9 +6,20 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.r2mo.base.dbe.constant.QOp;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
-import io.r2mo.base.dbe.syntax.*;
+import io.r2mo.base.dbe.syntax.QBranch;
+import io.r2mo.base.dbe.syntax.QLeaf;
+import io.r2mo.base.dbe.syntax.QNode;
+import io.r2mo.base.dbe.syntax.QPager;
+import io.r2mo.base.dbe.syntax.QProjection;
+import io.r2mo.base.dbe.syntax.QQuery;
+import io.r2mo.base.dbe.syntax.QSorter;
+import io.r2mo.base.dbe.syntax.QTree;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author lang : 2025-08-28
@@ -36,6 +47,11 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
 
     @Override
     public QueryWrapper<T> where(final Map<String, Object> condition) {
+        if (Objects.isNull(condition) || condition.isEmpty()) {
+            // 特殊不带条件的模式，只能通过 Map.of() 传递
+            return Wrappers.query();
+        }
+        
         final Map<String, Object> column = this.meta.vColumn(condition);
         return Wrappers.query(this.entityCls).allEq(column);
     }

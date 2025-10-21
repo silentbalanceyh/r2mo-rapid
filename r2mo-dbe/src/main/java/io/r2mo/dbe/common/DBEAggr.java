@@ -86,6 +86,10 @@ class DBEAggr<QR, T, EXECUTOR> extends DBEConfiguration {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.SUM, condition);
     }
 
+    public Optional<BigDecimal> sum(final String aggrField) {
+        return this.sum(aggrField, Map.of());
+    }
+
     public Optional<BigDecimal> sum(final String aggrField, final JObject criteriaJ) {
         return this.sum(aggrField, QTree.of(criteriaJ));
     }
@@ -107,6 +111,10 @@ class DBEAggr<QR, T, EXECUTOR> extends DBEConfiguration {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.AVG, condition);
     }
 
+    public Optional<BigDecimal> avg(final String aggrField) {
+        return this.avg(aggrField, Map.of());
+    }
+
     // ---- MIN
     public Optional<BigDecimal> min(final String aggrField, final String field, final Object value) {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.MIN, field, value);
@@ -118,6 +126,10 @@ class DBEAggr<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public Optional<BigDecimal> min(final String aggrField, final Map<String, Object> condition) {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.MIN, condition);
+    }
+
+    public Optional<BigDecimal> min(final String aggrField) {
+        return this.min(aggrField, Map.of());
     }
 
     public Optional<BigDecimal> min(final String aggrField, final JObject criteriaJ) {
@@ -135,6 +147,10 @@ class DBEAggr<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public Optional<BigDecimal> max(final String aggrField, final Map<String, Object> condition) {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.MAX, condition);
+    }
+
+    public Optional<BigDecimal> max(final String aggrField) {
+        return this.max(aggrField, Map.of());
     }
 
     public Optional<BigDecimal> max(final String aggrField, final JObject criteriaJ) {
@@ -180,6 +196,10 @@ class DBEAggr<QR, T, EXECUTOR> extends DBEConfiguration {
         return this.sumBy(aggrField, QTree.of(criteriaJ), groupBy);
     }
 
+    public ConcurrentMap<String, BigDecimal> sumBy(final String aggrField, final String groupBy) {
+        return this.sumBy(aggrField, Map.of(), groupBy);
+    }
+
     // ---- AVG (groupBy)
     public ConcurrentMap<String, BigDecimal> avgBy(final String aggrField, final String field, final Object value, final String groupBy) {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.AVG, field, value, groupBy);
@@ -195,6 +215,10 @@ class DBEAggr<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public ConcurrentMap<String, BigDecimal> avgBy(final String aggrField, final JObject criteriaJ, final String groupBy) {
         return this.avgBy(aggrField, QTree.of(criteriaJ), groupBy);
+    }
+
+    public ConcurrentMap<String, BigDecimal> avgBy(final String aggrField, final String groupBy) {
+        return this.avgBy(aggrField, Map.of(), groupBy);
     }
 
     // ---- MIN (groupBy)
@@ -214,6 +238,10 @@ class DBEAggr<QR, T, EXECUTOR> extends DBEConfiguration {
         return this.minBy(aggrField, QTree.of(criteriaJ), groupBy);
     }
 
+    public ConcurrentMap<String, BigDecimal> minBy(final String aggrField, final String groupBy) {
+        return this.minBy(aggrField, Map.of(), groupBy);
+    }
+
     // ---- MAX (groupBy)
     public ConcurrentMap<String, BigDecimal> maxBy(final String aggrField, final String field, final Object value, final String groupBy) {
         return this.opAggr.execute(aggrField, BigDecimal.class, QCV.Aggr.MAX, field, value, groupBy);
@@ -229,6 +257,10 @@ class DBEAggr<QR, T, EXECUTOR> extends DBEConfiguration {
 
     public ConcurrentMap<String, BigDecimal> maxBy(final String aggrField, final JObject criteriaJ, final String groupBy) {
         return this.maxBy(aggrField, QTree.of(criteriaJ), groupBy);
+    }
+
+    public ConcurrentMap<String, BigDecimal> maxBy(final String aggrField, final String groupBy) {
+        return this.maxBy(aggrField, Map.of(), groupBy);
     }
 
     // ===================== SUM (aggrGroup = aggrField = groupBy) =====================

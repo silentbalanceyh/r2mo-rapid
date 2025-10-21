@@ -18,7 +18,11 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * @author lang : 2025-10-20
@@ -97,5 +101,27 @@ class DBExBase<T> {
 
     protected QTree wrapTree(final JsonObject criteria, final QSorter sorter) {
         return this.wrapTree(criteria).sortBy(sorter);
+    }
+
+    protected <T> Map<String, JsonArray> mapResult(Map<String, List<T>> source, Function<List<T>, JsonArray> mapper) {
+        Map<String, JsonArray> result = new ConcurrentHashMap<>();
+        if (source != null) {
+            for (Map.Entry<String, List<T>> entry : source.entrySet()) {
+                String key = entry.getKey();
+                List<T> valueList = entry.getValue();
+
+                if (valueList != null) {
+                    JsonArray jsonArray = Objects.nonNull(mapper) ? mapper.apply(valueList) : R2MO.serializeA(valueList);
+                    result.put(key, jsonArray);
+                } else {
+                    result.put(key, new JsonArray()); // 空数组
+                }
+            }
+        }
+        return result;
+    }
+
+    protected <T> Future<Map<String, JsonArray>> mapResultAsync(final Map<String, List<T>> source, Function<List<T>, JsonArray> mapper) {
+        return Future.succeededFuture(this.mapResult(source, mapper));
     }
 }
