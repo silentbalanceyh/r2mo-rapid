@@ -43,7 +43,7 @@ class PolyDB<E> extends PolyBase<E, List<E>> {
 
 
         final JsonObject mapped = new JsonObject();
-        this.vector.mapBy((fieldJson, field) -> {
+        this.vector.mapTo((field, fieldJson) -> {
             final Object value = serialized.getValue(field);
             if (Objects.nonNull(value)) {
                 mapped.put(fieldJson, value);

@@ -28,11 +28,11 @@ class DBExJson<T> extends DBExFuture<T> {
 
     // region After: 后置类型映射处理
     public JsonArray findAllJ() {
-        return this.mapped().outMany(this.dbe.findAll());
+        return this.mapped().many(this.dbe.findAll());
     }
 
     public Future<JsonArray> findAllJAsync() {
-        return this.mapped().outMany(this.findAllAsync());
+        return this.mapped().thenMany(this.findAllAsync());
     }
     // endregion
 }

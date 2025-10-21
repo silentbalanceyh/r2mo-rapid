@@ -29,11 +29,33 @@ public interface Poly<T, C> {
     static <E> Poly<E, List<E>> ofDB(final Class<?> entityCls, final R2Vector vector) {
         return (Poly<E, List<E>>) CC_SKELETON.pick(() -> new PolyDB<>(vector, entityCls), PolyDB.class.getName() + "@" + entityCls.getName());
     }
+
     // JsonObject/JsonArray -> 数据库中实体
+    @SuppressWarnings("unchecked")
+    static Poly<JsonObject, JsonArray> ofWeb(final Class<?> entityCls, final R2Vector vector) {
+        return (Poly<JsonObject, JsonArray>) CC_SKELETON.pick(() -> new PolyWeb(vector, entityCls), PolyWeb.class.getName() + "@" + entityCls.getName());
+    }
+
+    static Poly.Qr ofQr(final Class<?> entityCls, final R2Vector vector) {
+        return Qr.CC_SKELETON.pick(() -> new PolyQr(vector, entityCls), PolyQr.class.getName() + "@" + entityCls.getName());
+    }
 
     PolyPhase phase();
 
     JsonObject mapOne(T input);
 
     JsonArray mapMany(C input);
+
+    interface Qr {
+
+        Cc<String, Qr> CC_SKELETON = Cc.openThread();
+
+        JsonObject map(JsonObject query);
+
+        JsonObject mapTree(JsonObject tree);
+
+        JsonArray mapSort(JsonArray sorter);
+
+        JsonArray mapProjection(JsonArray projection);
+    }
 }
