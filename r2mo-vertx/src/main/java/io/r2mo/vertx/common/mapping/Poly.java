@@ -27,8 +27,9 @@ public interface Poly<T, C> {
     // 数据库中实体 -> JsonObject/JsonArray 的映射
     @SuppressWarnings("unchecked")
     static <E> Poly<E, List<E>> ofDB(final Class<?> entityCls, final R2Vector vector) {
-        return (Poly<E, List<E>>) CC_SKELETON.pick(() -> new PolyDB<>(vector, entityCls), "PolyDB@" + entityCls.getName());
+        return (Poly<E, List<E>>) CC_SKELETON.pick(() -> new PolyDB<>(vector, entityCls), PolyDB.class.getName() + "@" + entityCls.getName());
     }
+    // JsonObject/JsonArray -> 数据库中实体
 
     PolyPhase phase();
 

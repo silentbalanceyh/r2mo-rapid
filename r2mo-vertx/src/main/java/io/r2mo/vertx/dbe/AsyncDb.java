@@ -12,5 +12,5 @@ public interface AsyncDb<T> {
 
     Future<T> executeAsync(T entity, OpType opType);
 
-    Future<List<T>> executeAsync(List<T> entities, OpType opType, int batchSize);
+    Future<List<T>> executeAsync(List<T> entities, OpType opType);
 }

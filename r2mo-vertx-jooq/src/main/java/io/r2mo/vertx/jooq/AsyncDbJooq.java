@@ -37,7 +37,7 @@ class AsyncDbJooq<T> extends AsyncDBEAction<T> implements AsyncDb<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Future<List<T>> executeAsync(final List<T> entities, final OpType opType, final int batchSize) {
+    public Future<List<T>> executeAsync(final List<T> entities, final OpType opType) {
         if (Objects.isNull(entities) || entities.isEmpty()) {
             return Future.succeededFuture(new ArrayList<>());
         }

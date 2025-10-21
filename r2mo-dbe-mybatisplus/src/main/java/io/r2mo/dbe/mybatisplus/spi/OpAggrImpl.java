@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * 聚集函数操作
@@ -52,6 +53,74 @@ class OpAggrImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWr
         final QueryWrapper<T> query = this.analyzer().where(map);
 
         return this.execute(aggrField, returnCls, query, aggr);
+    }
+
+    @Override
+    public <N extends Number> ConcurrentMap<String, N> execute(final String aggrField, final Class<N> returnCls,
+                                                               final QCV.Aggr aggr,
+                                                               final String field, final Object value, final String groupBy) {
+        final QueryWrapper<T> query = this.analyzer().where(field, value);
+        return this.executeGrouped(aggrField, returnCls, aggr, query, groupBy);
+    }
+
+    @Override
+    public <N extends Number> ConcurrentMap<String, N> execute(final String aggrField, final Class<N> returnCls,
+                                                               final QCV.Aggr aggr, final QTree criteria, final String groupBy) {
+        final QueryWrapper<T> query = this.analyzer().where(criteria);
+        return this.executeGrouped(aggrField, returnCls, aggr, query, groupBy);
+    }
+
+    @Override
+    public <N extends Number> ConcurrentMap<String, N> execute(final String aggrField, final Class<N> returnCls,
+                                                               final QCV.Aggr aggr, final Map<String, Object> map, final String groupBy) {
+        final QueryWrapper<T> query = this.analyzer().where(map);
+        return this.executeGrouped(aggrField, returnCls, aggr, query, groupBy);
+    }
+
+    /* ===== 私有通用方法：分组聚集 ===== */
+    // ② 分组聚集的公共实现：统一使用中文提示 + [ R2MO ] 前缀
+    private <N extends Number> ConcurrentMap<String, N> executeGrouped(
+        final String aggrField, final Class<N> returnCls, final QCV.Aggr aggr,
+        final QueryWrapper<T> query, final String groupBy
+    ) {
+        Objects.requireNonNull(aggr, "[ R2MO ] 聚集函数 aggr 不能为空");
+        Objects.requireNonNull(groupBy, "[ R2MO ] 分组字段 groupBy 不能为空");
+
+        final String alias = "__agg__";
+        final String aggrSelect = (QCV.Aggr.COUNT == aggr)
+            ? "COUNT(*) AS " + alias
+            : (this.buildAggr(
+            Objects.requireNonNull(aggrField, "[ R2MO ] 非 COUNT 聚集时，聚集字段 aggrField 不能为空"),
+            aggr
+        ) + " AS " + alias);
+
+        query.select(groupBy, aggrSelect).groupBy(groupBy);
+
+        final List<Map<String, Object>> rows = this.executor().selectMaps(query);
+        final java.util.concurrent.ConcurrentMap<String, N> result =
+            new java.util.concurrent.ConcurrentHashMap<>(Math.max(16, rows.size() * 2));
+
+        for (final Map<String, Object> row : rows) {
+            if (row == null || row.isEmpty()) {
+                continue;
+            }
+
+            Object g = row.get(groupBy);
+            if (g == null) {
+                g = row.entrySet().stream()
+                    .filter(e -> e.getKey() != null && e.getKey().equalsIgnoreCase(groupBy))
+                    .map(Map.Entry::getValue)
+                    .findFirst().orElse(null);
+            }
+            final Object v = row.getOrDefault(alias, row.get(alias.toUpperCase()));
+
+            if (g != null && v != null) {
+                final Optional<N> casted = this.buildResult(v, returnCls);
+                final Object finalG = g;
+                casted.ifPresent(n -> result.put(String.valueOf(finalG), n));
+            }
+        }
+        return result;
     }
 
     private <N extends Number> Optional<N> execute(

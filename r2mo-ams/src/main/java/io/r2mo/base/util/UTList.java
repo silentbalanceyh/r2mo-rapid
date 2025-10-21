@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 列表差异工具类
@@ -174,6 +175,51 @@ class UTList {
             targetMap.keySet().forEach(sourceMap::remove);
         }
         return new ArrayList<>(sourceMap.values());
+    }
+
+    /**
+     * 基于给定实体集合，在 <b>Java 侧</b> 按某字段进行分组（返回 Map&lt;K, List&lt;T&gt;&gt;）。
+     *
+     * <pre>
+     * 🧠 适用场景
+     * - ✅ 需要“按键分桶 + 保留原始实体行”的场景（非 SUM/COUNT 类聚合）。
+     * - ✅ 数据已拉取到内存后，需继续在内存内做二次整形/缓存/分发。
+     * - ❌ 不适合百万级以上大集合（建议分批或数据库侧处理）。
+     *
+     * 🧩 参数说明
+     * - entities : 待分组的实体列表。
+     * - field    : 分组用字段名（字符串）。内部通过 {@code SourceReflect.value(entity, field, entityCls)} 读取值。
+     * - entityCls: 实体类类型，用于反射读取字段值与泛型推断。
+     *
+     * 🔐 类型与安全
+     * - 返回 Map 的键类型为 K，来源于 field 对应的值。若 field 对应值类型与 K 不一致会产生 unchecked cast。
+     * - 建议调用方确保 field 的静态类型与期望的 K 一致（例如 Long/Integer/String 等）。
+     *
+     * ⚙️ 并发与性能
+     * - 当前实现使用 parallelStream() + groupingBy(...)：
+     *   JDK 会在内部处理分区结果合并，对中小集合通常没问题。
+     *   若追求稳定与易排障，可改为 {@code entities.stream().collect(...)} 串行模式。
+     * - 分组键值通过反射读取，若在热点路径可考虑缓存元数据（MethodHandle / FieldAccessor）。
+     *
+     * 🧪 示例
+     * <pre>
+     * Map&lt;Long, List&lt;Order&gt;&gt; grouped = DBETool.groupBy(orders, "buyerId", Order.class);
+     * List&lt;Order&gt; oneBucket  = grouped.get(12345L);
+     * </pre>
+     * </pre>
+     *
+     * @param entities  实体集合（不可为 null，建议调用方判空）
+     * @param field     用于分组的字段名（必须存在于 entityCls 中）
+     * @param entityCls 实体类 Class 对象
+     * @param <K>       分组键类型（需与 field 对应值的实际类型一致）
+     * @param <T>       实体类型
+     *
+     * @return Map，key 为分组键，value 为该分组下的实体列表
+     */
+    @SuppressWarnings("unchecked")
+    static <K, T> Map<K, List<T>> elementGroupBy(final List<T> entities, final String field, final Class<T> entityCls) {
+        final Function<T, K> keyMapper = entity -> (K) SourceReflect.value(entity, field, entityCls);
+        return entities.parallelStream().collect(Collectors.groupingBy(keyMapper));
     }
 
     /**

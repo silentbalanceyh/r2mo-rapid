@@ -120,6 +120,11 @@ class _UtilArray {
         return UTList.elementGroupBy(list, field);
     }
 
+    public static <K, T> Map<K, List<T>> elementGroupBy(
+        final List<T> entities, final String field, final Class<T> entityCls) {
+        return UTList.elementGroupBy(entities, field, entityCls);
+    }
+
     /**
      * 查找第一个匹配项（按字段值等于指定值）。🎯
      *
