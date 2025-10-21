@@ -36,6 +36,10 @@ class PolyDB<E> extends PolyBase<E, List<E>> {
      */
     @Override
     public JsonObject mapOne(final E input) {
+        // 为空的处理
+        if (Objects.isNull(input)) {
+            return new JsonObject();
+        }
         final JsonObject serialized = R2MO.serializeJ(input);
         if (Objects.isNull(this.vector) || !this.vector.hasMapping()) {
             return serialized;

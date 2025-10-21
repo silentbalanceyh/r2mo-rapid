@@ -49,15 +49,6 @@ public class DBVector<T> {
         return Future.succeededFuture(this.one(entityJ));
     }
 
-    // 异步转异步
-    public <E> Future<JsonObject> thenOne(final Future<E> entity) {
-        return entity.compose(e -> Future.succeededFuture(this.one(e)));
-    }
-
-    public <E> Future<E> thenOneJ(final Future<JsonObject> entityJ) {
-        return entityJ.compose(eJ -> Future.succeededFuture(this.one(eJ)));
-    }
-
     // 同步转同步
     public <E> JsonArray many(final List<E> entity) {
         return Poly.<E>ofDB(this.entityCls, this.vector).mapMany(entity);
@@ -78,12 +69,20 @@ public class DBVector<T> {
         return Future.succeededFuture(this.many(entityA));
     }
 
-    // 异步转异步
-    public <E> Future<JsonArray> thenMany(final Future<List<E>> entity) {
-        return entity.compose(e -> Future.succeededFuture(this.many(e)));
+    // 搜索参数转换
+    public JsonObject mapQuery(final JsonObject query) {
+        return Poly.ofQr(this.entityCls, this.vector).map(query);
     }
 
-    public <E> Future<List<E>> thenManyA(final Future<JsonArray> entityJA) {
-        return entityJA.compose(eJA -> Future.succeededFuture(this.many(eJA)));
+    public JsonObject mapCriteria(final JsonObject criteria) {
+        return Poly.ofQr(this.entityCls, this.vector).mapCriteria(criteria);
+    }
+
+    public JsonArray mapSort(final JsonArray sorter) {
+        return Poly.ofQr(this.entityCls, this.vector).mapSort(sorter);
+    }
+
+    public JsonArray mapProjection(final JsonArray projection) {
+        return Poly.ofQr(this.entityCls, this.vector).mapProjection(projection);
     }
 }

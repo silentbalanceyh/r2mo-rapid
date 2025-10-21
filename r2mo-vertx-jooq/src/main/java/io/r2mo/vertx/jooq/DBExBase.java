@@ -2,10 +2,20 @@ package io.r2mo.vertx.jooq;
 
 import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.dbe.Database;
+import io.r2mo.base.dbe.syntax.QSorter;
+import io.r2mo.base.dbe.syntax.QTree;
+import io.r2mo.base.util.R2MO;
 import io.r2mo.dbe.jooq.DBE;
 import io.r2mo.dbe.jooq.core.domain.JooqDatabase;
+import io.r2mo.spi.SPI;
+import io.r2mo.typed.common.Pagination;
 import io.r2mo.typed.exception.web._501NotSupportException;
+import io.r2mo.typed.json.JArray;
+import io.r2mo.typed.json.JObject;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import lombok.experimental.Accessors;
 
 import java.util.Objects;
@@ -60,5 +70,32 @@ class DBExBase<T> {
 
     protected AsyncMeta metadata() {
         return this.metadata;
+    }
+
+    protected JsonObject mapPage(final Pagination<T> page) {
+        final JsonObject response = new JsonObject();
+        response.put("count", page.getCount());
+        response.put("list", R2MO.<T, JsonArray>serializeA(page.getList()));
+        return response;
+    }
+
+    protected Future<JsonObject> mapPageAsync(final Pagination<T> page) {
+        return Future.succeededFuture(mapPage(page));
+    }
+
+    protected JObject wrap(final JsonObject data) {
+        return SPI.J(data);
+    }
+
+    protected JArray wrap(final JsonArray data) {
+        return SPI.A(data);
+    }
+
+    protected QTree wrapTree(final JsonObject criteria) {
+        return QTree.of(this.wrap(criteria));
+    }
+
+    protected QTree wrapTree(final JsonObject criteria, final QSorter sorter) {
+        return this.wrapTree(criteria).sortBy(sorter);
     }
 }

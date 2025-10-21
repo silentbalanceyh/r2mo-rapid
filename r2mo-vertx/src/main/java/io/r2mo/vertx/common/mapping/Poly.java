@@ -52,7 +52,7 @@ public interface Poly<T, C> {
 
         JsonObject map(JsonObject query);
 
-        JsonObject mapTree(JsonObject tree);
+        JsonObject mapCriteria(JsonObject tree);
 
         JsonArray mapSort(JsonArray sorter);
 

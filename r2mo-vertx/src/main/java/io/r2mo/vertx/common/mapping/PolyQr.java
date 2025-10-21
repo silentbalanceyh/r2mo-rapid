@@ -27,7 +27,7 @@ class PolyQr implements Poly.Qr {
         }
         if (query.containsKey(QCV.P_CRITERIA)) {
             // criteria
-            query.put(QCV.P_CRITERIA, this.mapTree(query.getJsonObject(QCV.P_CRITERIA)));
+            query.put(QCV.P_CRITERIA, this.mapCriteria(query.getJsonObject(QCV.P_CRITERIA)));
         }
         if (query.containsKey(QCV.P_SORTER)) {
             // sorter
@@ -41,7 +41,7 @@ class PolyQr implements Poly.Qr {
     }
 
     @Override
-    public JsonObject mapTree(final JsonObject tree) {
+    public JsonObject mapCriteria(final JsonObject tree) {
         if (Objects.isNull(this.vector) || Objects.isNull(tree)) {
             return tree;
         }

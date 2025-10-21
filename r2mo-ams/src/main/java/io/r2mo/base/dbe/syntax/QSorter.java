@@ -45,6 +45,11 @@ public class QSorter implements Serializable, QRequest {
         return sorter;
     }
 
+    // 高频使用方法
+    public static QSorter of(final String field, final boolean isAsc) {
+        return QSorter.of().add(field, isAsc);
+    }
+
     @Override
     public boolean isOk() {
         return !this.fields.isEmpty();
