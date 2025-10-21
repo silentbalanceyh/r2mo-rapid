@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.r2mo.base.secure.EDCrypto;
 import io.r2mo.spi.SPI;
-import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.enums.DatabaseType;
 import io.r2mo.typed.json.JElement;
 import io.r2mo.typed.json.JObject;
@@ -25,7 +24,6 @@ import java.io.Serializable;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -126,33 +124,7 @@ public class Database implements Serializable, JElement {
     // -------------- 除开 Get / Set 的特殊方法 -----------------
 
     public String getPasswordDecrypted() {
-        /*
-         * 不在考虑使用与否，只是单纯用组件处理，屏蔽环境变量，此处的 EDCrypto 在处理加密解密过程中，和其他 SPI
-         * 不同，底层会存在默认实现类 io.r2mo.jce.component.secure.CryptoDatabase，但是这个实现类和其他
-         * SPI的不同点在于它是可选的方式加载，就是在启动器中来引入 SPI，而不是一开始就有一个默认引入的方式再使用
-         * SPI.findOverwrite 来覆盖默认实现，这是和其他 SPI 很大的不同。
-         */
-        final List<EDCrypto> cryptoList = SPI.findMany(EDCrypto.class);
-        if (cryptoList.isEmpty()) {
-            return this.password;
-        }
-        if (Objects.nonNull(this.crypto)) {
-            log.info("[ R2MO ] 数据库加解密模块快速查找，实现类 = {}", this.crypto.getClass().getName());
-            return this.crypto.decrypt(this.password);
-        }
-        this.crypto = cryptoList.stream().filter(item -> {
-            final SPID spid = item.getClass().getDeclaredAnnotation(SPID.class);
-            if (Objects.isNull(spid)) {
-                return false;
-            }
-            return EDCrypto.FOR_DATABASE.equals(spid.value());
-        }).findAny().orElse(null);
-        if (Objects.isNull(this.crypto)) {
-            return this.password;
-        }
-
-        log.info("[ R2MO ] 数据库加解密模块启用，实现类 = {}", this.crypto.getClass().getName());
-        return this.crypto.decrypt(this.password);
+        return EDCrypto.decryptPassword(this.password);
     }
 
     public <T> T getOption(final String optionKey) {

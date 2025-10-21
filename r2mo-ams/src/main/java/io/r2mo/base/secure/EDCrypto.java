@@ -14,4 +14,8 @@ public interface EDCrypto {
 
     // 解密
     String decrypt(String cipherText);
+
+    static String decryptPassword(final String password) {
+        return EDCryptoDoctor.decryptPassword(password);
+    }
 }
