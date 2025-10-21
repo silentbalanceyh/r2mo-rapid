@@ -106,6 +106,7 @@ public class R2Vector implements Serializable {
             final String filename = STORE.pHome(mappingFile);
             JObject data = STORE.inYaml(filename);
             if (Objects.isNull(data)) {
+                log.info("[ R2MO ] 尝试从 ClassPath 中加载映射文件：{}", mappingFile);
                 final URL url = Thread.currentThread().getContextClassLoader().getResource(filename);
                 data = STORE.inYaml(url);
             }

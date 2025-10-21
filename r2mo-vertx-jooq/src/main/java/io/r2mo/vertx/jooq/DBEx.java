@@ -6,6 +6,9 @@ import io.r2mo.typed.cc.Cc;
 
 /**
  * 异步模式的 DBE -> Async Database Engine, x - Extension（扩展）
+ * <pre>
+ *     此处没有使用 {@link io.r2mo.dbe.jooq.DBE}
+ * </pre>
  *
  * @author lang : 2025-10-18
  */

@@ -2,11 +2,15 @@ package io.r2mo.dbe.common;
 
 import io.r2mo.base.dbe.constant.OpType;
 import io.r2mo.base.dbe.constant.QCV;
-import io.r2mo.base.dbe.operation.*;
+import io.r2mo.base.dbe.operation.OpAggr;
+import io.r2mo.base.dbe.operation.OpDb;
+import io.r2mo.base.dbe.operation.OpVary;
+import io.r2mo.base.dbe.operation.QrAnalyzer;
+import io.r2mo.base.dbe.operation.QrMany;
+import io.r2mo.base.dbe.operation.QrOne;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QTree;
 import io.r2mo.spi.SPI;
-import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Pagination;
 import io.r2mo.typed.json.JObject;
 
@@ -14,15 +18,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
  * @author lang : 2025-08-28
  */
-public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
+public abstract class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
-    private static final Cc<String, DBE<?, ?, ?>> CCT_DBE = Cc.openThread();
     private final Class<T> entityCls;
     private final EXECUTOR executor;
     // 操作专用函数
@@ -45,14 +47,6 @@ public class DBE<QR, T, EXECUTOR> extends DBEConfiguration {
 
         this.opVary = SPI.SPI_DB.opVary(entityCls, executor);
         this.qrAnalyzer = SPI.SPI_DB.qrAnalyzer(entityCls, executor);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <QR, T, EXECUTOR, R extends DBE<QR, T, EXECUTOR>> R of(final Class<T> entityCls, final EXECUTOR executor) {
-        Objects.requireNonNull(entityCls, "[ R2MO ] 参数 entityCls 不能为空");
-        Objects.requireNonNull(executor, "[ R2MO ] 参数 executor 不能为空");
-        final String cacheKey = entityCls.getName() + "@" + executor.hashCode();
-        return (R) CCT_DBE.pick(() -> new DBE<>(entityCls, executor), cacheKey);
     }
 
     protected EXECUTOR executor() {
