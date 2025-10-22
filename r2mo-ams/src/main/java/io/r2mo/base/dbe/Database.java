@@ -96,6 +96,12 @@ public class Database implements Serializable, JElement {
         return UT.serializeJson(this);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T toJson() {
+        final JObject toJson = UT.serializeJson(this);
+        return (T) toJson;
+    }
+
     @Override
     @SuppressWarnings("all")
     public Database fromJObject(final JObject json) {

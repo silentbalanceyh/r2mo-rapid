@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Slf4j
 public class DBMany {
+    public static final String DEFAULT_DBS = "master";
     private static DBMany INSTANCE = new DBMany();
     private final ConcurrentMap<String, DBS> ds = new ConcurrentHashMap<>();
     private DBS master;
@@ -45,11 +46,28 @@ public class DBMany {
         final FactoryDBAction db = SPI.SPI_DB;
         final DBS dbs = db.configure(database);
 
-        if ("master".equals(name)) {
-            this.master = dbs;
-        }
+        dbs.getDatabase().name(name);
+        // 反向绑定名称，双保险，保证在配置的时候名称是一致的
+        this.lockMaster(name, dbs);
+
         this.ds.put(name, dbs);
         return dbs;
+    }
+
+    public DBS registry(final String name, final DBS dbs) {
+        Objects.requireNonNull(dbs, "[ R2MO ] 数据库配置对象不可为空！");
+        final DBS found = this.ds.getOrDefault(name, null);
+        if (Objects.isNull(found)) {
+            final Database db = dbs.getDatabase();
+            return this.put(name, db);
+        }
+        return found;
+    }
+
+    private void lockMaster(final String name, final DBS dbs) {
+        if (DEFAULT_DBS.equals(name)) {
+            this.master = dbs;
+        }
     }
 
     public DBS get(final String name) {

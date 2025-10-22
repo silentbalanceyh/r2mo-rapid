@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class JooqDatabase extends Database {
 
-    
+
     @JsonIgnore
     private Configuration configuration;
 
@@ -65,13 +65,21 @@ public class JooqDatabase extends Database {
 
     public DSLContext getContext() {
         if (Objects.isNull(this.configuration)) {
-            log.warn("[ R2MO ] 数据库配置还未初始化，请先调用 configure 初始化数据库！");
+            log.warn("[ R2MO ] （获取上下文）数据库配置还未初始化，请先调用 configure 初始化数据库！");
             return null;
         }
         if (Objects.isNull(this.context)) {
             this.context = DSL.using(this.configuration);
         }
         return this.context;
+    }
+
+    public Configuration getConfiguration() {
+        if (Objects.isNull(this.configuration)) {
+            log.warn("[ R2MO ] 数据库配置未初始化，请先调用 configure 初始化数据库！");
+            return null;
+        }
+        return this.configuration;
     }
 
     @SuppressWarnings("all")

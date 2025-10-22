@@ -25,6 +25,10 @@ public class QPager implements Serializable, QRequest {
         this.end = this.page * size;        // page 从 1 开始
     }
 
+    public static <T> QPager of(final T json) {
+        return of(SPI.J(json));
+    }
+
     public static QPager of(final JObject pageJ) {
         final int page = pageJ.getInt(PAGE, 1);
         final int size = pageJ.getInt(SIZE, 10);

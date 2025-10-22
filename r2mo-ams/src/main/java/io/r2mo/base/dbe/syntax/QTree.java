@@ -23,6 +23,10 @@ public class QTree implements QRequest {
         this.root = this.initialize(syntaxJ, 0);
     }
 
+    public static <T> QTree of(final T syntax) {
+        return of(SPI.J(syntax));
+    }
+
     public static QTree of(final JObject syntaxJ) {
         return new QTree(syntaxJ);
     }

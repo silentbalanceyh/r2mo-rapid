@@ -19,6 +19,6 @@ public class DatabaseDeserializer extends JsonDeserializer<Database> {
     public Database deserialize(final JsonParser parser, final DeserializationContext context) throws IOException, JacksonException {
         final JsonNode node = parser.getCodec().readTree(parser);
         final JObject json = JObjectDeserializer.parseNode(node, (ObjectMapper) parser.getCodec());
-        return new Database().fromJObject(json);
+        return Database.createDatabase(json);
     }
 }

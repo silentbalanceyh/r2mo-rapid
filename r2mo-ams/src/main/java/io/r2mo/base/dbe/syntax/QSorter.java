@@ -23,6 +23,10 @@ public class QSorter implements Serializable, QRequest {
         return of(null);
     }
 
+    public static <T> QSorter of(final T sorter) {
+        return of(SPI.A(sorter));
+    }
+
     public static QSorter of(final JArray sorterA) {
         if (SPI.V_UTIL.isEmpty(sorterA)) {
             return new QSorter();

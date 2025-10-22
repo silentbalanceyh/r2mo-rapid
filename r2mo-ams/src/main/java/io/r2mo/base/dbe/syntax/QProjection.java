@@ -19,6 +19,10 @@ public class QProjection implements Serializable, QRequest {
     private QProjection() {
     }
 
+    public static <T> QProjection of(final T projection) {
+        return of(SPI.A(projection));
+    }
+
     public static QProjection of(final JArray projectionA) {
         Objects.requireNonNull(projectionA, "[ R2MO ] 输入参数 JArray 不可为 null");
         final QProjection projection = new QProjection();
