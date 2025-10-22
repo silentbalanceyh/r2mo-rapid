@@ -23,7 +23,7 @@ class OpAggrJooq<T> extends AbstractDbJooq<T> implements OpAggr {
 
     protected OpAggrJooq(final Class<T> entityCls, final DSLContext context) {
         super(entityCls, context);
-        this.analyzer = new QrAnalyzerCondition(entityCls, context);
+        this.analyzer = new QrAnalyzerJooq(entityCls, context);
     }
 
     @Override

@@ -25,7 +25,7 @@ import java.util.function.Function;
  */
 @SuppressWarnings("all")
 @Slf4j
-public class QrHelper {
+public class ActionHelper {
     private static final JUtil UT = SPI.V_UTIL;
 
     static List<OrderField<?>> forOrderBy(final QSorter sorter,

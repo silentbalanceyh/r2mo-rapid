@@ -1,127 +1,94 @@
 package io.r2mo.dbe.jooq.spi;
 
+import io.r2mo.base.dbe.constant.QOp;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
-import io.r2mo.base.dbe.syntax.QPager;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.base.dbe.syntax.QTree;
+import io.r2mo.base.dbe.syntax.QValue;
+import io.r2mo.dbe.jooq.core.condition.Clause;
 import io.r2mo.dbe.jooq.core.domain.JooqMeta;
-import io.r2mo.typed.common.Pagination;
+import io.r2mo.typed.exception.web._501NotSupportException;
+import io.r2mo.typed.json.JObject;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.OrderField;
-import org.jooq.SelectConditionStep;
-import org.jooq.SelectForUpdateStep;
-import org.jooq.SelectLimitStep;
-import org.jooq.SelectWhereStep;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
- * @author lang : 2025-10-18
+ * @author lang : 2025-10-19
  */
-class QrAnalyzerJooq implements QrAnalyzer<SelectForUpdateStep<?>> {
+public class QrAnalyzerJooq implements QrAnalyzer<Condition> {
     private final JooqMeta meta;
-    private final DSLContext context;
-    private final QrAnalyzerCondition qr;
 
-    QrAnalyzerJooq(final Class<?> entityCls, final DSLContext context) {
-        this.context = context;
+    public QrAnalyzerJooq(final Class<?> entityCls, final DSLContext context) {
         this.meta = JooqMeta.getOr(entityCls);
-        this.qr = new QrAnalyzerCondition(entityCls, context);
         Objects.requireNonNull(this.meta, "[ R2MO ] 无法从实体类中提取元数据：" + entityCls.getName());
     }
 
-    private SelectWhereStep<?> selectFor() {
-        return this.context.selectFrom(this.meta.table());
+    @Override
+    public Condition whereIn(final String field, final Object... values) {
+        final Field<?> column = this.meta.findColumn(field);
+        final QValue value = QValue.of(column.getName(), QOp.IN, values).type(column.getType());
+        return Clause.of(value).where(column, value);
     }
 
     @Override
-    public SelectForUpdateStep<?> whereIn(final String field, final Object... values) {
-        return this.selectFor().where(this.qr.whereIn(field, values));
-    }
-
-    @Override
-    public SelectForUpdateStep<?> where(final Map<String, Object> condition) {
-        return this.selectFor().where(this.qr.where(condition));
-    }
-
-    @Override
-    public SelectForUpdateStep<?> where(final String field, final Object value) {
-        return this.selectFor().where(this.qr.where(field, value));
-    }
-
-    @Override
-    public SelectForUpdateStep<?> where(final QTree tree, final QSorter sorter) {
-        final SelectConditionStep<?> stepQr = this.selectFor(tree);
-
-        return this.selectFor(stepQr, sorter);
-    }
-
-    private SelectConditionStep<?> selectFor(final QTree tree) {
-
-        final Condition condition = this.qr.where(tree, null /* 排序本来在此处就没使用，传 null 不影响 */);
-
-        return this.selectFor().where(condition);
-    }
-
-    private SelectLimitStep<?> selectFor(final SelectConditionStep<?> stepQr, final QSorter sorter) {
-
-        if (Objects.isNull(sorter)) {
-            // 无排序
-            return stepQr;
+    public Condition where(final Map<String, Object> condition) {
+        if (Objects.isNull(condition) || condition.isEmpty()) {
+            // 特殊不带条件的模式，只能通过 Map.of() 传递
+            return DSL.trueCondition();
         }
 
-        final List<OrderField<?>> orderBy = QrHelper.forOrderBy(sorter, this.meta::findColumn, null);
 
-        return stepQr.orderBy(orderBy);
+        final List<Condition> conditions = new ArrayList<>();
+        condition.forEach((k, v) -> {
+            final Field<?> column = this.meta.findColumn(k);
+            final QValue qValue = QValue.of(column.getName(), QOp.EQ, v).type(column.getType());
+            final Condition cond = Clause.of(qValue).where(column, qValue);
+            conditions.add(cond);
+        });
+        return DSL.and(conditions);
     }
 
-    private SelectForUpdateStep<?> selectFor(final SelectLimitStep<?> stepQr, final QPager pager) {
-        if (Objects.isNull(pager)) {
-            return stepQr;
+    @Override
+    public Condition where(final String field, final Object value) {
+        final Field<?> column = this.meta.findColumn(field);
+        final QValue qValue = QValue.of(column.getName(), QOp.EQ, value).type(column.getType());
+        return Clause.of(qValue).where(column, qValue);
+    }
+
+    // 此处 sorter 会忽略
+    @Override
+    public Condition where(final QTree tree, final QSorter sorter) {
+        // Fix: java.lang.NullPointerException: Cannot invoke "io.r2mo.base.dbe.syntax.QTree.data()" because "tree" is null
+        if (Objects.isNull(tree)) {
+            return DSL.trueCondition();
         }
+        final JObject treeJ = tree.data();
+        return ActionHelper.transform(treeJ, this.meta::findColumn);
+    }
 
-        return stepQr.offset(pager.getStart()).limit(pager.getSize());
+    // 此处只处理 QTree
+    @Override
+    public Condition where(final QQuery query) {
+        if (Objects.isNull(query)) {
+            return DSL.trueCondition();
+        }
+        final QTree tree = query.criteria();
+        if (Objects.isNull(tree)) {
+            return DSL.trueCondition();
+        }
+        return this.where(tree, query.sorter());
     }
 
     @Override
-    public SelectForUpdateStep<?> where(final QQuery query) {
-        final SelectConditionStep<?> stepQr = this.selectFor(query.criteria());
-
-        final SelectLimitStep<?> stepOrders = this.selectFor(stepQr, query.sorter());
-
-        return this.selectFor(stepOrders, query.pager());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
     public <PAGE> PAGE page(final QQuery query) {
-        final Pagination<?> pagination = new Pagination<>();
-
-        final SelectConditionStep<?> stepQr = this.selectFor(query.criteria());
-
-        final SelectLimitStep<?> stepOrders = this.selectFor(stepQr, query.sorter());
-
-        final SelectForUpdateStep<?> stepFinal = this.selectFor(stepOrders, query.pager());
-
-        final List<?> totalList = stepFinal.fetchInto(this.meta.entityCls());
-        pagination.setList(this.toList(totalList));
-        pagination.setCount(stepQr.fetchStream().count());
-        return (PAGE) pagination;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> List<T> toList(final List<?> list) {
-        if (list == null) {
-            return new ArrayList<>();
-        }
-        return list.stream()
-            .map(item -> (T) item)
-            .collect(Collectors.toList());
+        throw new _501NotSupportException("[ R2MO ] QrAnalyzerCondition 不支持分页操作，请调用其他 API 在外层实现分页逻辑！");
     }
 }

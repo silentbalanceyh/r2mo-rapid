@@ -60,7 +60,7 @@ class JooqField {
             found = this.fieldColumn.get(fieldOr);
         } else {
             // 不相等，等价于要提取实际值 name
-            final String field = this.vector.mapToColumn(columnName);
+            final String field = this.vector.mapByColumn(columnName);
             found = this.fieldColumn.get(field);
         }
         if (Objects.isNull(found)) {

@@ -4,7 +4,7 @@ import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.dbe.jooq.DBE;
 import io.r2mo.dbe.jooq.core.domain.JooqMeta;
 import io.r2mo.dbe.jooq.core.domain.JooqObject;
-import io.r2mo.dbe.jooq.spi.QrAnalyzerCondition;
+import io.r2mo.dbe.jooq.spi.QrAnalyzerJooq;
 import io.r2mo.vertx.jooq.classic.VertxDAO;
 import io.vertx.core.Future;
 import org.jooq.Condition;
@@ -39,7 +39,7 @@ class AsyncDBEAction<T> {
 
         this.meta = meta.metaJooq();
         this.metaAsync = meta;
-        this.analyzer = new QrAnalyzerCondition(entityCls, meta.context());
+        this.analyzer = new QrAnalyzerJooq(entityCls, meta.context());
     }
 
     protected VertxDAO executor() {

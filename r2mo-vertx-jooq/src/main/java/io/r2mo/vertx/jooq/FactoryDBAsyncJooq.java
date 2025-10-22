@@ -1,7 +1,7 @@
 package io.r2mo.vertx.jooq;
 
 import io.r2mo.base.dbe.operation.QrAnalyzer;
-import io.r2mo.dbe.jooq.spi.QrAnalyzerCondition;
+import io.r2mo.dbe.jooq.spi.QrAnalyzerJooq;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.vertx.dbe.AsyncAggr;
 import io.r2mo.vertx.dbe.AsyncDb;
@@ -75,10 +75,10 @@ public class FactoryDBAsyncJooq implements FactoryDBAsync {
     @Override
     @SuppressWarnings("unchecked")
     public <T, METADATA, CONDITION> QrAnalyzer<CONDITION> qrAnalyzer(final Class<T> entityCls, final METADATA executor) {
-        final String cacheKey = this.keyCached(entityCls, executor, QrAnalyzerCondition.class);
+        final String cacheKey = this.keyCached(entityCls, executor, QrAnalyzerJooq.class);
         return CCT_QR_ANALYZER.pick(() -> {
             final AsyncMeta meta = (AsyncMeta) executor;
-            return new QrAnalyzerCondition(entityCls, meta.context());
+            return new QrAnalyzerJooq(entityCls, meta.context());
         }, cacheKey);
     }
 }
