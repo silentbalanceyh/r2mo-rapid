@@ -1,6 +1,5 @@
 package io.r2mo.dbe.jooq.core.domain;
 
-import cn.hutool.core.util.StrUtil;
 import io.r2mo.SourceReflect;
 import io.r2mo.base.program.R2Vector;
 import io.r2mo.typed.cc.Cc;
@@ -62,9 +61,6 @@ public class JooqMeta {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)   // 这个变量是锁定的，不会改动
     private final ConcurrentMap<String, Field<?>> fieldColumn = new ConcurrentHashMap<>();
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)   // 这个变量是会变化的，会随着 vector 的变化而追加
-    private final ConcurrentMap<String, Class<?>> fieldType = new ConcurrentHashMap<>();
 
     public JooqMeta vector(final R2Vector vector) {
         final R2Vector combined;
@@ -76,7 +72,7 @@ public class JooqMeta {
             combined = this.vectorCombine(this.vector, vector);
         }
         Optional.ofNullable(this.key).ifPresent(key -> key.vector(combined));
-        Optional.ofNullable(this.field).ifPresent(field -> field.vector(combined, this.fieldColumn));
+        Optional.ofNullable(this.field).ifPresent(field -> field.vector(combined));
         this.vector = combined;
         return this;
     }
@@ -154,8 +150,7 @@ public class JooqMeta {
              * - field          = ???
              * - fieldAlias     = ???
              */
-            this.fieldColumn.put(field.getName(), column);
-            this.fieldType.put(field.getName(), field.getType());
+            this.field.put(field, column);
             columnMap.put(field.getName(), column.getName());
         }
         this.vector.mappingColumn(columnMap);
@@ -173,21 +168,7 @@ public class JooqMeta {
 
     // 提取
     public ConcurrentMap<String, Class<?>> fieldType() {
-        if (Objects.nonNull(this.vector)) {
-            /*
-             * 延迟填充，避免重复，此处的 typeMap 会包含两种
-             * 1）field -> Class<?>
-             * 2）column -> Class<?>
-             * 所以需要进行二次过滤，根据过滤信息来提取最终的数据信息
-             */
-            this.fieldColumn.forEach((field, columnField) -> {
-                final String columnName = this.vector.mapTo(field);
-                if (StrUtil.isNotEmpty(columnName)) {
-                    this.fieldType.put(columnName, columnField.getType());
-                }
-            });
-        }
-        return this.fieldType;
+        return this.field.fieldType();
     }
 
     // 键操作 -----------------------------------------------------------
@@ -212,8 +193,8 @@ public class JooqMeta {
     }
 
     // 列操作 -----------------------------------------------------------
-    public ConcurrentMap<String, Field<?>> columns() {
-        return this.fieldColumn;
+    public ConcurrentMap<String, Field<?>> fieldColumns() {
+        return this.field.fieldColumns();
     }
 
     public Field<?>[] findColumns(final String... fields) {

@@ -37,6 +37,11 @@ public class R2Mapping implements Serializable {
     @Setter(AccessLevel.NONE)
     private final List<Kv<String, String>> extension = new ArrayList<>();
 
+    public void setMapping(final String name, final String nameTo) {
+        this.mapping.put(name, nameTo);
+        this.revert.put(nameTo, name);
+    }
+
     public void setMapping(final ConcurrentMap<String, String> mapping) {
         this.setMapping(mapping, true);
     }

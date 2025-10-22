@@ -17,14 +17,24 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 class JooqField {
     private R2Vector vector;
+    // 这个变量是锁定的，不会改动
     private final ConcurrentMap<String, Field<?>> fieldColumn = new ConcurrentHashMap<>();
+    // 这个变量是会变化的，会随着 vector 的变化而追加
+    private final ConcurrentMap<String, Class<?>> fieldType = new ConcurrentHashMap<>();
 
     JooqField() {
     }
 
-    void vector(final R2Vector vector, final ConcurrentMap<String, Field<?>> fieldColumn) {
+    void vector(final R2Vector vector) {
         this.vector = vector;
-        this.fieldColumn.putAll(fieldColumn);
+    }
+
+    /*
+     * 此处已经绑定过两个核心变量，所以不再考虑在 vector 过程设置过程中来进行二次绑定
+     */
+    void put(final java.lang.reflect.Field field, final Field<?> column) {
+        this.fieldColumn.put(field.getName(), column);
+        this.fieldType.put(field.getName(), field.getType());
     }
 
     Field<?>[] findColumn(final String... fields) {
@@ -32,6 +42,10 @@ class JooqField {
             .map(this::findColumn)
             .filter(Objects::nonNull)
             .toArray(Field[]::new);
+    }
+
+    ConcurrentMap<String, Field<?>> fieldColumns() {
+        return this.fieldColumn;
     }
 
     Field<?> findColumn(final String fieldOr) {
@@ -96,6 +110,24 @@ class JooqField {
             fieldField = field;
         }
         return fieldField;
+    }
+
+    ConcurrentMap<String, Class<?>> fieldType() {
+        if (Objects.nonNull(this.vector)) {
+            /*
+             * 延迟填充，避免重复，此处的 typeMap 会包含两种
+             * 1）field -> Class<?>
+             * 2）column -> Class<?>
+             * 所以需要进行二次过滤，根据过滤信息来提取最终的数据信息
+             */
+            this.fieldColumn.forEach((field, columnField) -> {
+                final String columnName = this.vector.mapTo(field);
+                if (StrUtil.isNotEmpty(columnName)) {
+                    this.fieldType.put(columnName, columnField.getType());
+                }
+            });
+        }
+        return this.fieldType;
     }
 
     /**

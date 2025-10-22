@@ -237,6 +237,13 @@ class UTList {
         return groupMap;
     }
 
+    static <T> T elementFirst(final List<T> list) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
     /**
      * 查找第一个匹配项：基于字段值
      */

@@ -8,7 +8,7 @@ import java.util.Objects;
  * Definition for `key = get` pair here
  * It stored `key = get` and act as Pair here for some spec usage
  */
-public final class Kv<K, V> {
+public class Kv<K, V> {
     private K key;
     private V value;
 

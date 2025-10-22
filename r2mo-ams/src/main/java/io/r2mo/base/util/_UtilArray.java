@@ -140,6 +140,10 @@ class _UtilArray {
         return UTList.elementFirst(list, field, value);
     }
 
+    public static <T> T elementFirst(final List<T> list) {
+        return UTList.elementFirst(list);
+    }
+
     /**
      * 查找所有匹配项（按字段值等于指定值）。🔎
      *
