@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -182,7 +183,7 @@ public class Database implements Serializable, JElement {
     public String findNameOfDBCP() {
         // 根据扩展看是否启用了连接池
         return this.extension.keySet().stream()
-            .filter(k -> k != null && NAMES.contains(k.toLowerCase(java.util.Locale.ROOT)))
+            .filter(k -> k != null && NAMES.contains(k.toLowerCase(Locale.ROOT)))
             .reduce((a, b) -> {
                 throw new IllegalStateException("[R2MO] 检测到多个连接池配置: " + a + ", " + b);
             })

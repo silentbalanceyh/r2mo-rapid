@@ -57,6 +57,10 @@ public class QPager implements Serializable, QRequest {
         return data;
     }
 
+    public <T> T toJson() {
+        return this.data().data();
+    }
+
     @Override
     public <R> R item() {
         throw new UnsupportedOperationException("[ R2MO ] 该方法调用不支持！");

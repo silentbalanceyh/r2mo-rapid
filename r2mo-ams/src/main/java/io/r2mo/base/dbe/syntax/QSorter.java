@@ -4,6 +4,7 @@ import io.r2mo.base.dbe.constant.QCV;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.json.JArray;
+import io.r2mo.typed.json.JObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -90,6 +91,13 @@ public class QSorter implements Serializable, QRequest {
     public QSorter reset() {
         this.fields.clear();
         return this;
+    }
+
+    public <T> T toJson() {
+        final JObject result = SPI.J();
+        this.fields.forEach(kv ->
+            result.put(kv.key(), kv.value() ? "ASC" : "DESC"));
+        return result.data();
     }
 
     public List<Kv<String, Boolean>> items() {
