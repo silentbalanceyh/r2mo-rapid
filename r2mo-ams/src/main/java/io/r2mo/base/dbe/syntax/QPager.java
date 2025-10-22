@@ -3,16 +3,19 @@ package io.r2mo.base.dbe.syntax;
 import io.r2mo.base.dbe.constant.QCV;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
+import lombok.Getter;
 
 import java.io.Serializable;
 
 /**
  * @author lang : 2025-08-28
  */
+@Getter
 public class QPager implements Serializable, QRequest {
     private static final String PAGE = "page";
     private static final String SIZE = "size";
 
+    // ---- Pager 特殊方法
     private final int page;     // 第几页，从1开始
     private final int size;     // 每页多少条
     private final int start;    // 开始索引，从0开始
@@ -59,20 +62,4 @@ public class QPager implements Serializable, QRequest {
         throw new UnsupportedOperationException("[ R2MO ] 该方法调用不支持！");
     }
 
-    // ---- Pager 特殊方法
-    public int getPage() {
-        return this.page;
-    }
-
-    public int getSize() {
-        return this.size;
-    }
-
-    public int getStart() {
-        return this.start;
-    }
-
-    public int getEnd() {
-        return this.end;
-    }
 }
