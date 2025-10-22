@@ -189,6 +189,13 @@ public class Database implements Serializable, JElement {
             .orElse(null);
     }
 
+    public static <T> Database createDatabase(final T databaseObj) {
+        if (databaseObj == null) {
+            return null;
+        }
+        return createDatabase(SPI.J(databaseObj));
+    }
+
     public static Database createDatabase(final JObject databaseJ) {
         if (UT.isEmpty(databaseJ)) {
             return null;
