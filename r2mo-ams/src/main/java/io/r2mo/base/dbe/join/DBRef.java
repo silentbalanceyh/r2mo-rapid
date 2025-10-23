@@ -7,10 +7,12 @@ import io.r2mo.typed.common.MultiKeyMap;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * Join 的描述主要包含一套新的结构，和原始结构不放到一起，等价于每个实体都会包含一套 {@link DBRef} 的结构用来做 Join
@@ -191,15 +193,32 @@ public class DBRef implements Serializable {
         return this.aliasMap.get(alias);
     }
 
-    public DBAlias findAlias(final String name) {
-        this.ifColumnOk();
-        return this.aliasMap.values().stream()
-            .filter(alias -> Objects.equals(name, alias.name()))
-            .findFirst().orElse(null);
-    }
-
     public boolean isAlias(final String column) {
         return this.aliasMap.containsKey(column);
+    }
+
+    /**
+     * 此处的 Kv /
+     *
+     * @param pkInfo 主键信息
+     *
+     * @return 是否主键属性
+     */
+    public boolean isPrimaryKey(final Kv<String, String> pkInfo) {
+        this.ifColumnOk();
+        final String table = pkInfo.key();
+        if (this.kvMap.containsKey(table)) {
+            // 存在则是非主表
+            final Set<Kv<String, String>> set = this.kvMap.get(table);
+            final Set<String> values = set.stream().map(Kv::key).collect(Collectors.toSet());
+            return values.contains(pkInfo.value());
+        } else {
+            // 不存在一定是主表
+            final Set<String> values = this.kvMap.values()
+                .stream().flatMap(Collection::stream)
+                .map(Kv::value).collect(Collectors.toSet());
+            return values.contains(pkInfo.value());
+        }
     }
 
     /**

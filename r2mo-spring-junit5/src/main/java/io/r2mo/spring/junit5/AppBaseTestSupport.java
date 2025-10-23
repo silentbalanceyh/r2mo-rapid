@@ -5,6 +5,7 @@ import io.r2mo.SourceReflect;
 import io.r2mo.dbe.mybatisplus.DBE;
 import io.r2mo.dbe.mybatisplus.DBJ;
 import io.r2mo.dbe.mybatisplus.Join;
+import io.r2mo.dbe.mybatisplus.JoinProxy;
 import io.r2mo.function.Actuator;
 import io.r2mo.function.Fn;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +83,15 @@ public abstract class AppBaseTestSupport<T> extends AppIoTestSupport {
     }
 
     protected DBJ<T> db(final Join meta) {
-        return DBJ.of(meta, this.mapper);
+        return DBJ.of(meta, this.executor());
+    }
+
+    protected MPJBaseMapper<T> mapper() {
+        return this.mapper;
+    }
+
+    protected JoinProxy<T> executor() {
+        return new JoinProxy<>(this.mapper);
     }
 
     protected void executeFile(final String file) {

@@ -21,7 +21,7 @@ import java.util.Optional;
 public abstract class DBEJ<QR, T, EXECUTOR> {
     private final EXECUTOR executor;
 
-    private final OpJoin<T, QR> opJoin;
+    protected final OpJoin<T, QR> opJoin;
 
     protected final DBRef ref;
 
@@ -35,6 +35,10 @@ public abstract class DBEJ<QR, T, EXECUTOR> {
         this.ref = ref;
         this.executor = executor;
         this.opJoin = SPI.SPI_DB.opJoin(ref, executor);
+        /*
+         * 反向设置，绑定第二执行器、一直往后完成 OpJoin 的核心初始化，父子流程设置，这种模式和方法在 Jooq 中无所谓，但
+         * 由于 MybatisPlus 的 Mapper 是绑定了实体的，需要预先构建完成，所以这里需要做一个后置配置
+         */
     }
 
     protected EXECUTOR executor() {

@@ -10,6 +10,7 @@ import io.r2mo.base.dbe.join.DBAlias;
 import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.syntax.QQuery;
+import io.r2mo.dbe.mybatisplus.JoinProxy;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
@@ -28,17 +29,25 @@ import java.util.Set;
  * @author lang : 2025-10-23
  */
 @Slf4j
-class OpJoinImpl<T, M extends MPJBaseMapper<T>> extends OpJoinPre<T> implements OpJoin<T, MPJQueryWrapper<T>> {
+public class OpJoinImpl<T, M extends MPJBaseMapper<T>> extends OpJoinPre<T> implements OpJoin<T, MPJQueryWrapper<T>> {
 
     private final M executor;
     private final OpJoinAnalyzer<T> joinAnalyzer;
-    private final OpJoinWriter<T, M> writer;
+    private OpJoinWriter<T> writer;
 
     OpJoinImpl(final DBRef ref, final M executor) {
         super(ref);
         this.executor = executor;
-        this.writer = new OpJoinWriter<>(ref, executor);
         this.joinAnalyzer = new OpJoinAnalyzer<>(ref);
+    }
+
+    public void afterConstruct(final JoinProxy<T> joinProxy) {
+        // 此处设置是在构造阶段，所以不会出现先调用 this.writer() 的场景
+        this.writer = new OpJoinWriter<>(this.ref, joinProxy);
+    }
+
+    private OpJoinWriter<T> writer() {
+        return this.writer;
     }
 
     @Override
@@ -89,27 +98,27 @@ class OpJoinImpl<T, M extends MPJBaseMapper<T>> extends OpJoinPre<T> implements 
 
     @Override
     public JObject create(final JObject latest) {
-        return this.writer.create(latest);
+        return this.writer().create(latest);
     }
 
     @Override
     public Boolean removeById(final Serializable id) {
-        return this.writer.removeById(id);
+        return this.writer().removeById(id);
     }
 
     @Override
     public Boolean removeBy(final MPJQueryWrapper<T> queryWrapper) {
-        return this.writer.removeBy(queryWrapper);
+        return this.writer().removeBy(queryWrapper);
     }
 
     @Override
     public JObject updateById(final Serializable id, final JObject latest) {
-        return this.writer.updateById(id, latest);
+        return this.writer().updateById(id, latest);
     }
 
     @Override
     public JObject update(final MPJQueryWrapper<T> queryWrapper, final JObject latest) {
-        return this.writer.update(queryWrapper, latest);
+        return this.writer().update(queryWrapper, latest);
     }
 
     // ----- 私有方法

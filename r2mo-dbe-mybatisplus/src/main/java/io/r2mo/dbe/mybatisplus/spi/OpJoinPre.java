@@ -3,9 +3,12 @@ package io.r2mo.dbe.mybatisplus.spi;
 import com.github.yulichang.query.MPJQueryWrapper;
 import io.r2mo.base.dbe.join.DBNode;
 import io.r2mo.base.dbe.join.DBRef;
+import io.r2mo.typed.common.Kv;
 
 import java.io.Serializable;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * @author lang : 2025-10-23
@@ -49,16 +52,22 @@ abstract class OpJoinPre<T> {
         return queryWrapper;
     }
 
-    protected String getFieldId() {
-        final DBNode found = this.ref.find();
+    protected Kv<String, String> getFieldId(final DBNode found) {
         final MetaTable<?> table = this.metaMap.get(found.entity());
         final String pkColumn = table.getPrimaryKey();
-        return table.vProperty(pkColumn);
+        return Kv.create(table.getTable(), table.vProperty(pkColumn));
     }
 
     protected String getColumnPrimaryKey() {
         final DBNode found = this.ref.find();
         final MetaTable<?> table = this.metaMap.get(found.entity());
         return table.getPrimaryKey();
+    }
+
+    protected Set<Class<?>> getJoinedEntities() {
+        final DBNode found = this.ref.find();
+        return this.metaMap.keySet().stream()
+            .filter(entityCls -> entityCls != found.entity())
+            .collect(Collectors.toSet());
     }
 }
