@@ -9,7 +9,6 @@ import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.syntax.QLeaf;
 import io.r2mo.base.dbe.syntax.QNode;
 import io.r2mo.base.dbe.syntax.QPager;
-import io.r2mo.base.dbe.syntax.QProjection;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.base.dbe.syntax.QTree;
@@ -71,9 +70,8 @@ public class OpJoinAnalyzer<T> implements QrAnalyzer<MPJQueryWrapper<T>> {
     @Override
     public MPJQueryWrapper<T> where(final String field, final Object value) {
         final QLeaf qValue = QValue.of(field, value);
-        final String column = this.seekColumn(qValue.field());
         final MPJQueryWrapper<T> condition = this.waitForQuery();
-        condition.eq(column, value);
+        this.whereLeaf(qValue, condition);
         return condition;
     }
 
@@ -100,7 +98,6 @@ public class OpJoinAnalyzer<T> implements QrAnalyzer<MPJQueryWrapper<T>> {
         final MPJQueryWrapper<T> condition = this.where(query.criteria(), query.sorter());
 
         // 列过滤
-        final QProjection fields = query.projection();
         MetaFix.filterBy(condition, query.projection(), this::seekColumn);
         return condition;
     }

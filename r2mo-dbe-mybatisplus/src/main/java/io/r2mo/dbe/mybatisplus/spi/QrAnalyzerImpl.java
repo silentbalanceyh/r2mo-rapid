@@ -39,8 +39,9 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
     @Override
     public QueryWrapper<T> where(final String field, final Object value) {
         final QLeaf qValue = QValue.of(field, value);
-        final String column = this.meta.vColumn(qValue.field());
-        return Wrappers.query(this.entityCls).eq(column, value);
+        final QueryWrapper<T> condition = Wrappers.query(this.entityCls);
+        this.whereLeaf(qValue, condition);
+        return condition;
     }
 
     @Override
