@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author lang : 2025-09-08
  */
 @Slf4j
-class MetaTable<T> {
+public class MetaTable<T> {
     private static final Cc<String, MetaTable<?>> CCT_META = Cc.open();
 
     private final ConcurrentMap<String, String> f2c = new ConcurrentHashMap<>();
@@ -39,7 +39,7 @@ class MetaTable<T> {
             // Column to Field
             this.c2f.put(tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
             // Primary Key
-            this.primaryKey = tableInfo.getKeyProperty();
+            this.primaryKey = tableInfo.getKeyColumn();
         }
         /*
          * FIX-DBE: 此处的迭代不包含主键，所以需要针对主键重新做一次操作

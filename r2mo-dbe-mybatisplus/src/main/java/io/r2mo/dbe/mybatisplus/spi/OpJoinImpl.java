@@ -1,12 +1,12 @@
 package io.r2mo.dbe.mybatisplus.spi;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
 import io.r2mo.SourceReflect;
 import io.r2mo.base.dbe.join.DBAlias;
-import io.r2mo.base.dbe.join.DBNode;
 import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.syntax.QQuery;
@@ -23,22 +23,22 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author lang : 2025-10-23
  */
 @Slf4j
-class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWrapper<T>> {
+class OpJoinImpl<T, M extends MPJBaseMapper<T>> extends OpJoinPre<T> implements OpJoin<T, MPJQueryWrapper<T>> {
 
-    private final DBRef ref;
     private final M executor;
-    private final ConcurrentMap<Class<T>, MetaTable<T>> metaMap;
+    private final OpJoinAnalyzer<T> joinAnalyzer;
+    private final OpJoinWriter<T, M> writer;
 
     OpJoinImpl(final DBRef ref, final M executor) {
+        super(ref);
         this.executor = executor;
-        this.ref = ref;
-        this.metaMap = this.preConfigure();
+        this.writer = new OpJoinWriter<>(ref, executor);
+        this.joinAnalyzer = new OpJoinAnalyzer<>(ref);
     }
 
     @Override
@@ -58,15 +58,28 @@ class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWra
 
     @Override
     public JObject findPage(final QQuery query) {
-        return null;
+        // 构造 PAGE 条件，此处已包含了 projection 部分的过滤
+        final MPJQueryWrapper<T> queryWrapper = this.joinAnalyzer.where(query);
+        this.postSelect(queryWrapper);
+
+        // 构造 分页 参数
+        final IPage<Map<String, Object>> page = this.joinAnalyzer.page(query);
+
+        final IPage<Map<String, Object>> result = this.executor.selectJoinMapsPage(page, queryWrapper);
+
+        return this.toResponse(result);
     }
 
     @Override
     public JObject findById(final Serializable id) {
-        final DBNode found = this.ref.find();
-        final MetaTable<T> table = this.metaMap.get(found.entity());
-        final String pkColumn = table.getPrimaryKey();
-        return null;
+        // 构造 ID 条件
+        final MPJQueryWrapper<T> queryWrapper = this.whereId(id);
+        // 构造查询结果
+        this.postSelect(queryWrapper);
+        // 执行查询
+        final Map<String, Object> row = this.executor.selectJoinMap(queryWrapper);
+        // 返回响应结果
+        return this.toResponse(row);
     }
 
     @Override
@@ -76,27 +89,27 @@ class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWra
 
     @Override
     public JObject create(final JObject latest) {
-        return null;
+        return this.writer.create(latest);
     }
 
     @Override
     public Boolean removeById(final Serializable id) {
-        return null;
+        return this.writer.removeById(id);
     }
 
     @Override
     public Boolean removeBy(final MPJQueryWrapper<T> queryWrapper) {
-        return null;
+        return this.writer.removeBy(queryWrapper);
     }
 
     @Override
     public JObject updateById(final Serializable id, final JObject latest) {
-        return null;
+        return this.writer.updateById(id, latest);
     }
 
     @Override
     public JObject update(final MPJQueryWrapper<T> queryWrapper, final JObject latest) {
-        return null;
+        return this.writer.update(queryWrapper, latest);
     }
 
     // ----- 私有方法
@@ -108,6 +121,14 @@ class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWra
             .map(JBase::data)
             .forEach(array::add);
         return array;
+    }
+
+    private JObject toResponse(final IPage<Map<String, Object>> page) {
+        final JObject pageJ = SPI.J();
+        pageJ.put("count", page.getTotal());
+        final List<Map<String, Object>> rows = page.getRecords();
+        pageJ.put("list", this.toResponse(rows));
+        return pageJ;
     }
 
     private JObject toResponse(final Map<String, Object> row) {
@@ -126,7 +147,7 @@ class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWra
 
 
             // 只有实现类可以这样检索
-            final MetaTable<T> metaTable = this.metaMap.get(metaCls);
+            final MetaTable<?> metaTable = this.metaMap.get(metaCls);
             final String vProperty = metaTable.vProperty(column);
 
 
@@ -143,23 +164,6 @@ class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWra
         return record;
     }
 
-    private ConcurrentMap<Class<T>, MetaTable<T>> preConfigure() {
-        final ConcurrentMap<Class<T>, MetaTable<T>> metaMap = MetaFix.toMetaMap(this.ref);
-        // 先把主实体的内容做 configure 保证不会被覆盖
-        final Class<?> entityCls = this.ref.find().entity();
-        final MetaTable<T> metaMain = metaMap.get(entityCls);
-        metaMain.vColumn().forEach(column -> this.ref.configure(column, metaMain.getTable()));
-
-        // 从第二实体开始做 configure，但不能采取覆盖模式，已经存在的不再处理
-        metaMap.keySet().stream()
-            .filter(entityOf -> entityOf != entityCls)
-            .map(metaMap::get)
-            .forEach(metaTable -> metaTable.vColumn().forEach(column ->
-                this.ref.configure(column, metaTable.getTable())
-            ));
-        return metaMap;
-    }
-
     private void postSelect(final MPJQueryWrapper<T> queryWrapper) {
         final StringBuilder selectBuilder = new StringBuilder();
         if (StrUtil.isEmpty(queryWrapper.getSqlSelect())) {
@@ -174,7 +178,7 @@ class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWra
 
                 // 提取 MyBatis-Plus 中的实体类，获取表级元数据
                 final Class<?> entityCls = this.ref.seekType(found.table());
-                final MetaTable<T> meta = this.metaMap.get(entityCls);
+                final MetaTable<?> meta = this.metaMap.get(entityCls);
 
 
                 // 提取表名别名

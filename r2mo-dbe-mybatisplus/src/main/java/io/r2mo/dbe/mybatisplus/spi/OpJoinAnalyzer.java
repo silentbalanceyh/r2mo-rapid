@@ -22,23 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author lang : 2025-10-23
  */
 @Slf4j
-public class OpJoinAnalyzer<T> implements QrAnalyzer<MPJQueryWrapper<T>> {
-    private final DBRef ref;
-    /**
-     * 此处虽然有哈希表，但实际不会创建新的 {@link MetaTable} 实例，均为复用已有实例，在哈希表中保存了对应的
-     * 引用信息，它内部使用了实例的类型 {@link Class} = {@link MetaTable} 做唯一缓存。
-     */
-    private final ConcurrentMap<Class<T>, MetaTable<T>> metaMap;
+public class OpJoinAnalyzer<T> extends OpJoinPre<T> implements QrAnalyzer<MPJQueryWrapper<T>> {
 
     public OpJoinAnalyzer(final DBRef ref) {
-        this.ref = ref;
-        this.metaMap = MetaFix.toMetaMap(ref);
+        super(ref);
     }
 
     @Override
@@ -102,7 +94,7 @@ public class OpJoinAnalyzer<T> implements QrAnalyzer<MPJQueryWrapper<T>> {
 
     @Override
     @SuppressWarnings("all")
-    public IPage<?> page(final QQuery query) {
+    public IPage<Map<String, Object>> page(final QQuery query) {
         if (Objects.isNull(query)) {
             return null;
         }

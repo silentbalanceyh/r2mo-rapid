@@ -26,11 +26,10 @@ import java.util.function.Function;
 @Slf4j
 class MetaFix {
 
-    @SuppressWarnings("unchecked")
-    static <T> ConcurrentMap<Class<T>, MetaTable<T>> toMetaMap(final DBRef ref) {
-        final ConcurrentMap<Class<T>, MetaTable<T>> metaMap = new ConcurrentHashMap<>();
+    static <T> ConcurrentMap<Class<?>, MetaTable<?>> toMetaMap(final DBRef ref) {
+        final ConcurrentMap<Class<?>, MetaTable<?>> metaMap = new ConcurrentHashMap<>();
         ref.findAll().forEach(node -> {
-            final Class<T> entityCls = (Class<T>) node.entity();
+            final Class<?> entityCls = node.entity();
             metaMap.putIfAbsent(entityCls, MetaTable.of(entityCls));
         });
         log.info("[ R2MO ] 合计加载 JOIN 关联实体元信息：{}", metaMap.keySet());

@@ -85,6 +85,9 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
     @SuppressWarnings("unchecked")
     public static <T> DBJ<T> of(final DBRef ref, final MPJBaseMapper<T> baseMapper) {
         final String cacheKey = ref.hashCode() + "@" + baseMapper.hashCode();
-        return (DBJ<T>) CCT_DBE.pick(() -> new DBJ(ref, baseMapper), cacheKey);
+        /*
+         * 调用 DBJ 构造函数之前对 DBRef 进行倒排表的列填充
+         */
+        return (DBJ<T>) CCT_DBE.pick(() -> new DBJ<>(ref, baseMapper), cacheKey);
     }
 }
