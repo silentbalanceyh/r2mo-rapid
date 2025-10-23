@@ -1,7 +1,7 @@
 package io.r2mo.dbe.mybatisplus.spi;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
+import com.github.yulichang.query.MPJQueryWrapper;
 import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.syntax.QQuery;
@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * @author lang : 2025-10-23
  */
-class OpJoinImpl<M extends BaseMapper<?>> implements OpJoin<QueryWrapper<?>> {
+class OpJoinImpl<M extends MPJBaseMapper<?>> implements OpJoin<MPJQueryWrapper<?>> {
 
     private final DBRef ref;
     private final M executor;
@@ -25,12 +25,12 @@ class OpJoinImpl<M extends BaseMapper<?>> implements OpJoin<QueryWrapper<?>> {
     }
 
     @Override
-    public JArray findMany(final QueryWrapper<?> queryWrapper) {
+    public JArray findMany(final MPJQueryWrapper<?> queryWrapper) {
         return null;
     }
 
     @Override
-    public JObject findOne(final QueryWrapper<?> queryWrapper) {
+    public JObject findOne(final MPJQueryWrapper<?> queryWrapper) {
         return null;
     }
 
@@ -45,7 +45,7 @@ class OpJoinImpl<M extends BaseMapper<?>> implements OpJoin<QueryWrapper<?>> {
     }
 
     @Override
-    public Optional<Long> count(final QueryWrapper<?> queryWrapper) {
+    public Optional<Long> count(final MPJQueryWrapper<?> queryWrapper) {
         return Optional.empty();
     }
 
@@ -60,7 +60,7 @@ class OpJoinImpl<M extends BaseMapper<?>> implements OpJoin<QueryWrapper<?>> {
     }
 
     @Override
-    public Boolean removeBy(final QueryWrapper<?> queryWrapper) {
+    public Boolean removeBy(final MPJQueryWrapper<?> queryWrapper) {
         return null;
     }
 
@@ -70,7 +70,7 @@ class OpJoinImpl<M extends BaseMapper<?>> implements OpJoin<QueryWrapper<?>> {
     }
 
     @Override
-    public JObject update(final QueryWrapper<?> queryWrapper, final JObject latest) {
+    public JObject update(final MPJQueryWrapper<?> queryWrapper, final JObject latest) {
         return null;
     }
 }

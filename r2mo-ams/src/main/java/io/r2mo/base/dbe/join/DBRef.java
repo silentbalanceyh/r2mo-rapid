@@ -106,6 +106,15 @@ public class DBRef implements Serializable {
         this.kvMap.computeIfAbsent(table, k -> ConcurrentHashMap.newKeySet()).add(waitFor);
     }
 
+    public String findTableAlias(final Class<?> clazz) {
+        final DBNode found = this.tableRef.getOr(clazz.getName());
+        if (Objects.isNull(found)) {
+            return null;
+        }
+        // 找到表名，通过表名提取别名
+        return this.prefixMap.mapTo(found.table());
+    }
+
     public DBNode find() {
         return this.left;
     }

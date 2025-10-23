@@ -14,6 +14,7 @@ import io.r2mo.base.dbe.syntax.QProjection;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.base.dbe.syntax.QTree;
+import io.r2mo.base.dbe.syntax.QValue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,13 +36,15 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
 
     @Override
     public QueryWrapper<T> whereIn(final String field, final Object... values) {
-        final String column = this.meta.vColumn(field);
+        final QValue qValue = QValue.of(field, values);
+        final String column = this.meta.vColumn(qValue.field());
         return Wrappers.query(this.entityCls).in(column, Arrays.asList(values));
     }
 
     @Override
     public QueryWrapper<T> where(final String field, final Object value) {
-        final String column = this.meta.vColumn(field);
+        final QValue qValue = QValue.of(field, value);
+        final String column = this.meta.vColumn(qValue.field());
         return Wrappers.query(this.entityCls).eq(column, value);
     }
 
@@ -51,7 +54,7 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
             // 特殊不带条件的模式，只能通过 Map.of() 传递
             return Wrappers.query();
         }
-        
+
         final Map<String, Object> column = this.meta.vColumn(condition);
         return Wrappers.query(this.entityCls).allEq(column);
     }

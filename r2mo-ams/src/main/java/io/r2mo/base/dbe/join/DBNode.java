@@ -48,8 +48,9 @@ public class DBNode implements Serializable {
          * FIX-DBE: 此处有可能出现 entity 为 null 的情况，导致 NPE 异常，所以修改成双模式，若 entity 为 null 则返回 dao 名称
          * 旧代码：this.entity.getName();
          **/
-        return Optional.ofNullable(this.entity)
-            .map(Class::getName).orElse(this.dao.getName());
+        return Optional.ofNullable(this.entity).map(Class::getName).orElse(
+            Optional.ofNullable(this.dao).map(Class::getName).orElse(null)
+        );
     }
 
     public static DBNode of(final Class<?> daoClass, final R2Vector vector) {
@@ -57,6 +58,10 @@ public class DBNode implements Serializable {
         node.dao(daoClass);
         node.vector(vector);
         return node;
+    }
+
+    public static DBNode of() {
+        return new DBNode();
     }
 
     /**

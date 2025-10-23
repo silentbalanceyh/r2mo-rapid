@@ -1,7 +1,7 @@
 package ${packageName}.mapper;
 
 import ${entityPackage}.${entityName};
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
 
 /**
 * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @author ${author}
 * @since ${date}
 */
-public interface ${className}Mapper extends BaseMapper<${entityName}> {
+public interface ${className}Mapper extends MPJBaseMapper<${entityName}> {
 
 }

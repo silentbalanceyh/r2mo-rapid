@@ -1,6 +1,7 @@
 package io.r2mo.dbe.mybatisplus.spi;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
 import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.operation.OpAggr;
 import io.r2mo.base.dbe.operation.OpDb;
@@ -83,6 +84,6 @@ public class FactoryDBActionMybatisPlus extends FactoryDBActionBase {
 
     @Override
     public <EXECUTOR, CONDITION> OpJoin<CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
-        return CCT_OP_JOIN.pick(() -> new OpJoinImpl<>(ref, (BaseMapper<?>) executor), String.valueOf(ref.hashCode()));
+        return CCT_OP_JOIN.pick(() -> new OpJoinImpl<>(ref, (MPJBaseMapper<?>) executor), String.valueOf(ref.hashCode()));
     }
 }
