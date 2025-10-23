@@ -110,6 +110,10 @@ public class DBRef implements Serializable {
         return this.left;
     }
 
+    public Set<DBNode> findAll() {
+        return this.tableRef.values();
+    }
+
     public DBNode find(final String name) {
         return this.tableRef.getOr(name);
     }

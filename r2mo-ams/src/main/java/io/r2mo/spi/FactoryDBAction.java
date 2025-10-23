@@ -2,8 +2,10 @@ package io.r2mo.spi;
 
 import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.dbe.Database;
+import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.operation.OpAggr;
 import io.r2mo.base.dbe.operation.OpDb;
+import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.operation.OpVary;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.operation.QrMany;
@@ -25,6 +27,8 @@ public interface FactoryDBAction {
     <T, EXECUTOR> QrMany<T> qrMany(Class<T> entityCls, EXECUTOR executor);
 
     <T, EXECUTOR, CONDITION> QrAnalyzer<CONDITION> qrAnalyzer(Class<T> entityCls, EXECUTOR executor);
+
+    <EXECUTOR, CONDITION> OpJoin<CONDITION> opJoin(DBRef ref, EXECUTOR executor);
 
     /*
      * 追加前置方法，用于处理配置模式 --> 非自动配置下将 Database -> DBS

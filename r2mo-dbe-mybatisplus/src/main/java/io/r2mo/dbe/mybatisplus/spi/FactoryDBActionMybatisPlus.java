@@ -1,19 +1,25 @@
 package io.r2mo.dbe.mybatisplus.spi;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.operation.OpAggr;
 import io.r2mo.base.dbe.operation.OpDb;
+import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.operation.OpVary;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.operation.QrMany;
 import io.r2mo.base.dbe.operation.QrOne;
 import io.r2mo.dbe.common.operation.FactoryDBActionBase;
+import io.r2mo.typed.cc.Cc;
 
 /**
  * @author lang : 2025-08-28
  */
 @SuppressWarnings({"unchecked"})
 public class FactoryDBActionMybatisPlus extends FactoryDBActionBase {
+
+    @SuppressWarnings("all")
+    private static final Cc<String, OpJoin> CCT_OP_JOIN = Cc.openThread();
 
     @Override
     protected <T, EXECUTOR> OpAggr ofAggr(final Class<T> entityCls, final EXECUTOR executor) {
@@ -73,5 +79,10 @@ public class FactoryDBActionMybatisPlus extends FactoryDBActionBase {
     @Override
     protected Class<?> ofAnalyzer() {
         return QrAnalyzerImpl.class;
+    }
+
+    @Override
+    public <EXECUTOR, CONDITION> OpJoin<CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
+        return CCT_OP_JOIN.pick(() -> new OpJoinImpl<>(ref, (BaseMapper<?>) executor), String.valueOf(ref.hashCode()));
     }
 }

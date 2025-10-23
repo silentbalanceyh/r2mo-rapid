@@ -2,8 +2,10 @@ package io.r2mo.dbe.jooq.spi;
 
 import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.dbe.Database;
+import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.operation.OpAggr;
 import io.r2mo.base.dbe.operation.OpDb;
+import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.operation.OpVary;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.operation.QrMany;
@@ -18,6 +20,11 @@ import org.jooq.DSLContext;
 @SuppressWarnings("unchecked")
 public class FactoryDBActionJooq extends FactoryDBActionBase {
 
+
+    @Override
+    public <EXECUTOR, CONDITION> OpJoin<CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
+        return null;
+    }
 
     @Override
     public DBS configure(final Database database) {

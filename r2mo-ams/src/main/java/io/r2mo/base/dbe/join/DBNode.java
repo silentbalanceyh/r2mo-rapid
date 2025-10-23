@@ -3,11 +3,13 @@ package io.r2mo.base.dbe.join;
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.program.R2Vector;
 import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -31,13 +33,30 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 @Data
 @Accessors(chain = true, fluent = true)
+@ToString
 public class DBNode implements Serializable {
-    private Class<?> entity;    // 实体名 / 或 Dao 名        = Department
+    private Class<?> entity;    // 实体名                   = Department
+    private Class<?> dao;       // DAO 名                  = DepartmentDAO
     private String table;       // 表名                     = departments
     private String key;         // 主键字段                 = id
 
+    private DBNode() {
+    }
+
     public String name() {
-        return this.entity.getName();
+        /*
+         * FIX-DBE: 此处有可能出现 entity 为 null 的情况，导致 NPE 异常，所以修改成双模式，若 entity 为 null 则返回 dao 名称
+         * 旧代码：this.entity.getName();
+         **/
+        return Optional.ofNullable(this.entity)
+            .map(Class::getName).orElse(this.dao.getName());
+    }
+
+    public static DBNode of(final Class<?> daoClass, final R2Vector vector) {
+        final DBNode node = new DBNode();
+        node.dao(daoClass);
+        node.vector(vector);
+        return node;
     }
 
     /**
