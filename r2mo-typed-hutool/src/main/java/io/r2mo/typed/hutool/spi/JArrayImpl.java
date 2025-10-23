@@ -56,6 +56,11 @@ class JArrayImpl implements JArray {
     }
 
     @Override
+    public int size() {
+        return this.data.size();
+    }
+
+    @Override
     public boolean isEmpty() {
         return this.data.isEmpty();
     }

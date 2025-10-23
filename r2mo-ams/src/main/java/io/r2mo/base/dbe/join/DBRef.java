@@ -1,5 +1,6 @@
 package io.r2mo.base.dbe.join;
 
+import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.program.R2Mapping;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.common.MultiKeyMap;
@@ -69,6 +70,14 @@ public class DBRef implements Serializable {
      */
     private final MultiKeyMap<DBNode> tableRef = new MultiKeyMap<>();
 
+    /**
+     * 追加一个数据结构用于存储列名 -> 表名的映射关系，这个填充会包含两部分
+     * <pre>
+     *     1. 实际字段对应表相关信息 column = table（倒排表）
+     *     2. 重复字段自动忽略，除非用户定义别名，否则相同字段只返回主表信息
+     * </pre>
+     */
+    private final ConcurrentMap<String, String> columnMap = new ConcurrentHashMap<>();
 
     /**
      * 根据 {@link DBNode} 的 left / right 来构造 tableRef 存储，方便后期快速定位，通过表名直接提取到和表直接
@@ -97,6 +106,30 @@ public class DBRef implements Serializable {
         this.counter++;
         // 设置向量处理
         this.addVector(nodeRight, waitFor);
+    }
+
+    public DBRef configure(final String column, final String table) {
+        if (StrUtil.isEmpty(column) || StrUtil.isEmpty(table)) {
+            return this;
+        }
+        if (this.columnMap.containsKey(column)) {
+            return this;
+        }
+        this.columnMap.put(column, table);
+        return this;
+    }
+
+    public DBRef configure(final ConcurrentMap<String, String> columnMap) {
+        if (Objects.nonNull(columnMap)) {
+            this.columnMap.putAll(columnMap);
+        }
+        return this;
+    }
+
+    private void ifColumnOk() {
+        if (this.columnMap.isEmpty()) {
+            log.warn("[ R2MO ] 当前列映射表为空，无法进行列名定位操作，请检查！");
+        }
     }
 
     /**
@@ -130,10 +163,12 @@ public class DBRef implements Serializable {
     }
 
     public DBNode find() {
+        this.ifColumnOk();
         return this.left;
     }
 
     public DBNode findSecond() {
+        this.ifColumnOk();
         return this.right;
     }
 
@@ -142,17 +177,29 @@ public class DBRef implements Serializable {
     }
 
     public DBNode find(final String name) {
+        this.ifColumnOk();
         return this.tableRef.getOr(name);
     }
 
+    public Set<String> alias() {
+        this.ifColumnOk();
+        return this.aliasMap.keySet();
+    }
+
     public DBAlias alias(final String alias) {
+        this.ifColumnOk();
         return this.aliasMap.get(alias);
     }
 
     public DBAlias findAlias(final String name) {
+        this.ifColumnOk();
         return this.aliasMap.values().stream()
             .filter(alias -> Objects.equals(name, alias.name()))
             .findFirst().orElse(null);
+    }
+
+    public boolean isAlias(final String column) {
+        return this.aliasMap.containsKey(column);
     }
 
     /**
@@ -166,6 +213,7 @@ public class DBRef implements Serializable {
     }
 
     public DBRef alias(final DBAlias alias) {
+        this.ifColumnOk();
         if (alias.isOk()) {
             this.aliasMap.put(alias.alias(), alias);
         }
@@ -173,10 +221,12 @@ public class DBRef implements Serializable {
     }
 
     public DBRef alias(final String table, final String name, final String alias) {
+        this.ifColumnOk();
         return this.alias(new DBAlias(table, name, alias));
     }
 
     public DBRef alias(final String fieldExpr, final String alias) {
+        this.ifColumnOk();
         final String[] fields = Objects.requireNonNull(fieldExpr).split("\\.");
         if (2 != fields.length) {
             log.warn("[ R2MO ] 参数有问题，无法构造别名记录：{} / {}", fieldExpr, alias);
@@ -196,6 +246,7 @@ public class DBRef implements Serializable {
 
     // ---- 运算专用 API
     public String seekAlias(final Class<?> clazz) {
+        this.ifColumnOk();
         final DBNode found = this.tableRef.getOr(clazz.getName());
         if (Objects.isNull(found)) {
             return null;
@@ -204,7 +255,19 @@ public class DBRef implements Serializable {
         return this.prefixMap.mapTo(found.table());
     }
 
+    public Class<?> seekType(final String table) {
+        this.ifColumnOk();
+        final DBNode found = this.tableRef.getOr(table);
+        return found.entity();  // 内部判断
+    }
+
+    public Class<?> seekTypeByColumn(final String column) {
+        final String table = this.columnMap.get(column);
+        return this.seekType(table);
+    }
+
     public Set<Kv<String, String>> seekJoin(final Class<?> clazz) {
+        this.ifColumnOk();
         final DBNode found = this.tableRef.getOr(clazz.getName());
         if (Objects.isNull(found)) {
             return Set.of();

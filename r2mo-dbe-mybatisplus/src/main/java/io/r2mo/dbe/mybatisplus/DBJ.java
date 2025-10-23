@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
+import io.r2mo.SourceReflect;
 import io.r2mo.base.dbe.join.DBNode;
 import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
@@ -11,6 +12,10 @@ import io.r2mo.dbe.common.DBEJ;
 import io.r2mo.dbe.mybatisplus.spi.OpJoinAnalyzer;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Kv;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 /**
  * @author lang : 2025-10-23
@@ -36,6 +41,16 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
         return this.analyzer;
     }
 
+    public DBJ<T> alias(final String table, final String field, final String alias) {
+        this.ref.alias(table, field, alias);
+        return this;
+    }
+
+    public DBJ<T> alias(final Class<?> entityCls, final String field, final String alias) {
+        final TableInfo tableInfo = TableInfoHelper.getTableInfo(entityCls);
+        return this.alias(tableInfo.getTableName(), field, alias);
+    }
+
     /**
      * 常见构造，可直接使用
      * <pre>
@@ -59,9 +74,12 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
 
     private static DBNode createNode(final Class<?> entityCls) {
         final TableInfo tableInfo = TableInfoHelper.getTableInfo(entityCls);
-        return DBNode.of().entity(entityCls)
-            .table(tableInfo.getTableName())
-            .key(entityCls.getName());
+        final DBNode node = DBNode.of().entity(entityCls).table(tableInfo.getTableName()).key(entityCls.getName());
+        final Field[] fields = SourceReflect.fieldsN(entityCls);
+        Arrays.stream(fields)
+            .filter(field -> !Modifier.isStatic(field.getModifiers()))
+            .forEach(field -> node.put(field.getName(), field.getType()));
+        return node;
     }
 
     @SuppressWarnings("unchecked")

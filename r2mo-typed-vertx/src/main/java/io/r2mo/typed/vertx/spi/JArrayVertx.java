@@ -50,6 +50,11 @@ class JArrayVertx implements JArray {
     }
 
     @Override
+    public int size() {
+        return this.data.size();
+    }
+
+    @Override
     public <T> JArray add(final T value) {
         this.data.add(value);
         return this;

@@ -2,7 +2,12 @@ package io.r2mo.typed.json;
 
 import io.r2mo.spi.SPI;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,6 +26,8 @@ public interface JArray extends JBase {
     <T> JArray add(T value);
 
     List toList();
+
+    int size();
 
     // ----------- 追加数组计算方法
     JObject findOne(String field, Object value);

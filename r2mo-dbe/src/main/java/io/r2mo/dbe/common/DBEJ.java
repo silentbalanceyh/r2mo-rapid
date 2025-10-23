@@ -23,6 +23,8 @@ public abstract class DBEJ<QR, T, EXECUTOR> {
 
     private final OpJoin<T, QR> opJoin;
 
+    protected final DBRef ref;
+
     /**
      * 此处的 DBRef 必须是完整的
      *
@@ -30,6 +32,7 @@ public abstract class DBEJ<QR, T, EXECUTOR> {
      * @param executor EXECUTOR
      */
     protected DBEJ(final DBRef ref, final EXECUTOR executor) {
+        this.ref = ref;
         this.executor = executor;
         this.opJoin = SPI.SPI_DB.opJoin(ref, executor);
     }

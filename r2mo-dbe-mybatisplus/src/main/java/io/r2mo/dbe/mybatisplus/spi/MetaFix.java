@@ -3,23 +3,39 @@ package io.r2mo.dbe.mybatisplus.spi;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import io.r2mo.base.dbe.constant.QOp;
+import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.syntax.QBranch;
 import io.r2mo.base.dbe.syntax.QLeaf;
 import io.r2mo.base.dbe.syntax.QNode;
 import io.r2mo.base.dbe.syntax.QProjection;
 import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.spi.SPI;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 /**
  * @author lang : 2025-10-23
  */
+@Slf4j
 class MetaFix {
+
+    @SuppressWarnings("unchecked")
+    static <T> ConcurrentMap<Class<T>, MetaTable<T>> toMetaMap(final DBRef ref) {
+        final ConcurrentMap<Class<T>, MetaTable<T>> metaMap = new ConcurrentHashMap<>();
+        ref.findAll().forEach(node -> {
+            final Class<T> entityCls = (Class<T>) node.entity();
+            metaMap.putIfAbsent(entityCls, MetaTable.of(entityCls));
+        });
+        log.info("[ R2MO ] 合计加载 JOIN 关联实体元信息：{}", metaMap.keySet());
+        return metaMap;
+    }
 
     /*
      * Fix Issue: Cannot convert string '\xAC\xED\x00\x05sr...' from binary to utf8mb4

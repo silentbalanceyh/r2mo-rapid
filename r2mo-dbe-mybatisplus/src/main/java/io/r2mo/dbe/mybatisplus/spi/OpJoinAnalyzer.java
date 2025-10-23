@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -31,16 +30,15 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class OpJoinAnalyzer<T> implements QrAnalyzer<MPJQueryWrapper<T>> {
     private final DBRef ref;
-    private final ConcurrentMap<Class<T>, MetaTable<T>> metaMap = new ConcurrentHashMap<>();
+    /**
+     * 此处虽然有哈希表，但实际不会创建新的 {@link MetaTable} 实例，均为复用已有实例，在哈希表中保存了对应的
+     * 引用信息，它内部使用了实例的类型 {@link Class} = {@link MetaTable} 做唯一缓存。
+     */
+    private final ConcurrentMap<Class<T>, MetaTable<T>> metaMap;
 
-    @SuppressWarnings("unchecked")
     public OpJoinAnalyzer(final DBRef ref) {
         this.ref = ref;
-        ref.findAll().forEach(node -> {
-            final Class<T> entityCls = (Class<T>) node.entity();
-            this.metaMap.putIfAbsent(entityCls, MetaTable.of(entityCls));
-        });
-        log.info("[ R2MO ] 合计加载 JOIN 关联实体元信息：{}", this.metaMap.keySet());
+        this.metaMap = MetaFix.toMetaMap(ref);
     }
 
     @Override

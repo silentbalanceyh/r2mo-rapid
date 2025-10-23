@@ -53,6 +53,13 @@ public class DBNode implements Serializable {
         );
     }
 
+    public Class<?> entity() {
+        if (Objects.nonNull(this.dao)) {
+            return this.dao;
+        }
+        return this.entity;
+    }
+
     public static DBNode of(final Class<?> daoClass, final R2Vector vector) {
         final DBNode node = new DBNode();
         node.dao(daoClass);
