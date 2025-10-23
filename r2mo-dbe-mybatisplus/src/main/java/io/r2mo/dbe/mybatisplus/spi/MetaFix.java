@@ -32,7 +32,6 @@ class MetaFix {
             final Class<?> entityCls = node.entity();
             metaMap.putIfAbsent(entityCls, MetaTable.of(entityCls));
         });
-        log.info("[ R2MO ] 合计加载 JOIN 关联实体元信息：{}", metaMap.keySet());
         return metaMap;
     }
 

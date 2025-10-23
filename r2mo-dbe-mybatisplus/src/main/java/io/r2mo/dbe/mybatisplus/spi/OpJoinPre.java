@@ -1,6 +1,7 @@
 package io.r2mo.dbe.mybatisplus.spi;
 
 import com.github.yulichang.query.MPJQueryWrapper;
+import io.r2mo.SourceReflect;
 import io.r2mo.base.dbe.join.DBNode;
 import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.typed.common.Kv;
@@ -66,8 +67,18 @@ abstract class OpJoinPre<T> {
 
     protected Set<Class<?>> getJoinedEntities() {
         final DBNode found = this.ref.find();
+        return this.getEntities(found.entity());
+    }
+
+    protected Set<Class<?>> getEntities(final Class<?> exclude) {
         return this.metaMap.keySet().stream()
-            .filter(entityCls -> entityCls != found.entity())
+            .filter(entityCls -> entityCls != exclude)
             .collect(Collectors.toSet());
+    }
+
+    protected Kv<String, Object> valuePrimary(final Object instance, final Class<?> entity) {
+        final MetaTable<?> table = this.metaMap.get(entity);
+        final String pkProperty = table.vProperty(table.getPrimaryKey());
+        return Kv.create(pkProperty, SourceReflect.value(instance, pkProperty));
     }
 }

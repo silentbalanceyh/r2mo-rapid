@@ -1,15 +1,20 @@
 package io.r2mo.dbe.mybatisplus.spi;
 
+import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
+import io.r2mo.SourceReflect;
 import io.r2mo.base.dbe.join.DBNode;
 import io.r2mo.base.dbe.join.DBRef;
+import io.r2mo.base.util.R2MO;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author lang : 2025-10-23
@@ -28,9 +33,29 @@ class OpJoinWriter<T> extends OpJoinPre<T> {
         }
     }
 
+    @SuppressWarnings("all")
     public JObject create(final JObject latest) {
+        // ------------------ 先插入主键实体 ------------------
+        // 查找使用主键做 Join 的实体
+        final DBNode found = this.getJoinedPkEntity();
+        final Class<?> entity = found.entity();
+        // 构造实体对象
+        final Object waitFor = this.createUUID(latest, entity);
+        // 先插入主键实体
+        final MPJBaseMapper mapper = this.executor.mapper(entity);
+        final Object created = mapper.insert(waitFor);
 
+        // ------------------ 处理其他关联实体 ------------------
         return null;
+    }
+
+    private <R> R createUUID(final JObject latest, final Class<R> entityCls) {
+        final R waitFor = R2MO.deserializeJ(latest.data(), entityCls);
+        final Kv<String, Object> pk = this.valuePrimary(waitFor, entityCls);
+        if (Objects.isNull(pk.value())) {
+            SourceReflect.value(waitFor, pk.key(), UUID.randomUUID());
+        }
+        return waitFor;
     }
 
     public Boolean removeById(final Serializable id) {
@@ -54,7 +79,7 @@ class OpJoinWriter<T> extends OpJoinPre<T> {
      *
      * @return DBNode
      */
-    private DBNode joinByPrimaryKey() {
+    private DBNode getJoinedPkEntity() {
         Kv<String, String> pkInfo = this.getFieldId(this.ref.find());
         if (this.ref.isPrimaryKey(pkInfo)) {
             return this.ref.find(pkInfo.key());

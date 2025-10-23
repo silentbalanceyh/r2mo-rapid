@@ -23,7 +23,7 @@ public class JoinProxy<T> {
     }
 
     public MPJBaseMapper<?> mapper(final Class<?> clazz) {
-        return this.mapperMap.get(clazz);
+        return this.mapperMap.getOrDefault(clazz, this.baseMapper);
     }
 
     public JoinProxy<T> mapper(final Class<?> entityCls, final MPJBaseMapper<?> mapper) {
