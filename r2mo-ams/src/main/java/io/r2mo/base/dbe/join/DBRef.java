@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class DBRef implements Serializable {
     private final DBNode left;
+    private final DBNode right;
     private int counter = 0;
     /**
      * 别名表，用于保存表对应的别名，别名必须唯一且别名是为了可以直接引导到真实名称
@@ -68,7 +69,6 @@ public class DBRef implements Serializable {
      */
     private final MultiKeyMap<DBNode> tableRef = new MultiKeyMap<>();
 
-    private final ConcurrentMap<String, Set<Kv<String, String>>> kvMap = new ConcurrentHashMap<>();
 
     /**
      * 根据 {@link DBNode} 的 left / right 来构造 tableRef 存储，方便后期快速定位，通过表名直接提取到和表直接
@@ -87,6 +87,7 @@ public class DBRef implements Serializable {
     private DBRef(final DBNode nodeLeft, final DBNode nodeRight,
                   final Kv<String, String> waitFor) {
         this.left = nodeLeft;
+        this.right = nodeRight;
         // 填充
         this.tableRef.put(nodeLeft.table(), nodeLeft, nodeLeft.name());
         this.tableRef.put(nodeRight.table(), nodeRight, nodeRight.name());
@@ -98,25 +99,42 @@ public class DBRef implements Serializable {
         this.addVector(nodeRight, waitFor);
     }
 
+    /**
+     * 多表 JOIN 的时候，此处的结构如：
+     * <pre>
+     *     T2
+     *        T2 Field 01 = T1 Field 01
+     *        T2 Field 02 = T1 Field 02
+     *     T3
+     *        T3 Field 01 = T1 Field 03
+     *        T3 Field 02 = T1 Field 04
+     * </pre>
+     * 暂时只考虑双表多字段模式
+     */
+    private final ConcurrentMap<String, Set<Kv<String, String>>> kvMap = new ConcurrentHashMap<>();
+
     private void addVector(final DBNode joined, final Kv<String, String> waitFor) {
         if (joined == null || waitFor == null) {
             return; // 或者抛异常，看你项目约定
         }
         final String table = joined.table();
-        this.kvMap.computeIfAbsent(table, k -> ConcurrentHashMap.newKeySet()).add(waitFor);
-    }
-
-    public String findTableAlias(final Class<?> clazz) {
-        final DBNode found = this.tableRef.getOr(clazz.getName());
-        if (Objects.isNull(found)) {
-            return null;
-        }
-        // 找到表名，通过表名提取别名
-        return this.prefixMap.mapTo(found.table());
+        this.kvMap.computeIfAbsent(table, k -> ConcurrentHashMap.newKeySet())
+            /*
+             * FIX-DBE: 此处需要逆序操作，waitFor 中存储的是 left.xx JOIN right.xx，但是此处应该保存的是
+             *
+             *          right.table = <right.xxx, left.xxx>
+             *          这样保存才能保证后续的多表连接
+             *          旧代码：.add(waitFor);
+             */
+            .add(Kv.create(waitFor.value(), waitFor.key()));
     }
 
     public DBNode find() {
         return this.left;
+    }
+
+    public DBNode findSecond() {
+        return this.right;
     }
 
     public Set<DBNode> findAll() {
@@ -174,5 +192,24 @@ public class DBRef implements Serializable {
         // 设置向量处理
         this.addVector(thirdOr, waitFor);
         return this;
+    }
+
+    // ---- 运算专用 API
+    public String seekAlias(final Class<?> clazz) {
+        final DBNode found = this.tableRef.getOr(clazz.getName());
+        if (Objects.isNull(found)) {
+            return null;
+        }
+        // 找到表名，通过表名提取别名
+        return this.prefixMap.mapTo(found.table());
+    }
+
+    public Set<Kv<String, String>> seekJoin(final Class<?> clazz) {
+        final DBNode found = this.tableRef.getOr(clazz.getName());
+        if (Objects.isNull(found)) {
+            return Set.of();
+        }
+        // 找到表名，通过表名提取 Join 信息
+        return this.kvMap.get(found.table());
     }
 }

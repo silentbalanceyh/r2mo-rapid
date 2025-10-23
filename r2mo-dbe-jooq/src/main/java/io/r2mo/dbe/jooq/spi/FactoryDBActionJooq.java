@@ -22,7 +22,7 @@ public class FactoryDBActionJooq extends FactoryDBActionBase {
 
 
     @Override
-    public <EXECUTOR, CONDITION> OpJoin<CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
+    public <T, EXECUTOR, CONDITION> OpJoin<T, CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
         return null;
     }
 

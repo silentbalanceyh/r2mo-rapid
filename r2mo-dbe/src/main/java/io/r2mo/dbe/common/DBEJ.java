@@ -18,10 +18,10 @@ import java.util.Optional;
  *
  * @author lang : 2025-10-23
  */
-public abstract class DBEJ<QR, EXECUTOR> {
+public abstract class DBEJ<QR, T, EXECUTOR> {
     private final EXECUTOR executor;
 
-    private final OpJoin<QR> opJoin;
+    private final OpJoin<T, QR> opJoin;
 
     /**
      * 此处的 DBRef 必须是完整的

@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @author lang : 2025-10-23
  */
-public interface OpJoin<CONDITION> {
+public interface OpJoin<T, CONDITION> {
 
     // --------------- 查询专用方法
     JArray findMany(CONDITION condition);

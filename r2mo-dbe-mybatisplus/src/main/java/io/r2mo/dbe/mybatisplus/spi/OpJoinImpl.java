@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * @author lang : 2025-10-23
  */
-class OpJoinImpl<M extends MPJBaseMapper<?>> implements OpJoin<MPJQueryWrapper<?>> {
+class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWrapper<T>> {
 
     private final DBRef ref;
     private final M executor;
@@ -25,12 +25,12 @@ class OpJoinImpl<M extends MPJBaseMapper<?>> implements OpJoin<MPJQueryWrapper<?
     }
 
     @Override
-    public JArray findMany(final MPJQueryWrapper<?> queryWrapper) {
+    public JArray findMany(final MPJQueryWrapper<T> queryWrapper) {
         return null;
     }
 
     @Override
-    public JObject findOne(final MPJQueryWrapper<?> queryWrapper) {
+    public JObject findOne(final MPJQueryWrapper<T> queryWrapper) {
         return null;
     }
 
@@ -45,8 +45,8 @@ class OpJoinImpl<M extends MPJBaseMapper<?>> implements OpJoin<MPJQueryWrapper<?
     }
 
     @Override
-    public Optional<Long> count(final MPJQueryWrapper<?> queryWrapper) {
-        return Optional.empty();
+    public Optional<Long> count(final MPJQueryWrapper<T> queryWrapper) {
+        return Optional.ofNullable(this.executor.selectJoinCount(queryWrapper));
     }
 
     @Override
@@ -60,7 +60,7 @@ class OpJoinImpl<M extends MPJBaseMapper<?>> implements OpJoin<MPJQueryWrapper<?
     }
 
     @Override
-    public Boolean removeBy(final MPJQueryWrapper<?> queryWrapper) {
+    public Boolean removeBy(final MPJQueryWrapper<T> queryWrapper) {
         return null;
     }
 
@@ -70,7 +70,7 @@ class OpJoinImpl<M extends MPJBaseMapper<?>> implements OpJoin<MPJQueryWrapper<?
     }
 
     @Override
-    public JObject update(final MPJQueryWrapper<?> queryWrapper, final JObject latest) {
+    public JObject update(final MPJQueryWrapper<T> queryWrapper, final JObject latest) {
         return null;
     }
 }

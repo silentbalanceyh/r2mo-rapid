@@ -83,7 +83,7 @@ public class FactoryDBActionMybatisPlus extends FactoryDBActionBase {
     }
 
     @Override
-    public <EXECUTOR, CONDITION> OpJoin<CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
-        return CCT_OP_JOIN.pick(() -> new OpJoinImpl<>(ref, (MPJBaseMapper<?>) executor), String.valueOf(ref.hashCode()));
+    public <T, EXECUTOR, CONDITION> OpJoin<T, CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
+        return CCT_OP_JOIN.pick(() -> new OpJoinImpl<>(ref, (MPJBaseMapper<T>) executor), String.valueOf(ref.hashCode()));
     }
 }

@@ -81,7 +81,7 @@ public abstract class AppBaseTestSupport<T> extends AppIoTestSupport {
         return DBE.of(this.entityCls, this.mapper);
     }
 
-    protected DBJ db(final Join meta) {
+    protected DBJ<T> db(final Join meta) {
         return DBJ.of(meta, this.mapper);
     }
 

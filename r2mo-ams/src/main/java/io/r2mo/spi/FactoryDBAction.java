@@ -28,7 +28,7 @@ public interface FactoryDBAction {
 
     <T, EXECUTOR, CONDITION> QrAnalyzer<CONDITION> qrAnalyzer(Class<T> entityCls, EXECUTOR executor);
 
-    <EXECUTOR, CONDITION> OpJoin<CONDITION> opJoin(DBRef ref, EXECUTOR executor);
+    <T, EXECUTOR, CONDITION> OpJoin<T, CONDITION> opJoin(DBRef ref, EXECUTOR executor);
 
     /*
      * 追加前置方法，用于处理配置模式 --> 非自动配置下将 Database -> DBS

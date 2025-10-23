@@ -15,10 +15,10 @@ import io.r2mo.typed.common.Kv;
 /**
  * @author lang : 2025-10-23
  */
-public class DBJ extends DBEJ<MPJQueryWrapper<?>, MPJBaseMapper<?>> {
-    private final QrAnalyzer<MPJQueryWrapper<?>> analyzer;
+public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
+    private final QrAnalyzer<MPJQueryWrapper<T>> analyzer;
 
-    private static final Cc<String, DBJ> CCT_DBE = Cc.openThread();
+    private static final Cc<String, DBJ<?>> CCT_DBE = Cc.openThread();
 
     /**
      * 此处的 DBRef 必须是完整的
@@ -26,13 +26,13 @@ public class DBJ extends DBEJ<MPJQueryWrapper<?>, MPJBaseMapper<?>> {
      * @param ref        DBRef
      * @param baseMapper EXECUTOR
      */
-    private DBJ(final DBRef ref, final MPJBaseMapper<?> baseMapper) {
+    private DBJ(final DBRef ref, final MPJBaseMapper<T> baseMapper) {
         super(ref, baseMapper);
-        this.analyzer = new OpJoinAnalyzer(ref);
+        this.analyzer = new OpJoinAnalyzer<>(ref);
     }
 
     @Override
-    protected QrAnalyzer<MPJQueryWrapper<?>> analyzer() {
+    protected QrAnalyzer<MPJQueryWrapper<T>> analyzer() {
         return this.analyzer;
     }
 
@@ -50,7 +50,7 @@ public class DBJ extends DBEJ<MPJQueryWrapper<?>, MPJBaseMapper<?>> {
      *
      * @return 当前引用
      */
-    public static DBJ of(final Join meta, final MPJBaseMapper<?> baseMapper) {
+    public static <T> DBJ<T> of(final Join meta, final MPJBaseMapper<T> baseMapper) {
         final DBNode leftNode = createNode(meta.from());
         final DBNode rightNode = createNode(meta.to());
         final Kv<String, String> kvJoin = Kv.create(meta.fromField(), meta.toField());
@@ -64,8 +64,9 @@ public class DBJ extends DBEJ<MPJQueryWrapper<?>, MPJBaseMapper<?>> {
             .key(entityCls.getName());
     }
 
-    public static DBJ of(final DBRef ref, final MPJBaseMapper<?> baseMapper) {
+    @SuppressWarnings("unchecked")
+    public static <T> DBJ<T> of(final DBRef ref, final MPJBaseMapper<T> baseMapper) {
         final String cacheKey = ref.hashCode() + "@" + baseMapper.hashCode();
-        return CCT_DBE.pick(() -> new DBJ(ref, baseMapper), cacheKey);
+        return (DBJ<T>) CCT_DBE.pick(() -> new DBJ(ref, baseMapper), cacheKey);
     }
 }
