@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.r2mo.base.dbe.DBMeta;
+import io.r2mo.base.dbe.common.DBLoad;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.syntax.QLeaf;
@@ -14,6 +14,7 @@ import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.base.dbe.syntax.QTree;
 import io.r2mo.base.dbe.syntax.QValue;
+import io.r2mo.spi.SPI;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -28,7 +29,9 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
 
     QrAnalyzerImpl(final Class<T> entityCls) {
         this.entityCls = entityCls;
-        this.node = DBMeta.of().findBy(entityCls);
+        // DBE 模式重新构造，构造过程中会自己访问 DBMeta
+        final DBLoad loader = SPI.SPI_DB.loader();
+        this.node = loader.configure(entityCls);
     }
 
     @Override

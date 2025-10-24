@@ -117,6 +117,13 @@ public class DBNode implements Serializable {
         SourceReflect.value(instance, pkProperty, value);
     }
 
+    public String name() {
+        if (Objects.nonNull(this.dao)) {
+            return this.dao.getName();
+        }
+        return this.entity.getName();
+    }
+
     // ------------------------ 绑定和设置 ----------------------
     public DBNode types(final String field, final Class<?> type) {
         if (StrUtil.isEmpty(field) || Objects.isNull(type)) {

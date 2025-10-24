@@ -2,7 +2,6 @@ package io.r2mo.dbe.mybatisplus;
 
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
-import io.r2mo.base.dbe.DBMeta;
 import io.r2mo.base.dbe.common.DBLoad;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
@@ -61,7 +60,7 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
     }
 
     public DBJ<T> alias(final Class<?> entityCls, final String field, final String alias) {
-        final DBNode found = DBMeta.of().findBy(entityCls);
+        final DBNode found = this.ref.findBy(entityCls);
         return this.alias(found.table(), field, alias);
     }
 
@@ -73,6 +72,10 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
      *          classTo, to,
      *     )).xxxMethod(???)
      * </pre>
+     * 此方法在调用过程中会直接根据 {@link Join} 中的定义来构造节点相关信息，需要注意一点就是此处使用 {@link DBLoad} 构造
+     * 的节点信息本身是完全独立的节点，和 {@link DBRef} 以及 {@link DBJ} 的数量无关，而加载流程中会直接截断加载，即直接通
+     * 过实际实现层来加载 {@link DBNode} 的基本信息，由于存在全局缓存，所以不会存在重复加载的问题。最终调试的时候要注意：
+     * 全局缓存中的 {@link DBNode} 是共享的！
      *
      * @param meta       JOIN 元信息
      * @param baseMapper EXECUTOR
@@ -81,9 +84,9 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
      */
     public static <T> DBJ<T> of(final Join meta, final JoinProxy<T> baseMapper) {
         // 新版直接使用 DBLoad 来完成节点的构建（一次性构建完成）
-        final DBLoad metaLoader = SPI.SPI_DB.loader();
-        final DBNode leftNode = metaLoader.configure(meta.from());
-        final DBNode rightNode = metaLoader.configure(meta.to());
+        final DBLoad loader = SPI.SPI_DB.loader();
+        final DBNode leftNode = loader.configure(meta.from());
+        final DBNode rightNode = loader.configure(meta.to());
         final Kv<String, String> kvJoin = Kv.create(meta.fromField(), meta.toField());
         return of(DBRef.of(leftNode, rightNode, kvJoin), baseMapper);
     }

@@ -2,7 +2,6 @@ package io.r2mo.dbe.mybatisplus.spi;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import io.r2mo.base.dbe.DBMeta;
 import io.r2mo.base.dbe.common.DBLoad;
 import io.r2mo.base.dbe.common.DBLoadBase;
 import io.r2mo.base.dbe.common.DBNode;
@@ -22,17 +21,7 @@ import java.util.Objects;
 public class LoadMyBatis extends DBLoadBase {
 
     @Override
-    public DBNode configure(final Class<?> entity, final R2Vector vector) {
-        /*
-         * - dao
-         * - vector
-         * - entity
-         * - field -> Class<?>
-         */
-        final DBNode node = DBNode.of(entity, vector);
-        node.entity(entity);
-
-        this.setupFields(node, entity);
+    protected void setupTable(final DBNode node, final Class<?> entity) {
         /*
          * - table
          * - key ( primaryKey = primaryColumn )
@@ -56,15 +45,5 @@ public class LoadMyBatis extends DBLoadBase {
         tableInfo.getFieldList().forEach(field ->
             vectorRef.putColumn(field.getProperty(), field.getColumn()));
         node.vector(vectorRef);
-
-        
-        /*
-         * 加载之后注册，注册后使用此处的内容统一管理，可通过三种方法查询对应的 DBNode
-         * - entity 实体名称
-         * - table  表名称
-         * - entityCls 实体类类型 / daoCls 类型也可以
-         */
-        DBMeta.of().registry(entity, node);
-        return node;
     }
 }

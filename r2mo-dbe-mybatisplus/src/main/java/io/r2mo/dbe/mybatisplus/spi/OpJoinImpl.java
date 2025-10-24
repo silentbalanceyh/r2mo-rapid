@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
 import io.r2mo.SourceReflect;
-import io.r2mo.base.dbe.DBMeta;
 import io.r2mo.base.dbe.common.DBAlias;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
@@ -46,7 +45,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
         this.executor = executor;
         this.joinAnalyzer = new OpJoinAnalyzer<>(ref);
         final Class<?> classT0 = SourceReflect.classT0(this.getClass());
-        this.node = DBMeta.of().findBy(classT0);
+        this.node = this.ref.findBy(classT0);
     }
 
     public void afterConstruct(final JoinProxy<T> joinProxy) {
@@ -166,7 +165,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
 
 
             // 只有实现类可以这样检索
-            final DBNode found = DBMeta.of().findBy(metaCls);
+            final DBNode found = this.ref.findBy(metaCls);
             final String vProperty = found.vProperty(column);
 
 
@@ -204,7 +203,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
 
 
                 // 根据属性查找列
-                final DBNode meta = DBMeta.of().findBy(entityCls);
+                final DBNode meta = this.ref.findBy(entityCls);
                 final String column = meta.vColumn(found.name());
                 // SELECT *, TRX.{COLUMN} AS {aliasName} ( 大写 )
                 selectBuilder.append(",").append(tableAlias).append(".").append(column)

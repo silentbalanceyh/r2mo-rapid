@@ -1,10 +1,10 @@
 package io.r2mo.base.dbe.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.r2mo.base.dbe.DBMeta;
 import io.r2mo.base.program.R2Mapping;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.typed.common.Kv;
+import io.r2mo.typed.common.MultiKeyMap;
 import io.r2mo.typed.exception.web._400BadRequestException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -94,8 +94,14 @@ public class DBRef implements Serializable {
      *     2. 重复字段自动忽略，除非用户定义别名，否则相同字段只返回主表信息
      * </pre>
      */
-    private final ConcurrentMap<String, String> columnMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, String> columnVector = new ConcurrentHashMap<>();
 
+
+    /**
+     * 此处的 joined 是非全局变量，用于存储当前 DBRef 中已经连接的节点信息，方便后续处理，多表连接的时候之中会限定
+     * 对应的连接内容，不允许出现从中全局提取的情况，所以此处的 joined 结构用于存储已经连接的节点信息。
+     */
+    private final MultiKeyMap<DBNode> joined = new MultiKeyMap<>();
 
     /**
      * 根据 {@link DBNode} 的 left / right 来构造 tableRef 存储，方便后期快速定位，通过表名直接提取到和表直接
@@ -137,9 +143,13 @@ public class DBRef implements Serializable {
 
         // 列 -> 表的映射关系填充
         nodeLeft.vector()
-            .mapBy((column, field) -> this.columnMap.put(column, nodeLeft.table()));
+            .mapBy((column, field) -> this.columnVector.put(column, nodeLeft.table()));
         nodeRight.vector()
-            .mapBy((column, field) -> this.columnMap.put(column, nodeRight.table()));
+            .mapBy((column, field) -> this.columnVector.put(column, nodeRight.table()));
+
+        // 填充当前内容
+        this.joined.put(nodeLeft.name(), nodeLeft, nodeLeft.table());
+        this.joined.put(nodeRight.name(), nodeRight, nodeRight.table());
 
         // 设置向量处理
         this.addVector(nodeRight, waitFor);
@@ -237,7 +247,7 @@ public class DBRef implements Serializable {
         }
 
         final String table = alias.table();
-        final DBNode found = DBMeta.of().findBy(table);
+        final DBNode found = this.findBy(table);
         if (Objects.isNull(found)) {
             // 无法找到对应实体，冲突
             return true;
@@ -293,8 +303,12 @@ public class DBRef implements Serializable {
         return this.right;
     }
 
-    public DBNode find(final String name) {
-        return DBMeta.of().findBy(name);
+    public DBNode findBy(final String name) {
+        return this.joined.getOr(name);
+    }
+
+    public DBNode findBy(final Class<?> entity) {
+        return this.joined.getOr(entity.getName());
     }
 
     /**
@@ -324,6 +338,12 @@ public class DBRef implements Serializable {
         return this.aliasMap.get(alias);
     }
 
+    public Set<Class<?>> findJoined() {
+        return this.joined.values().stream()
+            .map(DBNode::entity)
+            .collect(Collectors.toSet());
+    }
+
     // ---- 运算专用 API
 
     /**
@@ -351,7 +371,7 @@ public class DBRef implements Serializable {
                 // 滤掉主实体
                 continue;
             }
-            final String c2 = DBMeta.of().findBy(other).vColumn(field);
+            final String c2 = this.findBy(other).vColumn(field);
             if (Objects.nonNull(c2)) {
                 final String tableAlias = this.seekAlias(other);
                 return tableAlias + "." + c2;
@@ -363,7 +383,7 @@ public class DBRef implements Serializable {
     }
 
     public String seekAlias(final Class<?> clazz) {
-        final DBNode found = DBMeta.of().findBy(clazz);
+        final DBNode found = this.findBy(clazz);
         if (Objects.isNull(found)) {
             return null;
         }
@@ -372,17 +392,17 @@ public class DBRef implements Serializable {
     }
 
     public Class<?> seekType(final String table) {
-        final DBNode found = DBMeta.of().findBy(table);
+        final DBNode found = this.findBy(table);
         return found.entity();  // 内部判断
     }
 
     public Class<?> seekTypeByColumn(final String column) {
-        final String table = this.columnMap.get(column);
+        final String table = this.columnVector.get(column);
         return this.seekType(table);
     }
 
     public Set<Kv<String, String>> seekJoinOn(final Class<?> clazz) {
-        final DBNode found = DBMeta.of().findBy(clazz);
+        final DBNode found = this.findBy(clazz);
         if (Objects.isNull(found)) {
             return Set.of();
         }

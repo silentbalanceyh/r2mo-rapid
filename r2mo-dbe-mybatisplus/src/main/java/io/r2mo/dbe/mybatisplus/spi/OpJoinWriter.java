@@ -2,7 +2,6 @@ package io.r2mo.dbe.mybatisplus.spi;
 
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
-import io.r2mo.base.dbe.DBMeta;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.util.R2MO;
@@ -26,7 +25,7 @@ class OpJoinWriter<T> {
         this.ref = ref;
         this.executor = executor;
 
-        final Set<Class<?>> entitySet = DBMeta.of().registrySet();
+        final Set<Class<?>> entitySet = ref.findJoined();
         final boolean isReady = entitySet.stream().anyMatch(executor::isReady);
         if (!isReady) {
             throw new _501NotSupportException("[ R2MO ] 由于执行器不完整，JOIN 模式的写操作无法执行，请检查是否为所有的实体都配置了对应的执行器！");

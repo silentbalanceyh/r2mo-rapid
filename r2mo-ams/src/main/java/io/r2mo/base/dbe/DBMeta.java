@@ -5,7 +5,6 @@ import io.r2mo.typed.common.MultiKeyMap;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -36,10 +35,6 @@ public class DBMeta {
             INSTANCE = new DBMeta();
         }
         return INSTANCE;
-    }
-    
-    public Set<Class<?>> registrySet() {
-        return SMART.keySet();
     }
 
     public DBMeta registry(final Class<?> entity, final DBNode node) {
