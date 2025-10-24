@@ -1,7 +1,21 @@
 package io.r2mo.base.dbe.common;
 
+import io.r2mo.typed.json.JObject;
+
 /**
  * @author lang : 2025-10-24
  */
-public class DBForOut {
+class DBForOut implements DBFor {
+    @Override
+    public JObject exchange(final JObject response, final DBNode current, final DBRef ref) {
+        T.doExchange(current, ref, alias -> {
+            // 正式的别名
+            final String aliasName = alias.alias();
+            // 正式的别名
+            final String overwrite = alias.name();
+            final Object value = response.get(overwrite);
+            response.put(aliasName, value);
+        });
+        return response;
+    }
 }

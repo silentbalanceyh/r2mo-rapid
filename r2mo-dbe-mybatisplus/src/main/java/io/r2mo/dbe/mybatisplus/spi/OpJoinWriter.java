@@ -5,20 +5,26 @@ import com.github.yulichang.query.MPJQueryWrapper;
 import io.r2mo.base.dbe.common.DBFor;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
+import io.r2mo.base.dbe.common.DBResult;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
-import io.r2mo.spi.SPI;
+import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * @author lang : 2025-10-23
  */
+@Slf4j
 class OpJoinWriter<T> {
     private final JoinProxy<T> executor;
     private final DBRef ref;
@@ -65,41 +71,85 @@ class OpJoinWriter<T> {
 
         // ------------------ 先插入主键实体 ------------------
         // 查找使用主键做 Join 的实体
-        final DBNode found = this.ref.findPrimary();
+        final DBNode first = this.ref.findPrimary();
 
 
         // 主键实体数据交换
-        final JObject cloned = request.copy();
-        final JObject exchanged = DBFor.ofC(true).exchange(cloned, found, this.ref);
+        final JObject clonedMajor = request.copy();
 
 
         // 主键实体反序列化和主键设置
-        final Object waitFor = R2MO.deserializeJ(exchanged.data(), found.entity());
+        final Object waitFor = this.createEntity(clonedMajor, first, null);
+
+
+        // 插入主键实体
+        final MPJBaseMapper mapper = this.executor().mapper(first.entity());
+        final int rows = mapper.insert(waitFor);
+        // BaseEntity 的特殊处理
+        if (waitFor instanceof final BaseEntity waitForClean) {
+            waitForClean.setExtension(Map.of());
+        }
+
+        // ------------------ 处理连接数据集 ------------------
+        final Set<Object> childSet = new HashSet<>();
+        this.ref.findByExclude(first.entity()).forEach(standBy -> {
+            // 暂时只有一个元素留下
+            final Map<String, Object> joinData = this.ref.mapOf(waitFor, standBy);
+
+            // ------------------ 处理其他关联实体 ------------------
+            // 辅助实体数据交换
+            final JObject clonedMinor = request.copy();
+            final Object waitMinor = this.createEntity(clonedMinor, standBy,
+                minorJ -> minorJ.put(joinData));
+
+            // 插入辅助实体
+            final MPJBaseMapper minorMapper = this.executor().mapper(standBy.entity());
+            final int minorRows = minorMapper.insert(waitMinor);
+
+            log.info("[ R2MO ] 主实体 {} / 辅助实体 {}", rows, minorRows);
+            if (waitMinor instanceof final BaseEntity waitMinorClean) {
+                waitMinorClean.setExtension(Map.of());
+            }
+            childSet.add(waitMinor);
+        });
+
+        // 合并之后的最终结果
+        return DBResult.of(this.ref).build(waitFor, childSet, first);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <R> R createEntity(final JObject requestJ, final DBNode node,
+                               final Consumer<JObject> beforeFn) {
+        final JObject exchanged = DBFor.ofAlias().exchange(requestJ, node, this.ref);
+
+
+        if (Objects.nonNull(beforeFn)) {
+            beforeFn.accept(exchanged);
+        }
+        // 主键实体反序列化和主键设置
+        final Object waitFor = R2MO.deserializeJ(exchanged.data(), node.entity());
         if (Objects.isNull(waitFor)) {
             // 反序列化失败
-            return SPI.J();
+            return null;
         }
 
 
         // 主键实体添加过程中的主键补齐
-        final Object pkValue = found.vPrimary(waitFor);
+        final Object pkValue = node.vPrimary(waitFor);
         if (Objects.isNull(pkValue)) {
             // 如果主键类型是 String 内置会自动转换
-            found.vPrimary(waitFor, UUID.randomUUID());
+            node.vPrimary(waitFor, UUID.randomUUID());
         }
-
-
-        // 插入主键实体
-        final MPJBaseMapper mapper = this.executor().mapper(found.entity());
-        final Object created = mapper.insert(waitFor);
-        // 插入实体之后做一次交换
-
-
-        // ------------------ 处理其他关联实体 ------------------
-
-        return null;
+        return (R) waitFor;
     }
 
+    /**
+     * 此处的 id 只能是主实体，而不可以是主键实体，因为主键实体可能会面临关联多个实体的情况！-- 直接底层做约束拦截
+     *
+     * @param id 主实体主键
+     *
+     * @return 删除结果
+     */
     public Boolean removeById(final Serializable id) {
         return null;
     }

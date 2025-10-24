@@ -126,6 +126,7 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
     /** 扩展属性（不在数据库中） */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @TableField(exist = false)
+    @JsonIgnore
     private Map<String, Object> extension = new HashMap<>();
 
     @JsonAnySetter            // 反序列化时：任何未匹配到属性的键都会进这里

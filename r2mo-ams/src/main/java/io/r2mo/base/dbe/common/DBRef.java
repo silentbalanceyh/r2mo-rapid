@@ -1,18 +1,22 @@
 package io.r2mo.base.dbe.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.r2mo.SourceReflect;
 import io.r2mo.base.program.R2Mapping;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.common.MultiKeyMap;
 import io.r2mo.typed.exception.web._400BadRequestException;
+import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -195,9 +199,15 @@ public class DBRef implements Serializable {
      * @return Fluent 方法
      */
     public DBRef alias(final DBAlias alias) {
-        if (alias.isOk()) {
-            this.aliasMap.put(alias.alias(), alias);
+        if (!alias.isOk()) {
+            log.warn("[ R2MO ] 参数有问题，无法构造别名记录：{}", alias);
+            return this;
         }
+        if (this.isAliasConflict(alias)) {
+            log.warn("[ R2MO ] 别名定义冲突，无法构造别名记录：{}", alias);
+            return this;
+        }
+        this.aliasMap.put(alias.alias(), alias);
         return this;
     }
 
@@ -330,6 +340,13 @@ public class DBRef implements Serializable {
         return this.left;
     }
 
+    public Set<DBNode> findByExclude(final Class<?> excludeCls) {
+        // 直接过滤掉 excludeCls
+        return this.joined.values().stream()
+            .filter(item -> excludeCls != item.entity())
+            .collect(Collectors.toSet());
+    }
+
     public Set<String> findAlias() {
         return this.aliasMap.keySet();
     }
@@ -408,5 +425,43 @@ public class DBRef implements Serializable {
         }
         // 找到表名，通过表名提取 Join 信息
         return this.kvMap.get(found.table());
+    }
+
+
+    // ---- CUD 连接运算专用 API
+    public Map<String, Object> mapOf(final Object instance, final DBNode minor) {
+        // 此处的 instance 是主实体
+        final String table = minor.table();
+        final Set<Kv<String, String>> kvJoin = this.kvMap.get(table);
+
+        final Map<String, Object> result = new HashMap<>();
+        if (Objects.isNull(kvJoin)) {
+            /*
+             * 主实体 != 主键实体
+             */
+            this.kvMap.values().stream().flatMap(Collection::stream).forEach((kv -> {
+                final String minorField = kv.value();
+                final String majorField = kv.key();
+                final Object value = SourceReflect.value(instance, majorField);
+                result.put(minorField, value);
+            }));
+        } else {
+            /*
+             * 主实体 == 主键实体
+             */
+            // 由于之前已经做过别名处理，所以此处不再考虑别名的问题，直接计算即可
+            kvJoin.forEach(kv -> {
+                final String minorField = kv.key();
+                final String majorField = kv.value();
+                final Object value = SourceReflect.value(instance, majorField);
+                result.put(minorField, value);
+            });
+        }
+        return result;
+    }
+
+    public JObject mapResult(final Object major, Set<Object> minor) {
+
+        return null;
     }
 }

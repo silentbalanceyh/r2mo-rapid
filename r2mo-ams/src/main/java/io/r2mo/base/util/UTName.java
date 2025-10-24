@@ -1,5 +1,7 @@
 package io.r2mo.base.util;
 
+import java.util.Set;
+
 /**
  * @author lang : 2025-10-24
  */
@@ -13,12 +15,12 @@ class UTName {
 
     private static final int COMMON_MAX_LEN = 30; // 取 Oracle 30 作为共同下限（更保守更可移植）
 
-    private static final java.util.Set<String> RESERVED_COMMON = java.util.Set.of(
+    private static final Set<String> RESERVED_COMMON = Set.of(
         // 一组保守的 SQL92/常见保留字（全大写比对）
         "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "ALTER", "DROP", "TRUNCATE",
         "TABLE", "VIEW", "INDEX", "SEQUENCE", "FUNCTION", "PROCEDURE", "TRIGGER",
         "FROM", "WHERE", "GROUP", "BY", "HAVING", "ORDER", "LIMIT", "OFFSET",
-        "JOIN", "LEFT", "RIGHT", "FULL", "INNER", "OUTER", "ON", "UNION", "ALL", "DISTINCT",
+        "JOIN", "LEFT", "RIGHT", "FULL", "INNER", "OUTER", "ON", "UNION", "DISTINCT",
         "AND", "OR", "NOT", "IN", "IS", "NULL", "LIKE", "BETWEEN", "CASE", "WHEN", "THEN", "ELSE", "END", "AS",
         // 类型/控制等
         "INT", "INTEGER", "SMALLINT", "BIGINT", "DECIMAL", "NUMERIC", "FLOAT", "REAL", "DOUBLE",

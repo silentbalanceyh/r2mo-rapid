@@ -2,13 +2,12 @@ package io.r2mo.dbe.mybatisplus.spi;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
-import io.r2mo.SourceReflect;
 import io.r2mo.base.dbe.common.DBAlias;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
+import io.r2mo.base.dbe.common.DBResult;
 import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
@@ -16,15 +15,12 @@ import io.r2mo.spi.FactoryDBAction;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.json.JArray;
-import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -74,7 +70,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
     public JArray findMany(final MPJQueryWrapper<T> queryWrapper) {
         this.postSelect(queryWrapper);
         final List<Map<String, Object>> rows = this.executor.selectJoinMaps(queryWrapper);
-        return this.toResponse(rows);
+        return DBResult.of(this.ref).build(rows);
     }
 
 
@@ -82,7 +78,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
     public JObject findOne(final MPJQueryWrapper<T> queryWrapper) {
         this.postSelect(queryWrapper);
         final Map<String, Object> row = this.executor.selectJoinMap(queryWrapper);
-        return this.toResponse(row);
+        return DBResult.of(this.ref).build(row);
     }
 
     @Override
@@ -110,7 +106,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
         // 执行查询
         final Map<String, Object> row = this.executor.selectJoinMap(queryWrapper);
         // 返回响应结果
-        return this.toResponse(row);
+        return DBResult.of(this.ref).build(row);
     }
 
     @Override
@@ -144,55 +140,13 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
     }
 
     // ----- 私有方法
-    private JArray toResponse(final List<Map<String, Object>> rows) {
-        final JArray array = SPI.A();
-        rows.stream().map(this::toResponse)
-            .filter(Objects::nonNull)
-            // 过滤之后解开 JObject / JArray 的封装
-            .map(JBase::data)
-            .forEach(array::add);
-        return array;
-    }
 
     private JObject toResponse(final IPage<Map<String, Object>> page) {
         final JObject pageJ = SPI.J();
         pageJ.put("count", page.getTotal());
         final List<Map<String, Object>> rows = page.getRecords();
-        pageJ.put("list", this.toResponse(rows));
+        pageJ.put("list", DBResult.of(this.ref).build(rows));
         return pageJ;
-    }
-
-    private JObject toResponse(final Map<String, Object> row) {
-        final JObject record = SPI.J();
-        for (final String column : row.keySet()) {
-            if (this.ref.isAlias(column)) {
-                // 别名处理，直接启用别名完成所有的事
-                record.put(column, row.get(column));
-                continue;
-            }
-            final Object value = row.get(column);
-
-
-            // 列转属性，但还需要处理 Class<?> 的提取
-            final Class<?> metaCls = this.ref.seekTypeByColumn(column);
-
-
-            // 只有实现类可以这样检索
-            final DBNode found = this.ref.findBy(metaCls);
-            final String vProperty = found.vProperty(column);
-
-
-            // 此处由于做的是 Json 的序列化，所以还需要计算一次
-            final Field field = SourceReflect.fieldN(metaCls, vProperty);
-            Objects.requireNonNull(field, "[ R2MO ] 此处属性必然不为空！");
-            final JsonProperty jProperty = field.getDeclaredAnnotation(JsonProperty.class);
-            if (Objects.isNull(jProperty)) {
-                record.put(vProperty, value);
-            } else {
-                record.put(jProperty.value(), value);
-            }
-        }
-        return record;
     }
 
     private void postSelect(final MPJQueryWrapper<T> queryWrapper) {
