@@ -7,7 +7,6 @@ import io.r2mo.base.util.R2MO;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.common.MultiKeyMap;
 import io.r2mo.typed.exception.web._400BadRequestException;
-import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -464,8 +463,17 @@ public class DBRef implements Serializable {
         return result;
     }
 
-    public JObject mapResult(final Object major, final Set<Object> minor) {
-
-        return null;
+    public Kv<String, String> mapIdAlias() {
+        final DBNode primary = this.find();
+        if (this.kvMap.containsKey(primary.table())) {
+            // 主实体 != 主键实体
+            final DBNode second = this.findSecond();
+            final String tableAlias = this.prefixMap.mapTo(second.table());
+            return Kv.create(tableAlias, second.key().key());
+        } else {
+            // 主实体 == 主键实体
+            final String tableAlias = this.prefixMap.mapTo(primary.table());
+            return Kv.create(tableAlias, primary.key().key());
+        }
     }
 }

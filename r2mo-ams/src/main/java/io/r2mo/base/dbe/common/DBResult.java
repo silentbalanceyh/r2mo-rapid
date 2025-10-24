@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.r2mo.SourceReflect;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
@@ -37,6 +38,15 @@ public class DBResult {
         final JObject serialized = SPI.V_UTIL.serializeJson(major);
         final JObject exchanged = DBFor.ofOut().exchange(serialized, current, this.ref);
 
+        // 返回的 id 如果不是主实体的 id，则要移除过后切换成主实体的 id 信息
+        // 旧代码：删除太早了，map 的时候会出错
+        //        final DBNode nodeMajor = this.ref.find();
+        //        if (nodeMajor.entity() != current.entity()) {
+        //            final Kv<String, String> kv = nodeMajor.key();
+        //            exchanged.remove(kv.value());
+        //        }
+
+        final DBNode nodeMajor = this.ref.find();
         minorSet.forEach(minor -> {
             final Class<?> minorCls = minor.getClass();
             final JObject serialized0 = SPI.V_UTIL.serializeJson(minor);
@@ -44,13 +54,33 @@ public class DBResult {
             final DBNode child = this.ref.findBy(minorCls);
             final JObject exchanged0 = DBFor.ofOut().exchange(serialized0, child, this.ref);
 
+
             // 拼接子实体，在 exchanged 中追加 exchanged0
-            exchanged0.fieldNames().forEach(field -> {
-                if (!exchanged.containsKey(field)) {
-                    exchanged.put(field, exchanged0.get(field));
+            for (final String field : exchanged0.fieldNames()) {
+                // FIX-DBE: 主实体检查（多表JOIN会碰上）
+                /*
+                 * 当主实体和子实体相同时，说明当前的 child 就是主实体（非主键实体）此时返回的 id 应该是主实体 id，而不应该是
+                 * 主键实体 id，主键实体 id 无法直接返回单数据，因为主键实体 id 通常会导致多条数据，此时的 id 无法判别 JOIN
+                 * 之后的结果，如果是 findMany 的模式，由于主实体会优先处理序列化，所以不会导致 id 的唯一问题，但是如果在单独
+                 * 数据的增删改的时候，必须要保证这个 id 的唯一性。
+                 */
+                if (nodeMajor.entity() == child.entity()) {
+                    // 此时的 child 是主实体
+                    final Kv<String, String> kv = nodeMajor.key();
+                    if (field.equals(kv.value())) {
+                        // 只会执行一次（覆盖）
+                        exchanged.put(field, exchanged0.get(field));
+                    }
                 }
-            });
+
+
+                if (exchanged.containsKey(field)) {
+                    continue;
+                }
+                exchanged.put(field, exchanged0.get(field));
+            }
         });
+        // 此处要使用主实体的 ID 做对应的值返回
         return exchanged;
     }
 

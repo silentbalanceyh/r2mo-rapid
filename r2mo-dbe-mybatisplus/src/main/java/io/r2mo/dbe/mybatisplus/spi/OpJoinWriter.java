@@ -132,12 +132,39 @@ class OpJoinWriter<T> {
         if (Objects.isNull(pkValue)) {
             // 如果主键类型是 String 内置会自动转换
             node.vPrimary(waitFor, UUID.randomUUID());
+            // FIX-DBE: 消费一次就删除，防止子表和主表同主键
+            requestJ.remove(node.key().value());
         }
         return (R) waitFor;
     }
 
+    @SuppressWarnings("all")
     public Boolean removeBy(final JObject removedJ) {
-        return null;
+        // ------------------ 删除非主键实体 ------------------
+        // 查找使用主键做 Join 的实体
+        final DBNode first = this.ref.findPrimary();
+
+
+        // 先删除子实体，再删除主键 Join 的实体
+        this.ref.findByExclude(first.entity()).forEach(standBy ->
+            this.removeBy(removedJ, standBy));
+
+
+        // 删除主实体
+        this.removeBy(removedJ, first);
+
+
+        // 双重删除
+        return true;
+    }
+
+    @SuppressWarnings("all")
+    private void removeBy(final JObject removedJ, final DBNode node) {
+        final MPJBaseMapper mapper = this.executor().mapper(node.entity());
+        // 辅助数据可能无主键，只能使用连接键来删除
+        final JObject condition = DBFor.ofRemove().exchange(removedJ, node, this.ref);
+        // 处理条件信息，转换成 Map
+        mapper.deleteByMap(condition.toMap());
     }
 
     @SuppressWarnings("all")

@@ -30,26 +30,20 @@ public abstract class AppIoTestSupport {
 
     protected <T> List<T> inMany(final String filename, final Class<T> clazz) {
         final JArray mappedEntity = this.fs().inJson(filename);
-        log.info("[ R2MOMO ] ( Many ) 读取测试数据：{} -> {}", filename, mappedEntity.encodePretty());
         return UT.deserializeJson(mappedEntity, clazz);
     }
 
     protected JObject inJObject(final String filename) {
-        final JObject json = this.fs().inJson(filename);
-        log.info("[ R2MOMO ] ( JObject ) 读取测试数据：{} -> {}", filename, json.encodePretty());
-        return json;
+        return this.fs().inJson(filename);
     }
 
     protected JArray inJArray(final String filename) {
-        final JArray json = this.fs().inJson(filename);
-        log.info("[ R2MOMO ] ( JArray ) 读取测试数据：{} -> {}", filename, json.encodePretty());
-        return json;
+        return this.fs().inJson(filename);
     }
 
     protected <T> T inOne(final String filename, final Class<T> clazz, final ClassLoader loader) {
         final URL url = loader.getResource(filename);
         final JObject mappedEntity = this.fs().inJson(url);
-        log.info("[ R2MOMO ] ( One ) CP / 读取测试数据：{} -> {}", filename, mappedEntity.encodePretty());
         return UT.deserializeJson(mappedEntity, clazz);
     }
 
@@ -60,7 +54,6 @@ public abstract class AppIoTestSupport {
     protected <T> List<T> inMany(final String filename, final Class<T> clazz, final ClassLoader loader) {
         final URL url = loader.getResource(filename);
         final JArray mappedEntity = this.fs().inJson(url);
-        log.info("[ R2MOMO ] ( Many ) CP / 读取测试数据：{} -> {}", filename, mappedEntity.encodePretty());
         return UT.deserializeJson(mappedEntity, clazz);
     }
 
@@ -70,9 +63,7 @@ public abstract class AppIoTestSupport {
 
     protected JObject inJObject(final String filename, final ClassLoader loader) {
         final URL url = loader.getResource(filename);
-        final JObject json = this.fs().inJson(url);
-        log.info("[ R2MOMO ] ( JObject ) CP / 读取测试数据：{} -> {}", filename, json.encodePretty());
-        return json;
+        return this.fs().inJson(url);
     }
 
     protected JObject inCPJObject(final String filename) {
@@ -81,9 +72,7 @@ public abstract class AppIoTestSupport {
 
     protected JArray inJArray(final String filename, final ClassLoader loader) {
         final URL url = loader.getResource(filename);
-        final JArray json = this.fs().inJson(url);
-        log.info("[ R2MOMO ] ( JArray ) CP / 读取测试数据：{} -> {}", filename, json.encodePretty());
-        return json;
+        return this.fs().inJson(url);
     }
 
     protected JArray inCPJArray(final String filename) {

@@ -25,6 +25,10 @@ public interface DBFor {
         return CCT_DB_FOR.pick(DBForFilter::new, DBForFilter.class.getName());
     }
 
+    static DBFor ofRemove() {
+        return CCT_DB_FOR.pick(DBForRemove::new, DBForRemove.class.getName());
+    }
+
     default JObject exchange(final JObject request, final DBNode current, final DBRef ref) {
         throw new _501NotSupportException("[ R2MO ] 当前 DBFor 未实现此主方法！");
     }

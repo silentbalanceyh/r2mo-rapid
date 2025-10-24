@@ -14,6 +14,7 @@ import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
 import io.r2mo.spi.FactoryDBAction;
 import io.r2mo.spi.SPI;
+import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
@@ -192,6 +193,10 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
                 selectBuilder.append(",").append(tableAlias).append(".").append(column)
                     .append(" AS ").append(aliasName);
             }
+            final Kv<String, String> kv = this.ref.mapIdAlias();
+            selectBuilder.append(",")
+                .append(kv.key()).append(".").append(kv.value())
+                .append(" AS ").append(kv.value());
             log.info("[ R2MO ] SELECT 语句部分 = {}", selectBuilder);
         }
         queryWrapper.select(selectBuilder.toString());
