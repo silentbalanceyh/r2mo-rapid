@@ -6,15 +6,18 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.r2mo.base.dbe.operation.QrOne;
 import io.r2mo.base.dbe.syntax.QTree;
 import io.r2mo.dbe.common.operation.AbstractDbOperation;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * @author lang : 2025-08-28
  */
+@Slf4j
 class QrOneImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWrapper<T>, T, M> implements QrOne<T> {
     QrOneImpl(final Class<T> entityCls, final M m) {
         super(entityCls, m);
@@ -41,7 +44,8 @@ class QrOneImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWra
             return Optional.empty();
         }
         final QueryWrapper<T> query = this.analyzer().where(condition);
-        return Optional.ofNullable(this.executor().selectOne(query));
+
+        return this.toResult(() -> this.executor().selectOne(query));
     }
 
     @Override
@@ -51,7 +55,7 @@ class QrOneImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWra
         }
 
 
-        return Optional.ofNullable(this.executor().selectById(id));
+        return this.toResult(() -> this.executor().selectById(id));
     }
 
     @Override
@@ -67,6 +71,15 @@ class QrOneImpl<T, M extends BaseMapper<T>> extends AbstractDbOperation<QueryWra
 
 
         // Result
-        return Optional.ofNullable(this.executor().selectOne(query));
+        return this.toResult(() -> this.executor().selectOne(query));
+    }
+
+    private Optional<T> toResult(final Supplier<T> supplier) {
+        try {
+            return Optional.ofNullable(supplier.get());
+        } catch (final Exception ex) {
+            log.error(ex.getMessage(), ex);
+            return Optional.empty();
+        }
     }
 }

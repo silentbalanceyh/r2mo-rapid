@@ -12,6 +12,7 @@ import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
+import io.r2mo.spi.FactoryDBAction;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.json.JArray;
@@ -34,20 +35,32 @@ import java.util.Set;
 public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWrapper<T>> {
 
     private final M executor;
-    private final OpJoinAnalyzer<T> joinAnalyzer;
+    private final OpJoinAnalyzer<T> analyzer;
     private final DBRef ref;
-    private final DBNode node;
     // 后置构造，等待执行完成后才启动的构造器，且构造时会传入 executor 之外的其他 executor
     private OpJoinWriter<T> writer;
 
     OpJoinImpl(final DBRef ref, final M executor) {
         this.ref = ref;
         this.executor = executor;
-        this.joinAnalyzer = new OpJoinAnalyzer<>(ref);
-        final Class<?> classT0 = SourceReflect.classT0(this.getClass());
-        this.node = this.ref.findBy(classT0);
+        this.analyzer = new OpJoinAnalyzer<>(ref);
     }
 
+    /**
+     * 此处的后期构造主要用于
+     * <pre>
+     *     抽象层   {@link FactoryDBAction} / {@link OpJoin}
+     *
+     *                                       {@link OpJoinImpl} -> {@link OpJoinWriter}
+     *
+     *                                       M = {@link MPJBaseMapper} 类型
+     *     由于整个继承树上的类型是 MPJBaseMapper<T> 类型的执行器，所以无法直接将第二执行器或第三执行器注入到 {@link OpJoinImpl}
+     *     中去完成写操作的支持，所以只能通过此处的后置构造来实现注入过程，确保{@link OpJoinWriter} 能够拿到完整的执行器集合，从而
+     *     完成写操作，并且在执行写之前会执行相关检查来确保写操作是合法的。
+     * </pre>
+     *
+     * @param joinProxy JoinProxy
+     */
     public void afterConstruct(final JoinProxy<T> joinProxy) {
         // 此处设置是在构造阶段，所以不会出现先调用 this.writer() 的场景
         this.writer = new OpJoinWriter<>(this.ref, joinProxy);
@@ -75,11 +88,11 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
     @Override
     public JObject findPage(final QQuery query) {
         // 构造 PAGE 条件，此处已包含了 projection 部分的过滤
-        final MPJQueryWrapper<T> queryWrapper = this.joinAnalyzer.where(query);
+        final MPJQueryWrapper<T> queryWrapper = this.analyzer.where(query);
         this.postSelect(queryWrapper);
 
         // 构造 分页 参数
-        final IPage<Map<String, Object>> page = this.joinAnalyzer.page(query);
+        final IPage<Map<String, Object>> page = this.analyzer.page(query);
 
         final IPage<Map<String, Object>> result = this.executor.selectJoinMapsPage(page, queryWrapper);
 
@@ -89,7 +102,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
     @Override
     public JObject findById(final Serializable id) {
         // 构造 ID 条件
-        final Kv<String, String> kv = this.node.key();
+        final Kv<String, String> kv = this.ref.find().key();
         final MPJQueryWrapper<T> queryWrapper = new MPJQueryWrapper<>();
         queryWrapper.eq(kv.key(), id);
         // 构造查询结果

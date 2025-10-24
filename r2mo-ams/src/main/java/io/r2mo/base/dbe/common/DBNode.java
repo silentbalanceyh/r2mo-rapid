@@ -5,13 +5,17 @@ import io.r2mo.SourceReflect;
 import io.r2mo.base.program.R2Mapping;
 import io.r2mo.base.program.R2Vector;
 import io.r2mo.typed.common.Kv;
+import io.r2mo.typed.exception.web._501NotSupportException;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -32,6 +36,7 @@ public class DBNode implements Serializable {
     // ----------------------- 实体相关 ------------------------
     private Class<?> entity;                            // 实体名                   = Department
     private Class<?> dao;                               // DAO 名                  = DepartmentDAO
+    @Getter(AccessLevel.NONE)
     private ConcurrentMap<String, Class<?>> types = new ConcurrentHashMap<>();
 
     // ----------------------- 二者共享 ------------------------
@@ -112,9 +117,35 @@ public class DBNode implements Serializable {
         return SourceReflect.value(instance, pkProperty);
     }
 
+    /**
+     * 主键类型暂时只考虑
+     * <pre>
+     *     1. {@link String}
+     *     2. {@link UUID}
+     * </pre>
+     *
+     * @param instance 实例信息
+     * @param value    主键值
+     */
     public void vPrimary(final Object instance, final Object value) {
+        if (Objects.isNull(value)) {
+            return;
+        }
         final String pkProperty = this.key.value();
-        SourceReflect.value(instance, pkProperty, value);
+        final Class<?> type = this.types.get(pkProperty);
+        final Object normalized;
+        if (String.class == type) {
+            normalized = value.toString();
+        } else if (UUID.class == type) {
+            if (value instanceof UUID) {
+                normalized = value;
+            } else {
+                normalized = UUID.fromString(value.toString());
+            }
+        } else {
+            throw new _501NotSupportException("[ R2MO ] 不支持的主键类型设置：" + type);
+        }
+        SourceReflect.value(instance, pkProperty, normalized);
     }
 
     public String name() {

@@ -142,10 +142,10 @@ public class DBRef implements Serializable {
         this.registrySet.add(nodeRight.entity());
 
         // 列 -> 表的映射关系填充
-        nodeLeft.vector()
-            .mapBy((column, field) -> this.columnVector.put(column, nodeLeft.table()));
-        nodeRight.vector()
-            .mapBy((column, field) -> this.columnVector.put(column, nodeRight.table()));
+        nodeLeft.vector().mapByColumn().forEach((column, field) ->
+            this.columnVector.put(column, nodeLeft.table()));
+        nodeRight.vector().mapByColumn().forEach((column, field) ->
+            this.columnVector.put(column, nodeRight.table()));
 
         // 填充当前内容
         this.joined.put(nodeLeft.name(), nodeLeft, nodeLeft.table());
