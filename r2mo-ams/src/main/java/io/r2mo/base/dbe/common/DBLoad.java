@@ -1,5 +1,6 @@
 package io.r2mo.base.dbe.common;
 
+import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.program.R2Vector;
 
 /**
@@ -12,9 +13,13 @@ import io.r2mo.base.program.R2Vector;
 public interface DBLoad {
     String DEFAULT_SPID_META = "DEFAULT_DB_META";
 
-    DBNode configure(Class<?> entity, R2Vector vector);
+    DBNode configure(Class<?> entity, R2Vector vector, DBS dbs);
+
+    default DBNode configure(Class<?> entity, R2Vector vector) {
+        return configure(entity, vector, null);
+    }
 
     default DBNode configure(final Class<?> entity) {
-        return this.configure(entity, null);
+        return this.configure(entity, null, null);
     }
 }

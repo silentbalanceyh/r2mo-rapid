@@ -27,10 +27,10 @@ import java.util.Set;
  * @author lang : 2025-10-23
  */
 @Slf4j
-public class OpJoinAnalyzer<T> implements QrAnalyzer<MPJQueryWrapper<T>> {
+public class QrAnalyzerJoin<T> implements QrAnalyzer<MPJQueryWrapper<T>> {
     private final DBRef ref;
 
-    public OpJoinAnalyzer(final DBRef ref) {
+    public QrAnalyzerJoin(final DBRef ref) {
         this.ref = ref;
     }
 

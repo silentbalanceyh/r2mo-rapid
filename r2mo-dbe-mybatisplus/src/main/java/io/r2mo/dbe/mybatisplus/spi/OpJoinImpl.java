@@ -32,7 +32,7 @@ import java.util.Set;
 public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWrapper<T>> {
 
     private final M executor;
-    private final OpJoinAnalyzer<T> analyzer;
+    private final QrAnalyzerJoin<T> analyzer;
     private final DBRef ref;
     // 后置构造，等待执行完成后才启动的构造器，且构造时会传入 executor 之外的其他 executor
     private OpJoinWriter<T> writer;
@@ -40,7 +40,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
     OpJoinImpl(final DBRef ref, final M executor) {
         this.ref = ref;
         this.executor = executor;
-        this.analyzer = new OpJoinAnalyzer<>(ref);
+        this.analyzer = new QrAnalyzerJoin<>(ref);
     }
 
     /**

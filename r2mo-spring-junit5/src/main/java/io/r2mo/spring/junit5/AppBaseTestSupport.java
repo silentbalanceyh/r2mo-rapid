@@ -2,9 +2,9 @@ package io.r2mo.spring.junit5;
 
 import com.github.yulichang.base.MPJBaseMapper;
 import io.r2mo.SourceReflect;
+import io.r2mo.base.dbe.Join;
 import io.r2mo.dbe.mybatisplus.DBE;
 import io.r2mo.dbe.mybatisplus.DBJ;
-import io.r2mo.dbe.mybatisplus.Join;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
 import io.r2mo.function.Actuator;
 import io.r2mo.function.Fn;

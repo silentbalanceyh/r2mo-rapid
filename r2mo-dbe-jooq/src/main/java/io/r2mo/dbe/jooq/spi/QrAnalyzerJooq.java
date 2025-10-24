@@ -15,7 +15,6 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +36,6 @@ public class QrAnalyzerJooq implements QrAnalyzer<Condition> {
         final Field<?> column = this.meta.findColumn(field);
         final QValue value = QValue.of(column.getName(), QOp.IN, values).type(column.getType());
         return Clause.of(value).where(column, value);
-    }
-
-    @Override
-    public Condition whereId(final Serializable id) {
-        return null;
     }
 
     @Override

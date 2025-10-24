@@ -22,10 +22,13 @@ import org.jooq.DSLContext;
 @SuppressWarnings("unchecked")
 public class FactoryDBActionJooq extends FactoryDBActionBase {
 
+    @SuppressWarnings("all")
+    private static final Cc<String, OpJoin> CCT_OP_JOIN = Cc.openThread();
 
     @Override
+    @SuppressWarnings("all")
     public <T, EXECUTOR, CONDITION> OpJoin<T, CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
-        return null;
+        return CCT_OP_JOIN.pick(() -> new OpJoinJooq(ref, (DSLContext) executor), String.valueOf(ref.hashCode()));
     }
 
     @Override

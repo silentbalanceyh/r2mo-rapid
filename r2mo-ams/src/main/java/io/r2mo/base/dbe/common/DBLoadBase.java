@@ -2,6 +2,7 @@ package io.r2mo.base.dbe.common;
 
 import io.r2mo.SourceReflect;
 import io.r2mo.base.dbe.DBMeta;
+import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.program.R2Vector;
 
 import java.lang.reflect.Field;
@@ -25,7 +26,7 @@ public abstract class DBLoadBase implements DBLoad {
     protected abstract void setupTable(DBNode node, Class<?> entity);
 
     @Override
-    public DBNode configure(final Class<?> entity, final R2Vector vector) {
+    public DBNode configure(final Class<?> entity, final R2Vector vector, final DBS dbs) {
         /*
          * FIX-DBE: 快速截断处理，提取已经存在的 entity，DBNode 本身就是不可变的对象，一旦创建之后
          * 就维持一致性，不再发生变化，所以这种场景下，直接返回已经存在的 DBNode 即可

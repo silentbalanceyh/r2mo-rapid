@@ -2,13 +2,14 @@ package io.r2mo.dbe.mybatisplus;
 
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
+import io.r2mo.base.dbe.Join;
 import io.r2mo.base.dbe.common.DBLoad;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.dbe.common.DBEJ;
-import io.r2mo.dbe.mybatisplus.spi.OpJoinAnalyzer;
 import io.r2mo.dbe.mybatisplus.spi.OpJoinImpl;
+import io.r2mo.dbe.mybatisplus.spi.QrAnalyzerJoin;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Kv;
@@ -31,7 +32,7 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
     private DBJ(final DBRef ref, final JoinProxy<T> executor) {
         super(ref, executor.mapper());
         this.joinProxy = executor;
-        this.analyzer = new OpJoinAnalyzer<>(ref);
+        this.analyzer = new QrAnalyzerJoin<>(ref);
         // 强制执行过程
         this.afterConstruct();
     }
@@ -85,8 +86,8 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
     public static <T> DBJ<T> of(final Join meta, final JoinProxy<T> baseMapper) {
         // 新版直接使用 DBLoad 来完成节点的构建（一次性构建完成）
         final DBLoad loader = SPI.SPI_DB.loader();
-        final DBNode leftNode = loader.configure(meta.from());
-        final DBNode rightNode = loader.configure(meta.to());
+        final DBNode leftNode = loader.configure(meta.from(), meta.vFrom());
+        final DBNode rightNode = loader.configure(meta.to(), meta.vTo());
         final Kv<String, String> kvJoin = Kv.create(meta.fromField(), meta.toField());
         return of(DBRef.of(leftNode, rightNode, kvJoin), baseMapper);
     }
