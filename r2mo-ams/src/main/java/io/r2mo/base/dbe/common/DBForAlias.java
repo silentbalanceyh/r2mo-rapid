@@ -18,15 +18,16 @@ class DBForAlias implements DBFor {
     @Override
     public JObject exchange(final JObject request,
                             final DBNode current, final DBRef ref) {
+        final JObject processed = request.copy();
         T.doExchange(current, ref, alias -> {
 
             // 正式的别名
             final String aliasName = alias.alias();
             final String overwrite = alias.name();
-            final Object value = request.get(aliasName);
-            request.put(overwrite, value);
+            final Object value = processed.get(aliasName);
+            processed.put(overwrite, value);
             log.debug("[ R2MO ] (In) 替换的表名别名：[ {} ] -> [ {} ]，对应的值：[ {} ]", aliasName, overwrite, value);
         });
-        return request;
+        return processed;
     }
 }

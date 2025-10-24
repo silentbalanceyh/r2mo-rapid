@@ -4,6 +4,7 @@ import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.base.dbe.syntax.QTree;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
@@ -13,6 +14,10 @@ import java.util.Objects;
 public interface QrAnalyzer<CONDITION> {
 
     CONDITION whereIn(String field, Object... values);
+
+    default CONDITION whereId(final Serializable id) {
+        return null;
+    }
 
     CONDITION where(Map<String, Object> condition);
 

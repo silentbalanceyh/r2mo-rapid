@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
 import io.r2mo.base.dbe.common.DBAlias;
+import io.r2mo.base.dbe.common.DBFor;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.common.DBResult;
@@ -13,7 +14,6 @@ import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
 import io.r2mo.spi.FactoryDBAction;
 import io.r2mo.spi.SPI;
-import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
@@ -98,9 +98,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
     @Override
     public JObject findById(final Serializable id) {
         // 构造 ID 条件
-        final Kv<String, String> kv = this.ref.find().key();
-        final MPJQueryWrapper<T> queryWrapper = new MPJQueryWrapper<>();
-        queryWrapper.eq(kv.key(), id);
+        final MPJQueryWrapper<T> queryWrapper = this.analyzer.whereId(id);
         // 构造查询结果
         this.postSelect(queryWrapper);
         // 执行查询
@@ -121,22 +119,40 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQ
 
     @Override
     public Boolean removeById(final Serializable id) {
-        return this.writer().removeById(id);
+        final JObject stored = this.findById(id);
+        return this.writer().removeBy(stored);
     }
 
     @Override
     public Boolean removeBy(final MPJQueryWrapper<T> queryWrapper) {
-        return this.writer().removeBy(queryWrapper);
+        final JObject stored = this.findOne(queryWrapper);
+        return this.writer().removeBy(stored);
     }
 
     @Override
     public JObject updateById(final Serializable id, final JObject latest) {
-        return this.writer().updateById(id, latest);
+        // 原始数据
+        final JObject stored = this.findById(id);
+        // 数据压缩
+        final JObject compressed = DBFor.ofFilter().exchange(latest, this.ref);
+        // 合并数据
+        compressed.fieldNames()
+            .forEach(field -> stored.put(field, compressed.get(field)));
+
+        return this.writer().update(stored);
     }
 
     @Override
     public JObject update(final MPJQueryWrapper<T> queryWrapper, final JObject latest) {
-        return this.writer().update(queryWrapper, latest);
+        // 原始数据
+        final JObject stored = this.findOne(queryWrapper);
+        // 数据压缩
+        final JObject compressed = DBFor.ofFilter().exchange(latest, this.ref);
+        // 合并数据
+        compressed.fieldNames()
+            .forEach(field -> stored.put(field, compressed.get(field)));
+
+        return this.writer().update(stored);
     }
 
     // ----- 私有方法

@@ -8,14 +8,15 @@ import io.r2mo.typed.json.JObject;
 class DBForOut implements DBFor {
     @Override
     public JObject exchange(final JObject response, final DBNode current, final DBRef ref) {
+        final JObject processed = response.copy();
         T.doExchange(current, ref, alias -> {
             // 正式的别名
             final String aliasName = alias.alias();
             // 正式的别名
             final String overwrite = alias.name();
-            final Object value = response.get(overwrite);
-            response.put(aliasName, value);
+            final Object value = processed.get(overwrite);
+            processed.put(aliasName, value);
         });
-        return response;
+        return processed;
     }
 }

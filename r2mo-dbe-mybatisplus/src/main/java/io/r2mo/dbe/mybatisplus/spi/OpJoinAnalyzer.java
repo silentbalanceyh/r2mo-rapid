@@ -16,6 +16,7 @@ import io.r2mo.base.dbe.syntax.QValue;
 import io.r2mo.typed.common.Kv;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,17 @@ public class OpJoinAnalyzer<T> implements QrAnalyzer<MPJQueryWrapper<T>> {
         final String column = this.ref.seekColumn(qValue.field());
         final MPJQueryWrapper<T> condition = this.waitForQuery();
         condition.in(column, MetaFix.toCollection(values));
+        return condition;
+    }
+
+    @Override
+    public MPJQueryWrapper<T> whereId(final Serializable id) {
+        final MPJQueryWrapper<T> condition = this.waitForQuery();
+        final DBNode node = this.ref.find();
+
+        final String tableAlias = this.ref.seekAlias(node.entity());
+        final Kv<String, String> kv = this.ref.find().key();
+        condition.eq(tableAlias + "." + kv.key(), id);
         return condition;
     }
 

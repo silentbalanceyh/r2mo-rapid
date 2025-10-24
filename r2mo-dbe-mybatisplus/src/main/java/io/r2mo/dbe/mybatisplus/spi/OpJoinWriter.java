@@ -1,7 +1,6 @@
 package io.r2mo.dbe.mybatisplus.spi;
 
 import com.github.yulichang.base.MPJBaseMapper;
-import com.github.yulichang.query.MPJQueryWrapper;
 import io.r2mo.base.dbe.common.DBFor;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
@@ -13,7 +12,6 @@ import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -74,12 +72,8 @@ class OpJoinWriter<T> {
         final DBNode first = this.ref.findPrimary();
 
 
-        // 主键实体数据交换
-        final JObject clonedMajor = request.copy();
-
-
         // 主键实体反序列化和主键设置
-        final Object waitFor = this.createEntity(clonedMajor, first, null);
+        final Object waitFor = this.buildEntity(request, first, null);
 
 
         // 插入主键实体
@@ -98,8 +92,7 @@ class OpJoinWriter<T> {
 
             // ------------------ 处理其他关联实体 ------------------
             // 辅助实体数据交换
-            final JObject clonedMinor = request.copy();
-            final Object waitMinor = this.createEntity(clonedMinor, standBy,
+            final Object waitMinor = this.buildEntity(request, standBy,
                 minorJ -> minorJ.put(joinData));
 
             // 插入辅助实体
@@ -118,8 +111,8 @@ class OpJoinWriter<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private <R> R createEntity(final JObject requestJ, final DBNode node,
-                               final Consumer<JObject> beforeFn) {
+    private <R> R buildEntity(final JObject requestJ, final DBNode node,
+                              final Consumer<JObject> beforeFn) {
         final JObject exchanged = DBFor.ofAlias().exchange(requestJ, node, this.ref);
 
 
@@ -143,26 +136,52 @@ class OpJoinWriter<T> {
         return (R) waitFor;
     }
 
-    /**
-     * 此处的 id 只能是主实体，而不可以是主键实体，因为主键实体可能会面临关联多个实体的情况！-- 直接底层做约束拦截
-     *
-     * @param id 主实体主键
-     *
-     * @return 删除结果
-     */
-    public Boolean removeById(final Serializable id) {
+    public Boolean removeBy(final JObject removedJ) {
         return null;
     }
 
-    public Boolean removeBy(final MPJQueryWrapper<T> queryWrapper) {
-        return null;
-    }
+    @SuppressWarnings("all")
+    public JObject update(final JObject updatedJ) {
+        // ------------------ 先插入主键实体 ------------------
+        // 查找使用主键做 Join 的实体
+        final DBNode first = this.ref.findPrimary();
 
-    public JObject updateById(final Serializable id, final JObject latest) {
-        return null;
-    }
 
-    public JObject update(final MPJQueryWrapper<T> queryWrapper, final JObject latest) {
-        return null;
+        // 主键实体反序列化和主键设置
+        final Object waitFor = this.buildEntity(updatedJ, first, null);
+
+
+        // 插入主键实体
+        final MPJBaseMapper mapper = this.executor().mapper(first.entity());
+        final int rows = mapper.updateById(waitFor);
+        // BaseEntity 的特殊处理
+        if (waitFor instanceof final BaseEntity waitForClean) {
+            waitForClean.setExtension(Map.of());
+        }
+
+        // ------------------ 处理连接数据集 ------------------
+        final Set<Object> childSet = new HashSet<>();
+        this.ref.findByExclude(first.entity()).forEach(standBy -> {
+            // 暂时只有一个元素留下
+            final Map<String, Object> joinData = this.ref.mapOf(waitFor, standBy);
+
+            // ------------------ 处理其他关联实体 ------------------
+            // 辅助实体数据交换
+            final Object waitMinor = this.buildEntity(updatedJ, standBy,
+                minorJ -> minorJ.put(joinData));
+
+            // 插入辅助实体
+            final MPJBaseMapper minorMapper = this.executor().mapper(standBy.entity());
+            final int minorRows = minorMapper.updateById(waitMinor);
+
+            log.info("[ R2MO ] 主实体 {} / 辅助实体 {}", rows, minorRows);
+            if (waitMinor instanceof final BaseEntity waitMinorClean) {
+                waitMinorClean.setExtension(Map.of());
+            }
+            childSet.add(waitMinor);
+        });
+
+        // 合并之后的最终结果
+        return DBResult.of(this.ref).build(waitFor, childSet, first);
     }
 }

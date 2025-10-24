@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Join 的描述主要包含一套新的结构，和原始结构不放到一起，等价于每个实体都会包含一套 {@link DBRef} 的结构用来做 Join
@@ -427,6 +428,9 @@ public class DBRef implements Serializable {
         return this.kvMap.get(found.table());
     }
 
+    public Stream<Kv<String, String>> seekJoinOn() {
+        return this.kvMap.values().stream().flatMap(Collection::stream);
+    }
 
     // ---- CUD 连接运算专用 API
     public Map<String, Object> mapOf(final Object instance, final DBNode minor) {
@@ -439,7 +443,7 @@ public class DBRef implements Serializable {
             /*
              * 主实体 != 主键实体
              */
-            this.kvMap.values().stream().flatMap(Collection::stream).forEach((kv -> {
+            this.seekJoinOn().forEach((kv -> {
                 final String minorField = kv.value();
                 final String majorField = kv.key();
                 final Object value = SourceReflect.value(instance, majorField);
@@ -460,7 +464,7 @@ public class DBRef implements Serializable {
         return result;
     }
 
-    public JObject mapResult(final Object major, Set<Object> minor) {
+    public JObject mapResult(final Object major, final Set<Object> minor) {
 
         return null;
     }
