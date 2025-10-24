@@ -2,7 +2,7 @@ package io.r2mo.vertx.jooq;
 
 import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.dbe.Database;
-import io.r2mo.base.dbe.Join;
+import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.dbe.jooq.DBE;
 import io.r2mo.dbe.jooq.core.domain.JooqDatabase;
 import io.r2mo.typed.exception.web._501NotSupportException;
@@ -21,7 +21,7 @@ class DBJxBase {
 
     private final ConcurrentMap<Class<?>, DBE<?>> dbeMap = new ConcurrentHashMap<>();
 
-    protected DBJxBase(final Join join, final DBS dbs) {
+    protected DBJxBase(final DBRef ref, final DBS dbs) {
         // 提取 Database 引用，构造同步专用的 DSLContext
         final Database database = dbs.getDatabase();
         if (!(database instanceof final JooqDatabase jooqDatabase)) {
