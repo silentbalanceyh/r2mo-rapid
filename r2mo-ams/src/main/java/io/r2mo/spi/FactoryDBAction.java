@@ -2,7 +2,8 @@ package io.r2mo.spi;
 
 import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.dbe.Database;
-import io.r2mo.base.dbe.join.DBRef;
+import io.r2mo.base.dbe.common.DBLoad;
+import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.OpAggr;
 import io.r2mo.base.dbe.operation.OpDb;
 import io.r2mo.base.dbe.operation.OpJoin;
@@ -36,4 +37,6 @@ public interface FactoryDBAction {
     default DBS configure(final Database database) {
         return null;
     }
+
+    DBLoad loader();
 }

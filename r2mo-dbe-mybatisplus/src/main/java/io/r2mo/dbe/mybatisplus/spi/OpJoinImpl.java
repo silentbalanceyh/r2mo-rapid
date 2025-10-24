@@ -6,12 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
 import io.r2mo.SourceReflect;
-import io.r2mo.base.dbe.join.DBAlias;
-import io.r2mo.base.dbe.join.DBRef;
+import io.r2mo.base.dbe.DBMeta;
+import io.r2mo.base.dbe.common.DBAlias;
+import io.r2mo.base.dbe.common.DBNode;
+import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
 import io.r2mo.spi.SPI;
+import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
@@ -29,16 +32,21 @@ import java.util.Set;
  * @author lang : 2025-10-23
  */
 @Slf4j
-public class OpJoinImpl<T, M extends MPJBaseMapper<T>> extends OpJoinPre<T> implements OpJoin<T, MPJQueryWrapper<T>> {
+public class OpJoinImpl<T, M extends MPJBaseMapper<T>> implements OpJoin<T, MPJQueryWrapper<T>> {
 
     private final M executor;
     private final OpJoinAnalyzer<T> joinAnalyzer;
+    private final DBRef ref;
+    private final DBNode node;
+    // 后置构造，等待执行完成后才启动的构造器，且构造时会传入 executor 之外的其他 executor
     private OpJoinWriter<T> writer;
 
     OpJoinImpl(final DBRef ref, final M executor) {
-        super(ref);
+        this.ref = ref;
         this.executor = executor;
         this.joinAnalyzer = new OpJoinAnalyzer<>(ref);
+        final Class<?> classT0 = SourceReflect.classT0(this.getClass());
+        this.node = DBMeta.of().findBy(classT0);
     }
 
     public void afterConstruct(final JoinProxy<T> joinProxy) {
@@ -82,7 +90,9 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> extends OpJoinPre<T> impl
     @Override
     public JObject findById(final Serializable id) {
         // 构造 ID 条件
-        final MPJQueryWrapper<T> queryWrapper = this.whereId(id);
+        final Kv<String, String> kv = this.node.key();
+        final MPJQueryWrapper<T> queryWrapper = new MPJQueryWrapper<>();
+        queryWrapper.eq(kv.key(), id);
         // 构造查询结果
         this.postSelect(queryWrapper);
         // 执行查询
@@ -156,8 +166,8 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> extends OpJoinPre<T> impl
 
 
             // 只有实现类可以这样检索
-            final MetaTable<?> metaTable = this.metaMap.get(metaCls);
-            final String vProperty = metaTable.vProperty(column);
+            final DBNode found = DBMeta.of().findBy(metaCls);
+            final String vProperty = found.vProperty(column);
 
 
             // 此处由于做的是 Json 的序列化，所以还需要计算一次
@@ -179,15 +189,14 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> extends OpJoinPre<T> impl
             selectBuilder.append("*");
             // 未设置的时候执行此处的语句
         }
-        final Set<String> aliasNames = this.ref.alias();
+        final Set<String> aliasNames = this.ref.findAlias();
         if (!aliasNames.isEmpty()) {
             for (final String aliasName : aliasNames) {
-                final DBAlias found = this.ref.alias(aliasName);
+                final DBAlias found = this.ref.findAlias(aliasName);
 
 
                 // 提取 MyBatis-Plus 中的实体类，获取表级元数据
                 final Class<?> entityCls = this.ref.seekType(found.table());
-                final MetaTable<?> meta = this.metaMap.get(entityCls);
 
 
                 // 提取表名别名
@@ -195,6 +204,7 @@ public class OpJoinImpl<T, M extends MPJBaseMapper<T>> extends OpJoinPre<T> impl
 
 
                 // 根据属性查找列
+                final DBNode meta = DBMeta.of().findBy(entityCls);
                 final String column = meta.vColumn(found.name());
                 // SELECT *, TRX.{COLUMN} AS {aliasName} ( 大写 )
                 selectBuilder.append(",").append(tableAlias).append(".").append(column)

@@ -28,7 +28,7 @@ public class RestAsker {
 
     private Map<String, Object> withSignature(final Map<String, Object> body) {
         final Map<String, Object> payload = new TreeMap<>(body);
-        // payload.put(this.meta.appId(), this.meta.appId());
+        // payload.types(this.meta.appId(), this.meta.appId());
         if (this.meta.signer() != null) {
             payload.put(this.meta.headerSign(), this.meta.signer().sign(payload));
         }

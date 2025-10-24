@@ -3,7 +3,6 @@ package io.r2mo.dbe.mybatisplus.spi;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import io.r2mo.base.dbe.constant.QOp;
-import io.r2mo.base.dbe.join.DBRef;
 import io.r2mo.base.dbe.syntax.QBranch;
 import io.r2mo.base.dbe.syntax.QLeaf;
 import io.r2mo.base.dbe.syntax.QNode;
@@ -16,8 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 /**
@@ -25,15 +22,6 @@ import java.util.function.Function;
  */
 @Slf4j
 class MetaFix {
-
-    static <T> ConcurrentMap<Class<?>, MetaTable<?>> toMetaMap(final DBRef ref) {
-        final ConcurrentMap<Class<?>, MetaTable<?>> metaMap = new ConcurrentHashMap<>();
-        ref.findAll().forEach(node -> {
-            final Class<?> entityCls = node.entity();
-            metaMap.putIfAbsent(entityCls, MetaTable.of(entityCls));
-        });
-        return metaMap;
-    }
 
     /*
      * Fix Issue: Cannot convert string '\xAC\xED\x00\x05sr...' from binary to utf8mb4

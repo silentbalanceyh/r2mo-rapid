@@ -2,7 +2,8 @@ package io.r2mo.dbe.jooq.spi;
 
 import io.r2mo.base.dbe.DBS;
 import io.r2mo.base.dbe.Database;
-import io.r2mo.base.dbe.join.DBRef;
+import io.r2mo.base.dbe.common.DBLoad;
+import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.OpAggr;
 import io.r2mo.base.dbe.operation.OpDb;
 import io.r2mo.base.dbe.operation.OpJoin;
@@ -12,6 +13,7 @@ import io.r2mo.base.dbe.operation.QrMany;
 import io.r2mo.base.dbe.operation.QrOne;
 import io.r2mo.dbe.common.operation.FactoryDBActionBase;
 import io.r2mo.dbe.jooq.core.domain.JooqDBS;
+import io.r2mo.typed.cc.Cc;
 import org.jooq.DSLContext;
 
 /**
@@ -24,12 +26,6 @@ public class FactoryDBActionJooq extends FactoryDBActionBase {
     @Override
     public <T, EXECUTOR, CONDITION> OpJoin<T, CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
         return null;
-    }
-
-    @Override
-    public DBS configure(final Database database) {
-        // 配置单个数据库
-        return JooqDBS.getOrCreate(database);
     }
 
     @Override
@@ -90,5 +86,20 @@ public class FactoryDBActionJooq extends FactoryDBActionBase {
     @Override
     protected Class<?> ofAnalyzer() {
         return QrAnalyzerJooq.class;
+    }
+
+    // 子类可选
+    @Override
+    public DBS configure(final Database database) {
+        // 配置单个数据库
+        return JooqDBS.getOrCreate(database);
+    }
+
+    // 子类必须
+    private static final Cc<String, DBLoad> CC_DB_LOAD = Cc.openThread();
+
+    @Override
+    public DBLoad loader() {
+        return CC_DB_LOAD.pick(LoadJooq::new);
     }
 }

@@ -1,5 +1,6 @@
 package io.r2mo.dbe.common.operation;
 
+import io.r2mo.base.dbe.common.DBLoad;
 import io.r2mo.base.dbe.operation.OpAggr;
 import io.r2mo.base.dbe.operation.OpDb;
 import io.r2mo.base.dbe.operation.OpVary;
@@ -20,6 +21,8 @@ public abstract class FactoryDBActionBase implements FactoryDBAction {
     private static final Cc<String, QrOne> CCT_QR_ONE = Cc.openThread();
     private static final Cc<String, QrMany> CCT_QR_MANY = Cc.openThread();
     private static final Cc<String, OpVary> CCT_OP_VARY = Cc.openThread();
+
+    private static final Cc<String, DBLoad> CC_DB_LOAD = Cc.openThread();
 
     private String keyCached(final Class<?> entityCls, final Object executor, final Class<?> implCls) {
         return entityCls.getName() + "@" + implCls.getName() + "@" + executor.hashCode();

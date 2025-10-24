@@ -94,6 +94,14 @@ public class R2Vector implements Serializable {
         this.vColumn.setMapping(mapping, isClean);
     }
 
+    public void putColumn(final String field, final String column) {
+        this.vColumn.setMapping(field, column);
+    }
+
+    public void put(final String field, final String fieldJson) {
+        this.vField.setMapping(field, fieldJson);
+    }
+
     public static R2Vector of(final String mappingFile) {
         if (StrUtil.isEmpty(mappingFile)) {
             throw new _501NotSupportException("[ R2MO ] 映射文件路径不能为空！");

@@ -72,7 +72,7 @@ public class DBETool {
      * 🧩 行为说明
      * - 若实体类未声明 @Identifiers：返回 null（调用方可据此回退到主键或其他策略）。
      * - 若声明了 @Identifiers：
-     *   1) 读取 identifiers.value() 中列出的字段名，put 到条件 Map；
+     *   1) 读取 identifiers.value() 中列出的字段名，types 到条件 Map；
      *   2) 根据 ifApp/ifTenant/ifEnabled 标志，附加默认字段：
      *      - appId    → {@link DefaultField#APP_ID}
      *      - tenantId → {@link DefaultField#TENANT_ID}
@@ -95,7 +95,7 @@ public class DBETool {
      *
      * 🧰 健壮性
      * - entity 为 null：返回 null；
-     * - 注解存在但某字段值为 null：依然会 put(null)，是否允许由上层 SQL 构造策略决定；
+     * - 注解存在但某字段值为 null：依然会 types(null)，是否允许由上层 SQL 构造策略决定；
      * - 字段名与实体不匹配：{@code SourceReflect.value(...)} 可能返回 null 或抛异常，调用方可按需捕获。
      * </pre>
      *

@@ -49,7 +49,7 @@ public interface JObject extends JBase {
     JArray getJArray(String key);
 
     /**
-     * 此处的 put 方法，主要是为了方便链式调用，并且此处的 Object 一旦监测到 {@link JArray} 或 {@link JObject} 类型，就直接调用其
+     * 此处的 types 方法，主要是为了方便链式调用，并且此处的 Object 一旦监测到 {@link JArray} 或 {@link JObject} 类型，就直接调用其
      * data() 方法提取底层数据结构进行存储，以防止递归过程中的封装问题，这是一种约定。为了兼容不同层面的 Json 数据结构，这种做法是必须的，
      * 毕竟不可以使用原生态的类型来继承统一类型
      *
@@ -84,7 +84,7 @@ public interface JObject extends JBase {
 
     /**
      * 如果是通过转换，那此处的 toMap 一定是原生数据结构，Object 不应该包含{@link JArray} 和 {@link JObject} 两种类型，此处取决于在
-     * put 过程中的一种承诺，即 put 进去的 value 只能是原生类型，不能是 {@link JArray} 和 {@link JObject}，否则无法做递归，最简单的
+     * types 过程中的一种承诺，即 types 进去的 value 只能是原生类型，不能是 {@link JArray} 和 {@link JObject}，否则无法做递归，最简单的
      * 模式是直接调用 {@link JObject#data()} 提取实际类型进行相关操作，最终执行都会归于内部结构。
      *
      * @return Map<String, Object>

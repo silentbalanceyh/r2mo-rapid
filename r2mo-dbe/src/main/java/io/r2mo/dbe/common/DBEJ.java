@@ -1,6 +1,6 @@
 package io.r2mo.dbe.common;
 
-import io.r2mo.base.dbe.join.DBRef;
+import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.syntax.QQuery;

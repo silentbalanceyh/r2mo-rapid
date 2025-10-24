@@ -2,12 +2,11 @@ package io.r2mo.dbe.mybatisplus.spi;
 
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
-import io.r2mo.SourceReflect;
-import io.r2mo.base.dbe.join.DBNode;
-import io.r2mo.base.dbe.join.DBRef;
+import io.r2mo.base.dbe.DBMeta;
+import io.r2mo.base.dbe.common.DBNode;
+import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
-import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
 
@@ -19,14 +18,15 @@ import java.util.UUID;
 /**
  * @author lang : 2025-10-23
  */
-class OpJoinWriter<T> extends OpJoinPre<T> {
+class OpJoinWriter<T> {
     private final JoinProxy<T> executor;
+    private final DBRef ref;
 
     OpJoinWriter(final DBRef ref, final JoinProxy<T> executor) {
-        super(ref);
+        this.ref = ref;
         this.executor = executor;
 
-        final Set<Class<?>> entitySet = this.getJoinedEntities();
+        final Set<Class<?>> entitySet = DBMeta.of().registrySet();
         final boolean isReady = entitySet.stream().anyMatch(executor::isReady);
         if (!isReady) {
             throw new _501NotSupportException("[ R2MO ] 由于执行器不完整，JOIN 模式的写操作无法执行，请检查是否为所有的实体都配置了对应的执行器！");
@@ -37,25 +37,29 @@ class OpJoinWriter<T> extends OpJoinPre<T> {
     public JObject create(final JObject latest) {
         // ------------------ 先插入主键实体 ------------------
         // 查找使用主键做 Join 的实体
-        final DBNode found = this.getJoinedPkEntity();
+        final DBNode found = this.ref.findPrimary();
         final Class<?> entity = found.entity();
-        // 构造实体对象
-        final Object waitFor = this.createUUID(latest, entity);
+
+
+
+        /*
+         * 插入新的实体 waitFor，此处不能将内容放到私有方法中，因为牵涉到两个返回值的问题新创建的值是主键，要在 pk 中提取
+         * - 主键名 / 主键值
+         * 然后是反序列化的结果，此处是 Object 类型，实际是 T 类型，对应到 Class<T> 中的泛型信息
+         */
+        final Object waitFor = R2MO.deserializeJ(latest.data(), entity);
+        final Object pkValue = found.vPrimary(waitFor);
+        if (Objects.isNull(pkValue)) {
+            found.vPrimary(waitFor, UUID.randomUUID());
+        }
         // 先插入主键实体
         final MPJBaseMapper mapper = this.executor.mapper(entity);
+        // 插入实体之后做一次交换
         final Object created = mapper.insert(waitFor);
+
 
         // ------------------ 处理其他关联实体 ------------------
         return null;
-    }
-
-    private <R> R createUUID(final JObject latest, final Class<R> entityCls) {
-        final R waitFor = R2MO.deserializeJ(latest.data(), entityCls);
-        final Kv<String, Object> pk = this.valuePrimary(waitFor, entityCls);
-        if (Objects.isNull(pk.value())) {
-            SourceReflect.value(waitFor, pk.key(), UUID.randomUUID());
-        }
-        return waitFor;
     }
 
     public Boolean removeById(final Serializable id) {
@@ -72,23 +76,5 @@ class OpJoinWriter<T> extends OpJoinPre<T> {
 
     public JObject update(final MPJQueryWrapper<T> queryWrapper, final JObject latest) {
         return null;
-    }
-
-    /**
-     * 查找使用主键做 Join 的实体
-     *
-     * @return DBNode
-     */
-    private DBNode getJoinedPkEntity() {
-        Kv<String, String> pkInfo = this.getFieldId(this.ref.find());
-        if (this.ref.isPrimaryKey(pkInfo)) {
-            return this.ref.find(pkInfo.key());
-        }
-        pkInfo = this.getFieldId(this.ref.findSecond());
-        if (this.ref.isPrimaryKey(pkInfo)) {
-            return this.ref.find(pkInfo.key());
-        }
-        // 如果不存在则直接使用主实体
-        return this.ref.find();
     }
 }

@@ -54,14 +54,14 @@ public class R2VarSet implements Serializable {
     }
 
     /**
-     * 五维添加：name / alias / type / value / valueDefault
+     * 五维添加：name / findAlias / type / value / valueDefault
      * - 并发安全：使用 compute 合并
      * - 类型规则：
      * 1) 若显式传入 type，则优先使用；
      * 2) 否则依据 value 或 valueDefault 推断；
      * 3) 都没有则用 Object.class；
      * - 合并规则：
-     * - alias 非空则覆盖；
+     * - findAlias 非空则覆盖；
      * - type 若已存在且传入非空且不同，抛出异常（避免脏数据）；
      * - value / valueDefault 仅在传入非空时覆盖。
      */
@@ -77,7 +77,7 @@ public class R2VarSet implements Serializable {
         this.vars.compute(name, (k, existing) -> {
             final R2Var v = (existing == null) ? new R2Var().name(name) : existing;
 
-            // alias：有就覆盖
+            // findAlias：有就覆盖
             if (alias != null && !alias.isBlank()) {
                 v.alias(alias);
             }

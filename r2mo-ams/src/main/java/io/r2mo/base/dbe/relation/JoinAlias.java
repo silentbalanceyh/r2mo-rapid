@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
  * 所以此处的数据结构向量如
  * <pre>
  *     1. field -> column
- *     2. alias -> field -> column
+ *     2. findAlias -> field -> column
  * </pre>
  *
  * @author lang : 2025-10-18
@@ -23,7 +23,7 @@ public class JoinAlias {
      * 混合向量
      * <pre>
      *     1. field -> table
-     *     2. alias -> table
+     *     2. findAlias -> table
      * </pre>
      */
     private final ConcurrentMap<String, String> mixVector = new ConcurrentHashMap<>();
@@ -41,7 +41,7 @@ public class JoinAlias {
      * 根据两个名称提取表名
      * <pre>
      *     1. field -> table
-     *     2. alias -> table
+     *     2. findAlias -> table
      * </pre>
      *
      * @param fieldOrAlias 字段名或者别名

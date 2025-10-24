@@ -1,22 +1,18 @@
 package io.r2mo.dbe.mybatisplus;
 
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.query.MPJQueryWrapper;
-import io.r2mo.SourceReflect;
-import io.r2mo.base.dbe.join.DBNode;
-import io.r2mo.base.dbe.join.DBRef;
+import io.r2mo.base.dbe.DBMeta;
+import io.r2mo.base.dbe.common.DBLoad;
+import io.r2mo.base.dbe.common.DBNode;
+import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.dbe.common.DBEJ;
 import io.r2mo.dbe.mybatisplus.spi.OpJoinAnalyzer;
 import io.r2mo.dbe.mybatisplus.spi.OpJoinImpl;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Kv;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
 
 /**
  * @author lang : 2025-10-23
@@ -65,8 +61,8 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
     }
 
     public DBJ<T> alias(final Class<?> entityCls, final String field, final String alias) {
-        final TableInfo tableInfo = TableInfoHelper.getTableInfo(entityCls);
-        return this.alias(tableInfo.getTableName(), field, alias);
+        final DBNode found = DBMeta.of().findBy(entityCls);
+        return this.alias(found.table(), field, alias);
     }
 
     /**
@@ -84,20 +80,12 @@ public class DBJ<T> extends DBEJ<MPJQueryWrapper<T>, T, MPJBaseMapper<T>> {
      * @return 当前引用
      */
     public static <T> DBJ<T> of(final Join meta, final JoinProxy<T> baseMapper) {
-        final DBNode leftNode = createNode(meta.from());
-        final DBNode rightNode = createNode(meta.to());
+        // 新版直接使用 DBLoad 来完成节点的构建（一次性构建完成）
+        final DBLoad metaLoader = SPI.SPI_DB.loader();
+        final DBNode leftNode = metaLoader.configure(meta.from());
+        final DBNode rightNode = metaLoader.configure(meta.to());
         final Kv<String, String> kvJoin = Kv.create(meta.fromField(), meta.toField());
         return of(DBRef.of(leftNode, rightNode, kvJoin), baseMapper);
-    }
-
-    private static DBNode createNode(final Class<?> entityCls) {
-        final TableInfo tableInfo = TableInfoHelper.getTableInfo(entityCls);
-        final DBNode node = DBNode.of().entity(entityCls).table(tableInfo.getTableName()).key(entityCls.getName());
-        final Field[] fields = SourceReflect.fieldsN(entityCls);
-        Arrays.stream(fields)
-            .filter(field -> !Modifier.isStatic(field.getModifiers()))
-            .forEach(field -> node.put(field.getName(), field.getType()));
-        return node;
     }
 
     @SuppressWarnings("unchecked")

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.r2mo.base.dbe.DBMeta;
+import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.syntax.QLeaf;
 import io.r2mo.base.dbe.syntax.QNode;
@@ -22,17 +24,17 @@ import java.util.Objects;
  */
 class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
     private final Class<T> entityCls;
-    private final MetaTable<T> meta;
+    private final DBNode node;
 
     QrAnalyzerImpl(final Class<T> entityCls) {
         this.entityCls = entityCls;
-        this.meta = MetaTable.of(entityCls);
+        this.node = DBMeta.of().findBy(entityCls);
     }
 
     @Override
     public QueryWrapper<T> whereIn(final String field, final Object... values) {
         final QLeaf qValue = QValue.of(field, values);
-        final String column = this.meta.vColumn(qValue.field());
+        final String column = this.node.vColumn(qValue.field());
         return Wrappers.query(this.entityCls).in(column, Arrays.asList(values));
     }
 
@@ -86,7 +88,7 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
         final QueryWrapper<T> condition = this.where(query.criteria(), query.sorter());
 
         // 列过滤
-        MetaFix.filterBy(condition, query.projection(), this.meta::vColumn);
+        MetaFix.filterBy(condition, query.projection(), this.node::vColumn);
         return condition;
     }
 
@@ -104,14 +106,14 @@ class QrAnalyzerImpl<T> implements QrAnalyzer<QueryWrapper<T>> {
     }
 
     private void whereTree(final QNode node, final QueryWrapper<T> query) {
-        MetaFix.whereTree(node, query, leaf -> this.meta.vColumn(leaf.field()));
+        MetaFix.whereTree(node, query, leaf -> this.node.vColumn(leaf.field()));
     }
 
     private void whereLeaf(final QLeaf node, final QueryWrapper<T> query) {
-        MetaFix.whereLeaf(node, query, leaf -> this.meta.vColumn(leaf.field()));
+        MetaFix.whereLeaf(node, query, leaf -> this.node.vColumn(leaf.field()));
     }
 
     private void orderBy(final QueryWrapper<T> query, final QSorter sorter) {
-        MetaFix.orderBy(query, sorter, this.meta::vColumn);
+        MetaFix.orderBy(query, sorter, this.node::vColumn);
     }
 }

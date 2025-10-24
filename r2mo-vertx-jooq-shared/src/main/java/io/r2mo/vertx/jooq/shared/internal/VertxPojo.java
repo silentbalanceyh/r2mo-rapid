@@ -12,7 +12,7 @@ public interface VertxPojo {
 
     /**
      * For internal purposes only.<br>
-     * Function to safely set a value inside a POJO. Helps users to find bugs if they accidentally put a value into
+     * Function to safely set a value inside a POJO. Helps users to find bugs if they accidentally types a value into
      * a {@code JsonObject} with a wrong type.
      *
      * @param pojoSetter        the setter of this POJO's property

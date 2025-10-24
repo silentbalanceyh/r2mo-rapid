@@ -449,16 +449,16 @@ public abstract class VertxGenerator extends JavaGenerator {
             } else if (this.isEnum(table, column)) {
                 //if enum is handled by custom type, try getLiteral() is not available
                 if (column.getType().getConverter() == null) {
-                    out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", this.getJsonKeyName(column), getter, getter);
+                    out.tab(2).println("json.types(\"%s\",%s()==null?null:%s().getLiteral());", this.getJsonKeyName(column), getter, getter);
                 } else {
-                    out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().name());", this.getJsonKeyName(column), getter, getter);
+                    out.tab(2).println("json.types(\"%s\",%s()==null?null:%s().name());", this.getJsonKeyName(column), getter, getter);
                 }
             } else if (this.isAllowedJsonType(column, columnType)) {
-                out.tab(2).println("json.put(\"%s\",%s());", this.getJsonKeyName(column), getter);
+                out.tab(2).println("json.types(\"%s\",%s());", this.getJsonKeyName(column), getter);
             } else if (this.isJavaTimeType(columnType) || this.isType(columnType, BigDecimal.class)) {
-                out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().toString());", this.getJsonKeyName(column), getter, getter);
+                out.tab(2).println("json.types(\"%s\",%s()==null?null:%s().toString());", this.getJsonKeyName(column), getter, getter);
             } else if (this.isCollectionType(columnType)) {
-                out.tab(2).println("json.put(\"%s\",%s()==null?null: new io.vertx.core.json.JsonArray(%s()));", this.getJsonKeyName(column), getter, getter);
+                out.tab(2).println("json.types(\"%s\",%s()==null?null: new io.vertx.core.json.JsonArray(%s()));", this.getJsonKeyName(column), getter, getter);
             } else {
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!", columnType, column.getName(), table.getName()));
                 out.tab(2).println(String.format("// Omitting unrecognized type %s for column %s!", columnType, column.getName()));

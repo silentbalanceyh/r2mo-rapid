@@ -1,4 +1,4 @@
-package io.r2mo.base.dbe.join;
+package io.r2mo.base.dbe.common;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.experimental.Accessors;
@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Slf4j
 @Accessors(chain = true, fluent = true)
 public record DBAlias(String table, String name, String alias) implements Serializable {
-    
+
     public boolean isOk() {
         final boolean isOk = StrUtil.isNotBlank(this.table) && StrUtil.isNotBlank(this.name) && StrUtil.isNotBlank(this.alias);
         if (!isOk) {

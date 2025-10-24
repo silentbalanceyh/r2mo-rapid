@@ -73,4 +73,19 @@ public class R2MO extends _UtilNum {
     public static boolean isBoolean(final String literal, final boolean widely) {
         return UTType.isBoolean(literal, widely);
     }
+
+    /**
+     * 是否是合法 Java 标识符
+     *
+     * @param name 名称
+     *
+     * @return 是否合法
+     */
+    public static boolean isNamedJava(final String name) {
+        return UTName.isNamedJava(name);
+    }
+
+    public static boolean isNamedSQL(final String name) {
+        return UTName.isNamedSQL(name);
+    }
 }
