@@ -5,8 +5,12 @@ import io.r2mo.base.dbe.Database;
 import io.r2mo.base.dbe.Join;
 import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.dbe.jooq.core.domain.JooqDatabase;
+import io.r2mo.dbe.jooq.spi.LoadREF;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._501NotSupportException;
+import org.jooq.Table;
+
+import java.util.Map;
 
 /**
  * @author lang : 2025-10-22
@@ -40,5 +44,27 @@ public class DBJx extends DBJxBase {
         ensureDBS(dbs);
         final String cacheKey = join.hashCode() + "@" + dbs.hashCode();
         return CCT_DBE.pick(() -> new DBJx(join, dbs), cacheKey);
+    }
+
+    public DBJx alias(final Class<?> daoCls, final String name, final String alias) {
+        final Table<?> table = LoadREF.of().loadTable(daoCls);
+        this.ref.alias(table.getName(), name, alias);
+        return this;
+    }
+
+    public DBJx alias(final Class<?> daoCls, Map<String, String> waitFor) {
+        final Table<?> table = LoadREF.of().loadTable(daoCls);
+        waitFor.forEach((name, alias) -> this.ref.alias(table.getName(), name, alias));
+        return this;
+    }
+
+    public DBJx alias(final String tableName, final String name, final String alias) {
+        this.ref.alias(tableName, name, alias);
+        return this;
+    }
+
+    public DBJx alias(final String tableName, final Map<String, String> waitFor) {
+        waitFor.forEach((name, alias) -> this.ref.alias(tableName, name, alias));
+        return this;
     }
 }

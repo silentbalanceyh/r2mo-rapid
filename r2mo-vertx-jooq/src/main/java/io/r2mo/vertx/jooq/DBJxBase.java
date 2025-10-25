@@ -22,8 +22,8 @@ import java.util.Set;
  */
 class DBJxBase {
     private final DBS dbs;
-    private final DBRef ref;
     private final Vertx vertxRef;
+    protected final DBRef ref;
 
     private final MultiKeyMap<DBEx<?>> dbeMap = new MultiKeyMap<>();
 
@@ -108,5 +108,13 @@ class DBJxBase {
 
     protected DBEx<?> executor(final Class<?> daoOr) {
         return this.dbeMap.getOr(daoOr.getName());
+    }
+
+    protected Vertx refVertx() {
+        return this.vertxRef;
+    }
+
+    protected DBS refDBS() {
+        return this.dbs;
     }
 }
