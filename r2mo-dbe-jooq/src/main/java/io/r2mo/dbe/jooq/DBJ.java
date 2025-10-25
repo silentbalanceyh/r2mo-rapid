@@ -8,6 +8,7 @@ import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.dbe.common.DBEJ;
 import io.r2mo.dbe.jooq.core.domain.JooqDatabase;
 import io.r2mo.dbe.jooq.core.domain.JooqMeta;
+import io.r2mo.dbe.jooq.spi.QrAnalyzerJoin;
 import io.r2mo.typed.cc.Cc;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -18,6 +19,8 @@ import org.jooq.DSLContext;
 public class DBJ<T> extends DBEJ<Condition, T, DSLContext> {
     private static final Cc<String, DBJ<?>> CCT_DBE = Cc.openThread();
 
+    private final QrAnalyzer<Condition> analyzer;
+
     /**
      * 此处的 DBRef 必须是完整的
      *
@@ -26,11 +29,12 @@ public class DBJ<T> extends DBEJ<Condition, T, DSLContext> {
      */
     private DBJ(final DBRef ref, final DSLContext context) {
         super(ref, context);
+        this.analyzer = new QrAnalyzerJoin(ref);
     }
 
     @Override
     protected QrAnalyzer<Condition> analyzer() {
-        return null;
+        return this.analyzer;
     }
 
     /**

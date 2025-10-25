@@ -1,7 +1,7 @@
 package io.r2mo.dbe.jooq.core.domain;
 
-import io.r2mo.SourceReflect;
 import io.r2mo.base.program.R2Vector;
+import io.r2mo.function.Fn;
 import io.r2mo.typed.cc.Cc;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -87,31 +87,16 @@ public class JooqMeta {
         this.field = new JooqField();
 
 
-
         /*
-         * 此处的顺序处理很重要，正常模式下生成代码过程中 getDeclaredFields 的顺序和 Table.fields() 的顺序
-         * 是一致的，可以直接通过下标进行一一对应的映射关系建立
+         * 新版追加更加智能和宽泛的检索，不单纯依靠 index，来执行 field -> column 的映射关系的构造
          */
-        final java.lang.reflect.Field[] fields = SourceReflect.fields(this.entityCls);
-        final Field<?>[] columns = table.fields();
-        final ConcurrentMap<String, String> columnMap = new ConcurrentHashMap<>();
-        for (int idx = 0; idx < columns.length; idx++) {
-            final Field<?> column = columns[idx];
-            final java.lang.reflect.Field field = fields[idx];
-
-
-            /*
-             * 追加映射关系
-             * 1）name = Field
-             * 2）name = Class<?>
-             * 3）field -> column / column -> field
-             * 此处这个操作是固定不变的顺序，如果出现了 pojo 的字段则再追加一次形成多对一的模式
-             * - field          = ???
-             * - fieldAlias     = ???
-             */
+        final ConcurrentMap<String, String> columnMap = JooqMap.build(table, this.entityCls);
+        columnMap.forEach((fieldName, columnName) -> {
+            final java.lang.reflect.Field field =
+                Fn.jvmOr(() -> this.entityCls.getDeclaredField(fieldName));
+            final Field<?> column = table.field(columnName);
             this.field.put(field, column);
-            columnMap.put(field.getName(), column.getName());
-        }
+        });
         this.vector.mappingColumn(columnMap);
         return this;
     }

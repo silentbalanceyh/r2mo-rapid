@@ -64,6 +64,7 @@ public class LoadREF {
         }
         CC_ENTITY.put(daoCls, entityCls);
         CC_TABLE.put(daoCls, table);
+        CC_TABLE.put(entityCls, table);
         log.info("[ R2MO ] 注册 Jooq 元数据映射：{} ( Dao ) -> {} / {}", daoCls.getName(), entityCls.getName(), table.getName());
         return this;
     }
@@ -77,7 +78,7 @@ public class LoadREF {
     }
 
     public void loadVerify(final Set<Class<?>> daoSet) {
-        for (Class<?> daoCls : daoSet) {
+        for (final Class<?> daoCls : daoSet) {
             if (!CC_ENTITY.containsKey(daoCls) || !CC_TABLE.containsKey(daoCls)) {
                 throw new IllegalStateException("[ R2MO ] Jooq 元数据加载失败，缺少必要的映射，请检查 Dao 类 " + daoCls.getName() + " 是否正确注册！");
             }

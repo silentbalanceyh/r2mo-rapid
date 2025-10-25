@@ -25,8 +25,14 @@ public abstract class DBLoadBase implements DBLoad {
 
     protected abstract void setupTable(DBNode node, Class<?> entity);
 
+
+    protected Class<?> setupBefore(final Class<?> clazz) {
+        return clazz;
+    }
+
     @Override
-    public DBNode configure(final Class<?> entity, final R2Vector vector, final DBS dbs) {
+    public DBNode configure(final Class<?> entityCls, final R2Vector vector, final DBS dbs) {
+        final Class<?> entity = this.setupBefore(entityCls);
         /*
          * FIX-DBE: 快速截断处理，提取已经存在的 entity，DBNode 本身就是不可变的对象，一旦创建之后
          * 就维持一致性，不再发生变化，所以这种场景下，直接返回已经存在的 DBNode 即可

@@ -84,6 +84,9 @@ public class R2Vector implements Serializable {
      * @param source 外层传入的 Vector 信息
      */
     public R2Vector combine(final R2Vector source) {
+        if (Objects.isNull(source)) {
+            return this;
+        }
         Class<?> entityCls = this.getType();
         if (Objects.isNull(entityCls)) {
             entityCls = source.getType();

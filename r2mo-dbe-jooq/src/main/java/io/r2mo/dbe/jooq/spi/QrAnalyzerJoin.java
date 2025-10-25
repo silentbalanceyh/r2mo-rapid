@@ -1,5 +1,6 @@
 package io.r2mo.dbe.jooq.spi;
 
+import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QSorter;
@@ -14,6 +15,12 @@ import java.util.Map;
  */
 @Slf4j
 public class QrAnalyzerJoin implements QrAnalyzer<Condition> {
+    private final DBRef ref;
+
+    public QrAnalyzerJoin(final DBRef ref) {
+        this.ref = ref;
+    }
+
     @Override
     public Condition whereIn(final String field, final Object... values) {
         return null;
