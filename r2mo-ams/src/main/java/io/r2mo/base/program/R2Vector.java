@@ -69,6 +69,38 @@ public class R2Vector implements Serializable {
     private R2Mapping vColumn = new R2Mapping();
 
     /**
+     * 结合两个 Vector 信息进行合并，但是合并过程不可以将引用切换掉，简单说要更改 target 中的数据才可以，
+     * 外层包含了 {@link R2Vector} 对象的引用，如果此方法是创建新的，那么会导致外层对象无法感知到变化
+     * <pre>
+     *     1. 外层 -> vector ( 引用 1 )
+     *     2. 内存 -> vector ( 引用 1 target )
+     *     3. 执行 combine(source) 之后，旧版 vector 的引用变成了此处的 combined ( 引用 2 ) 外层
+     *        对象依然持有引用 1，无法感知到变化，导致映射关系失效
+     *     4. 新版直接更改 target
+     * </pre>
+     * 自己一定不为空，且此方法会包含副作用更改当前对象对应的值，这个过程中不该变引用信息，直接合并之后得到
+     * 新的结构对象。
+     *
+     * @param source 外层传入的 Vector 信息
+     */
+    public R2Vector combine(final R2Vector source) {
+        Class<?> entityCls = this.getType();
+        if (Objects.isNull(entityCls)) {
+            entityCls = source.getType();
+        }
+        if (Objects.isNull(entityCls)) {
+            entityCls = this.type;
+        }
+        // 计算完成后回写
+        this.type = entityCls;
+        // 合并 mapping
+        this.mapping(source.mapTo(), false);
+        // 合并 columnMapping
+        this.mappingColumn(source.mapTo(), false);
+        return this;
+    }
+
+    /**
      * field -> fieldJson
      *
      * @param mapping 映射表

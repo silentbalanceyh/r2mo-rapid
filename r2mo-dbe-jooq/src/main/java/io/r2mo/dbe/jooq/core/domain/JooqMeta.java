@@ -63,52 +63,11 @@ public class JooqMeta {
     private final ConcurrentMap<String, Field<?>> fieldColumn = new ConcurrentHashMap<>();
 
     public JooqMeta vector(final R2Vector vector) {
-        final R2Vector combined;
-        if (Objects.isNull(vector)) {
-            // 外层传入 null
-            combined = this.vector;
-        } else {
-            // 外层传入非 null，进行合并
-            combined = this.vectorCombine(this.vector, vector);
-        }
+        final R2Vector combined = this.vector.combine(vector);
         Optional.ofNullable(this.key).ifPresent(key -> key.vector(combined));
         Optional.ofNullable(this.field).ifPresent(field -> field.vector(combined));
         this.vector = combined;
         return this;
-    }
-
-    /**
-     * 结合两个 Vector 信息进行合并，但是合并过程不可以将引用切换掉，简单说要更改 target 中的数据才可以，
-     * 外层包含了 {@link R2Vector} 对象的引用，如果此方法是创建新的，那么会导致外层对象无法感知到变化
-     * <pre>
-     *     1. 外层 -> vector ( 引用 1 )
-     *     2. 内存 -> vector ( 引用 1 target )
-     *     3. 执行 vectorCombine(target, source) 之后，旧版 vector 的引用变成了此处的 combined ( 引用 2 )
-     *        外层对象依然持有引用 1，无法感知到变化，导致映射关系失效
-     *     4. 新版直接更改 target
-     * </pre>
-     */
-    private R2Vector vectorCombine(final R2Vector combined, final R2Vector source) {
-        Objects.requireNonNull(combined, "[ R2MO ] 目标 Vector 信息部可能为空，检查系统！");
-        // 旧代码：new R2Vector();
-        // 先提取 Class<?> 信息
-        Class<?> entityCls = combined.getType();
-        if (Objects.isNull(entityCls)) {
-            entityCls = source.getType();
-        }
-        if (Objects.isNull(entityCls)) {
-            entityCls = this.entityCls;
-        }
-        combined.setType(entityCls);
-
-        // 合并 mapping 信息
-        combined.mapping(combined.mapTo());
-        combined.mapping(source.mapTo(), false);
-
-        // 合并 columnMapping 信息
-        combined.mappingColumn(combined.mapToColumn());
-        combined.mappingColumn(source.mapToColumn(), false);
-        return combined;
     }
 
     private Table<?> table;
@@ -224,7 +183,7 @@ public class JooqMeta {
      * <pre>
      *     {@link Table} 的构造方式
      *     - 直接通过 {@link Table} 对象中的 getName() 获取
-     *     - 获取静态字段中的表实例信息，表实例一定是静态字段
+     *     - 获取已经构造好的对象中的 Table 对象
      *     - 通过反射的方式获取表名
      *     - 可结合 JPA 注解获取表名
      * </pre>
