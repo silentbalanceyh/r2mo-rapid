@@ -94,7 +94,7 @@
         <module>r2mo-boot-vertx</module>
     </modules>
     <properties>
-        <rachel-momo.version>1.0.7</rachel-momo.version>
+        <rachel-momo.version>1.0.8</rachel-momo.version>
         <r2mo.version>1.0-M23</r2mo.version>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
