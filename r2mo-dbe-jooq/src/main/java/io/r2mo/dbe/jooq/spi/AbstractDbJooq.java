@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * @author lang : 2025-10-19
  */
-public class AbstractDbJooq<T> extends AbstractDbOperation<Condition, T, DSLContext> {
+class AbstractDbJooq<T> extends AbstractDbOperation<Condition, T, DSLContext> {
     protected final JooqMeta meta;
     protected final JooqObject setter;
 

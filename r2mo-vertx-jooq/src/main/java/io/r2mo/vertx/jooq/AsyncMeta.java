@@ -3,6 +3,7 @@ package io.r2mo.vertx.jooq;
 import io.r2mo.SourceReflect;
 import io.r2mo.base.program.R2Vector;
 import io.r2mo.dbe.jooq.core.domain.JooqMeta;
+import io.r2mo.dbe.jooq.spi.LoadREF;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._500ServerInternalException;
 import io.r2mo.vertx.jooq.classic.VertxDAO;
@@ -54,6 +55,10 @@ public class AsyncMeta {
         final Table<?> table = SourceReflect.value(vertxDAO, "table");
         // 提取实体类名
         final Class<?> entityCls = SourceReflect.value(vertxDAO, "type");
+
+        // Join 中需要此处的注册
+        LoadREF.of().registry(daoCls, entityCls, table);
+
         CC_META_REF.put(entityCls, daoCls);
         this.dao = vertxDAO;
         this.metadata = JooqMeta.of(entityCls, table);

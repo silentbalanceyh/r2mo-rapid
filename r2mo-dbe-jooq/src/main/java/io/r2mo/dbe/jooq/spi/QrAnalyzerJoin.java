@@ -13,7 +13,7 @@ import java.util.Map;
  * @author lang : 2025-10-24
  */
 @Slf4j
-class QrAnalyzerJoin implements QrAnalyzer<Condition> {
+public class QrAnalyzerJoin implements QrAnalyzer<Condition> {
     @Override
     public Condition whereIn(final String field, final Object... values) {
         return null;
