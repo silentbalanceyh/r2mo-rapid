@@ -3,16 +3,20 @@ package io.r2mo.dbe.jooq.spi;
 import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.syntax.QQuery;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
+import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.SelectWhereStep;
 import org.jooq.TableOnConditionStep;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -30,17 +34,31 @@ class OpJoinJooq<T> implements OpJoin<T, Condition> {
 
     @Override
     public JArray findMany(final Condition condition) {
-        return null;
+        final TableOnConditionStep<Record> joinOn = JoinQr.buildJoin(this.ref);
+
+        log.debug("[ R2MO ] findMany 查询条件：{}, {}", joinOn, condition);
+        final SelectWhereStep<Record> started = this.context.selectFrom(joinOn);
+
+        final Result<Record> record = this.context.fetch(started.where(condition));
+        final JArray array = SPI.A();
+        record.stream()
+            .map(JoinResult.of(this.ref)::toResponse)
+            .map(JBase::data)
+            .forEach(array::add);
+        return array;
     }
 
     @Override
     public JObject findOne(final Condition condition) {
-        log.info("[ R2MO ] findOne 查询条件：{}", condition);
         final TableOnConditionStep<Record> joinOn = JoinQr.buildJoin(this.ref);
+        log.debug("[ R2MO ] findOne 查询条件：{}, {}", joinOn, condition);
 
         final SelectWhereStep<Record> started = this.context.selectFrom(joinOn);
 
         final Record record = this.context.fetchOne(started.where(condition));
+        if (Objects.isNull(record)) {
+            return SPI.J();
+        }
         return JoinResult.of(this.ref).toResponse(record);
     }
 

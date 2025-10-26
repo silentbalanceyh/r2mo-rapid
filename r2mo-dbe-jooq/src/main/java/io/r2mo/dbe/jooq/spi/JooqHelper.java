@@ -183,6 +183,55 @@ class JooqHelper {
         return conditions;
     }
 
+    static Condition transform(final String field, final Object value,
+                               final Function<String, Field> columnFn) {
+        return transform(field, value, columnFn, null);
+    }
+
+    static Condition transform(final String field, final Object value,
+                               final Function<String, Field> columnFn,
+                               final Function<String, String> prefixFn) {
+        /** 根据列值得到 OOp 的转换模式 */
+        final QValue qValue = QValue.of(field, value);
+
+
+        final Condition item;
+        /* 字段名处理 */
+        if (Objects.nonNull(columnFn)) {
+
+
+            // 函数 columnFn 调用 -> 得到之后绑定类型
+            final Field<?> columnField = columnFn.apply(qValue.field());
+            // <-- type 绑定
+            qValue.type(columnField.getType());
+
+
+            // 函数 prefixFn 调用
+            final String column = MySQLGap.normFor(columnField.getName(), prefixFn);
+
+
+            // 构造新的 QValue
+            final QValue copied = QValue.copyOf(qValue, column);
+            // --> type 有类型
+            final Clause clause = Clause.of(copied);
+
+
+            // 计算最终条件
+            item = clause.where(columnField, copied);
+        } else {
+            // 无 columnFn 调用，直接使用原始字段名
+            final Clause clause = Clause.of(qValue);
+
+
+            final String column = MySQLGap.normFor(field, prefixFn);
+
+
+            final Field<?> columnField = DSL.field(column);
+            item = clause.where(columnField, qValue);
+        }
+        return item;
+    }
+
     private static Condition transformLeaf(final JObject filters, final Operator operator,
                                            final Function<String, Field> columnFn,
                                            final Function<String, String> prefixFn) {
@@ -197,45 +246,7 @@ class JooqHelper {
             /* 从 JObject 中提取值信息 */
             final Object value = filters.get(field);
 
-
-            /* 根据列值得到 OOp 的转换模式 */
-            final QValue qValue = QValue.of(field, value);
-
-
-            final Condition item;
-            /* 字段名处理 */
-            if (Objects.nonNull(columnFn)) {
-
-
-                // 函数 columnFn 调用 -> 得到之后绑定类型
-                final Field<?> columnField = columnFn.apply(field);
-                // <-- type 绑定
-                qValue.type(columnField.getType());
-
-
-                // 函数 prefixFn 调用
-                final String column = MySQLGap.normFor(columnField.getName(), prefixFn);
-
-
-                // 构造新的 QValue
-                final QValue copied = QValue.copyOf(qValue, column);
-                // --> type 有类型
-                final Clause clause = Clause.of(copied);
-
-
-                // 计算最终条件
-                item = clause.where(columnField, copied);
-            } else {
-                // 无 columnFn 调用，直接使用原始字段名
-                final Clause clause = Clause.of(qValue);
-
-
-                final String column = MySQLGap.normFor(field, prefixFn);
-
-
-                final Field<?> columnField = DSL.field(column);
-                item = clause.where(columnField, qValue);
-            }
+            final Condition item = transform(field, value, columnFn, prefixFn);
             conditions.add(item);
         }
         return (Operator.AND == operator) ? DSL.and(conditions) : DSL.or(conditions);
