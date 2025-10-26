@@ -13,6 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * 抽象异步方法集合，此处所有方法都是异步非阻塞的
+ * <pre>
+ *     1. 方法签名全是异步
+ *     2. 返回值全部是 {@link Future}
+ *     3. 支持高阶的三种查询对象
+ *        - {@link QTree}
+ *        - {@link QQuery}
+ *        - {@link JObject}
+ * </pre>
+ */
 class DBExFuture<T> extends DBExCommon<T> {
     protected DBExFuture(final Class<T> daoCls, final DBS dbs) {
         super(daoCls, dbs);

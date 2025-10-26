@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * @author lang : 2025-10-22
  */
-public class DBJx extends DBJxBase {
+public class DBJx extends DBJxJson {
     private static final Cc<String, DBJx> CCT_DBE = Cc.openThread();
 
     private DBJx(final DBRef ref, final DBS dbs) {
@@ -52,7 +52,7 @@ public class DBJx extends DBJxBase {
         return this;
     }
 
-    public DBJx alias(final Class<?> daoCls, Map<String, String> waitFor) {
+    public DBJx alias(final Class<?> daoCls, final Map<String, String> waitFor) {
         final Table<?> table = LoadREF.of().loadTable(daoCls);
         waitFor.forEach((name, alias) -> this.ref.alias(table.getName(), name, alias));
         return this;

@@ -21,6 +21,11 @@ import java.util.concurrent.ConcurrentMap;
  *     1. 后置使用日志：After 注释
  *     2. 前置使用日志：Before 注释
  * </pre>
+ * 此处的参数查询对象没有高阶对象，都是位于底层的
+ * <pre>
+ *     1. {@link JsonArray}
+ *     2. {@link JsonObject}
+ * </pre>
  *
  * @author lang : 2025-10-20
  */

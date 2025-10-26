@@ -14,6 +14,15 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 
 /**
+ * 抽象同步方法集合，此处的所有方法均是同步阻塞方法
+ * <pre>
+ *     1. 方法签名全是同步
+ *     2. 支持高阶的三种查询对象
+ *        - {@link QTree}
+ *        - {@link QQuery}
+ *        - {@link JObject}
+ * </pre>
+ *
  * @author lang : 2025-10-20
  */
 class DBExCommon<T> extends DBExBase<T> {

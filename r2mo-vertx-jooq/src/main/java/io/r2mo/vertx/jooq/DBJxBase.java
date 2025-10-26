@@ -6,6 +6,7 @@ import io.r2mo.base.dbe.Join;
 import io.r2mo.base.dbe.common.DBLoad;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
+import io.r2mo.dbe.jooq.DBJ;
 import io.r2mo.dbe.jooq.spi.LoadREF;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Kv;
@@ -23,6 +24,7 @@ import java.util.Set;
 class DBJxBase {
     private final DBS dbs;
     private final Vertx vertxRef;
+    private final DBJ<?> dbj;
     protected final DBRef ref;
 
     private final MultiKeyMap<DBEx<?>> dbeMap = new MultiKeyMap<>();
@@ -34,6 +36,7 @@ class DBJxBase {
         // first + second
         this.afterConstruct(ref, dbs);
         this.ref = ref;
+        this.dbj = DBJ.of(ref, dbs);
     }
 
     private void afterConstruct(final DBRef ref, final DBS dbs) {
@@ -104,6 +107,7 @@ class DBJxBase {
         final DBNode leftNode = loader.configure(join.from(), join.vFrom(), dbs);
         final DBNode rightNode = loader.configure(join.to(), join.vTo(), dbs);
         this.ref = DBRef.of(leftNode, rightNode, Kv.create(join.fromField(), join.toField()));
+        this.dbj = DBJ.of(this.ref, dbs);
     }
 
     protected DBEx<?> executor(final Class<?> daoOr) {
@@ -112,6 +116,11 @@ class DBJxBase {
 
     protected Vertx refVertx() {
         return this.vertxRef;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> DBJ<T> refDBJ() {
+        return (DBJ<T>) this.dbj;
     }
 
     protected DBS refDBS() {
