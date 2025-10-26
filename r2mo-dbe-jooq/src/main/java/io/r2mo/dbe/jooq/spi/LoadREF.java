@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.Table;
 
 import java.lang.annotation.Annotation;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -49,6 +50,9 @@ public class LoadREF {
     // Dao -> Table
     private static final Cc<Class<?>, Table<?>> CC_TABLE = Cc.open();
 
+    // Class<?> -> JooqMeta
+    private static final Cc<Class<?>, JooqMeta> CC_META = Cc.open();
+
     private static final LoadREF INSTANCE = new LoadREF();
 
     private LoadREF() {
@@ -63,14 +67,33 @@ public class LoadREF {
             return this;
         }
         CC_ENTITY.put(daoCls, entityCls);
+        CC_ENTITY.put(entityCls, daoCls);
+
+
         CC_TABLE.put(daoCls, table);
         CC_TABLE.put(entityCls, table);
         log.info("[ R2MO ] 注册 Jooq 元数据映射：{} ( Dao ) -> {} / {}", daoCls.getName(), entityCls.getName(), table.getName());
+
+
+        final JooqMeta metadata = JooqMeta.of(entityCls, table);
+        CC_META.put(daoCls, metadata);
         return this;
     }
 
-    public Class<?> loadEntity(final Class<?> daoCls) {
-        return CC_ENTITY.get(daoCls);
+    public JooqMeta loadMeta(final Class<?> daoCls) {
+        JooqMeta metadata = CC_META.get(daoCls);
+        if (Objects.isNull(metadata)) {
+            final Class<?> entityCls = CC_ENTITY.get(daoCls);
+            if (Objects.isNull(entityCls)) {
+                return null;
+            }
+            metadata = CC_META.get(entityCls);
+        }
+        return metadata;
+    }
+
+    public Class<?> loadClass(final Class<?> daoOrEntity) {
+        return CC_ENTITY.get(daoOrEntity);
     }
 
     public Table<?> loadTable(final Class<?> daoCls) {

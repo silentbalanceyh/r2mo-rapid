@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 /**
  * @author lang : 2025-10-18
  */
-class ActionComplex {
+class JooqComplex {
     private final JooqMeta meta;
     private final DSLContext context;
     private final QrAnalyzerJooq qr;
 
-    ActionComplex(final Class<?> entityCls, final DSLContext context) {
+    JooqComplex(final Class<?> entityCls, final DSLContext context) {
         this.context = context;
         this.meta = JooqMeta.getOr(entityCls);
         this.qr = new QrAnalyzerJooq(entityCls, context);
@@ -67,7 +67,7 @@ class ActionComplex {
             return stepQr;
         }
 
-        final List<OrderField<?>> orderBy = ActionHelper.forOrderBy(sorter, this.meta::findColumn, null);
+        final List<OrderField<?>> orderBy = JooqHelper.forOrderBy(sorter, this.meta::findColumn, null);
 
         return stepQr.orderBy(orderBy);
     }

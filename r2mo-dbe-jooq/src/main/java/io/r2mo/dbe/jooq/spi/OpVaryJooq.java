@@ -20,13 +20,13 @@ import java.util.Optional;
  */
 @Slf4j
 class OpVaryJooq<T> extends AbstractDbJooq<T> implements OpVary<T, Condition> {
-    private final ActionComplex analyzerFor;
+    private final JooqComplex analyzerFor;
     private final OpDbJooq<T> db;
 
     protected OpVaryJooq(final Class<T> entityCls, final DSLContext context) {
         super(entityCls, context);
 
-        this.analyzerFor = new ActionComplex(entityCls, context);
+        this.analyzerFor = new JooqComplex(entityCls, context);
         this.db = new OpDbJooq<>(entityCls, context);
     }
 

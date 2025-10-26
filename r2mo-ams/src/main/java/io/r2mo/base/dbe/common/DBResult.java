@@ -94,6 +94,18 @@ public class DBResult {
         return array;
     }
 
+    /**
+     * FIX-DBE: 此处的主表不需要计算，因为采用了类似：
+     * <pre>
+     *     SELECT *, TRX.column AS alias FROM ???
+     * </pre>
+     * 的结构，如果出现了同名，那么主表的信息一定会在前边而且不会被覆盖掉，所以数据库自己就完成了主表和别名的区分，而且在这种模式
+     * 之下不用去考虑计算谁的字段优先级高的情况，这样就导致了 id 列一定会在前边。
+     *
+     * @param row 数据库行数据
+     *
+     * @return 结果
+     */
     public JObject build(final Map<String, Object> row) {
         final JObject record = SPI.J();
         for (final String column : row.keySet()) {

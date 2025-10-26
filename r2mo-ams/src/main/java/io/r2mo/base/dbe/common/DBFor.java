@@ -6,6 +6,7 @@ import io.r2mo.typed.json.JObject;
 
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * @author lang : 2025-10-24
@@ -27,6 +28,10 @@ public interface DBFor {
 
     static DBFor ofRemove() {
         return CCT_DB_FOR.pick(DBForRemove::new, DBForRemove.class.getName());
+    }
+    
+    static DBFor of(final Supplier<DBFor> supplier) {
+        return CCT_DB_FOR.pick(supplier, String.valueOf(supplier.hashCode()));
     }
 
     default JObject exchange(final JObject request, final DBNode current, final DBRef ref) {

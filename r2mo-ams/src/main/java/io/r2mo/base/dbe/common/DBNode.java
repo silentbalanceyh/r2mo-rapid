@@ -164,4 +164,8 @@ public class DBNode implements Serializable {
         this.types.put(field, type);
         return this;
     }
+
+    public Class<?> typeOf(final String field) {
+        return this.types.get(field);
+    }
 }

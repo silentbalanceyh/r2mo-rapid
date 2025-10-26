@@ -46,8 +46,18 @@ public class Join {
         return this;
     }
 
+    public Join from(final String fromField) {
+        this.fromField = Objects.isNull(fromField) ? this.ID() : fromField;
+        return this;
+    }
+
     public Join from(final R2Vector from) {
         this.vFrom = from;
+        return this;
+    }
+
+    public Join to(final String toField) {
+        this.toField = Objects.isNull(toField) ? this.ID() : toField;
         return this;
     }
 

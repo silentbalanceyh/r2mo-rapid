@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentMap;
 public class LoadJooq extends DBLoadBase {
 
     @Override
-    protected void setupTable(final DBNode node, final Class<?> daoCls) {
-        final Table<?> table = LoadREF.of().loadTable(daoCls);
+    protected void setupTable(final DBNode node, final Class<?> entityCls) {
+        final Table<?> table = LoadREF.of().loadTable(entityCls);
         // 设置表名称
         /*
          * - table
@@ -32,10 +32,15 @@ public class LoadJooq extends DBLoadBase {
          * - column -> field
          */
         node.table(table.getName());
+        // FIX-DBE: 设置 DAO 类，此步骤很重要
+        final Class<?> daoCls = LoadREF.of().loadClass(entityCls);
+        if (daoCls != entityCls) {
+            node.dao(daoCls);
+        }
 
         final R2Vector vectorRef = node.vector();
         // 设置 field -> column 映射关系
-        final ConcurrentMap<String, String> mapping = JooqMap.build(table, daoCls);
+        final ConcurrentMap<String, String> mapping = JooqMap.build(table, entityCls);
         vectorRef.mappingColumn(mapping);
         // 最终计算 primaryKey = primaryColumn
         final UniqueKey<?> primaryKey = table.getPrimaryKey();
@@ -56,6 +61,6 @@ public class LoadJooq extends DBLoadBase {
 
     @Override
     protected Class<?> setupBefore(final Class<?> daoCls) {
-        return LoadREF.of().loadEntity(daoCls);
+        return LoadREF.of().loadClass(daoCls);
     }
 }

@@ -10,6 +10,9 @@ import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,8 +42,19 @@ class JUtilVertx implements JUtil {
             final JsonArray data = jsonA.data();
             Objects.requireNonNull(data, "[ R2MO ] 根据约定，内置数组不可以为空！");
             return (T) data;
-        } else {
+        } else if (value instanceof LocalDateTime ||
+            value instanceof LocalDate ||
+            value instanceof LocalTime
+        ) {
             // 其他对象不转换
+            if (value instanceof final LocalDateTime ldt) {
+                return (T) R2MO.parse(ldt).toInstant();
+            } else if (value instanceof final LocalDate ld) {
+                return (T) R2MO.parse(ld).toInstant();
+            } else {
+                return (T) R2MO.parse((LocalTime) value).toInstant();
+            }
+        } else {
             return (T) value;
         }
     }

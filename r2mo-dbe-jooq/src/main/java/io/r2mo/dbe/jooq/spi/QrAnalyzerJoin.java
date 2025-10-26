@@ -5,10 +5,15 @@ import io.r2mo.base.dbe.operation.QrAnalyzer;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.base.dbe.syntax.QTree;
+import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
 
+import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author lang : 2025-10-24
@@ -38,6 +43,20 @@ public class QrAnalyzerJoin implements QrAnalyzer<Condition> {
 
     @Override
     public Condition where(final QTree tree, final QSorter sorter) {
+        if (Objects.isNull(tree)) {
+            return DSL.falseCondition();        // 只有 Map 为空才适合 true 条件
+        }
+        final JObject filters = tree.data();    // 兼容写法
+        return JooqHelper.transform(filters, this::findColumn);
+    }
+
+    private Field<?> findColumn(final String field) {
+        final String column = this.ref.seekColumn(field);
+        return DSL.field(column);
+    }
+
+    @Override
+    public Condition whereId(final Serializable id) {
         return null;
     }
 

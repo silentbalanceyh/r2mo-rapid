@@ -395,6 +395,22 @@ public class DBRef implements Serializable {
             }
         }
 
+
+        /*
+         * FIX-DBE: 别名做查询条件，两个实体都没有，最后的可能就是 field 是别名，要先做转换，这种模式可能比较高频，
+         * 所以此处追加一次解析，且可以根据别名的模式解析对应的字段信息！
+         */
+        if (this.aliasMap.containsKey(field)) {
+            final DBAlias alias = this.aliasMap.get(field);
+            if (Objects.isNull(alias)) {
+                throw new _400BadRequestException("[ R2MO ] 无法识别的查询字段（Alias）: " + field);
+            }
+            final DBNode found = this.findBy(alias.table());
+            final String column = found.vColumn(alias.name());
+            final String tableAlias = this.seekAlias(found.entity());
+            return tableAlias + "." + column;
+        }
+
         // 都找不到
         throw new _400BadRequestException("[ R2MO ] 无法识别的查询字段: " + field);
     }

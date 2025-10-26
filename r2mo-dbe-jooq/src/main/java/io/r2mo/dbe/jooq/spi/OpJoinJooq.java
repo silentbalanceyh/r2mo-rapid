@@ -5,7 +5,12 @@ import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JObject;
+import lombok.extern.slf4j.Slf4j;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectWhereStep;
+import org.jooq.TableOnConditionStep;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -13,7 +18,8 @@ import java.util.Optional;
 /**
  * @author lang : 2025-10-24
  */
-class OpJoinJooq<T> implements OpJoin<T, DSLContext> {
+@Slf4j
+class OpJoinJooq<T> implements OpJoin<T, Condition> {
     private final DSLContext context;
     private final DBRef ref;
 
@@ -23,13 +29,19 @@ class OpJoinJooq<T> implements OpJoin<T, DSLContext> {
     }
 
     @Override
-    public JArray findMany(final DSLContext dslContext) {
+    public JArray findMany(final Condition condition) {
         return null;
     }
 
     @Override
-    public JObject findOne(final DSLContext dslContext) {
-        return null;
+    public JObject findOne(final Condition condition) {
+        log.info("[ R2MO ] findOne 查询条件：{}", condition);
+        final TableOnConditionStep<Record> joinOn = JoinQr.buildJoin(this.ref);
+
+        final SelectWhereStep<Record> started = this.context.selectFrom(joinOn);
+
+        final Record record = this.context.fetchOne(started.where(condition));
+        return JoinResult.of(this.ref).toResponse(record);
     }
 
     @Override
@@ -43,7 +55,7 @@ class OpJoinJooq<T> implements OpJoin<T, DSLContext> {
     }
 
     @Override
-    public Optional<Long> count(final DSLContext dslContext) {
+    public Optional<Long> count(final Condition condition) {
         return Optional.empty();
     }
 
@@ -58,7 +70,7 @@ class OpJoinJooq<T> implements OpJoin<T, DSLContext> {
     }
 
     @Override
-    public Boolean removeBy(final DSLContext dslContext) {
+    public Boolean removeBy(final Condition condition) {
         return null;
     }
 
@@ -68,7 +80,7 @@ class OpJoinJooq<T> implements OpJoin<T, DSLContext> {
     }
 
     @Override
-    public JObject update(final DSLContext dslContext, final JObject latest) {
+    public JObject update(final Condition condition, final JObject latest) {
         return null;
     }
 }

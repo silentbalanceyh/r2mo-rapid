@@ -25,7 +25,7 @@ import java.util.function.Function;
  */
 @SuppressWarnings("all")
 @Slf4j
-class ActionHelper {
+class JooqHelper {
     private static final JUtil UT = SPI.V_UTIL;
 
     static List<OrderField<?>> forOrderBy(final QSorter sorter,
@@ -190,7 +190,9 @@ class ActionHelper {
         final List<Condition> conditions = new ArrayList<>();
 
         for (final String field : filters.fieldNames()) {
-
+            if ("".equals(field)) {
+                continue;
+            }
 
             /* 从 JObject 中提取值信息 */
             final Object value = filters.get(field);
