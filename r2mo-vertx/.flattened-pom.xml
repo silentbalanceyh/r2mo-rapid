@@ -53,13 +53,13 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
-      <version>5.0.4</version>
+      <version>5.0.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
-      <version>5.0.4</version>
+      <version>5.0.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
