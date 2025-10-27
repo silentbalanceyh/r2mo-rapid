@@ -29,6 +29,18 @@ class DBJxJson extends DBJxFuture {
         return this.countAsync(SPI.J(criteria));
     }
 
+    public Future<Long> countAsyncJ(final Map<String, Object> criteria) {
+        return this.countAsync(criteria);
+    }
+
+    public Future<Long> countAsyncJ(final String field, final Object value) {
+        return this.countAsync(field, value);
+    }
+
+    public Future<Long> countAsyncJ() {
+        return this.countAsync();
+    }
+
     public Future<JsonArray> findAllAsyncJ() {
         return this.findAllAsync().map(JBase::data);
     }
@@ -132,11 +144,23 @@ class DBJxJson extends DBJxFuture {
     public Future<JsonObject> createAsyncJ(final JsonObject insertJ) {
         return this.createAsync(SPI.J(insertJ)).map(JBase::data);
     }
-    
+
     // ========== 同步版（不使用 JBase.data，直接 .data()） ==========
 
     public Long countJ(final JsonObject criteria) {
         return this.count(SPI.J(criteria)).orElse(0L);
+    }
+
+    public Long countJ(final Map<String, Object> criteria) {
+        return this.count(criteria).orElse(0L);
+    }
+
+    public Long countJ(final String field, final Object value) {
+        return this.count(field, value).orElse(0L);
+    }
+
+    public Long countJ() {
+        return this.count().orElse(0L);
     }
 
     public JsonArray findAllJ() {

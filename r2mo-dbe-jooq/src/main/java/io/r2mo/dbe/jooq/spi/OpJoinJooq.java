@@ -2,6 +2,8 @@ package io.r2mo.dbe.jooq.spi;
 
 import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.OpJoin;
+import io.r2mo.base.dbe.operation.QrAnalyzer;
+import io.r2mo.base.dbe.syntax.QPager;
 import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JArray;
@@ -10,12 +12,16 @@ import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SelectWhereStep;
 import org.jooq.TableOnConditionStep;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,10 +32,12 @@ import java.util.Optional;
 class OpJoinJooq<T> implements OpJoin<T, Condition> {
     private final DSLContext context;
     private final DBRef ref;
+    private final QrAnalyzer<Condition> underAnalyzer;
 
     OpJoinJooq(final DBRef ref, final DSLContext context) {
         this.ref = ref;
         this.context = context;
+        this.underAnalyzer = new QrAnalyzerJoin(ref);
     }
 
     @Override
@@ -63,18 +71,68 @@ class OpJoinJooq<T> implements OpJoin<T, Condition> {
     }
 
     @Override
+    @SuppressWarnings("all")
     public JObject findPage(final QQuery query) {
-        return null;
+        final TableOnConditionStep<Record> joinOn = JoinQr.buildJoin(this.ref);
+        log.debug("[ R2MO ] findPage 查询条件：{}, {}", joinOn, query);
+
+        final SelectWhereStep<Record> started;
+        final Field<?>[] columns = JooqHelper.findColumn(query.projection(), this.ref);
+        if (Objects.nonNull(columns)) {
+            final List<Field<?>> fields = new ArrayList<>();
+            started = this.context.select(columns).from(joinOn);
+        } else {
+            started = this.context.selectFrom(joinOn);
+        }
+
+        final Condition condition = this.underAnalyzer.where(query.criteria());
+        started.where(condition);
+
+        final List<OrderField<?>> orderBy =
+            JooqHelper.forOrderBy(query.sorter(), this::findColumn, null);
+        started.orderBy(orderBy);
+
+        final QPager inPager = query.pager();
+        Optional.ofNullable(inPager).ifPresent(pager ->
+            started.offset(pager.getStart()).limit(pager.getSize()));
+
+
+        final Result<Record> result = started.fetch();
+        final Optional<Long> count = this.count(condition);
+
+        final JObject page = SPI.J();
+        page.put("list", JoinResult.of(this.ref).toResponse(result));
+        page.put("count", count.get());
+        return page;
+    }
+
+    private Field<?> findColumn(final String field) {
+        return JooqHelper.findColumn(field, this.ref);
     }
 
     @Override
     public JObject findById(final Serializable id) {
-        return null;
+        final TableOnConditionStep<Record> joinOn = JoinQr.buildJoin(this.ref);
+        log.debug("[ R2MO ] findById 查询条件：{}, id = {}", joinOn, id);
+
+        final SelectWhereStep<Record> started = this.context.selectFrom(joinOn);
+        final Condition idCondition = this.underAnalyzer.whereId(id);
+
+        final Record record = this.context.fetchOne(started.where(idCondition));
+        if (Objects.isNull(record)) {
+            return SPI.J();
+        }
+        return JoinResult.of(this.ref).toResponse(record);
     }
 
     @Override
     public Optional<Long> count(final Condition condition) {
-        return Optional.empty();
+        final TableOnConditionStep<Record> joinOn = JoinQr.buildJoin(this.ref);
+        log.debug("[ R2MO ] count 统计数量：{}, {}", joinOn, condition);
+
+        final SelectWhereStep<Record> started = this.context.selectFrom(joinOn);
+        final long count = this.context.fetchCount(started.where(condition));
+        return Optional.of(count);
     }
 
     @Override

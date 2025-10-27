@@ -2,6 +2,7 @@ package io.r2mo.dbe.jooq.core.domain;
 
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.program.R2Vector;
+import io.r2mo.typed.exception.web._501NotSupportException;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -50,6 +51,9 @@ class JooqField {
 
     Field<?> findColumn(final String fieldOr) {
         final String columnName = this.nameOfColumn(fieldOr);
+        if (Objects.isNull(columnName)) {
+            throw new _501NotSupportException("[ R2MO ] 无法找到对应的 Column 名称: 输入字段 = " + fieldOr);
+        }
         log.info("[ R2MO ] 寻找 JOOQ Column: 输入字段 = {}, 目标 Column = {}", fieldOr, columnName);
         Field<?> found;
         if (fieldOr.equals(columnName)) {

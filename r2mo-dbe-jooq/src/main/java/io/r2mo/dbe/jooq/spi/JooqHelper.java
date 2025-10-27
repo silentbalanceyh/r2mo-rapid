@@ -1,5 +1,7 @@
 package io.r2mo.dbe.jooq.spi;
 
+import io.r2mo.base.dbe.common.DBRef;
+import io.r2mo.base.dbe.syntax.QProjection;
 import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.base.dbe.syntax.QValue;
 import io.r2mo.dbe.jooq.core.condition.Clause;
@@ -16,8 +18,10 @@ import org.jooq.OrderField;
 import org.jooq.impl.DSL;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -28,10 +32,49 @@ import java.util.function.Function;
 class JooqHelper {
     private static final JUtil UT = SPI.V_UTIL;
 
+    /**
+     * 此处要考虑重名列的问题，并且重名列有可能被 rename 做别名处理，简单说
+     * <pre>
+     *     A 表包含 name, B 表也包含 name
+     *     如果设置 B 中的 name 有别名 name1
+     *     name在整个 projection 中都应该追加 name 和 name1 来进行区分
+     * </pre>
+     *
+     * @param projection 列过滤
+     * @param ref        关联引用
+     *
+     * @return
+     */
+    static Field<?>[] findColumn(final QProjection projection, final DBRef ref) {
+        if (Objects.isNull(projection) || !projection.isOk()) {
+            return null;
+        }
+        final List<Field<?>> fields = new ArrayList<>();
+        final Set<String> added = new HashSet<>();
+        projection.item().forEach(each -> {
+            final List<Kv<String, String>> columns = ref.seekKvList(each);
+            columns.stream()
+                .filter(column -> {
+                    if (!added.contains(column.key() + "." + column.value())) {
+                        added.add(column.key() + "." + column.value());
+                        return true;
+                    }
+                    return false;
+                })
+                .map(column -> DSL.field(column.key() + "." + column.value()))
+                .forEach(fields::add);
+        });
+        return fields.toArray(new Field[0]);
+    }
+
+    static Field<?> findColumn(final String field, final DBRef ref) {
+        return DSL.field(ref.seekColumn(field));
+    }
+
     static List<OrderField<?>> forOrderBy(final QSorter sorter,
                                           final Function<String, Field<?>> columnFn,
                                           final Function<String, String> prefixFn) {
-        final List<Kv<String, Boolean>> items = sorter.items();
+        final List<Kv<String, Boolean>> items = sorter.item();
         final List<OrderField<?>> orders = new ArrayList<>();
         items.forEach(kv -> {
             final boolean asc = kv.value();

@@ -2,9 +2,6 @@ package io.r2mo.dbe.jooq.spi;
 
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
-import io.r2mo.base.dbe.syntax.QBranch;
-import io.r2mo.base.dbe.syntax.QLeaf;
-import io.r2mo.base.dbe.syntax.QNode;
 import io.r2mo.dbe.jooq.core.domain.JooqMeta;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import org.jooq.Condition;
@@ -16,23 +13,11 @@ import org.jooq.impl.DSL;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author lang : 2025-10-26
  */
 class JoinQr {
-
-    static Condition whereTree(final QNode node, final Condition query,
-                               final Function<QLeaf, String> columnFn,
-                               final Function<String, String> prefixFn) {
-        if (node instanceof final QBranch branch) {
-
-        } else if (node instanceof final QLeaf leaf) {
-
-        }
-        throw new _501NotSupportException("[ R2MO ] 节点类型不支持：" + node);
-    }
 
     /**
      * SELECT A AS A1 JOIN B AS B2 ON A1.field1 = B2.field2

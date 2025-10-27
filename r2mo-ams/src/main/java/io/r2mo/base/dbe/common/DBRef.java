@@ -7,14 +7,17 @@ import io.r2mo.base.util.R2MO;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.common.MultiKeyMap;
 import io.r2mo.typed.exception.web._400BadRequestException;
+import io.r2mo.typed.exception.web._501NotSupportException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -204,8 +207,7 @@ public class DBRef implements Serializable {
             return this;
         }
         if (this.isAliasConflict(alias)) {
-            log.warn("[ R2MO ] 别名定义冲突，无法构造别名记录：{}", alias);
-            return this;
+            throw new _501NotSupportException("[ R2MO ] ( Join ) 别名冲突，检查您的代码：" + alias);
         }
         this.aliasMap.put(alias.alias(), alias);
         return this;
@@ -265,6 +267,12 @@ public class DBRef implements Serializable {
         final Class<?> entity = found.entity();
         if (Objects.isNull(entity)) {
             // 无法找到 Class 类名，冲突
+            return true;
+        }
+        final Set<String> added = this.aliasMap.keySet();
+        if (added.contains(alias.alias())) {
+            // 别名重复，冲突
+            log.warn("[ R2MO ] 别名重复，冲突检查：{} / {}", alias, this.aliasMap);
             return true;
         }
         return Arrays.stream(entity.getDeclaredFields())
@@ -363,6 +371,84 @@ public class DBRef implements Serializable {
 
     // ---- 运算专用 API
 
+    public Kv<String, String> seekColumnKv(final String field) {
+        // 优先考虑主实体
+        Kv<String, String> seeked = this.seekKvAlias(field, this.left);
+        if (Objects.nonNull(seeked)) {
+            return seeked;
+        }
+
+        // 其他实体（第一个匹配即返回）
+        for (final Class<?> other : this.registrySet) {
+            if (other == this.left.entity()) {
+                // 滤掉主实体
+                continue;
+            }
+            seeked = this.seekKvAlias(field, this.findBy(other));
+            if (Objects.nonNull(seeked)) {
+                return seeked;
+            }
+        }
+
+
+        /*
+         * FIX-DBE: 别名做查询条件，两个实体都没有，最后的可能就是 field 是别名，要先做转换，这种模式可能比较高频，
+         * 所以此处追加一次解析，且可以根据别名的模式解析对应的字段信息！
+         */
+        if (this.aliasMap.containsKey(field)) {
+            return this.seekKv(field);
+        }
+
+        // 都找不到
+        throw new _400BadRequestException("[ R2MO ] 无法识别的查询字段: " + field);
+    }
+
+    public List<Kv<String, String>> seekKvList(final String field) {
+        final List<Kv<String, String>> result = new ArrayList<>();
+        this.joined.values().forEach(node -> {
+            final Kv<String, String> seeked = this.seekKv(field, node);
+            if (Objects.nonNull(seeked)) {
+                result.add(seeked);
+            }
+        });
+        return result;
+    }
+
+    private Kv<String, String> seekKv(final String field, final DBNode found) {
+        final Kv<String, String> seeked = this.seekKvAlias(field, found);
+        if (Objects.nonNull(seeked)) {
+            return seeked;
+        }
+        if (this.aliasMap.containsKey(field)) {
+            return this.seekKv(field);
+        }
+        return null;
+    }
+
+    private Kv<String, String> seekKvAlias(final String field, final DBNode found) {
+        final String column = found.vColumn(field);
+        if (Objects.nonNull(column)) {
+            final String tableAlias = this.seekAlias(found.entity());
+            return Kv.create(tableAlias, column);
+        }
+        return null;
+    }
+
+    private Kv<String, String> seekKv(final String field) {
+        /*
+         * FIX-DBE: 别名做查询条件，两个实体都没有，最后的可能就是 field 是别名，要先做转换，这种模式可能比较高频，
+         * 所以此处追加一次解析，且可以根据别名的模式解析对应的字段信息！
+         */
+        final DBAlias alias = this.aliasMap.get(field);
+        if (Objects.isNull(alias)) {
+            throw new _400BadRequestException("[ R2MO ] 无法识别的查询字段（Alias）: " + field);
+        }
+        final DBNode found = this.findBy(alias.table());
+        final String column = found.vColumn(alias.name());
+        final String tableAlias = this.seekAlias(found.entity());
+        return Kv.create(tableAlias, column);
+    }
+
     /**
      * 逆向查找，通过属性名找列信息
      * <pre>
@@ -376,43 +462,8 @@ public class DBRef implements Serializable {
      */
     public String seekColumn(final String field) {
         // 优先考虑主实体
-        final String c1 = this.left.vColumn(field);
-        if (Objects.nonNull(c1)) {
-            final String tableAlias = this.seekAlias(this.left.entity());
-            return tableAlias + "." + c1;
-        }
-
-        // 其他实体（第一个匹配即返回）
-        for (final Class<?> other : this.registrySet) {
-            if (other == this.left.entity()) {
-                // 滤掉主实体
-                continue;
-            }
-            final String c2 = this.findBy(other).vColumn(field);
-            if (Objects.nonNull(c2)) {
-                final String tableAlias = this.seekAlias(other);
-                return tableAlias + "." + c2;
-            }
-        }
-
-
-        /*
-         * FIX-DBE: 别名做查询条件，两个实体都没有，最后的可能就是 field 是别名，要先做转换，这种模式可能比较高频，
-         * 所以此处追加一次解析，且可以根据别名的模式解析对应的字段信息！
-         */
-        if (this.aliasMap.containsKey(field)) {
-            final DBAlias alias = this.aliasMap.get(field);
-            if (Objects.isNull(alias)) {
-                throw new _400BadRequestException("[ R2MO ] 无法识别的查询字段（Alias）: " + field);
-            }
-            final DBNode found = this.findBy(alias.table());
-            final String column = found.vColumn(alias.name());
-            final String tableAlias = this.seekAlias(found.entity());
-            return tableAlias + "." + column;
-        }
-
-        // 都找不到
-        throw new _400BadRequestException("[ R2MO ] 无法识别的查询字段: " + field);
+        final Kv<String, String> seeked = this.seekColumnKv(field);
+        return seeked.key() + "." + seeked.value();
     }
 
     public String seekAlias(final Class<?> clazz) {
@@ -429,8 +480,35 @@ public class DBRef implements Serializable {
         return found.entity();  // 内部判断
     }
 
+    /**
+     * 根据列名提取实体类型，不带表别名的实体类型提取取决于 column 的优先级，通常模式下
+     * <pre>
+     *     1. 主实体的优先级高于其他实体
+     *     2. 如果出现了重名只会直接返回主实体的实例类型
+     * </pre>
+     *
+     * @param column 列名（不带表别名）
+     *
+     * @return 实体类型
+     */
     public Class<?> seekTypeByColumn(final String column) {
         final String table = this.columnVector.get(column);
+        return this.seekType(table);
+    }
+
+    /**
+     * 根据带有表别名的的列信息提取实例类型，此处不考虑 {@link #columnVector} 中存储的带有优先级的映射，而是
+     * <pre>
+     *     1. 根据表别名提取真实表名
+     *     2. 根据真实表名提取实体类型
+     * </pre>
+     *
+     * @param column 带有表别名的列信息
+     *
+     * @return 实体类型
+     */
+    public Class<?> seekTypeByColumn(final Kv<String, String> column) {
+        final String table = this.prefixMap.mapBy(column.key());
         return this.seekType(table);
     }
 

@@ -7,6 +7,8 @@ import io.r2mo.base.dbe.syntax.QQuery;
 import io.r2mo.base.dbe.syntax.QSorter;
 import io.r2mo.base.dbe.syntax.QTree;
 import io.r2mo.base.dbe.syntax.QValue;
+import io.r2mo.typed.common.Kv;
+import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
@@ -67,22 +69,26 @@ public class QrAnalyzerJoin implements QrAnalyzer<Condition> {
     }
 
     private Field<?> findColumn(final String field) {
-        final String column = this.ref.seekColumn(field);
-        return DSL.field(column);
+        return JooqHelper.findColumn(field, this.ref);
     }
 
     @Override
     public Condition whereId(final Serializable id) {
-        return null;
+        if (Objects.isNull(id)) {
+            // 如果 id 为空直接返回 false 条件
+            return DSL.falseCondition();
+        }
+        final Kv<String, String> kv = this.ref.find().key();
+        return JooqHelper.transform(kv.key(), id, this::findColumn);
     }
 
     @Override
     public Condition where(final QQuery query) {
-        return null;
+        throw new _501NotSupportException("[ R2MO ] Jooq 中的 Join 查询无需此方法！where(QQuery)");
     }
 
     @Override
     public <PAGE> PAGE page(final QQuery query) {
-        return null;
+        throw new _501NotSupportException("[ R2MO ] Jooq 中的 Join 查询无需此方法！page(QQuery)");
     }
 }
