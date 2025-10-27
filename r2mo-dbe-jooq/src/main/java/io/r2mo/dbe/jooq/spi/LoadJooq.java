@@ -54,7 +54,10 @@ public class LoadJooq extends DBLoadBase {
         final Field<?> pkField = primaryKey.getFields().getFirst();
         mapping.forEach((field, column) -> {
             if (column.equalsIgnoreCase(pkField.getName())) {
-                node.key(Kv.create(field, column));
+                /*
+                 * FIX-DBE: 此处之前的代码写反了，应该是 column -> key
+                 */
+                node.key(Kv.create(column, field));
             }
         });
     }

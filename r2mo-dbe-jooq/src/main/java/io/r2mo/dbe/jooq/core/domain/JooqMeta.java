@@ -154,7 +154,7 @@ public class JooqMeta {
     public static JooqMeta of(final Class<?> entityCls, final Table<?> table) {
         return CC_META.pick(() -> {
             final JooqMeta meta = new JooqMeta(entityCls).table(table);
-            log.info("[ R2MO ] ( Jooq ) 同步 meta 初始化完成：{} / {}, hashCode = {}",
+            log.debug("[ R2MO ] ( Jooq ) 同步 meta 初始化完成：{} / {}, hashCode = {}",
                 entityCls.getName(), table.getName(), meta.hashCode());
             return meta;
         }, entityCls);

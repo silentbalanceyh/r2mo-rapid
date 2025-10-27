@@ -54,7 +54,7 @@ class JooqField {
         if (Objects.isNull(columnName)) {
             throw new _501NotSupportException("[ R2MO ] 无法找到对应的 Column 名称: 输入字段 = " + fieldOr);
         }
-        log.info("[ R2MO ] 寻找 JOOQ Column: 输入字段 = {}, 目标 Column = {}", fieldOr, columnName);
+        log.debug("[ R2MO ] 寻找 JOOQ Column: 输入字段 = {}, 目标 Column = {}", fieldOr, columnName);
         Field<?> found;
         if (fieldOr.equals(columnName)) {
             // 直接等于，双保险

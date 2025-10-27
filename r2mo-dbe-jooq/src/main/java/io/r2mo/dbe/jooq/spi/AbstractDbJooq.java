@@ -23,7 +23,7 @@ class AbstractDbJooq<T> extends AbstractDbOperation<Condition, T, DSLContext> {
 
     protected AbstractDbJooq(final Class<T> entityCls, final DSLContext context) {
         super(entityCls, context);
-        this.meta = JooqMeta.getOr(entityCls);
+        this.meta = LoadREF.of().loadMeta(entityCls);
         this.setter = new JooqObject(this.meta, context);
     }
 

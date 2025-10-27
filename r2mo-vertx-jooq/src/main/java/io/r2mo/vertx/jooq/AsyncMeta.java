@@ -76,7 +76,7 @@ public class AsyncMeta {
     public static AsyncMeta of(final Class<?> daoCls, final DSLContext context, final Vertx vertxRef) {
         return CC_META.pick(() -> {
             final AsyncMeta instance = new AsyncMeta(daoCls, context, vertxRef);
-            log.info("[ R2MO ] ( Jooq ) Async 异步初始化完成 hashCode = {}", instance.hashCode());
+            log.debug("[ R2MO ] ( Jooq ) Async 异步初始化完成 hashCode = {}", instance.hashCode());
             return instance;
         }, daoCls);
     }

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * @author lang : 2025-10-24
@@ -35,6 +36,12 @@ public class DBResult {
 
     public JObject build(final Object major, final Set<Object> minorSet,
                          final DBNode current) {
+        return this.build(major, minorSet, current, cls -> cls);
+    }
+
+    public JObject build(final Object major, final Set<Object> minorSet,
+                         final DBNode current,
+                         final Function<Class<?>, Class<?>> entityFn) {
         final JObject serialized = SPI.V_UTIL.serializeJson(major);
         final JObject exchanged = DBFor.ofOut().exchange(serialized, current, this.ref);
 
@@ -51,7 +58,11 @@ public class DBResult {
             final Class<?> minorCls = minor.getClass();
             final JObject serialized0 = SPI.V_UTIL.serializeJson(minor);
 
-            final DBNode child = this.ref.findBy(minorCls);
+            DBNode child = this.ref.findBy(minorCls);
+            if (Objects.isNull(child) && Objects.nonNull(entityFn)) {
+                final Class<?> entityCls = entityFn.apply(minorCls);
+                child = this.ref.findBy(entityCls);
+            }
             final JObject exchanged0 = DBFor.ofOut().exchange(serialized0, child, this.ref);
 
 

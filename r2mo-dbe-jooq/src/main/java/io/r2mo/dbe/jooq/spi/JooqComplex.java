@@ -30,7 +30,7 @@ class JooqComplex {
 
     JooqComplex(final Class<?> entityCls, final DSLContext context) {
         this.context = context;
-        this.meta = JooqMeta.getOr(entityCls);
+        this.meta = LoadREF.of().loadMeta(entityCls);
         this.qr = new QrAnalyzerJooq(entityCls, context);
         Objects.requireNonNull(this.meta, "[ R2MO ] 无法从实体类中提取元数据：" + entityCls.getName());
     }

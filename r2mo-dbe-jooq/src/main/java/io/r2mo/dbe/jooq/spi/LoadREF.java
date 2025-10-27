@@ -72,7 +72,7 @@ public class LoadREF {
 
         CC_TABLE.put(daoCls, table);
         CC_TABLE.put(entityCls, table);
-        log.info("[ R2MO ] 注册 Jooq 元数据映射：{} ( Dao ) -> {} / {}", daoCls.getName(), entityCls.getName(), table.getName());
+        log.debug("[ R2MO ] 注册 Jooq 元数据映射：{} ( Dao ) -> {} / {}", daoCls.getName(), entityCls.getName(), table.getName());
 
 
         final JooqMeta metadata = JooqMeta.of(entityCls, table);

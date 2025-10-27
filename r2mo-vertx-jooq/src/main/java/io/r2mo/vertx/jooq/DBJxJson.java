@@ -266,6 +266,4 @@ class DBJxJson extends DBJxFuture {
     public JsonObject createJ(final JsonObject insertJ) {
         return this.create(SPI.J(insertJ)).data();
     }
-
-
 }

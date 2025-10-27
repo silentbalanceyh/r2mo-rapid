@@ -5,7 +5,7 @@ import io.r2mo.base.dbe.common.DBFor;
 import io.r2mo.base.dbe.common.DBNode;
 import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.common.DBResult;
-import io.r2mo.base.util.R2MO;
+import io.r2mo.dbe.common.DBEWait;
 import io.r2mo.dbe.mybatisplus.JoinProxy;
 import io.r2mo.dbe.mybatisplus.core.domain.BaseEntity;
 import io.r2mo.typed.exception.web._501NotSupportException;
@@ -14,10 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
 
 /**
  * @author lang : 2025-10-23
@@ -73,69 +70,32 @@ class OpJoinWriter<T> {
 
 
         // 主键实体反序列化和主键设置
-        final Object waitFor = this.buildEntity(request, first, null);
+        final Object waitFor = DBEWait.of(this.ref).build(request, first);
 
 
         // 插入主键实体
         final MPJBaseMapper mapper = this.executor().mapper(first.entity());
         final int rows = mapper.insert(waitFor);
-        // BaseEntity 的特殊处理
-        if (waitFor instanceof final BaseEntity waitForClean) {
-            waitForClean.setExtension(Map.of());
-        }
+        this.cleanExtension(waitFor);
 
         // ------------------ 处理连接数据集 ------------------
         final Set<Object> childSet = new HashSet<>();
         this.ref.findByExclude(first.entity()).forEach(standBy -> {
-            // 暂时只有一个元素留下
-            final Map<String, Object> joinData = this.ref.mapOf(waitFor, standBy);
-
             // ------------------ 处理其他关联实体 ------------------
             // 辅助实体数据交换
-            final Object waitMinor = this.buildEntity(request, standBy,
-                minorJ -> minorJ.put(joinData));
+            final Object waitMinor = DBEWait.of(this.ref).build(request, standBy, waitFor);
 
             // 插入辅助实体
             final MPJBaseMapper minorMapper = this.executor().mapper(standBy.entity());
             final int minorRows = minorMapper.insert(waitMinor);
 
             log.info("[ R2MO ] 主实体 {} / 辅助实体 {}", rows, minorRows);
-            if (waitMinor instanceof final BaseEntity waitMinorClean) {
-                waitMinorClean.setExtension(Map.of());
-            }
+            this.cleanExtension(waitMinor);
             childSet.add(waitMinor);
         });
 
         // 合并之后的最终结果
         return DBResult.of(this.ref).build(waitFor, childSet, first);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <R> R buildEntity(final JObject requestJ, final DBNode node,
-                              final Consumer<JObject> beforeFn) {
-        final JObject exchanged = DBFor.ofAlias().exchange(requestJ, node, this.ref);
-
-
-        if (Objects.nonNull(beforeFn)) {
-            beforeFn.accept(exchanged);
-        }
-        // 主键实体反序列化和主键设置
-        final Object waitFor = R2MO.deserializeJ(exchanged.data(), node.entity());
-        if (Objects.isNull(waitFor)) {
-            // 反序列化失败
-            return null;
-        }
-
-
-        // 主键实体添加过程中的主键补齐
-        final Object pkValue = node.vPrimary(waitFor);
-        if (Objects.isNull(pkValue)) {
-            // 如果主键类型是 String 内置会自动转换
-            node.vPrimary(waitFor, UUID.randomUUID());
-            // FIX-DBE: 消费一次就删除，防止子表和主表同主键
-            requestJ.remove(node.key().value());
-        }
-        return (R) waitFor;
     }
 
     @SuppressWarnings("all")
@@ -175,40 +135,37 @@ class OpJoinWriter<T> {
 
 
         // 主键实体反序列化和主键设置
-        final Object waitFor = this.buildEntity(updatedJ, first, null);
+        final Object waitFor = DBEWait.of(this.ref).build(updatedJ, first);
 
 
         // 插入主键实体
         final MPJBaseMapper mapper = this.executor().mapper(first.entity());
         final int rows = mapper.updateById(waitFor);
-        // BaseEntity 的特殊处理
-        if (waitFor instanceof final BaseEntity waitForClean) {
-            waitForClean.setExtension(Map.of());
-        }
+        this.cleanExtension(waitFor);
 
         // ------------------ 处理连接数据集 ------------------
         final Set<Object> childSet = new HashSet<>();
         this.ref.findByExclude(first.entity()).forEach(standBy -> {
-            // 暂时只有一个元素留下
-            final Map<String, Object> joinData = this.ref.mapOf(waitFor, standBy);
-
-            // ------------------ 处理其他关联实体 ------------------
             // 辅助实体数据交换
-            final Object waitMinor = this.buildEntity(updatedJ, standBy,
-                minorJ -> minorJ.put(joinData));
+            final Object waitMinor = DBEWait.of(this.ref).build(updatedJ, standBy, waitFor);
 
             // 插入辅助实体
             final MPJBaseMapper minorMapper = this.executor().mapper(standBy.entity());
             final int minorRows = minorMapper.updateById(waitMinor);
 
             log.info("[ R2MO ] 主实体 {} / 辅助实体 {}", rows, minorRows);
-            if (waitMinor instanceof final BaseEntity waitMinorClean) {
-                waitMinorClean.setExtension(Map.of());
-            }
+            this.cleanExtension(waitMinor);
             childSet.add(waitMinor);
         });
 
         // 合并之后的最终结果
         return DBResult.of(this.ref).build(waitFor, childSet, first);
+    }
+
+    private void cleanExtension(final Object waitFor) {
+        // BaseEntity 的特殊处理
+        if (waitFor instanceof final BaseEntity waitForClean) {
+            waitForClean.setExtension(Map.of());
+        }
     }
 }

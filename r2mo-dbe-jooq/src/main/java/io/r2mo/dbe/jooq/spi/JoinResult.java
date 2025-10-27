@@ -89,7 +89,7 @@ class JoinResult {
     private Kv<String, String> findAlias(final Field<?> field) {
         if (field instanceof final TableField<?, ?> tableField) {
             final Name name = Objects.requireNonNull(tableField.getTable()).getUnqualifiedName();
-            return Kv.create(name.first(), name.last());
+            return Kv.create(name.last(), field.getName());
         }
         // 比较广泛的处理方法
         final String name = field.getName();

@@ -27,8 +27,9 @@ public class QrAnalyzerJooq implements QrAnalyzer<Condition> {
     private final JooqMeta meta;
 
     public QrAnalyzerJooq(final Class<?> entityCls, final DSLContext context) {
-        this.meta = JooqMeta.getOr(entityCls);
-        Objects.requireNonNull(this.meta, "[ R2MO ] 无法从实体类中提取元数据：" + entityCls.getName());
+        final JooqMeta detect = LoadREF.of().loadMeta(entityCls);
+        Objects.requireNonNull(detect, "[ R2MO ] 无法从实体类中提取元数据：" + entityCls.getName());
+        this.meta = detect;
     }
 
     @Override

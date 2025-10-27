@@ -1,5 +1,6 @@
 package io.r2mo.dbe.jooq.spi;
 
+import io.r2mo.base.dbe.common.DBFor;
 import io.r2mo.base.dbe.common.DBRef;
 import io.r2mo.base.dbe.operation.OpJoin;
 import io.r2mo.base.dbe.operation.QrAnalyzer;
@@ -33,11 +34,13 @@ class OpJoinJooq<T> implements OpJoin<T, Condition> {
     private final DSLContext context;
     private final DBRef ref;
     private final QrAnalyzer<Condition> underAnalyzer;
+    private final OpJoinWriter writer;
 
     OpJoinJooq(final DBRef ref, final DSLContext context) {
         this.ref = ref;
         this.context = context;
         this.underAnalyzer = new QrAnalyzerJoin(ref);
+        this.writer = new OpJoinWriter(ref, context);
     }
 
     @Override
@@ -137,26 +140,44 @@ class OpJoinJooq<T> implements OpJoin<T, Condition> {
 
     @Override
     public JObject create(final JObject latest) {
-        return null;
+        return this.writer.create(latest);
     }
 
     @Override
     public Boolean removeById(final Serializable id) {
-        return null;
+        final JObject stored = this.findById(id);
+        return this.writer.removeBy(stored);
     }
 
     @Override
     public Boolean removeBy(final Condition condition) {
-        return null;
+        final JObject stored = this.findOne(condition);
+        return this.writer.removeBy(stored);
     }
 
     @Override
     public JObject updateById(final Serializable id, final JObject latest) {
-        return null;
+        // 原始数据
+        final JObject stored = this.findById(id);
+        // 数据压缩
+        final JObject compressed = DBFor.ofFilter().exchange(latest, this.ref);
+        // 合并数据
+        compressed.fieldNames()
+            .forEach(field -> stored.put(field, compressed.get(field)));
+
+        return this.writer.update(stored);
     }
 
     @Override
     public JObject update(final Condition condition, final JObject latest) {
-        return null;
+        // 原始数据
+        final JObject stored = this.findOne(condition);
+        // 数据压缩
+        final JObject compressed = DBFor.ofFilter().exchange(latest, this.ref);
+        // 合并数据
+        compressed.fieldNames()
+            .forEach(field -> stored.put(field, compressed.get(field)));
+
+        return this.writer.update(stored);
     }
 }

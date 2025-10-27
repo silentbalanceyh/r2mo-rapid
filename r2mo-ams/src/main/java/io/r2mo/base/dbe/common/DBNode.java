@@ -94,9 +94,6 @@ public class DBNode implements Serializable {
     // ------------------------ 读取专用方法 ---------------------
 
     public Class<?> entity() {
-        if (Objects.nonNull(this.dao)) {
-            return this.dao;
-        }
         return this.entity;
     }
 
