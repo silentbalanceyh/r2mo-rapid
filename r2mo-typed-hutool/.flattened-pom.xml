@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
   <artifactId>r2mo-typed-hutool</artifactId>
-  <version>1.0-M24</version>
+  <version>1.0-M25</version>
   <name>R2MO::Typed::Hutool</name>
   <description>R2MO Rapid Framework for Delivery</description>
   <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-typed-hutool</url>
@@ -28,7 +28,7 @@
   <scm>
     <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-typed-hutool</connection>
     <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-typed-hutool</developerConnection>
-    <tag>v1.0-M24</tag>
+    <tag>v1.0-M25</tag>
     <url>https://www.zerows.io/r2mo-typed-hutool</url>
   </scm>
   <distributionManagement>
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-ams</artifactId>
-      <version>1.0-M24</version>
+      <version>1.0-M25</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
