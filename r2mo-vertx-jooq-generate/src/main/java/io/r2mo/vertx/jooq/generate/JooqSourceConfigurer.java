@@ -109,7 +109,7 @@ public class JooqSourceConfigurer {
             )
             .withGenerator(new Generator()
                 .withName(Objects.requireNonNull(inputConfiguration.classGenerator(),
-                    "[ ZMOD ] 代码生成器类不可为 null.").getName())
+                    "[ PLUG ] 代码生成器类不可为 null.").getName())
                 .withDatabase(new org.jooq.meta.jaxb.Database()
                     .withName(databaseClass)
                     .withInputSchema(database.getInstance())
@@ -127,12 +127,12 @@ public class JooqSourceConfigurer {
                 )
                 .withTarget(new Target()
                     .withPackageName(Objects.requireNonNull(inputConfiguration.classPackage(),
-                        "[ ZMOD ] 目标包名不可为 null.").getName() + ".domain")
+                        "[ PLUG ] 目标包名不可为 null.").getName() + ".domain")
                     .withDirectory(inputConfiguration.directory())
                 )
                 .withStrategy(new Strategy()
                     .withName(Objects.requireNonNull(inputConfiguration.classStrategy(),
-                        "[ ZMOD ] 代码生成策略类不可为 null.").getName())
+                        "[ PLUG ] 代码生成策略类不可为 null.").getName())
                 )
             )
             ;
