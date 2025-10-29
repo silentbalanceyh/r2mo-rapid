@@ -182,7 +182,7 @@ public class ForLocaleCommon implements ForLocale {
         }
 
         CACHE_I18N.put(messageKey, false);
-        return messageKey;
+        return formatPattern(messageKey, messageArgs);  // Fix issue
     }
 
     /**
