@@ -90,8 +90,10 @@ public final class SourceReflect {
     public static <T> T instance(final Class<?> clazzImpl, final Object... args) {
         try {
             if (args == null || args.length == 0) {
-                // 无参构造
-                return (T) clazzImpl.getDeclaredConstructor().newInstance();
+                // 无参构造，Fix Accessible 问题（私有也可访问）
+                final Constructor<T> constructor = (Constructor<T>) clazzImpl.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                return constructor.newInstance();
             }
 
             // 获取所有构造函数（含 private）
