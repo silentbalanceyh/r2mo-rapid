@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
   <artifactId>r2mo-boot-vertx</artifactId>
-  <version>1.0-M25</version>
+  <version>1.0-M26</version>
   <name>R2MO::Boot::Vertx</name>
   <description>R2MO Rapid Framework for Delivery</description>
   <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-boot-vertx</url>
@@ -28,7 +28,7 @@
   <scm>
     <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-boot-vertx</connection>
     <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-boot-vertx</developerConnection>
-    <tag>v1.0-M25</tag>
+    <tag>v1.0-M26</tag>
     <url>https://www.zerows.io/r2mo-boot-vertx</url>
   </scm>
   <distributionManagement>
@@ -47,25 +47,25 @@
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-dbe</artifactId>
-      <version>1.0-M25</version>
+      <version>1.0-M26</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-io</artifactId>
-      <version>1.0-M25</version>
+      <version>1.0-M26</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-vertx</artifactId>
-      <version>1.0-M25</version>
+      <version>1.0-M26</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-jce</artifactId>
-      <version>1.0-M25</version>
+      <version>1.0-M26</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

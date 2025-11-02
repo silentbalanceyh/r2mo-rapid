@@ -99,7 +99,10 @@ public class R2Vector implements Serializable {
         // 合并 mapping
         this.mapping(source.mapTo(), false);
         // 合并 columnMapping
-        this.mappingColumn(source.mapTo(), false);
+        // FIX-DBE: java.sql.SQLSyntaxErrorException: Unknown column 'code' in 'where clause'
+        // this.mappingColumn(source.mapTo(), false);
+        // 旧代码有问题，导致 column 映射关系丢失（主要问题是逻辑错误）
+        this.mappingColumn(source.mapToColumn(), false);
         return this;
     }
 
