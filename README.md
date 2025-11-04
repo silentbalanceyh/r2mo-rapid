@@ -58,6 +58,17 @@
 
 ## 参考文档
 
+### 工程初始化
+
+```bash
+# 安装自动化工具
+npm install -g zero-ai
+# 初始化 Spring 项目脚手架
+ai spring -n app-demo
+# 初始化 Zero 项目脚手架（开发中）
+ai app -n app-zero
+```
+
 ### 使用方式
 
 搭建经典的 `-domain/-provider/-api` 的结构，在父 POM 项目中直接继承（推荐）
@@ -108,6 +119,19 @@
     <dependency>
         <groupId>io.zerows</groupId>
         <artifactId>r2mo-io-local</artifactId>
+        <version>${r2mo.version}</version>
+    </dependency>
+</dependencies>
+```
+
+上述方式是**自选择实现**的模式，若想要快速启动可使用如下依赖：
+
+```xml
+
+<dependencies>
+    <dependency>
+        <groupId>io.zerows</groupId>
+        <artifactId>r2mo-boot-spring-default</artifactId>
         <version>${r2mo.version}</version>
     </dependency>
 </dependencies>
