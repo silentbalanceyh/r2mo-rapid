@@ -60,6 +60,8 @@
 
 ### 工程初始化
 
+最新版：![npm version](https://img.shields.io/npm/v/zero-ai.svg)
+
 ```bash
 # 安装自动化工具
 npm install -g zero-ai
