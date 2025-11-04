@@ -44,7 +44,7 @@ class OpVaryJooq<T> extends AbstractDbJooq<T> implements OpVary<T, Condition> {
         if (Objects.isNull(condition)) {
             return new ArrayList<>();
         }
-        return this.findMany(condition);
+        return this.db.findMany(condition);
     }
 
     @Override
@@ -71,7 +71,7 @@ class OpVaryJooq<T> extends AbstractDbJooq<T> implements OpVary<T, Condition> {
         if (Objects.isNull(condition)) {
             return Optional.empty();
         }
-        return this.findOne(condition);
+        return this.db.findOne(condition);
     }
 
     @Override
