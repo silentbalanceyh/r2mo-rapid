@@ -89,6 +89,8 @@ public class R2VarSet implements Serializable {
             } else {
                 inferred = type;
             }
+            // 防止内部的 NullPointerException
+            v.type(inferred);
 
             // type：若已存在且不同，判冲突
             if (v.type() != null && !Objects.equals(v.type(), inferred)) {
@@ -96,7 +98,6 @@ public class R2VarSet implements Serializable {
                     "[ R2MO ] 变量 \"" + name + "\" 的类型冲突：已存在类型="
                         + v.type().getName() + "，新传入类型=" + inferred.getName() + "。");
             }
-            v.type(inferred);
             // 值：仅在传入非空时覆盖
             if (valueDefault != null) {
                 v.valueDefault(valueDefault);
