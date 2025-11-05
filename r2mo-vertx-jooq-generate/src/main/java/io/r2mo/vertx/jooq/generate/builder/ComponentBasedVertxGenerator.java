@@ -151,7 +151,7 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
             final String instance = hasConverter ? column.getType().getConverter() : column.getType().getBinding();
             final Class<?> pgConverterFromType = this.tryGetPgConverterFromType(columnType, instance);
             if (JsonObject.class.equals(pgConverterFromType) || JSONArray.class.equals(pgConverterFromType)) {
-                out.tab(2).println("json.types(\"%s\",%s.pgConverter().to(%s()));",
+                out.tab(2).println("json.put(\"%s\",%s.pgConverter().to(%s()));",
                     this.getJsonKeyName(column),
                     VertxGeneratorBuilder.resolveConverterInstance(instance, column.getSchema(), this),
                     getter);
