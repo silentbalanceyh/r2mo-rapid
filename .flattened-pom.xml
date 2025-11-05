@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
   <artifactId>r2mo-rapid</artifactId>
-  <version>1.0-M26</version>
+  <version>1.0-M27</version>
   <packaging>pom</packaging>
-  <name>R2MO::🧬 - 1.0-M26 / 🧪 - Rachel Momo 1.0.11</name>
+  <name>R2MO::🧬 - 1.0-M27 / 🧪 - Rachel Momo 1.0.11</name>
   <description>R2MO Rapid Framework for Delivery</description>
   <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
   <licenses>
@@ -29,7 +29,7 @@
   <scm>
     <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git</connection>
     <developerConnection>scm:git:https://gitee.com/silentbalanceyh</developerConnection>
-    <tag>v1.0-M26</tag>
+    <tag>v1.0-M27</tag>
     <url>https://www.zerows.io</url>
   </scm>
   <distributionManagement>
