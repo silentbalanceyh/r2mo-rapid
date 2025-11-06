@@ -56,7 +56,7 @@ import java.util.regex.Pattern;
  *         +----------------------------+
  *                       |
  *                       v
- *           code < 0 ? 使用 MessageFail
+ *           {@code code < 0} ? 使用 MessageFail
  *                    : 使用 MessageInfo
  *                       |
  *                       v

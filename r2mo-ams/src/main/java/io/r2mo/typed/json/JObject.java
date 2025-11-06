@@ -87,7 +87,7 @@ public interface JObject extends JBase {
      * types 过程中的一种承诺，即 types 进去的 value 只能是原生类型，不能是 {@link JArray} 和 {@link JObject}，否则无法做递归，最简单的
      * 模式是直接调用 {@link JObject#data()} 提取实际类型进行相关操作，最终执行都会归于内部结构。
      *
-     * @return Map<String, Object>
+     * @return {@code Map<String, Object>}
      */
     // 转换为 Map
     Map<String, Object> toMap();

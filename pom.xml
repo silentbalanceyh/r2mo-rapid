@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>r2mo-rapid</artifactId>
-    <version>1.0-M27</version>
+    <version>1.0.28</version>
     <properties>
         <rachel-momo.version>1.0.11</rachel-momo.version>
-        <r2mo.version>1.0-M27</r2mo.version>
+        <r2mo.version>1.0.28</r2mo.version>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -108,6 +108,24 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
+                    <failOnError>false</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
                 <version>1.7.3</version>
@@ -140,24 +158,6 @@
                         <arg>-Xlint:-options</arg>
                     </compilerArgs>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <additionalOptions>
-                        <additionalOption>-Xdoclint:none</additionalOption>
-                    </additionalOptions>
-                    <failOnError>false</failOnError>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <!-- Source -->
             <plugin>
