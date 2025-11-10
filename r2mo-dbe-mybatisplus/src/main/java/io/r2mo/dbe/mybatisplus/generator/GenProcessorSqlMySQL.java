@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.r2mo.base.generator.GenConfig;
+import io.r2mo.base.generator.GenMeta;
 import io.r2mo.base.generator.GenProcessor;
 import io.r2mo.dbe.common.constant.SourceField;
 import io.r2mo.typed.json.JArray;
@@ -18,7 +19,13 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -321,7 +328,8 @@ class GenProcessorSqlMySQL implements GenProcessor {
             return;
         }
 
-        final String filename = "V1__init_schema.sql";
+        final GenMeta meta = config.getMetadata();
+        final String filename = meta.getSchema(); // "V1__init_schema.sql";
         final Path sqlFilePath = dbSchema.resolve(filename);
         // 确保目录存在
         try {

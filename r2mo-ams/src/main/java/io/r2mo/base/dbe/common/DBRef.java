@@ -155,8 +155,13 @@ public class DBRef implements Serializable {
             this.columnVector.put(column, nodeRight.table()));
 
         // 填充当前内容
-        this.joined.put(nodeLeft.name(), nodeLeft, nodeLeft.table());
-        this.joined.put(nodeRight.name(), nodeRight, nodeRight.table());
+        // FIX-DBE: [ R2MO-10501 ] [ R2MO ] 无法构建 JOIN 条件，请检查 DBRef 配置：io.r2mo.base.dbe.common.DBRef@3fec290
+        // - 新代码追加 nodeLeft.entity() 非空检查以及 getName() 作键值
+        // - 否则使用 entity() 的方式提取信息会不成功引起上述问题！
+        this.joined.put(nodeLeft.name(), nodeLeft, nodeLeft.table(),
+            Objects.requireNonNull(nodeLeft.entity()).getName());
+        this.joined.put(nodeRight.name(), nodeRight, nodeRight.table(),
+            Objects.requireNonNull(nodeRight.entity()).getName());
 
         // 设置向量处理
         this.addVector(nodeRight, waitFor);

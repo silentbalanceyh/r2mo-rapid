@@ -101,8 +101,27 @@ public class DBNode implements Serializable {
         return Kv.create(this.table, this.key.value());
     }
 
+    /**
+     * FIX-DBE: 此处的属性可能是转换之前的，所以要进行二次检索和转换，才能保证得到的列名是具有一致性的
+     * <pre>
+     *     1. 直接检索
+     *        field ( Entity 中存在 ) -> column
+     *     2. 间接检索
+     *        field ( Entity 中不存在 ) -> 转换 -> column
+     * </pre>
+     *
+     * @param field 字段名
+     *
+     * @return 列名
+     */
     public String vColumn(final String field) {
-        return Objects.requireNonNull(this.vector).mapToColumn(field);
+        final R2Vector vectorRef = Objects.requireNonNull(this.vector);
+        String column = vectorRef.mapToColumn(field);
+        if (StrUtil.isEmpty(column)) {
+            final String fieldEntity = vectorRef.mapBy(field);
+            column = vectorRef.mapToColumn(fieldEntity);
+        }
+        return column;
     }
 
     public String vProperty(final String column) {
