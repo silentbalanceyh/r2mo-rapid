@@ -10,22 +10,33 @@ import org.springframework.security.core.AuthenticationException;
 public interface AuthService {
     /**
      * 前置处理
+     * <pre>
+     *     认证方式              前置接口
+     *     sms                  /sms/send
+     *     email                /email/send
+     *     ldap                 无
+     *     wechat               /wechat/qrcode
+     *     password             /auth/captcha           开启图片验证码后使用
+     * </pre>
      *
      * @param loginRequest 登录请求
      *
      * @return 是否允许登录
      */
-    default boolean authorize(final LoginRequest loginRequest) {
-        return true;
+    default String authorize(final LoginRequest loginRequest) {
+        return null;
     }
 
     /**
      * 执行认证并返回登录响应
+     * <pre>
+     *     认证方式              执行接口
+     *     sms                  /sms/login
+     *     email                /email/login
+     *     ldap                 /ldap/login
+     *     wechat               /wechat/login
+     *     password             /auth/login
+     * </pre>
      */
     LoginResponse login(LoginRequest loginRequest) throws AuthenticationException;
-
-    /**
-     * 判断是否支持该登录请求
-     */
-    boolean supports(LoginRequest loginRequest);
 }

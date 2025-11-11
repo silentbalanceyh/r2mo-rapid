@@ -2,46 +2,53 @@ package io.r2mo.spring.security.auth;
 
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.jaas.auth.LoginResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.r2mo.jaas.session.UserAt;
+import io.r2mo.spring.security.auth.executor.ExecutorCache;
+import io.r2mo.spring.security.auth.executor.ExecutorManager;
+import io.r2mo.spring.security.auth.executor.PreAuthService;
+import io.r2mo.spring.security.auth.executor.UserAtService;
+import io.r2mo.typed.common.Kv;
+import org.ehcache.Cache;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Objects;
 
 /**
  * @author lang : 2025-11-11
  */
 @Service
 public class AuthServiceManager implements AuthService {
-    private final List<AuthProvider> authServices;
 
-    public AuthServiceManager(@Autowired final List<AuthProvider> authServices) {
-        this.authServices = authServices;
+    private final ExecutorManager manager;
+    private final ExecutorCache cache;
+
+    public AuthServiceManager() {
+        this.manager = ExecutorManager.of();
+        this.cache = ExecutorCache.of();
     }
 
     @Override
-    public boolean authorize(final LoginRequest loginRequest) {
-        for (final AuthProvider service : this.authServices) {
-            if (service.supports(loginRequest)) {
-                return service.authorize(loginRequest);
-            }
-        }
-        return true;
+    public String authorize(final LoginRequest loginRequest) {
+        // 根据 type() 查找匹配的
+        final PreAuthService service = this.manager.authorizeProvider(loginRequest);
+        final Kv<String, String> generated = service.authorize(loginRequest.getId());
+        // 缓存处理 - 60s 有效期，特殊配置后边来处理（比如5分钟验证码）
+        final Cache<String, String> cache = this.cache.getOrCreate(loginRequest.type());
+        cache.put(generated.key(), generated.value());
+        return generated.value();
     }
 
     @Override
     public LoginResponse login(final LoginRequest loginRequest) throws AuthenticationException {
-        for (final AuthProvider service : this.authServices) {
-            if (service.supports(loginRequest)) {
-                return service.login(loginRequest);
-            }
-        }
-        throw new AuthenticationException("[R2MO] 未找到合适的认证服务") {
-        };
-    }
+        final UserAtService service = this.manager.userProvider(loginRequest);
 
-    @Override
-    public boolean supports(final LoginRequest loginRequest) {
-        return this.authServices.stream().anyMatch(service -> service.supports(loginRequest));
+        final UserAt user = service.loadLogged(loginRequest);
+        if (Objects.isNull(user) || !user.isOk()) {
+            throw new AuthenticationException("[ R2MO ] 用户登录异常：id = " + loginRequest.getId()) {
+            };
+        }
+
+        return new LoginResponse(user);
     }
 }

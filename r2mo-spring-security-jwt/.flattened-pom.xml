@@ -3,11 +3,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
-  <artifactId>r2mo-spring-security</artifactId>
+  <artifactId>r2mo-spring-security-jwt</artifactId>
   <version>1.0.29</version>
-  <name>R2MO::Spring::Security</name>
+  <name>R2MO::Spring::Security::JWT</name>
   <description>R2MO Rapid Framework for Delivery</description>
-  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-spring-security</url>
+  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-spring-security-jwt</url>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -26,10 +26,10 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-spring-security</connection>
-    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-spring-security</developerConnection>
+    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-spring-security-jwt</connection>
+    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-spring-security-jwt</developerConnection>
     <tag>v1.0.29</tag>
-    <url>https://www.zerows.io/r2mo-spring-security</url>
+    <url>https://www.zerows.io/r2mo-spring-security-jwt</url>
   </scm>
   <distributionManagement>
     <repository>
@@ -46,38 +46,14 @@
   <dependencies>
     <dependency>
       <groupId>io.zerows</groupId>
-      <artifactId>r2mo-spring</artifactId>
+      <artifactId>r2mo-spring-security</artifactId>
       <version>1.0.29</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.zerows</groupId>
-      <artifactId>r2mo-jaas</artifactId>
-      <version>1.0.29</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-      <version>3.4.11</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>3.4.11</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-context</artifactId>
-      <version>4.2.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>cn.hutool</groupId>
-      <artifactId>hutool-captcha</artifactId>
-      <version>5.8.41</version>
+      <groupId>cn.dev33</groupId>
+      <artifactId>sa-token-jwt</artifactId>
+      <version>1.38.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

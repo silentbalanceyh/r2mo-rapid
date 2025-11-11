@@ -1,9 +1,8 @@
 package io.r2mo.spring.security.config;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import io.r2mo.jaas.auth.LoginRequest;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.domain.BaseScope;
-import io.r2mo.typed.json.JBase;
+import io.r2mo.typed.json.JObject;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -27,7 +26,7 @@ public class SecurityScopeResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(final MethodParameter parameter) {
-        return LoginRequest.class.isAssignableFrom(parameter.getParameterType());
+        return JObject.class.isAssignableFrom(parameter.getParameterType());
     }
 
     @Override
@@ -58,22 +57,9 @@ public class SecurityScopeResolver implements HandlerMethodArgumentResolver {
 
         // 3. 读取 Body（仅包含 id, credential, captcha 等）
         final String body = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        final JsonMapper jackson = JBase.jackson();
-        final LoginRequest bodyPart;
-        try {
-            bodyPart = jackson.readValue(body, LoginRequest.class);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("[R2MO] 请求体 JSON 解析失败，请检查格式", e);
-        }
-
-        // 4. 合并：Header 的 Scope + Body 的认证信息
-        final LoginRequest wrapRequest = new LoginRequest();
-        wrapRequest.app(appId);
-        wrapRequest.tenant(tenantId);
-        wrapRequest.setId(bodyPart.getId());
-        wrapRequest.setCredential(bodyPart.getCredential());
-        wrapRequest.setIdType(bodyPart.getIdType());
-        wrapRequest.setCaptcha(bodyPart.getCaptcha());
-        return wrapRequest;
+        final JObject bodyData = SPI.J(body);
+        bodyData.put("appId", appId);
+        bodyData.put("tenantId", tenantId);
+        return bodyData;
     }
 }

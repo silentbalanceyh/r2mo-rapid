@@ -2,6 +2,7 @@ package io.r2mo.spring.security.auth;
 
 import io.r2mo.jaas.element.MSRole;
 import io.r2mo.jaas.element.MSUser;
+import io.r2mo.jaas.session.UserAt;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,14 +16,14 @@ import java.util.Objects;
 /**
  * @author lang : 2025-11-11
  */
-public class MSUserDetail implements UserDetails {
+public class AuthUserDetail implements UserDetails {
     @Getter
-    private final MSUser user;
+    private final UserAt user;
     private final List<GrantedAuthority> authorities = new ArrayList<>();
 
-    public MSUserDetail(final MSUser user) {
+    public AuthUserDetail(final UserAt user) {
         this.user = user;
-        final List<MSRole> roles = user.roles();
+        final List<MSRole> roles = user.logged().roles();
         roles.forEach(role -> {
             final GrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
             this.authorities.add(authority);
@@ -36,11 +37,17 @@ public class MSUserDetail implements UserDetails {
 
     @Override
     public String getPassword() {
-        return Objects.requireNonNull(this.user).getPassword();
+        final MSUser logged = this.user.logged();
+        return Objects.requireNonNull(logged).getPassword();
     }
 
     @Override
     public String getUsername() {
-        return Objects.requireNonNull(this.user).getUsername();
+        final MSUser logged = this.user.logged();
+        return Objects.requireNonNull(logged).getUsername();
+    }
+
+    public UserAt logged() {
+        return this.user;
     }
 }

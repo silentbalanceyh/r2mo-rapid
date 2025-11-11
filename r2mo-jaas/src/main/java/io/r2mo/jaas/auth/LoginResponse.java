@@ -1,5 +1,6 @@
 package io.r2mo.jaas.auth;
 
+import io.r2mo.jaas.session.UserAt;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,4 +16,7 @@ public class LoginResponse implements Serializable {
     private UUID userId;
     private String username;
     private long expiredAt;
+
+    public LoginResponse(final UserAt user) {
+    }
 }

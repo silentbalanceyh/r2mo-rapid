@@ -57,4 +57,7 @@ public enum UserIDType {
     PLAY_GAME,      // Google Play Games
 
     PASSWORD,        // 默认账号、密码
+    SMS,             // 短信验证码
+    EMAIL,           // 邮箱验证码
+    LDAP,            // LDAP
 }

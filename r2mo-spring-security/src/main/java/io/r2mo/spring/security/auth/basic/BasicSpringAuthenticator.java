@@ -1,14 +1,11 @@
 package io.r2mo.spring.security.auth.basic;
 
-import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityBasic;
 import io.r2mo.spring.security.extension.SpringAuthenticatorBase;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 import java.util.Objects;
@@ -21,11 +18,9 @@ import java.util.Objects;
  */
 @Slf4j
 public class BasicSpringAuthenticator extends SpringAuthenticatorBase {
-    private final PasswordEncoder passwordEncoder;
 
     public BasicSpringAuthenticator(final ConfigSecurity configuration) {
         super(configuration);
-        this.passwordEncoder = SpringUtil.getBean(PasswordEncoder.class);
     }
 
     @Override
@@ -48,16 +43,9 @@ public class BasicSpringAuthenticator extends SpringAuthenticatorBase {
             return;
         }
 
-        // 配置 Basic 认证
-        final DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(this.passwordEncoder);
-        provider.setUserDetailsService(this.userService());
-
         try {
             security
-                .httpBasic(basicSecurity -> basicSecurity.authenticationEntryPoint(entryPoint))
-                .userDetailsService(service)
-                .authenticationProvider(provider);
+                .httpBasic(basicSecurity -> basicSecurity.authenticationEntryPoint(entryPoint));
         } catch (final Exception ex) {
             log.error("[ R2MO ] Basic 认证配置失败", ex);
         }
