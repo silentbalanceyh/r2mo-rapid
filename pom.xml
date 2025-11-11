@@ -5,13 +5,13 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>rachel-momo-0216</artifactId>
-        <version>1.0.11</version>
+        <version>1.0.13</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>r2mo-rapid</artifactId>
     <version>1.0.29</version>
     <properties>
-        <rachel-momo.version>1.0.11</rachel-momo.version>
+        <rachel-momo.version>1.0.13</rachel-momo.version>
         <r2mo.version>1.0.29</r2mo.version>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -104,6 +104,8 @@
         <module>r2mo-boot-spring</module>
         <module>r2mo-boot-spring-default</module><!-- ☘️ Bootstrap 实现层（默认）-->
         <module>r2mo-boot-vertx</module>
+        <module>r2mo-jaas</module>
+        <module>r2mo-spring-security</module>
     </modules>
     <build>
         <plugins>
@@ -236,10 +238,11 @@
 
             <!--
             统一抽象接口
-            - r2mo-ams / Agreed Metadata Specification
-            - r2mo-dbe / Database Engine
-            - r2mo-jce / JCE Encryption Decryption
-            - r2mo-io  / Input Output
+            - r2mo-ams      / Agreed Metadata Specification
+            - r2mo-dbe      / Database Engine
+            - r2mo-jce      / JCE Encryption Decryption
+            - r2mo-jaas     / Java Authentication Authorization
+            - r2mo-io       / Input Output
             -->
             <dependency>
                 <groupId>io.zerows</groupId>
@@ -254,6 +257,11 @@
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-jce</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-jaas</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
             <dependency>

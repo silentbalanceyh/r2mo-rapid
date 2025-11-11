@@ -1,0 +1,22 @@
+security:
+  ignore-uris:
+    - /api/????:POST
+    - /api/public/**
+  captcha:
+    enabled: true
+    type: circle
+    expiredAt: 30s
+    width: 150
+    height: 50
+    textAlpha: 0.5
+    code:
+      type: RANDOM
+      length: 4
+    font:
+      name: Arial
+      weight: 0
+      size: 20
+  jwt:
+    issuer: "R2MO Issuer"
+    expiredAt: 30m
+    refreshAt: 7d

@@ -35,6 +35,12 @@
             <artifactId>r2mo-jce</artifactId>
             <version>${r2mo.version}</version>
         </dependency>
+        <!-- JAAS -->
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-jaas</artifactId>
+            <version>${r2mo.version}</version>
+        </dependency>
         <!--
         MySQL 部分的处理流程 /
         -->

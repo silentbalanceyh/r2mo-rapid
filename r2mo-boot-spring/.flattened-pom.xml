@@ -77,13 +77,13 @@
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-mysql</artifactId>
-      <version>11.15.0</version>
+      <version>11.16.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
-      <version>11.15.0</version>
+      <version>11.16.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -101,7 +101,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>3.4.10</version>
+      <version>3.4.11</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>

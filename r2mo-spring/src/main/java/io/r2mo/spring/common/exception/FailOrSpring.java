@@ -2,7 +2,11 @@ package io.r2mo.spring.common.exception;
 
 import io.r2mo.base.web.FailOr;
 import io.r2mo.typed.exception.WebException;
-import io.r2mo.typed.exception.web.*;
+import io.r2mo.typed.exception.web._400BadRequestException;
+import io.r2mo.typed.exception.web._401UnauthorizedException;
+import io.r2mo.typed.exception.web._403ForbiddenException;
+import io.r2mo.typed.exception.web._405MethodBadException;
+import io.r2mo.typed.exception.web._415MediaNotSupportException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +19,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class FailOrSpring implements FailOr {
+    
     @Override
     public WebException transform(final Throwable ex, final HttpServletRequest request, final HttpServletResponse response) {
         // org.springframework.web.HttpRequestMethodNotSupportedException
