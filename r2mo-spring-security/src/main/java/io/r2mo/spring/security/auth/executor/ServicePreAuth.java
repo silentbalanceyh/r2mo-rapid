@@ -7,7 +7,7 @@ import io.r2mo.typed.common.Kv;
  *
  * @author lang : 2025-11-11
  */
-public interface PreAuthService {
+public interface ServicePreAuth {
 
     Kv<String, String> authorize(String identifier);
 }

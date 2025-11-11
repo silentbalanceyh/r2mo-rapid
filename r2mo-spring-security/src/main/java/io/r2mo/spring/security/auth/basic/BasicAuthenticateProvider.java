@@ -1,14 +1,16 @@
 package io.r2mo.spring.security.auth.basic;
 
-import io.r2mo.jaas.auth.LoginResponse;
-import io.r2mo.spring.security.auth.AuthService;
+import cn.hutool.extra.spring.SpringUtil;
+import io.r2mo.spring.security.auth.executor.UserDetailsContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,11 +22,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class BasicAuthenticateProvider implements AuthenticationProvider {
 
-    private final AuthService authService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userService;
 
     @Autowired
-    public BasicAuthenticateProvider(final AuthService authService) {
-        this.authService = authService;
+    public BasicAuthenticateProvider(final UserDetailsService authService) {
+        this.userService = authService;
+        this.passwordEncoder = SpringUtil.getBean(PasswordEncoder.class);
     }
 
     @Override
@@ -32,25 +36,28 @@ public class BasicAuthenticateProvider implements AuthenticationProvider {
         final String username = authentication.getName();
         final String password = authentication.getCredentials().toString();
 
-        // 构造 LoginRequest
-        final BasicLoginRequest loginRequest = new BasicLoginRequest();
-        loginRequest.setUsername(username);
-        loginRequest.setPassword(password);
-
-        // 从缓存中加载认证信息
+        // -- 关键：设置认证策略到上下文
+        UserDetailsContext.setStrategy(BasicLoginRequest.TYPE);
 
         try {
-            // 调用 AuthService 进行认证
-            final LoginResponse loginResponse = this.authService.login(loginRequest);
+            final UserDetails stored = this.userService.loadUserByUsername(username);
+
+            // 密码校验
+            if (!this.passwordEncoder.matches(password, stored.getPassword())) {
+                throw new BadCredentialsException("[ R2MO ] 用户名或密码错误");
+            }
 
             // 构造认证成功的 Authentication 对象
             return new UsernamePasswordAuthenticationToken(
-                loginResponse.getUsername(),
-                password,
-                AuthorityUtils.createAuthorityList("ROLE_USER")
+                stored.getUsername(),
+                null,
+                stored.getAuthorities()
             );
         } catch (final Exception e) {
             throw new BadCredentialsException("认证失败: " + e.getMessage());
+        } finally {
+            // -- 关键：清空认证策略
+            UserDetailsContext.clearStrategy();
         }
     }
 

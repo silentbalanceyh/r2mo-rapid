@@ -1,6 +1,7 @@
 package io.r2mo.spring.security.config;
 
 import io.r2mo.spring.security.auth.basic.BasicSpringAuthenticator;
+import io.r2mo.spring.security.auth.executor.UserDetailsCommon;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
 import io.r2mo.spring.security.extension.valve.RequestValve;
 import io.r2mo.spring.security.extension.valve.RequestValveAuth;
@@ -17,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -119,5 +121,11 @@ public class SecurityWebConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    // 用户服务管理器
+    @Bean
+    public UserDetailsService userService() {
+        return new UserDetailsCommon();
     }
 }

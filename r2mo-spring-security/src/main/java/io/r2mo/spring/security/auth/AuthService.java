@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.auth;
 
 import io.r2mo.jaas.auth.LoginRequest;
-import io.r2mo.jaas.auth.LoginResponse;
+import io.r2mo.jaas.session.UserAt;
 import org.springframework.security.core.AuthenticationException;
 
 /**
@@ -38,5 +38,5 @@ public interface AuthService {
      *     password             /auth/login
      * </pre>
      */
-    LoginResponse login(LoginRequest loginRequest) throws AuthenticationException;
+    UserAt login(LoginRequest loginRequest) throws AuthenticationException;
 }

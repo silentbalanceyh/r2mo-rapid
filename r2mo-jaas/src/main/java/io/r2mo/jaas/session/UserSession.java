@@ -66,7 +66,8 @@ public class UserSession {
         userAt.logged(user).employee(employee);
         // 添加
         this.user(userAt);
-        log.info("[ R2MO ] 登录账号：{} / 员工工号 = {}", user.getUsername(), employee.getWorkNumber());
+        log.info("[ R2MO ] 登录账号：{} / 员工工号 = {}", user.getUsername(),
+            Objects.isNull(employee) ? "N/A" : employee.getWorkNumber());
         return userAt;
     }
 

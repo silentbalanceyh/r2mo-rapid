@@ -45,7 +45,9 @@ public class BasicSpringAuthenticator extends SpringAuthenticatorBase {
 
         try {
             security
-                .httpBasic(basicSecurity -> basicSecurity.authenticationEntryPoint(entryPoint));
+                .httpBasic(basicSecurity -> basicSecurity.authenticationEntryPoint(entryPoint))
+                .userDetailsService(service)
+                .authenticationProvider(new BasicAuthenticateProvider(service));
         } catch (final Exception ex) {
             log.error("[ R2MO ] Basic 认证配置失败", ex);
         }

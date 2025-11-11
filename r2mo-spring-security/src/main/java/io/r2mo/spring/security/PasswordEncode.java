@@ -16,4 +16,9 @@ public class PasswordEncode {
         final String pwd = "lang1017";
         System.out.println(encoder.encode(pwd));
     }
+
+    public static String encode(final String pwd) {
+        final PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return encoder.encode(pwd);
+    }
 }

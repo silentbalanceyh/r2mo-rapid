@@ -40,20 +40,23 @@ class UserAtLogged implements UserAt {
         final JObject userJ = this.V.serializeJson(this.logged);
         combined.put(userJ);
         // 员工
-        final JObject employeeJ = this.V.serializeJson(this.employee);
-        combined.put(employeeJ);
+        if (Objects.nonNull(this.employee)) {
+            final JObject employeeJ = this.V.serializeJson(this.employee);
+            combined.put(employeeJ);
+        }
         /*
          * - id / userId
          * - employeeId
          */
         combined.put("id", this.logged.getId());
-        combined.put("employeeId", this.employee.getId());
+        if (Objects.nonNull(this.employee)) {
+            combined.put("employeeId", this.employee.getId());
+        }
         return combined;
     }
 
     @Override
     public boolean isOk() {
-        return Objects.nonNull(this.logged)
-            && Objects.nonNull(this.employee);
+        return Objects.nonNull(this.logged);
     }
 }

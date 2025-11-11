@@ -37,8 +37,10 @@ public class BasicLoginRequest extends LoginRequest {
 
     @Override
     public UserIDType type() {
-        return UserIDType.PASSWORD;
+        return TYPE;
     }
+
+    public static final UserIDType TYPE = UserIDType.PASSWORD;
 
     public BasicLoginRequest() {
     }
