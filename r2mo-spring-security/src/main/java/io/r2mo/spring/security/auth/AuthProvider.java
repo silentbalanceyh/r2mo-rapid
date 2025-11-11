@@ -7,7 +7,7 @@ import org.springframework.security.core.AuthenticationException;
 /**
  * @author lang : 2025-11-11
  */
-public interface AuthService {
+public interface AuthProvider {
     /**
      * 前置处理
      *

@@ -57,7 +57,7 @@ public class ConfigSecurity implements Serializable {
     private List<String> ignoreUris;
     private ConfigSecurityCaptcha captcha;
     private ConfigSecurityJwt jwt;
-    private ConfigSecurityBasic basic;
+    private ConfigSecurityBasic basic = new ConfigSecurityBasic();  // 默认打开
     private ConfigSecurityScope scope;
 
     public List<Kv<String, HttpMethod>> loadIgnoreUris() {
@@ -87,7 +87,7 @@ public class ConfigSecurity implements Serializable {
 
     // 内置配置：是否开启 Basic 认证
     public boolean isBasic() {
-        return Objects.nonNull(this.basic);
+        return Objects.nonNull(this.basic) && this.basic.isEnabled();
     }
 
     // 内置配置：是否开启 JWT 认证

@@ -1,6 +1,6 @@
 package io.r2mo.spring.security.config;
 
-import io.r2mo.spring.security.auth.basic.SpringAuthenticatorBasic;
+import io.r2mo.spring.security.auth.basic.BasicSpringAuthenticator;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
 import io.r2mo.spring.security.extension.valve.RequestValve;
 import io.r2mo.spring.security.extension.valve.RequestValveAuth;
@@ -80,7 +80,7 @@ public class SecurityWebConfiguration {
         // 加载不同模式的认证器
         if (this.config.isBasic()) {
             // 加载 Basic 认证器
-            final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config, SpringAuthenticatorBasic::new);
+            final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config, BasicSpringAuthenticator::new);
             authenticator.configure(http, introspector);
             log.info("[ R2MO ] 启用 Basic 认证器");
         }

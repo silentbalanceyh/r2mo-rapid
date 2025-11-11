@@ -36,11 +36,11 @@ public class MSUserDetail implements UserDetails {
 
     @Override
     public String getPassword() {
-        return Objects.requireNonNull(this.user).getUsername();
+        return Objects.requireNonNull(this.user).getPassword();
     }
 
     @Override
     public String getUsername() {
-        return Objects.requireNonNull(this.user).getPassword();
+        return Objects.requireNonNull(this.user).getUsername();
     }
 }

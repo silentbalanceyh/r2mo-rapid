@@ -15,5 +15,6 @@ import java.io.Serializable;
 @Data
 @RefreshScope
 public class ConfigSecurityBasic implements Serializable {
-    private String realm;
+    private String realm = "Realm Default R2MO";
+    private boolean enabled = true;
 }
