@@ -27,7 +27,10 @@ public interface UserCache {
 
     String DEFAULT_NAME = "UserCache/SPI";
 
-    String NAME_AUTHORIZE = "CACHE_AUTHORIZE";  // 前缀
+    String NAME_AUTHORIZE = "CACHE_AUTHORIZE";
+    String NAME_TOKEN = "CACHE_TOKEN";
+    String NAME_TOKEN_REFRESH = "CACHE_TOKEN_REFRESH";
+    // 前缀
     String NAME_AT = "CACHE_USER_AT";
     String NAME_CONTEXT = "CACHE_USER_CONTEXT";
     String NAME_VECTOR = "CACHE_USER_VECTOR";
@@ -45,6 +48,7 @@ public interface UserCache {
         return found;
     }
 
+    // ----- 账号部分专用缓存
     void login(UserContext context);
 
     void login(UserAt userAt);
@@ -57,7 +61,29 @@ public interface UserCache {
 
     UserAt find(UUID id);
 
+    // ----- 临时验证码（授权码）专用缓存
     void authorize(Kv<String, String> generated, TypeID type);
 
     void authorize(String consumerId, TypeID type);
+
+    // ----- 令牌部分专用缓存
+    // --- Access Token ---
+    // 存储 Access Token -> UserId 映射
+    void token(String token, UUID userId);
+
+    // 查找 Access Token 对应的 UserId
+    UUID token(String token);
+
+    @SuppressWarnings("all")
+    boolean tokenKo(String token);
+
+    // --- Refresh Token ---
+    // 存储 Refresh Token -> UserId 映射
+    void tokenRefresh(String refreshToken, UUID userId);
+
+    // 查找 Refresh Token 对应的 UserId
+    UUID tokenRefresh(String refreshToken);
+
+    @SuppressWarnings("all")
+    boolean tokenRefreshKo(String refreshToken);
 }

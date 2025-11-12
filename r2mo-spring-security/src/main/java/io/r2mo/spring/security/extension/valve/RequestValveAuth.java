@@ -32,11 +32,6 @@ public class RequestValveAuth implements RequestValve {
 
         // 定义需要公开访问的认证相关路径（默认为 POST 方法）
         final List<String> authUris = new ArrayList<>();
-        /*
-         * 所有方法都包含，主要是为了支持 OPTIONS 预检请求以及
-         * - GET /auth/captcha: 获取验证码
-         */
-        authUris.add("/auth/**:*");
 
 
         // 限定 SPI 注册的 URI 路径，只要加载则忽略
@@ -60,5 +55,14 @@ public class RequestValveAuth implements RequestValve {
             log.info("[ R2MO ] 公开访问的 URI: `{} {}`", Objects.isNull(method) ? "*" : method, uri);
             registry.requestMatchers(matcher).permitAll();
         }
+
+
+        /*
+         * 所有方法都包含，主要是为了支持 OPTIONS 预检请求以及
+         * - GET /auth/captcha: 获取验证码
+         */
+        final MvcRequestMatcher matcher = builder.pattern("/auth/**");
+        registry.requestMatchers(matcher).permitAll();
+        log.info("[ R2MO ] 公开访问的 URI: `* /auth/**`");
     }
 }

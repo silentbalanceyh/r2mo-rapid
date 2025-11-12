@@ -96,11 +96,11 @@ public class ConfigSecurity implements Serializable {
 
     // 内置配置：是否开启 JWT 认证
     public boolean isJwt() {
-        return Objects.nonNull(this.jwt);
+        return Objects.nonNull(this.jwt) && this.jwt.isEnabled();
     }
 
     // 内置配置：是否开启图片验证码
     public boolean isCaptcha() {
-        return Objects.nonNull(this.captcha);
+        return Objects.nonNull(this.captcha) && this.captcha.isEnabled();
     }
 }

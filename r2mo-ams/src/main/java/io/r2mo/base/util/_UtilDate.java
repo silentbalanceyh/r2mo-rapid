@@ -1,5 +1,6 @@
 package io.r2mo.base.util;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -267,6 +268,17 @@ class _UtilDate extends _UtilArray {
      */
     public static LocalTime toTime(final Instant date) {
         return UTDate.toTime(date);
+    }
+
+    /**
+     * 将字符串literal转换成 Duration类型
+     *
+     * @param literal 字符串
+     *
+     * @return Duration
+     */
+    public static Duration toDuration(final String literal) {
+        return UTDuration.parseToDuration(literal);
     }
 
     /**
