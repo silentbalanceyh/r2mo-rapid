@@ -1,7 +1,8 @@
-package io.r2mo.spring.security.auth.basic;
+package io.r2mo.spring.security.basic;
 
 import cn.hutool.extra.spring.SpringUtil;
-import io.r2mo.spring.security.auth.executor.UserDetailsContext;
+import io.r2mo.spring.security.auth.UserDetailsContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
  *
  * @author lang : 2025-11-11
  */
+@Slf4j
 @Component
 public class BasicAuthenticateProvider implements AuthenticationProvider {
 
@@ -44,6 +46,7 @@ public class BasicAuthenticateProvider implements AuthenticationProvider {
 
             // 密码校验
             if (!this.passwordEncoder.matches(password, stored.getPassword())) {
+                log.error("[ R2MO ] 用户 `{}` 密码校验失败 | {} : {}", username, password, stored.getPassword());
                 throw new BadCredentialsException("[ R2MO ] 用户名或密码错误");
             }
 
@@ -53,8 +56,6 @@ public class BasicAuthenticateProvider implements AuthenticationProvider {
                 null,
                 stored.getAuthorities()
             );
-        } catch (final Exception e) {
-            throw new BadCredentialsException("认证失败: " + e.getMessage());
         } finally {
             // -- 关键：清空认证策略
             UserDetailsContext.clearStrategy();

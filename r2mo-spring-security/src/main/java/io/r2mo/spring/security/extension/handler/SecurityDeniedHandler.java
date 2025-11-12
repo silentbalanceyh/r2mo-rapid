@@ -10,7 +10,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * @author lang : 2025-11-11
@@ -24,12 +23,8 @@ public class SecurityDeniedHandler implements AccessDeniedHandler {
 
 
         // 转换成统一的 WebException
-        Throwable cause = accessDeniedException.getCause();
-        if (Objects.isNull(cause)) {
-            cause = accessDeniedException;
-        }
-        final WebException webException = SecurityFailure.of()
-            .transform(cause, request, response);
+        final Throwable cause = SecurityFailure.findExceptionAt(accessDeniedException);
+        final WebException webException = SecurityFailure.of().transform(cause, request, response);
 
 
         // 执行异常处理

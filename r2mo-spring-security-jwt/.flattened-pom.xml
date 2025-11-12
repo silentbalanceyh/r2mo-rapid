@@ -53,7 +53,7 @@
     <dependency>
       <groupId>cn.dev33</groupId>
       <artifactId>sa-token-jwt</artifactId>
-      <version>1.38.0</version>
+      <version>1.44.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

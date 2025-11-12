@@ -90,6 +90,8 @@
         <module>r2mo-spring-json</module>
         <module>r2mo-spring-excel</module>
         <module>r2mo-spring-junit5</module>
+        <module>r2mo-spring-security</module>
+        <module>r2mo-spring-security-jwt</module>
 
         <!-- 🌷 Vertx 模块专用 -->
         <module>r2mo-vertx</module>
@@ -105,7 +107,6 @@
         <module>r2mo-boot-spring-default</module><!-- ☘️ Bootstrap 实现层（默认）-->
         <module>r2mo-boot-vertx</module>
         <module>r2mo-jaas</module>
-        <module>r2mo-spring-security</module>
     </modules>
     <build>
         <plugins>
@@ -210,6 +211,7 @@
             - Spring
               - 启动层 -> r2mo-boot-spring（带实现）
               - 核心层 -> r2mo-spring
+                      -> r2mo-spring-security 扩展
             - Vertx
               - 启动层 -> r2mo-boot-vertx（带实现）
               - 核心层 -> r2mo-vertx
@@ -222,6 +224,11 @@
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-spring</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
             <dependency>

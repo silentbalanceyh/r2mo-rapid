@@ -1,4 +1,4 @@
-package io.r2mo.spring.security.auth.executor;
+package io.r2mo.spring.security.auth;
 
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.jaas.session.UserAt;

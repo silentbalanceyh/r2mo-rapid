@@ -3,7 +3,7 @@ package io.r2mo.jaas.enums;
 /**
  * @author lang : 2025-11-10
  */
-public enum UserIDType {
+public enum TypeID {
     WECHAT,     // 微信
     ALIPAY,     // 支付宝
     TAOBAO,     // 淘宝
@@ -60,4 +60,6 @@ public enum UserIDType {
     SMS,             // 短信验证码
     EMAIL,           // 邮箱验证码
     LDAP,            // LDAP
+    JWT,             // JWT 令牌
+    OAUTH,           // OAuth 令牌
 }

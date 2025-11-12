@@ -1,4 +1,4 @@
-package io.r2mo.spring.security.extension.valve;
+package io.r2mo.spring.security.extension;
 
 import io.r2mo.spring.security.config.ConfigSecurity;
 

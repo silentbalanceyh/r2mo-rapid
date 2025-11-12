@@ -2,7 +2,7 @@ package io.r2mo.jaas.element;
 
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.r2mo.jaas.enums.UserIDType;
+import io.r2mo.jaas.enums.TypeID;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -14,9 +14,12 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * @author lang : 2025-11-10
@@ -27,7 +30,7 @@ public class MSUser extends AbstractNormObject implements Serializable {
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private final ConcurrentMap<UserIDType, String> id = new ConcurrentHashMap<>();
+    private final ConcurrentMap<TypeID, String> id = new ConcurrentHashMap<>();
 
     @Schema(description = "账号名")
     private String username;
@@ -79,18 +82,28 @@ public class MSUser extends AbstractNormObject implements Serializable {
         return this.getClass();
     }
 
-    public String id(final UserIDType idType) {
+    public String id(final TypeID typeID) {
         // 获取
-        return this.id.getOrDefault(idType, null);
+        return this.id.getOrDefault(typeID, null);
     }
 
-    public MSUser id(final UserIDType idType, final String id) {
+    public Set<String> idKeys() {
+        final Set<String> keys = Arrays.stream(TypeID.values())
+            .map(this::id)
+            .collect(Collectors.toSet());
+        keys.add(this.getMobile());
+        keys.add(this.getEmail());
+        keys.add(this.getUsername());
+        return keys.stream().filter(StrUtil::isNotEmpty).collect(Collectors.toSet());
+    }
+
+    public MSUser id(final TypeID typeID, final String id) {
         if (StrUtil.isEmpty(id)) {
             // 移除
-            this.id.remove(idType);
+            this.id.remove(typeID);
         } else {
             // 添加
-            this.id.put(idType, id);
+            this.id.put(typeID, id);
         }
         return this;
     }

@@ -10,6 +10,7 @@ import io.r2mo.typed.exception.web._415MediaNotSupportException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import java.util.Objects;
@@ -19,7 +20,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class FailOrSpring implements FailOr {
-    
+
     @Override
     public WebException transform(final Throwable ex, final HttpServletRequest request, final HttpServletResponse response) {
         // org.springframework.web.HttpRequestMethodNotSupportedException
@@ -71,6 +72,12 @@ public class FailOrSpring implements FailOr {
         if (ex instanceof final org.springframework.http.converter.HttpMessageNotReadableException e) {
             log.error("[ R2MO ] (S) 请求地址 '{}'，HTTP 消息不可读", request.getRequestURI(), e);
             return new _400BadRequestException(e.getMessage());
+        }
+
+        // org.springframework.security.authentication.BadCredentials
+        if (ex instanceof final BadCredentialsException e) {
+            log.error("[ R2MO ] (S) 登录失败", e);
+            return new _401UnauthorizedException(e.getMessage());
         }
 
         // org.springframework.security.core.AuthenticationException

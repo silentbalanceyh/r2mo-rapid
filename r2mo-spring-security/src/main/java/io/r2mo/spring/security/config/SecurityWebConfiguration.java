@@ -1,8 +1,9 @@
 package io.r2mo.spring.security.config;
 
-import io.r2mo.spring.security.auth.basic.BasicSpringAuthenticator;
-import io.r2mo.spring.security.auth.executor.UserDetailsCommon;
+import io.r2mo.spring.security.auth.UserDetailsCommon;
+import io.r2mo.spring.security.basic.BasicSpringAuthenticator;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
+import io.r2mo.spring.security.extension.handler.SecurityHandler;
 import io.r2mo.spring.security.extension.valve.RequestValve;
 import io.r2mo.spring.security.extension.valve.RequestValveAuth;
 import io.r2mo.spring.security.extension.valve.RequestValveIgnore;
@@ -21,9 +22,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
@@ -47,8 +46,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableConfigurationProperties({ConfigSecurity.class, ConfigUser.class})
 public class SecurityWebConfiguration {
 
-    private final AccessDeniedHandler deniedHandler;
-    private final AuthenticationEntryPoint entryPoint;
+    private final SecurityHandler failure;
     private final ConfigSecurity config;
     // Spring Boot 自动装配
     private final CorsConfigurationSource configCors;
@@ -74,16 +72,13 @@ public class SecurityWebConfiguration {
             // ---- 禁用 Session
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             // ---- 自定义异常处理
-            .exceptionHandling(exception -> {
-                exception.accessDeniedHandler(this.deniedHandler);
-                exception.authenticationEntryPoint(this.entryPoint);
-            });
+            .exceptionHandling(this.failure.handler());
 
         // 加载不同模式的认证器
         if (this.config.isBasic()) {
             // 加载 Basic 认证器
             final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config, BasicSpringAuthenticator::new);
-            authenticator.configure(http, introspector);
+            authenticator.configure(http, this.failure);
             log.info("[ R2MO ] 启用 Basic 认证器");
         }
 

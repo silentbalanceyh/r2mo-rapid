@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -60,26 +61,29 @@ public class ConfigSecurity implements Serializable {
     private ConfigSecurityBasic basic = new ConfigSecurityBasic();  // 默认打开
     private ConfigSecurityScope scope;
 
-    public List<Kv<String, HttpMethod>> loadIgnoreUris() {
+    public List<Kv<String, HttpMethod>> ignoreUris() {
         // 未配置 ignore-uris 的情况下，直接返回空
-        if (Objects.isNull(this.ignoreUris)) {
+        return ignoreUris(this.ignoreUris, null);
+    }
+
+    public static List<Kv<String, HttpMethod>> ignoreUris(final Collection<String> uris,
+                                                          final HttpMethod defaultMethod) {
+        if (Objects.isNull(uris)) {
             return new ArrayList<>();
         }
-
-
         /*
          * 配置之后格式会有两种
          * 1. /api/public/**:POST
          * 2. /api/public/**（全方法，只做路径匹配）
          */
-        return this.ignoreUris.stream().map(item -> {
+        return uris.stream().map(item -> {
             final String[] segments = item.split(":", 2);   // 只分割一次
             final Kv<String, HttpMethod> uri;
             if (1 < segments.length) {
                 final HttpMethod method = HttpMethod.valueOf(segments[1].trim());
                 uri = Kv.create(segments[0].trim(), method);
             } else {
-                uri = Kv.create(segments[0].trim(), null);
+                uri = Kv.create(segments[0].trim(), defaultMethod);
             }
             return uri;
         }).collect(Collectors.toList());

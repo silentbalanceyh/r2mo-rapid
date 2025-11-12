@@ -11,18 +11,17 @@
 
     <artifactId>r2mo-spring-security-jwt</artifactId>
     <name>R2MO::Spring::Security::JWT</name>
-    
+
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring-security</artifactId>
         </dependency>
-        
+
         <!-- Sa-Token-JWT Support -->
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-jwt</artifactId>
-            <version>1.38.0</version>
         </dependency>
     </dependencies>
 </project>

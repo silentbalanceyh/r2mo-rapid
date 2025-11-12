@@ -33,7 +33,6 @@ public abstract class AbstractException extends RuntimeException {
      * - 当 {@code messageKey} 中包含占位符（如 <code>{}</code> 或 <code>{0}</code>）时，
      * 且不符合 <code>Exxxxx</code> 格式 👉 会被当作 **普通国际化 Key** 处理。
      * 使用 {@link ForLocale#formatInfo(String, Object...)} 方法解析并填充 {@code messageArgs}。
-     *
      * 🔹 **情况 2：异常码模式**
      * - 当 {@code messageKey} 符合 <code>^E\\d+$</code> 正则（例如 <code>E11002</code>）时，
      * 👉 视为 **异常码**，会直接使用 {@link #getCode()} 去加载对应国际化资源文件中的 message 部分。

@@ -1,11 +1,13 @@
-package io.r2mo.spring.security.auth.basic;
+package io.r2mo.spring.security.basic;
 
 import io.r2mo.jaas.element.MSUser;
+import io.r2mo.jaas.enums.TypeToken;
 import io.r2mo.jaas.session.UserAt;
+import io.r2mo.spring.security.token.TokenBuilder;
+import io.r2mo.spring.security.token.TokenBuilderManager;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Base64;
 import java.util.UUID;
 
 /**
@@ -21,7 +23,8 @@ public class BasicLoginResponse implements Serializable {
         final MSUser user = userAt.logged();
         this.id = user.getId();
         this.username = user.getUsername();
-        final String token = user.getUsername() + ":" + user.getPassword();
-        this.token = Base64.getEncoder().encodeToString(token.getBytes());
+        // Token 构造器
+        final TokenBuilder builder = TokenBuilderManager.of().getOrCreate(TypeToken.BASIC);
+        this.token = builder.build(userAt);
     }
 }

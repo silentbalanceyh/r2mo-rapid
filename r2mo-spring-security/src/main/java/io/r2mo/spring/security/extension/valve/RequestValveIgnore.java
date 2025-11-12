@@ -22,7 +22,7 @@ public class RequestValveIgnore implements RequestValve {
         if (!(attached instanceof final MvcRequestMatcher.Builder builder)) {
             return;
         }
-        final List<Kv<String, HttpMethod>> ignoreUris = config.loadIgnoreUris();
+        final List<Kv<String, HttpMethod>> ignoreUris = config.ignoreUris();
         ignoreUris.stream()
             .filter(item -> StrUtil.isNotEmpty(item.key()))
             .forEach(item -> {

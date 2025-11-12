@@ -1,7 +1,7 @@
-package io.r2mo.spring.security.auth.basic;
+package io.r2mo.spring.security.basic;
 
 import io.r2mo.jaas.auth.LoginRequest;
-import io.r2mo.jaas.enums.UserIDType;
+import io.r2mo.jaas.enums.TypeID;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,11 +36,11 @@ public class BasicLoginRequest extends LoginRequest {
     }
 
     @Override
-    public UserIDType type() {
+    public TypeID type() {
         return TYPE;
     }
 
-    public static final UserIDType TYPE = UserIDType.PASSWORD;
+    public static final TypeID TYPE = TypeID.PASSWORD;
 
     public BasicLoginRequest() {
     }
