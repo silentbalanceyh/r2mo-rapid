@@ -73,7 +73,9 @@ public interface UserCache {
     // ----- 临时验证码（授权码）专用缓存
     void authorize(Kv<String, String> generated, TypeID type);
 
-    void authorize(String consumerId, TypeID type);
+    String authorize(String consumerId, TypeID type);
+
+    void authorizeKo(String consumerId, TypeID type);
 
     // ----- 令牌部分专用缓存
     // --- Access Token ---

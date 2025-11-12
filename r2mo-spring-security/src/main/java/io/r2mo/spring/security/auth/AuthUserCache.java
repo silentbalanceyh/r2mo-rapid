@@ -106,7 +106,17 @@ public class AuthUserCache implements UserCache {
     }
 
     @Override
-    public void authorize(final String consumerId, final TypeID type) {
+    public String authorize(final String consumerId, final TypeID type) {
+        final CacheAt<String, String> cache = this.factory().ofAuthorize(type);
+        final String generated = cache.find(consumerId);
+        if (Objects.isNull(generated)) {
+            return null;
+        }
+        return generated;
+    }
+
+    @Override
+    public void authorizeKo(final String consumerId, final TypeID type) {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(type);
         cache.remove(consumerId);
         log.info("[ R2MO ] 消费验证码：id = {}", consumerId);

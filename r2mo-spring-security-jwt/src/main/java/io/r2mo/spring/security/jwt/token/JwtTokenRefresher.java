@@ -6,7 +6,6 @@ import io.r2mo.spring.security.config.ConfigSecurityJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -59,13 +58,13 @@ public class JwtTokenRefresher {
      * @return 包含新 Access Token (和可选新 Refresh Token) 的 Map。
      * 如果旧 Refresh Token 无效，则返回 null。
      */
-    public Map<String, Object> tokenRefresh(final String refreshToken) {
+    public String tokenRefresh(final String refreshToken) {
         final ConfigSecurityJwt jwt = this.getConfiguration();
         if (Objects.isNull(jwt)) {
-            return Map.of();
+            return null;
         }
         if (refreshToken == null || refreshToken.trim().isEmpty()) {
-            return Map.of();
+            return null;
         }
 
         // 1. 获取 UserCache 实例
@@ -75,7 +74,7 @@ public class JwtTokenRefresher {
         final UUID userId = userCache.tokenRefresh(refreshToken);
         if (userId == null) {
             // Token 不存在或已过期
-            return Map.of();
+            return null;
         }
 
         // 3. 获取 loginId (简化处理)
@@ -85,7 +84,7 @@ public class JwtTokenRefresher {
         final String newAccessToken = this.tokenGenerator.tokenGenerate(loginId, null); // additionalData 传 null
         if (newAccessToken == null) {
             // Access Token 生成失败
-            return Map.of();
+            return null;
         }
 
         // --- 实现 "one-time use"：使旧的 Refresh Token 失效 ---
@@ -97,7 +96,7 @@ public class JwtTokenRefresher {
 
         // 6. 返回新生成的 Access Token (当前实现不返回新 Refresh Token)
         // 这个 Map 会被 Controller 接收，并作为 JSON 响应体的一部分返回给客户端
-        return Map.of("accessToken", newAccessToken);
+        return newAccessToken;
         // 或者，如果需要返回更多信息：
         // return Map.of("token", newAccessToken, "tokenType", "Bearer", "expiresIn", 3600); // 示例
     }
