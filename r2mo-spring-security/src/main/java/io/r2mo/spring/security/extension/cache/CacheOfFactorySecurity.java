@@ -43,7 +43,8 @@ public class CacheOfFactorySecurity implements CacheOfFactory {
     @Override
     public CacheAt<UUID, UserAt> userAt() {
         return (CacheAt<UUID, UserAt>) CC_CACHE.pick(() -> {
-            final CacheAt<UUID, UserAt> userAt = this.create(UserCache.NAME_USER_AT);
+            final CacheAt<UUID, UserAt> userAt =
+                this.create(UserCache.NAME_USER_AT, UUID.class, UserAt.class);
             userAt.configure(this.duration, this.size);
             return userAt;
         }, UserCache.NAME_USER_AT);
@@ -52,7 +53,8 @@ public class CacheOfFactorySecurity implements CacheOfFactory {
     @Override
     public CacheAt<UUID, UserContext> userContext() {
         return (CacheAt<UUID, UserContext>) CC_CACHE.pick(() -> {
-            final CacheAt<UUID, UserContext> userContext = this.create(UserCache.NAME_USER_CONTEXT);
+            final CacheAt<UUID, UserContext> userContext =
+                this.create(UserCache.NAME_USER_CONTEXT, UUID.class, UserContext.class);
             userContext.configure(this.duration, this.size);
             return userContext;
         }, UserCache.NAME_USER_CONTEXT);
@@ -61,7 +63,8 @@ public class CacheOfFactorySecurity implements CacheOfFactory {
     @Override
     public CacheAt<String, UUID> userVector() {
         return (CacheAt<String, UUID>) CC_CACHE.pick(() -> {
-            final CacheAt<String, UUID> userVector = this.create(UserCache.NAME_USER_VECTOR);
+            final CacheAt<String, UUID> userVector =
+                this.create(UserCache.NAME_USER_VECTOR, String.class, UUID.class);
             userVector.configure(this.duration, this.size * 8);
             return userVector;
         }, UserCache.NAME_USER_VECTOR);
@@ -75,7 +78,8 @@ public class CacheOfFactorySecurity implements CacheOfFactory {
             throw new _501NotSupportException("[ R2MO ] 未启用 JWT 功能，无法使用 Token 缓存");
         }
         return (CacheAt<String, UUID>) CC_CACHE.pick(() -> {
-            final CacheAt<String, UUID> ofToken = this.create(UserCache.NAME_TOKEN);
+            final CacheAt<String, UUID> ofToken =
+                this.create(UserCache.NAME_TOKEN, String.class, UUID.class);
             final Duration duration = R2MO.toDuration(jwt.getExpiredAt());
             ofToken.configure(duration, this.security.getLimit().getToken());
             return ofToken;
@@ -90,7 +94,8 @@ public class CacheOfFactorySecurity implements CacheOfFactory {
             throw new _501NotSupportException("[ R2MO ] 未启用 JWT 功能，无法使用 Refresh Token 缓存");
         }
         return (CacheAt<String, UUID>) CC_CACHE.pick(() -> {
-            final CacheAt<String, UUID> ofToken = this.create(UserCache.NAME_REFRESH);
+            final CacheAt<String, UUID> ofToken =
+                this.create(UserCache.NAME_REFRESH, String.class, UUID.class);
             final Duration duration = R2MO.toDuration(jwt.getRefreshAt());
             ofToken.configure(duration, this.security.getLimit().getToken());
             return ofToken;
@@ -102,7 +107,8 @@ public class CacheOfFactorySecurity implements CacheOfFactory {
         Objects.requireNonNull(type, "[ R2MO ] 授权码类型不可为空！");
         final String name = UserCache.NAME_AUTHORIZE + "@" + type.name();
         return (CacheAt<String, String>) CC_CACHE.pick(() -> {
-            final CacheAt<String, String> ofAuthorize = this.create(name);
+            final CacheAt<String, String> ofAuthorize =
+                this.create(name, String.class, String.class);
             final Kv<Long, Duration> limit = this.findLimit(type);
             ofAuthorize.configure(limit.value(), limit.key());
             return ofAuthorize;
@@ -136,7 +142,7 @@ public class CacheOfFactorySecurity implements CacheOfFactory {
         return Kv.create(size, duration);
     }
 
-    protected <K, V> CacheAt<K, V> create(final String name) {
-        return new CacheAtEhcache<>(name);
+    protected <K, V> CacheAt<K, V> create(final String name, final Class<K> clazzK, final Class<V> clazzV) {
+        return new CacheAtEhcache<>(name, clazzK, clazzV);
     }
 }

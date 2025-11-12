@@ -1,6 +1,5 @@
 package io.r2mo.typed.cc;
 
-import io.r2mo.SourceReflect;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
@@ -10,8 +9,6 @@ import java.time.Duration;
  */
 @Slf4j
 public abstract class CacheAtBase<K, V> implements CacheAt<K, V> {
-    private final Class<K> clazzK;
-    private final Class<V> clazzV;
     private final String name;
     private boolean initialized = false;
     // 子类可访问的基础配置属性
@@ -20,16 +17,6 @@ public abstract class CacheAtBase<K, V> implements CacheAt<K, V> {
 
     protected CacheAtBase(final String name) {
         this.name = name;
-        this.clazzK = SourceReflect.classT0(this.getClass());
-        this.clazzV = SourceReflect.classT1(this.getClass());
-    }
-
-    protected Class<K> classKey() {
-        return this.clazzK;
-    }
-
-    protected Class<V> classValue() {
-        return this.clazzV;
     }
 
     @Override
