@@ -16,7 +16,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -30,16 +33,13 @@ public class MSUser extends AbstractNormObject implements Serializable {
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private final ConcurrentMap<TypeID, String> id = new ConcurrentHashMap<>();
+    private final ConcurrentMap<TypeID, String> idMap = new ConcurrentHashMap<>();
 
     @Schema(description = "账号名")
     private String username;
 
     @Schema(description = "密码")
     private String password;
-
-    @Schema(description = "访问令牌")
-    private String token;
 
     @Schema(description = "描述")
     private String description;
@@ -84,7 +84,7 @@ public class MSUser extends AbstractNormObject implements Serializable {
 
     public String id(final TypeID typeID) {
         // 获取
-        return this.id.getOrDefault(typeID, null);
+        return this.idMap.getOrDefault(typeID, null);
     }
 
     public Set<String> idKeys() {
@@ -97,13 +97,37 @@ public class MSUser extends AbstractNormObject implements Serializable {
         return keys.stream().filter(StrUtil::isNotEmpty).collect(Collectors.toSet());
     }
 
+    /**
+     * 令牌常用数据
+     *
+     * @return 令牌常用数据
+     */
+    public Map<String, Object> token() {
+        final Map<String, Object> tokenData = new TreeMap<>();
+        tokenData.put("id", this.getId());
+        tokenData.put("username", this.username);
+        if (StrUtil.isEmpty(this.email)) {
+            tokenData.put("email", this.email);
+        }
+        if (StrUtil.isEmpty(this.mobile)) {
+            tokenData.put("mobile", this.mobile);
+        }
+        Arrays.stream(TypeID.values()).forEach(typeId -> {
+            final Object value = this.id(typeId);
+            if (Objects.nonNull(value)) {
+                tokenData.put(typeId.name(), value);
+            }
+        });
+        return tokenData;
+    }
+
     public MSUser id(final TypeID typeID, final String id) {
         if (StrUtil.isEmpty(id)) {
             // 移除
-            this.id.remove(typeID);
+            this.idMap.remove(typeID);
         } else {
             // 添加
-            this.id.put(typeID, id);
+            this.idMap.put(typeID, id);
         }
         return this;
     }

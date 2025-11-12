@@ -18,6 +18,12 @@ import java.util.stream.Collectors;
  * <pre>
  *     application.yml 中的格式如
  *     security:
+ *        limit:
+ *          session: 8192               # 最大会话数
+ *          token: 4096                 # Token 的最大数量，控制 Token / Refresh
+ *          timeout: 120                # 会话超时时间，单位分钟
+ *          types:
+ *          - JWT:4096:30m              # 限制某种类型的 Token 数量和过期时间
  *        ignore-uris:
  *          - /api/public/**
  *        scope:
@@ -56,6 +62,8 @@ import java.util.stream.Collectors;
 @RefreshScope
 public class ConfigSecurity implements Serializable {
     private List<String> ignoreUris;
+
+    private ConfigSecurityLimit limit = new ConfigSecurityLimit();
     private ConfigSecurityCaptcha captcha;
     private ConfigSecurityJwt jwt;
     private ConfigSecurityBasic basic = new ConfigSecurityBasic();  // 默认打开

@@ -20,7 +20,7 @@ public class ConfigSecurityCaptcha implements Serializable {
     /**
      * 验证码过期时间，单位：秒
      */
-    private String expiredAt;
+    private int expiredAt;
     /**
      * 验证码图片宽度
      */

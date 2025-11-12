@@ -62,4 +62,8 @@ public enum TypeID {
     LDAP,            // LDAP
     JWT,             // JWT 令牌
     OAUTH,           // OAuth 令牌
+    CAPTCHA,         // 验证码
+    CAPTCHA_IMAGE,   // 图片验证码
+    OTP,             // 一次性密码 (One-Time Password)
+    SSO,             // 单点登录 (Single Sign-On)
 }

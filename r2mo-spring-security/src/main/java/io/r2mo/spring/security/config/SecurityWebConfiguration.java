@@ -1,5 +1,6 @@
 package io.r2mo.spring.security.config;
 
+import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.auth.UserDetailsCommon;
 import io.r2mo.spring.security.basic.BasicSpringAuthenticator;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
@@ -26,6 +27,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import java.util.List;
 
 /**
  * 核心安全配置，基于 Spring Security 实现的基础配置
@@ -80,6 +83,12 @@ public class SecurityWebConfiguration {
             final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config, BasicSpringAuthenticator::new);
             authenticator.configure(http, this.failure);
             log.info("[ R2MO ] 启用 Basic 认证器");
+        }
+
+        final List<SecurityWebConfigurer> configurerList = SPI.findMany(SecurityWebConfigurer.class);
+        for (final SecurityWebConfigurer configurer : configurerList) {
+            log.info("[ R2MO ] ----> 执行 `{}` 配置器", configurer.getClass().getName());
+            configurer.configure(http, introspector);
         }
 
         // 请求执行链式处理

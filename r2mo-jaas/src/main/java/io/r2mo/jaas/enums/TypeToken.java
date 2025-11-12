@@ -9,6 +9,7 @@ public enum TypeToken {
      * r2mo-security-oauth2
      */
     JWT,
+    JWT_REFRESH,
     /*
      * r2mo-security-basic
      */

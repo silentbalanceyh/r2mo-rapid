@@ -34,6 +34,10 @@ public class JwtTokenRefresher {
      * @return Refresh Token 字符串
      */
     public String tokenGenerate(final String userId) {
+        final ConfigSecurityJwt jwt = this.getConfiguration();
+        if (Objects.isNull(jwt)) {
+            return null;
+        }
         // 1. 生成一个安全的随机 Refresh Token
         final String refreshToken = UUID.randomUUID().toString().replace("-", ""); // 移除 UUID 中的横线
 
@@ -56,8 +60,12 @@ public class JwtTokenRefresher {
      * 如果旧 Refresh Token 无效，则返回 null。
      */
     public Map<String, Object> tokenRefresh(final String refreshToken) {
+        final ConfigSecurityJwt jwt = this.getConfiguration();
+        if (Objects.isNull(jwt)) {
+            return Map.of();
+        }
         if (refreshToken == null || refreshToken.trim().isEmpty()) {
-            return null;
+            return Map.of();
         }
 
         // 1. 获取 UserCache 实例
@@ -67,7 +75,7 @@ public class JwtTokenRefresher {
         final UUID userId = userCache.tokenRefresh(refreshToken);
         if (userId == null) {
             // Token 不存在或已过期
-            return null;
+            return Map.of();
         }
 
         // 3. 获取 loginId (简化处理)
@@ -77,7 +85,7 @@ public class JwtTokenRefresher {
         final String newAccessToken = this.tokenGenerator.tokenGenerate(loginId, null); // additionalData 传 null
         if (newAccessToken == null) {
             // Access Token 生成失败
-            return null;
+            return Map.of();
         }
 
         // --- 实现 "one-time use"：使旧的 Refresh Token 失效 ---
@@ -105,20 +113,6 @@ public class JwtTokenRefresher {
             final UserCache userCache = UserCache.of();
             // 调用 UserCache 的 Ko 方法来删除/标记 Refresh Token
             userCache.tokenRefreshKo(refreshToken);
-        }
-    }
-
-    /**
-     * 撤销 (删除/作废) 指定的 Access Token
-     * 通常在用户登出或需要立即使 Access Token 失效时调用
-     *
-     * @param accessToken 要撤销的 Access Token
-     */
-    public void tokenRevokeAccess(final String accessToken) {
-        if (accessToken != null && !accessToken.trim().isEmpty()) {
-            final UserCache userCache = UserCache.of();
-            // 调用 UserCache 的 Ko 方法来删除/标记 Access Token
-            userCache.tokenKo(accessToken);
         }
     }
 

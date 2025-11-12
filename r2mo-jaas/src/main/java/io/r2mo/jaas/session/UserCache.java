@@ -2,6 +2,7 @@ package io.r2mo.jaas.session;
 
 import io.r2mo.jaas.enums.TypeID;
 import io.r2mo.spi.SPI;
+import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.exception.web._404NotFoundException;
 
@@ -25,27 +26,35 @@ import java.util.UUID;
  */
 public interface UserCache {
 
-    String DEFAULT_NAME = "UserCache/SPI";
-
     String NAME_AUTHORIZE = "CACHE_AUTHORIZE";
     String NAME_TOKEN = "CACHE_TOKEN";
-    String NAME_TOKEN_REFRESH = "CACHE_TOKEN_REFRESH";
+    String NAME_REFRESH = "CACHE_REFRESH";
     // 前缀
-    String NAME_AT = "CACHE_USER_AT";
-    String NAME_CONTEXT = "CACHE_USER_CONTEXT";
-    String NAME_VECTOR = "CACHE_USER_VECTOR";
+    String NAME_USER_AT = "CACHE_USER_AT";
+    String NAME_USER_CONTEXT = "CACHE_USER_CONTEXT";
+    String NAME_USER_VECTOR = "CACHE_USER_VECTOR";
 
+    Cc<String, UserCache> CC_SKELETON = Cc.openThread();
+
+    /**
+     * 此处的 SPI 是按照优先级查找的，默认实现
+     * <pre>
+     *     1. AuthUserCase
+     *        - r2mo-spring-security 提供，priority = 0
+     *     2. 如果存在其他实现，直接定义 priority > 0 即可
+     * </pre>
+     *
+     * @return 缓存提供者
+     */
     static UserCache of() {
-        return of(DEFAULT_NAME);
-    }
-
-    static UserCache of(final String name) {
-        // 查找缓存的相关信息，当前环境中先使用 SPI 直接查找
-        final UserCache found = SPI.findOne(UserCache.class, name);
-        if (Objects.isNull(found)) {
-            throw new _404NotFoundException("[ R2MO ] 未找到匹配的缓存提供者：SPI = " + name);
-        }
-        return found;
+        return CC_SKELETON.pick(() -> {
+            // 查找缓存的相关信息，当前环境中先使用 SPI 直接查找
+            final UserCache found = SPI.findOneOf(UserCache.class);
+            if (Objects.isNull(found)) {
+                throw new _404NotFoundException("[ R2MO ] 未找到匹配的缓存提供者：SPI");
+            }
+            return found;
+        });
     }
 
     // ----- 账号部分专用缓存

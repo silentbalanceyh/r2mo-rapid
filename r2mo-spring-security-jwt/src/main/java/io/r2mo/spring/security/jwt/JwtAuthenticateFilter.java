@@ -31,9 +31,9 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
     private final JwtTokenGenerator jwtTokenGenerator;
     private final UserCache userCache;
 
-    public JwtAuthenticateFilter(final JwtTokenGenerator jwtTokenGenerator, final UserCache userCache) {
+    public JwtAuthenticateFilter(final JwtTokenGenerator jwtTokenGenerator) {
         this.jwtTokenGenerator = jwtTokenGenerator;
-        this.userCache = userCache;
+        this.userCache = UserCache.of();
     }
 
     @Override

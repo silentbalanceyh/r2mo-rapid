@@ -19,5 +19,6 @@ public interface UserAt {
 
     JObject data();
 
+    @SuppressWarnings("all")
     boolean isOk();
 }
