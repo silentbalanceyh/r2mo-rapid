@@ -11,11 +11,11 @@ import java.util.Objects;
 /**
  * @author lang : 2025-11-12
  */
-public class TokenBuilderJwt implements TokenBuilder {
+public class JwtTokenBuilder implements TokenBuilder {
 
     private final JwtTokenGenerator generator;
 
-    public TokenBuilderJwt() {
+    public JwtTokenBuilder() {
         this.generator = SpringUtil.getBean(JwtTokenGenerator.class);
     }
 

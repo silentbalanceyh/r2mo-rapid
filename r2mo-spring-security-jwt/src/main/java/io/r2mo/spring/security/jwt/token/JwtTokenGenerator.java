@@ -31,13 +31,29 @@ public class JwtTokenGenerator {
 
     // 自定义扩展字段
     private static final String NAME_ADDON_DATA = "ext";
-    private static final String NAME_LOGIN_TYPE = "default";
+    /**
+     * 下边代码是 sa-token 必须的字段，否则会报错
+     * <pre>
+     * - eff 表示过期时间，sa-token 不标准的地方
+     * - loginType 表示登录方式，sa-token 必须要指定对应值
+     *   loginType = R2MO-SA-TOKEN
+     * </pre>
+     * 后期可以将此处内容转换到 Client Agent 上实现客户端绑定
+     */
+    private static final String NAME_EXPIRE_ALIAS = "eff";
+    private static final String NAME_LOGIN_TYPE = "loginType";          // Sa-Token 登录方式字段名
+    private static final String VALUE_LOGIN_TYPE = "R2MO-SA-TOKEN";     // Sa-Token 登录方式值可支持的是 login
 
     @Autowired
     private ConfigSecurity config;
 
     /**
-     * 生成 JWT Token
+     * 生成 JWT Token，注意此处的时间戳的含义
+     * <pre>
+     *     - exp / expiredAt -> 过期时间，单位 ms
+     *     - iat / issuedAt  -> 签发时间，单位 ms
+     *     - eff / eff       -> 过期时间，单位 ms （ sa-token 中有此字段 ）
+     * </pre>
      *
      * @param identifier 作为 subject (sub) 的唯一标识
      * @param data       附加数据，放入 ext
@@ -50,13 +66,17 @@ public class JwtTokenGenerator {
             return null;
         }
         // 组装 payload（注意 SaJwtUtil 会从全局配置中读取 jwtSecretKey 完成签名）
-        final long nowSec = System.currentTimeMillis() / 1000;
-        final long expSec = nowSec + (jwt.msExpiredAt() / 1000);
+        final long nowSec = System.currentTimeMillis();
+        final long expSec = nowSec + jwt.msExpiredAt();
 
         final Map<String, Object> payload = new HashMap<>(8);
         payload.put(NAME_SUBJECT, identifier);
-        payload.put(NAME_ISSUED_AT, nowSec);
+        payload.put(NAME_ISSUED_AT, nowSec);     //
         payload.put(NAME_EXPIRE, expSec);
+        payload.put(NAME_EXPIRE_ALIAS, expSec); // ← 新增 eff 字段
+
+        // Fix Issue: loginType 无效
+        payload.put(NAME_LOGIN_TYPE, VALUE_LOGIN_TYPE);
 
         if (jwt.getIssuer() != null && !jwt.getIssuer().isEmpty()) {
             payload.put(NAME_ISSUER, jwt.getIssuer());
@@ -93,7 +113,7 @@ public class JwtTokenGenerator {
 
         try {
             // getPayloads 会校验签名与 exp
-            final Map<String, Object> payload = SaJwtUtil.getPayloads(token, NAME_LOGIN_TYPE, jwt.getSecretKey());
+            final Map<String, Object> payload = SaJwtUtil.getPayloads(token, VALUE_LOGIN_TYPE, jwt.getSecretKey());
             if (payload == null) {
                 return false;
             }
@@ -124,7 +144,7 @@ public class JwtTokenGenerator {
             return null;
         }
         try {
-            final Map<String, Object> payload = SaJwtUtil.getPayloads(token, NAME_LOGIN_TYPE, jwt.getSecretKey());
+            final Map<String, Object> payload = SaJwtUtil.getPayloads(token, VALUE_LOGIN_TYPE, jwt.getSecretKey());
             if (payload == null) {
                 return null;
             }
@@ -145,7 +165,7 @@ public class JwtTokenGenerator {
             return Map.of();
         }
         try {
-            final Map<String, Object> payload = SaJwtUtil.getPayloads(token, NAME_LOGIN_TYPE, jwt.getSecretKey());
+            final Map<String, Object> payload = SaJwtUtil.getPayloads(token, VALUE_LOGIN_TYPE, jwt.getSecretKey());
             if (payload == null) {
                 return null;
             }

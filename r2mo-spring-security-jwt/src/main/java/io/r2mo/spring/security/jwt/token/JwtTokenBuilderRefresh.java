@@ -7,10 +7,10 @@ import io.r2mo.spring.security.token.TokenBuilder;
 /**
  * @author lang : 2025-11-12
  */
-public class TokenBuilderJwtRefresh implements TokenBuilder {
+public class JwtTokenBuilderRefresh implements TokenBuilder {
     private final JwtTokenRefresher refresher;
 
-    public TokenBuilderJwtRefresh() {
+    public JwtTokenBuilderRefresh() {
         this.refresher = SpringUtil.getBean(JwtTokenRefresher.class);
     }
 

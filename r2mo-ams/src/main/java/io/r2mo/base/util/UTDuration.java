@@ -32,7 +32,7 @@ class UTDuration {
      */
     static Duration parseToDuration(final String durationStr) {
         if (durationStr == null || durationStr.trim().isEmpty()) {
-            throw new IllegalArgumentException("[ R2MO ] Duration 字符串不可为空，无法解析 " + durationStr);
+            throw new IllegalArgumentException("[ R2MO ] Duration 字符串不可为空，无法解析：" + durationStr);
         }
 
         final String trimmedStr = durationStr.trim();
@@ -48,7 +48,7 @@ class UTDuration {
         final Matcher matcher = SIMPLE_DURATION_PATTERN.matcher(trimmedStr.toLowerCase());
 
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Invalid duration format: " + durationStr + ". Supported formats include ISO-8601 (e.g., PT10S, P1D) and simple format (e.g., 10s, 10d, 100ms).");
+            throw new IllegalArgumentException("[ R2MO ] 无效的持续时间格式：" + durationStr + "。支持的格式包括 ISO-8601（例如 PT10S、P1D）和简单格式（例如 10s、10d、100ms）");
         }
 
         final String numberStr = matcher.group(1);
@@ -58,7 +58,7 @@ class UTDuration {
         try {
             number = Long.parseLong(numberStr);
         } catch (final NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid number in duration string: " + durationStr, e);
+            throw new IllegalArgumentException("[ R2MO ] 持续时间字符串中的数值无效：" + durationStr, e);
         }
 
         final ChronoUnit unit = switch (unitStr) {
@@ -66,12 +66,12 @@ class UTDuration {
             case "m" -> ChronoUnit.MINUTES;
             case "h" -> ChronoUnit.HOURS;
             case "d" -> ChronoUnit.DAYS;
-            case "ms" -> ChronoUnit.MILLIS; // 微秒
-            case "us", "µs" -> ChronoUnit.MICROS;// 微秒 (Unicode mu)
+            case "ms" -> ChronoUnit.MILLIS; // 毫秒
+            case "us", "µs" -> ChronoUnit.MICROS; // 微秒 (Unicode mu)
             case "ns" -> ChronoUnit.NANOS;
             default ->
                 // 理论上不会到达这里，因为正则表达式已经限制了单位
-                throw new IllegalArgumentException("Unexpected unit in duration string: " + durationStr);
+                throw new IllegalArgumentException("[ R2MO ] 持续时间字符串中包含意外的单位：" + durationStr);
         };
 
         // 使用 number 和 unit 创建 Duration
