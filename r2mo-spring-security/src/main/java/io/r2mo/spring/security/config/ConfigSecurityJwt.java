@@ -18,11 +18,11 @@ public class ConfigSecurityJwt implements Serializable {
     // JWT 签发者
     private String issuer;
     // JWT 过期时间，可直接解析
-    private String expiredAt;
+    private String expiredAt = "2h";
     // JWT 刷新时间，可直接解析
-    private String refreshAt;
+    private String refreshAt = "7d";
     // JWT 专用密钥
-    private String secretKey;
+    private String secretKey = "4KEBF72K14MH2Z6SWTQSMBU2";
     // 是否启用
     private boolean enabled;
     // 访问范围

@@ -38,7 +38,7 @@ public class JwtLoginResponse implements Serializable {
         this.token = generator.build(userAt);
         // 需要构造到 refresh token 中的信息，从数据中提取
         final TokenBuilder refresher = MANAGER.getOrCreate(TypeToken.JWT_REFRESH);
-        this.token = refresher.build(userAt);
+        this.refreshToken = refresher.build(userAt);
         this.expiresIn = jwt.msExpiredAt() / 1000;
         // 构造用户基础信息
         final MSUser logged = userAt.logged();

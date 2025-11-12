@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * 用户会话管理，根据会话本身数据执行相关管理，会设置缓存时间长度
@@ -88,6 +89,18 @@ public class UserSession {
 
     public UserAt find(final String idOr) {
         return this.cache.find(idOr);
+    }
+
+    public UserContext context(final String idOr) {
+        final UserAt userAt = this.find(idOr);
+        if (Objects.isNull(userAt)) {
+            return null;
+        }
+        return context(userAt.id());
+    }
+
+    public UserContext context(final UUID id) {
+        return this.cache.context(id);
     }
 
     // --------------- 上边为提取值的 API ---------------

@@ -32,7 +32,7 @@ class UTDuration {
      */
     static Duration parseToDuration(final String durationStr) {
         if (durationStr == null || durationStr.trim().isEmpty()) {
-            throw new IllegalArgumentException("Duration string cannot be null or empty: " + durationStr);
+            throw new IllegalArgumentException("[ R2MO ] Duration 字符串不可为空，无法解析 " + durationStr);
         }
 
         final String trimmedStr = durationStr.trim();

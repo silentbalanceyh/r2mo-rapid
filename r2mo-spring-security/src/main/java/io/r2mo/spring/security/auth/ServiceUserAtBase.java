@@ -49,6 +49,9 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
             return cached;
         }
         log.info("[ R2MO ] 验证加载：identifier = {} / provider = {}", identifier, this.getClass().getName());
-        return this.findUser(identifier);
+        final UserAt userAt = this.findUser(identifier);
+        // 查找内容写缓存
+        UserSession.of().userAt(userAt);
+        return userAt;
     }
 }
