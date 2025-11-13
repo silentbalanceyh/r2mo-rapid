@@ -45,6 +45,8 @@ public class RequestValveAuth implements RequestValve {
 
         final List<Kv<String, HttpMethod>> ignoreUris = ConfigSecurity.ignoreUris(authUris, HttpMethod.POST);
         // 配置这些路径为 permitAll，并且只匹配 POST 方法
+        final StringBuilder content = new StringBuilder();
+        content.append("[ R2MO ] 公开访问的 URI:\n");
         for (final Kv<String, HttpMethod> kv : ignoreUris) {
             final String uri = kv.key();
             final MvcRequestMatcher matcher = builder.pattern(uri);
@@ -52,7 +54,8 @@ public class RequestValveAuth implements RequestValve {
             if (Objects.nonNull(method)) {
                 matcher.setMethod(method);
             }
-            log.info("[ R2MO ] 公开访问的 URI: `{} {}`", Objects.isNull(method) ? "*" : method, uri);
+            content.append("\t `").append(Objects.isNull(method) ? "*" : method)
+                .append(" ").append(uri).append("`\n");
             registry.requestMatchers(matcher).permitAll();
         }
 
@@ -63,6 +66,7 @@ public class RequestValveAuth implements RequestValve {
          */
         final MvcRequestMatcher matcher = builder.pattern("/auth/**");
         registry.requestMatchers(matcher).permitAll();
-        log.info("[ R2MO ] 公开访问的 URI: `* /auth/**`");
+        content.append("\t `* /auth/**`");
+        log.info(content.toString());
     }
 }

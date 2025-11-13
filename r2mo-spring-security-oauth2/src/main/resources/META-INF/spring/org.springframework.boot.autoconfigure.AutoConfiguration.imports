@@ -1,3 +1,2 @@
 io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2
 io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2Native
-io.r2mo.spring.security.oauth2.OAuth2SpringAuthenticator

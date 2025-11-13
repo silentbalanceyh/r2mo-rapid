@@ -18,4 +18,5 @@ public enum TypeToken {
      * r2mo-security-oauth2
      */
     OPAQUE,
+    OPAQUE_REFRESH,
 }

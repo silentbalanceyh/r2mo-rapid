@@ -7,12 +7,14 @@ import io.r2mo.spring.security.extension.SpringAuthenticatorBase;
 import io.r2mo.spring.security.jwt.token.JwtTokenBuilder;
 import io.r2mo.spring.security.jwt.token.JwtTokenBuilderRefresh;
 import io.r2mo.spring.security.token.TokenBuilderManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * @author lang : 2025-11-12
  */
+@Slf4j
 public class JwtSpringAuthenticator extends SpringAuthenticatorBase {
     private final JwtAuthenticateFilter filter;
 
@@ -31,5 +33,7 @@ public class JwtSpringAuthenticator extends SpringAuthenticatorBase {
 
         // 注册 Jwt 的 Token 刷新
         TokenBuilderManager.of().registry(TypeToken.JWT_REFRESH, JwtTokenBuilderRefresh::new);
+
+        log.info("[ R2MO ] ( Auth ) JWT 认证器配置完成！");
     }
 }

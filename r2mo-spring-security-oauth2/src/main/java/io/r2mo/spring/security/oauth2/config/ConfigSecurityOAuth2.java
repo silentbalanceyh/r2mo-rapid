@@ -131,7 +131,6 @@ public class ConfigSecurityOAuth2 implements Serializable {
 
     /**
      * 插件是否真正启用（接管配置）。
-     *
      * 语义：
      * - enabled = true 且不存在原生配置 → 插件接管 → true
      * - enabled = true 且存在原生配置 → 让位给 spring.security.oauth2 → false

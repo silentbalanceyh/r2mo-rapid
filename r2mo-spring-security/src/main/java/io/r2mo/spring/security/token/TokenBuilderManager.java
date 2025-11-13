@@ -32,7 +32,7 @@ public class TokenBuilderManager {
 
     public void registry(final TypeToken token, final Supplier<TokenBuilder> constructorFn) {
         CC_SUPPLIER.putIfAbsent(token, constructorFn);
-        log.info("[ R2MO ] 注册 Token 构建器：tokenType = `{}`", token);
+        log.info("[ R2MO ]     ----> 注册 Token 构建器：tokenType = `{}`", token);
     }
 
     public TokenBuilder getOrCreate(final TypeToken token) {
