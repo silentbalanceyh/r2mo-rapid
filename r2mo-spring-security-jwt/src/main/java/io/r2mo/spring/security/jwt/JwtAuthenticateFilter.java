@@ -8,6 +8,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,11 +27,21 @@ import java.util.UUID;
  *
  * @author lang : 2025-11-12
  */
+@Slf4j
 @Component
 public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
     private final JwtTokenGenerator jwtTokenGenerator;
     private final UserCache userCache;
+
+    /**
+     * OAuth2 共存标记（可选注入）
+     * 如果存在且应该禁用旧 JWT，则此 Filter 将不执行
+     */
+    @Autowired(required = false)
+    private Object oauth2JwtCoexistenceMarker;
+
+    private Boolean shouldSkip = null;
 
     public JwtAuthenticateFilter(final JwtTokenGenerator jwtTokenGenerator) {
         this.jwtTokenGenerator = jwtTokenGenerator;
@@ -40,6 +52,12 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull final HttpServletRequest request,
                                     @NonNull final HttpServletResponse response,
                                     @NonNull final FilterChain filterChain) throws ServletException, IOException {
+
+        // 0. 检查是否应该跳过（OAuth2 JWT 模式启用时）
+        if (this.shouldSkipFilter()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 1. 从请求头获取 JWT Token
         final String token = this.parseJwt(request);
@@ -109,5 +127,31 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
         }
 
         return null;
+    }
+
+    /**
+     * 检查是否应该跳过此 Filter
+     * 如果 OAuth2 启用了 JWT 模式，则旧的 JWT Filter 应该被禁用
+     */
+    private boolean shouldSkipFilter() {
+        if (this.shouldSkip == null) {
+            if (this.oauth2JwtCoexistenceMarker == null) {
+                this.shouldSkip = false;
+            } else {
+                try {
+                    // 反射调用 shouldDisableLegacyJwt 方法
+                    final java.lang.reflect.Method method =
+                        this.oauth2JwtCoexistenceMarker.getClass().getMethod("shouldDisableLegacyJwt");
+                    this.shouldSkip = (Boolean) method.invoke(this.oauth2JwtCoexistenceMarker);
+                    if (this.shouldSkip) {
+                        log.info("[ R2MO ] JWT Filter 已禁用，OAuth2 JWT 模式已接管");
+                    }
+                } catch (final Exception ex) {
+                    log.warn("[ R2MO ] 检查 OAuth2 共存状态失败，JWT Filter 将正常工作", ex);
+                    this.shouldSkip = false;
+                }
+            }
+        }
+        return this.shouldSkip;
     }
 }

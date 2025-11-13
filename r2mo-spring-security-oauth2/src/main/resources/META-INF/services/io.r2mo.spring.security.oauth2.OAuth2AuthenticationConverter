@@ -1,0 +1,4 @@
+# OAuth2 自定义 AuthenticationConverter SPI
+# 在此文件中添加自定义的 OAuth2AuthenticationConverter 实现类
+# 格式：每行一个完整的类名（包名.类名）
+

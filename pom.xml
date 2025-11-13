@@ -92,6 +92,7 @@
         <module>r2mo-spring-junit5</module>
         <module>r2mo-spring-security</module>
         <module>r2mo-spring-security-jwt</module>
+        <module>r2mo-spring-security-oauth2</module>
 
         <!-- 🌷 Vertx 模块专用 -->
         <module>r2mo-vertx</module>

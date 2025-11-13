@@ -71,6 +71,8 @@ public class ConfigSecurity implements Serializable {
     private ConfigSecurityBasic basic = new ConfigSecurityBasic();  // 默认打开
     private ConfigSecurityScope scope;
     private ConfigSecurityCors cors = new ConfigSecurityCors();
+    // OAuth2 配置（由 r2mo-spring-security-oauth2 模块使用）
+    private Object oauth2;  // 避免直接依赖 OAuth2 模块
 
     public List<Kv<String, HttpMethod>> ignoreUris() {
         // 未配置 ignore-uris 的情况下，直接返回空
@@ -113,5 +115,10 @@ public class ConfigSecurity implements Serializable {
     // 内置配置：是否开启图片验证码
     public boolean isCaptcha() {
         return Objects.nonNull(this.captcha) && this.captcha.isEnabled();
+    }
+
+    // 内置配置：是否开启 OAuth2 认证（由 OAuth2 模块检查）
+    public boolean isOAuth2() {
+        return Objects.nonNull(this.oauth2);
     }
 }

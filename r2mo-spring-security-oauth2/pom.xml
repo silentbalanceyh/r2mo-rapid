@@ -11,14 +11,25 @@
 
     <artifactId>r2mo-spring-security-oauth2</artifactId>
     <name>R2MO::Spring::Security::OAuth2</name>
-    
+
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring-security</artifactId>
         </dependency>
-        
+
+        <!-- Spring JDBC -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+
         <!-- Spring Security OAuth2 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-authorization-server</artifactId>
+            <version>1.3.2</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-core</artifactId>
