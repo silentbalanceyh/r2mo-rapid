@@ -4,6 +4,7 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.core.codec.Base64;
+import io.r2mo.jaas.auth.LoginCaptcha;
 import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.typed.common.Kv;
@@ -52,7 +53,7 @@ public class CaptchaServiceImage implements CaptchaService {
             captcha.write(out);
             final String base64Image = Base64.encode(out.toByteArray());
             final Map<String, String> result = new HashMap<>();
-            result.put("captchaKey", captchaKey);
+            result.put(LoginCaptcha.ID, captchaKey);
             result.put("image", "data:image/png;base64," + base64Image);
             return result;
         } catch (final Exception e) {
@@ -62,13 +63,13 @@ public class CaptchaServiceImage implements CaptchaService {
     }
 
     @Override
-    public boolean validate(final String captchaKey, final String userInput) {
-        if (captchaKey == null || userInput == null) {
+    public boolean validate(final String captchaId, final String userInput) {
+        if (captchaId == null || userInput == null) {
             return false;
         }
 
         // 从缓存中获取并自动移除（一次性使用）
-        final String storedCode = UserCache.of().authorize(captchaKey, TypeLogin.CAPTCHA);
+        final String storedCode = UserCache.of().authorize(captchaId, TypeLogin.CAPTCHA);
         if (storedCode == null) {
             return false;
         }
@@ -76,7 +77,7 @@ public class CaptchaServiceImage implements CaptchaService {
         final boolean valid = storedCode.equalsIgnoreCase(userInput.trim());
         if (valid) {
             // 成功后可选再清除一次（防御性）
-            this.invalidate(captchaKey);
+            this.invalidate(captchaId);
         }
         return valid;
     }

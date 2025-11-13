@@ -1,5 +1,6 @@
 package io.r2mo.spring.security.config;
 
+import io.r2mo.typed.exception.web._401UnauthorizedException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,29 +19,30 @@ public class ConfigSecurityCaptcha implements Serializable {
     private boolean enabled = false;
     private String type;
     /**
-     * 验证码过期时间，单位：秒
+     * 验证码过期时间，单位：60秒，此处之前有个问题就是 captcha 图片验证码的时间是 0s
+     * 0s 会导致 {@link _401UnauthorizedException} 的过期异常信息。
      */
-    private int expiredAt;
+    private int expiredAt = 60;
     /**
      * 验证码图片宽度
      */
-    private int width;
+    private int width = 220;
     /**
      * 验证码图片高度
      */
-    private int height;
+    private int height = 80;
     /**
      * 验证码图片透明度
      */
-    private Float textAlpha;
+    private Float textAlpha = 0.8f;
     /**
      * 验证码字符配置
      */
-    private ConfigCode code;
+    private ConfigCode code = new ConfigCode();
     /**
      * 验证码字体配置
      */
-    private ConfigFont font;
+    private ConfigFont font = new ConfigFont();
 
     @Data
     @Configuration
@@ -49,11 +51,11 @@ public class ConfigSecurityCaptcha implements Serializable {
         /**
          * 验证码字符串类型 MATH-算术 | RANDOM-随机字符
          */
-        private String type;
+        private String type = "RANDOM";
         /**
          * 验证码字符串长度，type = 算术时表示运算位数
          */
-        private int length;
+        private int length = 5;
     }
 
     @Data
@@ -63,15 +65,15 @@ public class ConfigSecurityCaptcha implements Serializable {
         /**
          * 字体名称
          */
-        private String name;
+        private String name = "PingFang SC";
         /**
          * 字体样式：0-正常 | 1-粗体 | 2-斜体 | 3-粗斜体
          */
-        private int weight;
+        private int weight = 1;
 
         /**
          * 字体大小
          */
-        private int size;
+        private int size = 32;
     }
 }

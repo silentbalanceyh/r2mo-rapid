@@ -1,7 +1,11 @@
 io.r2mo.spring.security.config.SecurityWebConfiguration
 io.r2mo.spring.security.config.SecurityWebMvcConfiguration
 io.r2mo.spring.security.config.SecurityScopeResolver
-io.r2mo.spring.security.auth.AuthServiceManager
+io.r2mo.spring.security.config.ConfigSecurityCaptcha
 io.r2mo.spring.security.extension.handler.SecurityHandler
 io.r2mo.spring.security.extension.handler.SecurityEntryPoint
 io.r2mo.spring.security.extension.handler.SecurityDeniedHandler
+io.r2mo.spring.security.auth.AuthServiceManager
+io.r2mo.spring.security.extension.captcha.CaptchaServiceImage
+io.r2mo.spring.security.extension.captcha.CaptchaConfiguration
+io.r2mo.spring.security.extension.captcha.CaptchaValidationAspect

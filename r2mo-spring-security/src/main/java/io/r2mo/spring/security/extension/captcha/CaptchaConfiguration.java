@@ -5,16 +5,19 @@ import cn.hutool.captcha.generator.MathGenerator;
 import cn.hutool.captcha.generator.RandomGenerator;
 import io.r2mo.spring.security.config.ConfigSecurityCaptcha;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * @author lang : 2025-11-10
  */
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class CaptchaConfiguration {
 
     private final ConfigSecurityCaptcha captcha;
@@ -24,6 +27,9 @@ public class CaptchaConfiguration {
      */
     @Bean
     public CodeGenerator captchaGenerator() {
+        if (Objects.isNull(this.captcha)) {
+            return null;
+        }
         final String codeType = this.captcha.getCode().getType();
         final int codeLength = this.captcha.getCode().getLength();
         if (CaptchaCode.MATH.name().equalsIgnoreCase(codeType)) {
@@ -43,6 +49,9 @@ public class CaptchaConfiguration {
     @Bean
     @SuppressWarnings("all")
     public Font captchaFont() {
+        if (Objects.isNull(this.captcha)) {
+            return null;
+        }
         final String fontName = this.captcha.getFont().getName();
         final int fontWeight = this.captcha.getFont().getWeight();
         final int fontSize = this.captcha.getFont().getSize();

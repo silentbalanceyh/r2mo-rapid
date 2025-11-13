@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,7 +26,9 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
@@ -51,8 +54,6 @@ public class SecurityWebConfiguration {
 
     private final SecurityHandler failure;
     private final ConfigSecurity config;
-    // Spring Boot 自动装配
-    private final CorsConfigurationSource configCors;
 
     @Bean
     public SecurityFilterChain resourceFilter(final HttpSecurity http,
@@ -61,13 +62,21 @@ public class SecurityWebConfiguration {
         // 基础安全配置
         http
             /*
-             * - 无状态 Session
-             * - 表单模式
-             * - CSRF
-             * 以上三种方式在 RESTful Api 中没有意义，均予以禁用
+             * 以下配置适用于 RESTful API：
+             * - 无状态 Session: RESTful API 通常不需要会话管理，因此禁用它以提高性能和简化架构。
+             * - 表单模式: 由于我们正在构建的是 RESTful API 而不是传统的 Web 应用程序，表单登录在这里没有意义，因此被禁用。
+             * - CSRF: Cross-Site Request Forgery 防护对于非浏览器发起的请求（如来自移动应用或第三方服务）来说是不必要的，并且可能会导致问题，所以这里也被禁用了。
+             *
+             * 关于 CORS 配置：
+             * - 我们使用了 Spring Security 的默认方式来注册 `CorsConfigurationSource`，通过调用 `Customizer.withDefaults()`，
+             *   这将自动查找并使用由 `@Bean` 定义的 `CorsConfigurationSource` 实例。
+             *   之前的方式 `cors(cors -> cors.configurationSource(this.configCors))` 是手动指定一个特定的 `CorsConfigurationSource`，
+             *   但这可能绕过了 Spring 容器对 Bean 的管理，导致潜在的问题，比如配置未正确加载。
+             * - 现在的方法确保了我们的 `CorsConfigurationSource` Bean 能够被 Spring 正确识别和使用，从而保证跨域资源共享策略能够按照预期工作。
+             * 旧代码：cors(cors -> cors.configurationSource(this.configCors))
              */
             // ---- 使用自动 CORS
-            .cors(cors -> cors.configurationSource(this.configCors))
+            .cors(Customizer.withDefaults())
             // ---- 禁用 CSRF
             .csrf(CsrfConfigurer::disable)
             // ---- 禁用表单模式
@@ -131,5 +140,22 @@ public class SecurityWebConfiguration {
     @Bean
     public UserDetailsService userService() {
         return new UserDetailsCommon();
+    }
+
+    // ✅ 新增：基于 config 动态构建 CorsConfigurationSource 的 Bean
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        final CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(this.config.getCors().getAllowedOriginPatterns());
+        configuration.setAllowedMethods(this.config.getCors().getAllowedMethods());
+        configuration.setAllowedHeaders(this.config.getCors().getAllowedHeaders());
+        configuration.setAllowCredentials(this.config.getCors().isAllowCredentials());
+
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // 应用到所有路径（你也可以根据 config.getCors().getPathPatterns() 动态注册）
+        for (final String path : this.config.getCors().getPathPatterns()) {
+            source.registerCorsConfiguration(path, configuration);
+        }
+        return source;
     }
 }

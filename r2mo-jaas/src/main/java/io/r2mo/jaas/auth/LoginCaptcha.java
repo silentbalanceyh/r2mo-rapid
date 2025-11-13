@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class LoginCaptcha implements Serializable {
 
     public static final String ID = "captchaId";
-    public static final String CODE = "captchaCode";
+    public static final String CODE = "captcha";
     /**
      * 验证码唯一标识
      */
@@ -21,5 +21,5 @@ public class LoginCaptcha implements Serializable {
     /**
      * 验证码图片 Base64 字符串
      */
-    private String captchaCode;
+    private String captcha;
 }

@@ -4,8 +4,8 @@ import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.spring.security.exception._80240Exception400UsernameRequired;
+import io.r2mo.spring.security.exception._80241Exception400PasswordRequired;
 import io.r2mo.typed.domain.BaseScope;
-import io.r2mo.typed.exception.web._400BadRequestException;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +18,8 @@ import java.util.Objects;
  *     {
  *         "username":"admin",
  *         "password":"admin123",
- *         "captcha":"1234"
+ *         "captcha":"1234",
+ *         "captchaId": "必须内容（多线程模式下必须）"
  *     }
  * </pre>
  *
@@ -30,6 +31,7 @@ public class BasicLoginRequest extends LoginRequest {
     private String username;
     private String password;
     private String captcha;
+    private String captchaId;
 
     public void setUsername(final String username) {
         this.username = username;
@@ -67,7 +69,7 @@ public class BasicLoginRequest extends LoginRequest {
             throw new _80240Exception400UsernameRequired(LoginID.USERNAME);
         }
         if (Objects.isNull(this.password)) {
-            throw new _400BadRequestException("[ R2MO ] 密码不可为空！");
+            throw new _80241Exception400PasswordRequired("password");
         }
     }
 }

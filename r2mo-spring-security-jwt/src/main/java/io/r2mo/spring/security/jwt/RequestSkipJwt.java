@@ -12,7 +12,6 @@ public class RequestSkipJwt implements RequestSkip {
     @Override
     public Set<String> openApi(final ConfigSecurity security) {
         return Set.of(
-            "/jwt/captcha",
             "/jwt/login"
         );
     }

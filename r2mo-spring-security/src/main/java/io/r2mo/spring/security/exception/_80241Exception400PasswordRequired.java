@@ -7,6 +7,6 @@ import io.r2mo.spring.common.exception.SpringException;
  */
 public class _80241Exception400PasswordRequired extends SpringException {
     public _80241Exception400PasswordRequired(final String fieldOfPassword) {
-        super(ERR._80240, fieldOfPassword);
+        super(ERR._80241, fieldOfPassword);
     }
 }

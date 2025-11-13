@@ -52,6 +52,8 @@ import java.util.stream.Collectors;
  *          issuer: "R2MO Issuer"       # 签发者
  *          expiredAt: 30m              # 单位分钟
  *          refreshAt: 7d               # 单位天
+ *        cors:
+ *
  * </pre>
  *
  * @author lang : 2025-11-10
@@ -68,6 +70,7 @@ public class ConfigSecurity implements Serializable {
     private ConfigSecurityJwt jwt;
     private ConfigSecurityBasic basic = new ConfigSecurityBasic();  // 默认打开
     private ConfigSecurityScope scope;
+    private ConfigSecurityCors cors = new ConfigSecurityCors();
 
     public List<Kv<String, HttpMethod>> ignoreUris() {
         // 未配置 ignore-uris 的情况下，直接返回空
