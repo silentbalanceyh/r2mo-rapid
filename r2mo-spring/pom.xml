@@ -68,14 +68,4 @@
             <artifactId>spring-security-core</artifactId>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <!-- JSR -->
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>${jakarta.servlet-api.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
