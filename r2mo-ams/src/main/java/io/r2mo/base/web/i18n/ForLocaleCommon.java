@@ -80,17 +80,17 @@ import java.util.regex.Pattern;
  * @since 2025-09-26
  */
 public class ForLocaleCommon implements ForLocale {
-    private static final Pattern SLF4J_PATTERN = Pattern.compile("\\{}");
-    private static final String BASE_INFO = "MessageInfo";
-    private static final String BASE_FAIL = "MessageFail";
-    private static final ResourceBundle.Control COMBINED =
+    static final String BASE_INFO = "MessageInfo";
+    static final String BASE_FAIL = "MessageFail";
+    static final ResourceBundle.Control COMBINED =
         new ForLocaleBundle(ResourceBundle.Control.TTL_NO_EXPIRATION_CONTROL, false);
+    /** 默认语言环境：中文 */
+    static final Locale DEFAULT_LOCALE = Locale.CHINA;
 
+    private static final Pattern SLF4J_PATTERN = Pattern.compile("\\{}");
     /** 缓存 messageKey 是否存在于 i18n 文件 */
     private static final ConcurrentHashMap<String, Boolean> CACHE_I18N = new ConcurrentHashMap<>();
 
-    /** 默认语言环境：中文 */
-    private static final Locale DEFAULT_LOCALE = Locale.CHINA;
 
     /**
      * 将 code 转换成资源文件中的 key
@@ -198,4 +198,5 @@ public class ForLocaleCommon implements ForLocale {
         final String template = pattern != null ? pattern : key;
         return formatPattern(template, messageArgs);
     }
+
 }
