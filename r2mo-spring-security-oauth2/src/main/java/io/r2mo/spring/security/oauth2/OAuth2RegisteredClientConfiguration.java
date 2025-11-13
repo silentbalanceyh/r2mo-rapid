@@ -23,7 +23,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
  */
 @Configuration
 @Slf4j
-public class OAuth2SecurityRegisteredClient extends OAuth2ConfigurationBase {
+public class OAuth2RegisteredClientConfiguration {
 
     @Autowired(required = false)
     private JdbcTemplate jdbcTemplate;
@@ -36,18 +36,16 @@ public class OAuth2SecurityRegisteredClient extends OAuth2ConfigurationBase {
      */
     @Bean
     public RegisteredClientRepository configureRegisteredClientRepository() {
-        return this.configureIfEnabled(() -> {
-            if (this.jdbcTemplate == null) {
-                throw new IllegalStateException("[ R2MO ] OAuth2 需要 JdbcTemplate，请配置数据源");
-            }
+        if (this.jdbcTemplate == null) {
+            throw new IllegalStateException("[ R2MO ] OAuth2 需要 JdbcTemplate，请配置数据源");
+        }
 
-            if (this.clientInitializer == null) {
-                throw new IllegalStateException("[ R2MO ] OAuth2 需要 OAuth2RegisteredClientInitializer");
-            }
+        if (this.clientInitializer == null) {
+            throw new IllegalStateException("[ R2MO ] OAuth2 需要 OAuth2RegisteredClientInitializer");
+        }
 
-            log.info("[ R2MO ] 配置 RegisteredClientRepository");
-            return this.clientInitializer.build(this.jdbcTemplate);
-        });
+        log.info("[ R2MO ] 配置 RegisteredClientRepository");
+        return this.clientInitializer.build(this.jdbcTemplate);
     }
 
     /**
@@ -55,14 +53,12 @@ public class OAuth2SecurityRegisteredClient extends OAuth2ConfigurationBase {
      */
     @Bean
     public OAuth2AuthorizationService configureAuthorizationService(final RegisteredClientRepository clientRepository) {
-        return this.configureIfEnabled(() -> {
-            if (this.jdbcTemplate == null) {
-                throw new IllegalStateException("[ R2MO ] OAuth2 需要 JdbcTemplate，请配置数据源");
-            }
+        if (this.jdbcTemplate == null) {
+            throw new IllegalStateException("[ R2MO ] OAuth2 需要 JdbcTemplate，请配置数据源");
+        }
 
-            log.info("[ R2MO ] 配置 OAuth2AuthorizationService");
-            return new JdbcOAuth2AuthorizationService(this.jdbcTemplate, clientRepository);
-        });
+        log.info("[ R2MO ] 配置 OAuth2AuthorizationService");
+        return new JdbcOAuth2AuthorizationService(this.jdbcTemplate, clientRepository);
     }
 
     /**
@@ -70,13 +66,11 @@ public class OAuth2SecurityRegisteredClient extends OAuth2ConfigurationBase {
      */
     @Bean
     public OAuth2AuthorizationConsentService configureAuthorizationConsentService(final RegisteredClientRepository clientRepository) {
-        return this.configureIfEnabled(() -> {
-            if (this.jdbcTemplate == null) {
-                throw new IllegalStateException("[ R2MO ] OAuth2 需要 JdbcTemplate，请配置数据源");
-            }
+        if (this.jdbcTemplate == null) {
+            throw new IllegalStateException("[ R2MO ] OAuth2 需要 JdbcTemplate，请配置数据源");
+        }
 
-            log.info("[ R2MO ] 配置 OAuth2AuthorizationConsentService");
-            return new JdbcOAuth2AuthorizationConsentService(this.jdbcTemplate, clientRepository);
-        });
+        log.info("[ R2MO ] 配置 OAuth2AuthorizationConsentService");
+        return new JdbcOAuth2AuthorizationConsentService(this.jdbcTemplate, clientRepository);
     }
 }

@@ -3,6 +3,7 @@ package io.r2mo.spring.security.config;
 import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.auth.UserDetailsCommon;
 import io.r2mo.spring.security.basic.BasicSpringAuthenticator;
+import io.r2mo.spring.security.extension.AuthSwitcher;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
 import io.r2mo.spring.security.extension.handler.SecurityHandler;
 import io.r2mo.spring.security.extension.valve.RequestValve;
@@ -32,6 +33,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 核心安全配置，基于 Spring Security 实现的基础配置
@@ -86,20 +88,9 @@ public class SecurityWebConfiguration {
             // ---- 自定义异常处理
             .exceptionHandling(this.failure.handler());
 
-        // 加载不同模式的认证器
-        if (this.config.isBasic()) {
-            // 加载 Basic 认证器
-            final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config, BasicSpringAuthenticator::new);
-            authenticator.configure(http, this.failure);
-            log.info("[ R2MO ] 启用 Basic 认证器");
-        }
 
-        final List<SecurityWebConfigurer> configurerList = SPI.findMany(SecurityWebConfigurer.class);
-        for (final SecurityWebConfigurer configurer : configurerList) {
-            log.info("[ R2MO ] ----> 执行 `{}` 配置器", configurer.getClass().getName());
-            configurer.configure(http, introspector);
-        }
-
+        final AuthSwitcher switcher = SPI.findOneOf(AuthSwitcher.class);
+        final boolean isOAuth2 = Objects.nonNull(switcher) && switcher.hasOAuth2();
         // 请求执行链式处理
         http.authorizeHttpRequests(request -> {
 
@@ -120,8 +111,27 @@ public class SecurityWebConfiguration {
             valueAuth.execute(request, this.config, this.mvc(introspector));
 
             // 其他请求都需要执行认证
-            request.anyRequest().authenticated();
-        }).csrf(AbstractHttpConfigurer::disable);
+            if (!isOAuth2) {
+                request.anyRequest().authenticated();
+            }
+        });
+
+        
+        // 加载不同模式的认证器
+        if (this.config.isBasic()) {
+            // 加载 Basic 认证器
+            final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config, BasicSpringAuthenticator::new);
+            authenticator.configure(http, this.failure);
+            log.info("[ R2MO ] 启用 Basic 认证器");
+        }
+
+
+        final List<SecurityWebConfigurer> configurerList = SPI.findMany(SecurityWebConfigurer.class);
+        for (final SecurityWebConfigurer configurer : configurerList) {
+            log.info("[ R2MO ] ----> 执行 `{}` 配置器", configurer.getClass().getName());
+            configurer.configure(http, introspector);
+        }
+
         return http.build();
     }
 

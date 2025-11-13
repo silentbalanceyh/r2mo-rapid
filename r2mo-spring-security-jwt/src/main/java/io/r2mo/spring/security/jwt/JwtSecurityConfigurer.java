@@ -19,13 +19,12 @@ public class JwtSecurityConfigurer extends SecurityWebConfigurerBase {
 
     @Override
     public void configure(final HttpSecurity http, final HandlerMappingIntrospector introspector) {
-        if (this.config().isJwt()) {
-            // 添加 JWT 认证过滤器
-            final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config(), JwtSpringAuthenticator::new);
-            authenticator.configure(http, this.handler());
-            log.info("[ R2MO ] 启用 JWT 认证器");
-        } else {
+        if (!this.config().isJwt()) {
             log.warn("[ R2MO ] (W) 未启用 JWT 功能，请检查 application.yml 配置！");
         }
+        // 添加 JWT 认证过滤器
+        final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config(), JwtSpringAuthenticator::new);
+        authenticator.configure(http, this.handler());
+        log.info("[ R2MO ] 启用 JWT 认证器");
     }
 }

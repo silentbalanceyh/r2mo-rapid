@@ -11,4 +11,6 @@ package io.r2mo.spring.security.extension;
  */
 public interface AuthSwitcher {
     boolean hasJwt();
+
+    boolean hasOAuth2();
 }

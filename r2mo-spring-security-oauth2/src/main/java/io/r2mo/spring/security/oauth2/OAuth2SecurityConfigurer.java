@@ -1,9 +1,10 @@
 package io.r2mo.spring.security.oauth2;
 
+import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.spring.security.config.SecurityWebConfigurerBase;
+import io.r2mo.spring.security.extension.SpringAuthenticator;
 import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
@@ -24,11 +25,11 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @Slf4j
 public class OAuth2SecurityConfigurer extends SecurityWebConfigurerBase {
 
-    @Autowired(required = false)
-    private ConfigSecurityOAuth2 oauth2Config;
+    private final ConfigSecurityOAuth2 oauth2Config;
 
     public OAuth2SecurityConfigurer() {
         super();
+        this.oauth2Config = SpringUtil.getBean(ConfigSecurityOAuth2.class);
     }
 
     @Override
@@ -38,11 +39,14 @@ public class OAuth2SecurityConfigurer extends SecurityWebConfigurerBase {
             return;
         }
 
+
         // Bean 配置已由以下类自动完成：
         // - OAuth2SecurityEncoder: JWKSource, JwtDecoder, OpaqueTokenIntrospector
         // - OAuth2SecurityRegisteredClient: RegisteredClientRepository, OAuth2AuthorizationService, OAuth2AuthorizationConsentService
         // - OAuth2SecurityAuthorizationServer: AuthorizationServerSettings, OAuth2TokenCustomizer
         // - OAuth2SpringAuthenticator: SecurityFilterChain
+        final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config(), OAuth2SpringAuthenticator::new);
+        authenticator.configure(http, this.handler());
 
         log.info("[ R2MO ] OAuth2 Bean 配置已就绪");
     }

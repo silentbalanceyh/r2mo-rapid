@@ -1,4 +1,4 @@
-package io.r2mo.spring.security.oauth2;
+package io.r2mo.spring.security.oauth2.bean;
 
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;
@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import java.util.Map;
  *
  * @author lang : 2025-11-13
  */
+@Component
 @Slf4j
 public class OAuth2JwtTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
 

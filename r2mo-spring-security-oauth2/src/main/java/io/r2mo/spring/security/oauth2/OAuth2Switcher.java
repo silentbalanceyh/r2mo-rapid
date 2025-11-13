@@ -26,4 +26,9 @@ public class OAuth2Switcher implements AuthSwitcher {
         log.info("[ R2MO ] OAuth2Switcher 检测到 OAuth2 JWT 认证方式：{}", hasJwt);
         return hasJwt;
     }
+
+    @Override
+    public boolean hasOAuth2() {
+        return true;
+    }
 }
