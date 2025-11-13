@@ -3,6 +3,8 @@ package io.r2mo.spring.security.oauth2.auth;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 
 /**
  * OAuth2 授权码模式请求
@@ -39,15 +41,15 @@ public class OAuth2RequestAuthCode extends OAuth2Request {
 
     public OAuth2RequestAuthCode(final JObject request) {
         super(request);
-        this.code = request.getString("code");
-        this.redirectUri = request.getString("redirect_uri");
+        this.code = request.getString(OAuth2ParameterNames.CODE);
+        this.redirectUri = request.getString(OAuth2ParameterNames.REDIRECT_URI);
         this.setId(this.code);
         this.setCredential(this.code);
     }
 
     @Override
-    public String getGrantType() {
-        return "authorization_code";
+    public AuthorizationGrantType typeGrant() {
+        return AuthorizationGrantType.AUTHORIZATION_CODE;
     }
 }
 

@@ -3,6 +3,7 @@ package io.r2mo.spring.security.oauth2.auth;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
 /**
  * OAuth2 客户端凭证模式请求
@@ -33,8 +34,8 @@ public class OAuth2RequestClient extends OAuth2Request {
     }
 
     @Override
-    public String getGrantType() {
-        return "client_credentials";
+    public AuthorizationGrantType typeGrant() {
+        return AuthorizationGrantType.CLIENT_CREDENTIALS;
     }
 }
 

@@ -72,7 +72,7 @@ public class OAuth2JwkSourceManager {
 
         final JWKSet jwkSet = new JWKSet(rsaKey);
 
-        log.info("[ R2MO ] JWK Source 创建��功：keyId = {}, algorithm = RS256", keyId);
+        log.info("[ R2MO ] JWK Source 创建成功：keyId = {}, algorithm = RS256", keyId);
 
         return new ImmutableJWKSet<>(jwkSet);
     }

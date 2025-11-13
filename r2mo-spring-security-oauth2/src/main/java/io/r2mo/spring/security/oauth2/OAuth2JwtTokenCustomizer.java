@@ -13,7 +13,6 @@ import java.util.Map;
 
 /**
  * OAuth2 JWT Token 定制器
- *
  * 从 UserDetails 和 MSUser 中提取自定义字段添加到 JWT Claims
  *
  * @author lang : 2025-11-13

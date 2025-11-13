@@ -4,6 +4,7 @@ import io.r2mo.jaas.session.UserAt;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 
 import java.util.Map;
 
@@ -60,16 +61,16 @@ public class OAuth2Response {
 
     public JObject toJson() {
         final JObject result = SPI.J();
-        result.put("access_token", this.accessToken);
-        result.put("token_type", this.tokenType);
+        result.put(OAuth2ParameterNames.ACCESS_TOKEN, this.accessToken);
+        result.put(OAuth2ParameterNames.TOKEN_TYPE, this.tokenType);
         if (this.expiresIn != null) {
-            result.put("expires_in", this.expiresIn);
+            result.put(OAuth2ParameterNames.EXPIRES_IN, this.expiresIn);
         }
         if (this.refreshToken != null) {
-            result.put("refresh_token", this.refreshToken);
+            result.put(OAuth2ParameterNames.REFRESH_TOKEN, this.refreshToken);
         }
         if (this.scope != null) {
-            result.put("scope", this.scope);
+            result.put(OAuth2ParameterNames.SCOPE, this.scope);
         }
         if (this.idToken != null) {
             result.put("id_token", this.idToken);

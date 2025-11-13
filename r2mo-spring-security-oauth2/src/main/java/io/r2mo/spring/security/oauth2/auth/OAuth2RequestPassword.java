@@ -3,6 +3,8 @@ package io.r2mo.spring.security.oauth2.auth;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 
 /**
  * OAuth2 密码模式请求
@@ -40,15 +42,15 @@ public class OAuth2RequestPassword extends OAuth2Request {
 
     public OAuth2RequestPassword(final JObject request) {
         super(request);
-        this.username = request.getString("username");
-        this.password = request.getString("password");
+        this.username = request.getString(OAuth2ParameterNames.USERNAME);
+        this.password = request.getString(OAuth2ParameterNames.PASSWORD);
         this.setId(this.username);
         this.setCredential(this.password);
     }
 
     @Override
-    public String getGrantType() {
-        return "password";
+    public AuthorizationGrantType typeGrant() {
+        return new AuthorizationGrantType("password");
     }
 }
 

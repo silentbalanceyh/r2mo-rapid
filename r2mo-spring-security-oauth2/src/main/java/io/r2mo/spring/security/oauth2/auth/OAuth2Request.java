@@ -6,6 +6,7 @@ import io.r2mo.typed.domain.BaseScope;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 
 /**
@@ -40,7 +41,7 @@ public abstract class OAuth2Request extends LoginRequest {
     /**
      * 获取 OAuth2 授权类型
      */
-    public abstract String getGrantType();
+    public abstract AuthorizationGrantType typeGrant();
 
     protected OAuth2Request() {
     }

@@ -3,6 +3,8 @@ package io.r2mo.spring.security.oauth2.auth;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 
 /**
  * OAuth2 刷新令牌模式请求
@@ -34,14 +36,14 @@ public class OAuth2RequestRefreshToken extends OAuth2Request {
 
     public OAuth2RequestRefreshToken(final JObject request) {
         super(request);
-        this.refreshToken = request.getString("refresh_token");
+        this.refreshToken = request.getString(OAuth2ParameterNames.REFRESH_TOKEN);
         this.setId(this.refreshToken);
         this.setCredential(this.refreshToken);
     }
 
     @Override
-    public String getGrantType() {
-        return "refresh_token";
+    public AuthorizationGrantType typeGrant() {
+        return AuthorizationGrantType.REFRESH_TOKEN;
     }
 }
 
