@@ -53,13 +53,13 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk18on</artifactId>
-      <version>1.82</version>
+      <version>1.81</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.2</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
