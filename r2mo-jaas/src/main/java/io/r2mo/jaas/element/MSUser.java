@@ -2,6 +2,7 @@ package io.r2mo.jaas.element;
 
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.enums.TypeID;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,7 +34,7 @@ public class MSUser extends AbstractNormObject implements Serializable {
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private final ConcurrentMap<TypeID, String> idMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<TypeID, LoginID> idMap = new ConcurrentHashMap<>();
 
     @Schema(description = "账号名")
     private String username;
@@ -84,10 +85,11 @@ public class MSUser extends AbstractNormObject implements Serializable {
 
     public String id(final TypeID typeID) {
         // 获取
-        return this.idMap.getOrDefault(typeID, null);
+        final LoginID loginId = this.idMap.getOrDefault(typeID, null);
+        return Objects.nonNull(loginId) ? loginId.key() : null;
     }
 
-    public Set<String> idKeys() {
+    public Set<String> ids() {
         final Set<String> keys = Arrays.stream(TypeID.values())
             .map(this::id)
             .collect(Collectors.toSet());
@@ -104,13 +106,13 @@ public class MSUser extends AbstractNormObject implements Serializable {
      */
     public Map<String, Object> token() {
         final Map<String, Object> tokenData = new TreeMap<>();
-        tokenData.put("id", this.getId());
-        tokenData.put("username", this.username);
+        tokenData.put(LoginID.ID, this.getId());
+        tokenData.put(LoginID.USERNAME, this.username);
         if (StrUtil.isEmpty(this.email)) {
-            tokenData.put("email", this.email);
+            tokenData.put(LoginID.EMAIL, this.email);
         }
         if (StrUtil.isEmpty(this.mobile)) {
-            tokenData.put("mobile", this.mobile);
+            tokenData.put(LoginID.MOBILE, this.mobile);
         }
         Arrays.stream(TypeID.values()).forEach(typeId -> {
             final Object value = this.id(typeId);
@@ -119,16 +121,5 @@ public class MSUser extends AbstractNormObject implements Serializable {
             }
         });
         return tokenData;
-    }
-
-    public MSUser id(final TypeID typeID, final String id) {
-        if (StrUtil.isEmpty(id)) {
-            // 移除
-            this.idMap.remove(typeID);
-        } else {
-            // 添加
-            this.idMap.put(typeID, id);
-        }
-        return this;
     }
 }

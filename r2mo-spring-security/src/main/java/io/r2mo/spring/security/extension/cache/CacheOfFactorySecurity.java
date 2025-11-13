@@ -2,7 +2,7 @@ package io.r2mo.spring.security.extension.cache;
 
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.base.util.R2MO;
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserContext;
@@ -103,7 +103,7 @@ public class CacheOfFactorySecurity implements CacheOfFactory {
     }
 
     @Override
-    public CacheAt<String, String> ofAuthorize(final TypeID type) {
+    public CacheAt<String, String> ofAuthorize(final TypeLogin type) {
         Objects.requireNonNull(type, "[ R2MO ] 授权码类型不可为空！");
         final String name = UserCache.NAME_AUTHORIZE + "@" + type.name();
         return (CacheAt<String, String>) CC_CACHE.pick(() -> {
@@ -115,10 +115,10 @@ public class CacheOfFactorySecurity implements CacheOfFactory {
         }, name);
     }
 
-    private Kv<Long, Duration> findLimit(final TypeID type) {
+    private Kv<Long, Duration> findLimit(final TypeLogin type) {
         // 特殊检索，图片验证码
         Duration duration = null;
-        if (type.name().startsWith(TypeID.CAPTCHA.name())) {
+        if (type.name().startsWith(TypeLogin.CAPTCHA.name())) {
             if (!this.security.isCaptcha()) {
                 throw new _501NotSupportException("[ R2MO ] 未启用图片验证码功能！");
             }

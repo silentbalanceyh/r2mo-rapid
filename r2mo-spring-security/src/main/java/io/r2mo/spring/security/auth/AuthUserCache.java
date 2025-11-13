@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.auth;
 
 import io.r2mo.jaas.element.MSUser;
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserContext;
@@ -60,7 +60,7 @@ public class AuthUserCache implements UserCache {
     }
 
     private void cacheVector(final MSUser user) {
-        final Set<String> idKeys = user.idKeys();
+        final Set<String> idKeys = user.ids();
         idKeys.forEach(id -> this.factory().userVector().put(id, user.getId()));
     }
 
@@ -99,14 +99,14 @@ public class AuthUserCache implements UserCache {
     }
 
     @Override
-    public void authorize(final Kv<String, String> generated, final TypeID type) {
+    public void authorize(final Kv<String, String> generated, final TypeLogin type) {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(type);
         cache.put(generated.key(), generated.value());
         log.info("[ R2MO ] 生成验证码：id = {} / code = {}", generated.key(), generated.value());
     }
 
     @Override
-    public String authorize(final String consumerId, final TypeID type) {
+    public String authorize(final String consumerId, final TypeLogin type) {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(type);
         final String generated = cache.find(consumerId);
         if (Objects.isNull(generated)) {
@@ -116,7 +116,7 @@ public class AuthUserCache implements UserCache {
     }
 
     @Override
-    public void authorizeKo(final String consumerId, final TypeID type) {
+    public void authorizeKo(final String consumerId, final TypeLogin type) {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(type);
         cache.remove(consumerId);
         log.info("[ R2MO ] 消费验证码：id = {}", consumerId);

@@ -3,7 +3,7 @@ package io.r2mo.spring.security.auth;
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.jaas.element.MSEmployee;
 import io.r2mo.jaas.element.MSUser;
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserSession;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +19,9 @@ import java.util.Objects;
 public abstract class ServiceUserAtBase implements ServiceUserAt {
     @Override
     public UserAt loadLogged(final LoginRequest request) {
-        final TypeID type = request.type();
-        if (type != this.idType()) {
-            throw new IllegalArgumentException("[ R2MO ] 加载用户信息的 ID 类型错误：期望类型 = " + this.idType() + "，实际类型 = " + type);
+        final TypeLogin type = request.type();
+        if (type != this.loginType()) {
+            throw new IllegalArgumentException("[ R2MO ] 加载用户信息的 ID 类型错误：期望类型 = " + this.loginType() + "，实际类型 = " + type);
         }
         // 此处不加载员工数据，员工数据的选择交给 UserContext 来处理
         final String identifier = request.getId();
@@ -31,7 +31,7 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
 
     public abstract UserAt findUser(final String id);
 
-    public abstract TypeID idType();
+    public abstract TypeLogin loginType();
 
     protected UserAt ofUserAt(final MSUser user) {
         return UserSession.of().userAt(user);

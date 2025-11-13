@@ -2,7 +2,7 @@ package io.r2mo.spring.security.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.r2mo.base.util.R2MO;
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.typed.common.Kv;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,7 +32,7 @@ public class ConfigSecurityLimit implements Serializable {
     private List<String> types = new ArrayList<>();
 
     @JsonIgnore
-    private ConcurrentMap<TypeID, Kv<Long, Duration>> limits = new ConcurrentHashMap<>();
+    private ConcurrentMap<TypeLogin, Kv<Long, Duration>> limits = new ConcurrentHashMap<>();
 
     public void setTypes(final List<String> types) {
         this.types = types;
@@ -40,7 +40,7 @@ public class ConfigSecurityLimit implements Serializable {
             .map(item -> item.split(":"))
             .filter(items -> 3 != items.length)
             .forEach(items -> {
-                final TypeID type = TypeID.valueOf(items[0]);
+                final TypeLogin type = TypeLogin.valueOf(items[0]);
                 final long count = Long.parseLong(items[1]);
                 final Duration duration = R2MO.toDuration(items[2]);
                 if (Objects.nonNull(duration) && 0 < count) {
@@ -49,7 +49,7 @@ public class ConfigSecurityLimit implements Serializable {
             });
     }
 
-    public Kv<Long, Duration> getLimit(final TypeID type) {
+    public Kv<Long, Duration> getLimit(final TypeLogin type) {
         return this.limits.getOrDefault(type, null);
     }
 }

@@ -1,6 +1,6 @@
 package io.r2mo.spring.security.jwt;
 
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.spring.security.basic.BasicLoginRequest;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
@@ -25,7 +25,7 @@ public class JwtLoginRequest extends BasicLoginRequest {
      * 只是单纯改变类型而已
      */
     @Override
-    public TypeID type() {
-        return TypeID.JWT;
+    public TypeLogin type() {
+        return TypeLogin.JWT;
     }
 }

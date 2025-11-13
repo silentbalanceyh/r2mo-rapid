@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.auth;
 
 import cn.hutool.extra.spring.SpringUtil;
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._404NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class ServiceFactory {
         return MANAGER;
     }
 
-    public ServicePreAuth authorizeProvider(final TypeID type) {
+    public ServicePreAuth authorizeProvider(final TypeLogin type) {
         // 查找匹配的认证提供者
         final String providerName = "PreAuth/" + type.name();
         return CC_PRE_AUTH.pick(() -> {
@@ -42,7 +42,7 @@ public class ServiceFactory {
         }, providerName);
     }
 
-    public ServiceUserAt userProvider(final TypeID type) {
+    public ServiceUserAt userProvider(final TypeLogin type) {
         // 查找匹配的用户提供者
         final String providerName = "UserAt/" + type;
         return CC_USER_AT.pick(() -> {

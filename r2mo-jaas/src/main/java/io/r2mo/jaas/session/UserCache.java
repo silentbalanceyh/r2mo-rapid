@@ -1,6 +1,6 @@
 package io.r2mo.jaas.session;
 
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Kv;
@@ -71,11 +71,11 @@ public interface UserCache {
     UserAt find(UUID id);
 
     // ----- 临时验证码（授权码）专用缓存
-    void authorize(Kv<String, String> generated, TypeID type);
+    void authorize(Kv<String, String> generated, TypeLogin type);
 
-    String authorize(String consumerId, TypeID type);
+    String authorize(String consumerId, TypeLogin type);
 
-    void authorizeKo(String consumerId, TypeID type);
+    void authorizeKo(String consumerId, TypeLogin type);
 
     // ----- 令牌部分专用缓存
     // --- Access Token ---

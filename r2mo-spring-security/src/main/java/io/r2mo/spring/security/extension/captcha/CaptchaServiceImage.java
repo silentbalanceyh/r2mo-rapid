@@ -4,7 +4,7 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.core.codec.Base64;
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.typed.common.Kv;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class CaptchaServiceImage implements CaptchaService {
 
         // 3. 存入 UserCache（类型为 CAPTCHA）
         final Kv<String, String> generated = Kv.create(captchaKey, code);
-        UserCache.of().authorize(generated, TypeID.CAPTCHA_IMAGE);
+        UserCache.of().authorize(generated, TypeLogin.CAPTCHA);
 
         // 4. 转为 Base64 图片
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -68,7 +68,7 @@ public class CaptchaServiceImage implements CaptchaService {
         }
 
         // 从缓存中获取并自动移除（一次性使用）
-        final String storedCode = UserCache.of().authorize(captchaKey, TypeID.CAPTCHA_IMAGE);
+        final String storedCode = UserCache.of().authorize(captchaKey, TypeLogin.CAPTCHA);
         if (storedCode == null) {
             return false;
         }
@@ -84,7 +84,7 @@ public class CaptchaServiceImage implements CaptchaService {
     @Override
     public void invalidate(final String captchaKey) {
         if (captchaKey != null) {
-            UserCache.of().authorize(captchaKey, TypeID.CAPTCHA_IMAGE);
+            UserCache.of().authorize(captchaKey, TypeLogin.CAPTCHA);
         }
     }
 }

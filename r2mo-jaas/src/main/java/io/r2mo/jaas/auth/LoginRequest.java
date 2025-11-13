@@ -1,6 +1,6 @@
 package io.r2mo.jaas.auth;
 
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.typed.domain.extension.AbstractScope;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,5 +21,5 @@ public abstract class LoginRequest extends AbstractScope implements Serializable
     // password, sms code 等等
     private String credential;
 
-    public abstract TypeID type();
+    public abstract TypeLogin type();
 }
