@@ -11,6 +11,9 @@ public interface BaseScope {
 
     String X_TENANT_ID = "X-Tenant-Id";
 
+    String F_APP_ID = "appId";
+    String F_TENANT_ID = "tenantId";
+
     void app(String appId);
 
     String app();

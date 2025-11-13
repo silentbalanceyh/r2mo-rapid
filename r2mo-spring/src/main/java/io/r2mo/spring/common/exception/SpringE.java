@@ -31,7 +31,7 @@ public class SpringE {
     }
 
     public static SpringE of(final int code) {
-        return CC_ERROR.pick(() -> new SpringE(code, "E" + Math.abs(code)), code);
+        return CC_ERROR.pick(() -> new SpringE(code, String.valueOf(code)), code);
     }
 
     public SpringE state(final HttpStatus status) {
