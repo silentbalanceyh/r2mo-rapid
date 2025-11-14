@@ -1,5 +1,6 @@
 package io.r2mo.spring.security.oauth2;
 
+import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -42,24 +45,38 @@ public class OAuth2RegisteredClientInitializer {
     public RegisteredClientRepository build(final JdbcTemplate jdbcTemplate) {
         final JdbcRegisteredClientRepository repository = new JdbcRegisteredClientRepository(jdbcTemplate);
 
+        if (!this.config.isOn()) {
+            log.info("[ R2MO ] OAuth2 插件未启用，跳过客户端初始化");
+            return repository;
+        }
         // 初始化固定客户端
-        this.initializeFixedClients(repository);
+        this.initializeClientFixed(repository);
+
+        // 初始化扩展客户端 SPI 模式
+        this.initializeClientExtension(repository);
 
         return repository;
+    }
+
+    private void initializeClientExtension(final JdbcRegisteredClientRepository repository) {
+        final List<OAuth2RegisteredClientBuilder> builder = SPI.findMany(OAuth2RegisteredClientBuilder.class);
+
+        builder.forEach(each -> {
+            final Set<RegisteredClient> clientSet = each.buildSet();
+            log.info("[ R2MO ] OAuth2 客户端构建器：{} / 数量：{}", each.getClass().getName(), clientSet.size());
+            clientSet.stream()
+                .filter(Objects::nonNull)
+                .filter(this::validateClient)
+                .forEach(repository::save);
+        });
     }
 
     /**
      * 初始化固定客户端
      */
-    private void initializeFixedClients(final JdbcRegisteredClientRepository repository) {
-        if (!this.config.isOn()) {
-            log.info("[ R2MO ] OAuth2 插件未启用，跳过客户端初始化");
-            return;
-        }
-
+    private void initializeClientFixed(final JdbcRegisteredClientRepository repository) {
         final List<ConfigSecurityOAuth2.Client> clients = this.config.getClients();
         if (clients == null || clients.isEmpty()) {
-            log.warn("[ R2MO ] 未配置固定 OAuth2 客户端");
             return;
         }
 
@@ -68,6 +85,46 @@ public class OAuth2RegisteredClientInitializer {
         }
 
         log.info("[ R2MO ] OAuth2 固定客户端初始化完成，共 {} 个", clients.size());
+    }
+
+    private boolean validateClient(final RegisteredClient client) {
+        if (client == null) {
+            return false;
+        }
+
+        if (client.getClientId() == null || client.getClientId().isBlank()) {
+            return false;
+        }
+
+        if (client.getClientName() == null || client.getClientName().isBlank()) {
+            return false;
+        }
+
+        final Set<ClientAuthenticationMethod> authMethods = client.getClientAuthenticationMethods();
+        if (authMethods == null || authMethods.isEmpty()) {
+            return false;
+        }
+
+        final Set<AuthorizationGrantType> grantTypes = client.getAuthorizationGrantTypes();
+        if (grantTypes == null || grantTypes.isEmpty()) {
+            return false;
+        }
+
+        final Set<String> scopes = client.getScopes();
+        if (scopes == null || scopes.isEmpty()) {
+            return false;
+        }
+
+        // 只有授权码模式需要 redirectUris
+        if (grantTypes.contains(AuthorizationGrantType.AUTHORIZATION_CODE)) {
+            final Set<String> redirectUris = client.getRedirectUris();
+            if (redirectUris == null || redirectUris.isEmpty()) {
+                return false;
+            }
+        }
+
+        // 可选：长度限制
+        return client.getClientId().length() <= 100;
     }
 
     /**
@@ -145,6 +202,10 @@ public class OAuth2RegisteredClientInitializer {
 
         // 保存客户端
         final RegisteredClient client = builder.build();
+        if (!this.validateClient(client)) {
+            log.warn("[ R2MO ] OAuth2 忽略非法客户端：clientId = {}", clientConfig.getClientId());
+            return;
+        }
         repository.save(client);
 
         log.info("[ R2MO ] OAuth2 客户端初始化成功：clientId = {}, grantTypes = {}",

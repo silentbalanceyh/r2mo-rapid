@@ -9,26 +9,19 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * OAuth2 Access Token AuthenticationProvider
@@ -36,36 +29,33 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-@ConditionalOnBean(value = {ConfigSecurityOAuth2.class})
+@ConditionalOnBean(ConfigSecurityOAuth2.class)
 public class OAuth2AccessTokenProvider implements AuthenticationProvider {
 
-    private static final String CLAIM_CLIENT_ID = OAuth2ParameterNames.CLIENT_ID;
-    private static final String CLAIM_USERNAME = OAuth2ParameterNames.USERNAME;
-    private static final String CLAIM_SCOPE = OAuth2ParameterNames.SCOPE;
-    private static final String CLAIM_SUB = "sub";
-    private static final String AUTH_SCOPE_PREFIX = "SCOPE_";
+    private static final String CLAIM_CLIENT_ID = OAuth2AccessTokenHelper.CLAIM_CLIENT_ID;
+    private static final String CLAIM_USERNAME = OAuth2AccessTokenHelper.CLAIM_USERNAME;
+    private static final String CLAIM_SCOPE = OAuth2AccessTokenHelper.CLAIM_SCOPE;
+    private static final String CLAIM_SUB = OAuth2AccessTokenHelper.CLAIM_SUB;
+    private static final String AUTH_SCOPE_PREFIX = OAuth2AccessTokenHelper.AUTH_SCOPE_PREFIX;
     private static final String ERROR_INVALID_TOKEN = "invalid_token";
 
-    private final JwtDecoder jwtDecoder;
+    private final org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
     private final OpaqueTokenIntrospector opaqueTokenIntrospector;
 
     @Autowired
-    public OAuth2AccessTokenProvider(@Nullable final JwtDecoder jwtDecoder,
+    public OAuth2AccessTokenProvider(@Nullable final org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder,
                                      @Nullable final OpaqueTokenIntrospector opaqueTokenIntrospector) {
         this.jwtDecoder = jwtDecoder;
         this.opaqueTokenIntrospector = opaqueTokenIntrospector;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public Authentication authenticate(@NonNull final Authentication authentication) throws AuthenticationException {
         if (!(authentication instanceof BearerTokenAuthenticationToken)) {
             return null;
         }
 
-        final BearerTokenAuthenticationToken bearer = (BearerTokenAuthenticationToken) authentication;
-        final String token = bearer.getToken();
-
+        final String token = ((BearerTokenAuthenticationToken) authentication).getToken();
         if (!StringUtils.hasText(token)) {
             throw new OAuth2AuthenticationException(new OAuth2Error(ERROR_INVALID_TOKEN, "empty token", null));
         }
@@ -73,20 +63,24 @@ public class OAuth2AccessTokenProvider implements AuthenticationProvider {
         try {
             if (this.jwtDecoder != null) {
                 final Jwt jwt = this.jwtDecoder.decode(token);
-                return this.buildFromJwt(jwt);
+                return this.buildAuthentication(jwt);
             }
 
             if (this.opaqueTokenIntrospector != null) {
                 final OAuth2AuthenticatedPrincipal principal = this.opaqueTokenIntrospector.introspect(token);
-                return this.buildFromPrincipal(principal, token);
+                return this.buildAuthentication(principal, token);
             }
 
-            throw new OAuth2AuthenticationException(new OAuth2Error(ERROR_INVALID_TOKEN, "no decoder/introspector configured", null));
+            throw new OAuth2AuthenticationException(
+                new OAuth2Error(ERROR_INVALID_TOKEN, "no decoder/introspector configured", null)
+            );
         } catch (final OAuth2AuthenticationException ex) {
             throw ex;
         } catch (final Exception ex) {
             log.debug("[ R2MO ] token decode/introspect failed: {}", ex.getMessage());
-            throw new OAuth2AuthenticationException(new OAuth2Error(ERROR_INVALID_TOKEN, "token invalid", null), ex);
+            throw new OAuth2AuthenticationException(
+                new OAuth2Error(ERROR_INVALID_TOKEN, "token invalid", null), ex
+            );
         }
     }
 
@@ -95,51 +89,32 @@ public class OAuth2AccessTokenProvider implements AuthenticationProvider {
         return BearerTokenAuthenticationToken.class.isAssignableFrom(authentication);
     }
 
-    private Authentication buildFromJwt(final Jwt jwt) {
-        if (jwt == null) {
-            throw new OAuth2AuthenticationException(new OAuth2Error(ERROR_INVALID_TOKEN, "jwt null", null));
-        }
+    // === 统一构建 Authentication 的入口 ===
 
-        final String principal = firstNonBlank(
-            jwt.getClaimAsString(CLAIM_USERNAME),
-            jwt.getClaimAsString(CLAIM_SUB),
-            jwt.getClaimAsString(CLAIM_CLIENT_ID)
-        );
-
+    private Authentication buildAuthentication(final Jwt jwt) {
+        final String principal = OAuth2AccessTokenHelper.extractPrincipalFromJwt(jwt);
         if (!StringUtils.hasText(principal)) {
-            throw new OAuth2AuthenticationException(new OAuth2Error(ERROR_INVALID_TOKEN, "missing principal", null));
+            throw new OAuth2AuthenticationException(
+                new OAuth2Error(ERROR_INVALID_TOKEN, "missing principal in JWT", null)
+            );
         }
 
-        final Set<String> scopes = extractScopesFromClaim(jwt.getClaim(CLAIM_SCOPE));
-        final var authorities = scopes.stream()
-            .filter(StringUtils::hasText)
-            .map(s -> new SimpleGrantedAuthority(AUTH_SCOPE_PREFIX + s))
-            .collect(Collectors.toList());
+        final Set<String> scopes = OAuth2AccessTokenHelper.extractScopesFromClaim(jwt.getClaim(OAuth2AccessTokenHelper.CLAIM_SCOPE));
+        final var authorities = OAuth2AccessTokenHelper.toAuthorities(scopes);
 
-        // 使用 JwtAuthenticationToken，Spring 原生用于 JWT
         return new JwtAuthenticationToken(jwt, authorities);
     }
 
-    private Authentication buildFromPrincipal(final OAuth2AuthenticatedPrincipal principal, final String rawToken) {
-        if (principal == null) {
-            throw new OAuth2AuthenticationException(new OAuth2Error(ERROR_INVALID_TOKEN, "principal null", null));
+    private Authentication buildAuthentication(final OAuth2AuthenticatedPrincipal principal, final String rawToken) {
+        final String principalName = OAuth2AccessTokenHelper.extractPrincipalFromOpaque(principal);
+        if (!StringUtils.hasText(principalName)) {
+            throw new OAuth2AuthenticationException(
+                new OAuth2Error(ERROR_INVALID_TOKEN, "missing principal in opaque token", null)
+            );
         }
 
-        final String principalName = principal.getName();
-        final String principalFromAttr = asString(principal.getAttribute(CLAIM_USERNAME));
-        final String principalSub = asString(principal.getAttribute(CLAIM_SUB));
-        final String principalClient = asString(principal.getAttribute(CLAIM_CLIENT_ID));
-
-        final String principalId = firstNonBlank(principalFromAttr, principalSub, principalClient, principalName);
-        if (!StringUtils.hasText(principalId)) {
-            throw new OAuth2AuthenticationException(new OAuth2Error(ERROR_INVALID_TOKEN, "missing principal", null));
-        }
-
-        final Set<String> scopes = extractScopesFromClaim(principal.getAttribute(CLAIM_SCOPE));
-        final var authorities = scopes.stream()
-            .filter(StringUtils::hasText)
-            .map(s -> new SimpleGrantedAuthority(AUTH_SCOPE_PREFIX + s))
-            .collect(Collectors.toList());
+        final Set<String> scopes = OAuth2AccessTokenHelper.extractScopesFromClaim(principal.getAttribute(OAuth2AccessTokenHelper.CLAIM_SCOPE));
+        final var authorities = OAuth2AccessTokenHelper.toAuthorities(scopes);
 
         final OAuth2AccessToken accessToken = new OAuth2AccessToken(
             OAuth2AccessToken.TokenType.BEARER,
@@ -150,42 +125,5 @@ public class OAuth2AccessTokenProvider implements AuthenticationProvider {
         );
 
         return new BearerTokenAuthentication(principal, accessToken, authorities);
-    }
-
-    private static String asString(final Object obj) {
-        return obj == null ? null : obj.toString();
-    }
-
-    private static Set<String> extractScopesFromClaim(final Object claim) {
-        if (claim == null) {
-            return Collections.emptySet();
-        }
-        if (claim instanceof Collection) {
-            return ((Collection<?>) claim).stream()
-                .map(Object::toString)
-                .flatMap(s -> Arrays.stream(s.split(" ")))
-                .filter(StringUtils::hasText)
-                .collect(Collectors.toSet());
-        }
-        final String raw = claim.toString();
-        if (!StringUtils.hasText(raw)) {
-            return Collections.emptySet();
-        }
-        return Arrays.stream(raw.split(" "))
-            .map(String::trim)
-            .filter(StringUtils::hasText)
-            .collect(Collectors.toSet());
-    }
-
-    private static String firstNonBlank(final String... values) {
-        if (values == null) {
-            return null;
-        }
-        for (final String v : values) {
-            if (StringUtils.hasText(v)) {
-                return v;
-            }
-        }
-        return null;
     }
 }

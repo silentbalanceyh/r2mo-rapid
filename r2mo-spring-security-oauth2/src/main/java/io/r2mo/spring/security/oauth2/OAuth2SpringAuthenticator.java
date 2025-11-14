@@ -56,7 +56,7 @@ public class OAuth2SpringAuthenticator extends SpringAuthenticatorBase {
 
         try {
             log.info("[ R2MO ] 认证授权服务器 / OAuth2 AuthorizationServer...");
-            log.info("[ R2MO ] ---> OAuth2 Token：{} / Issuer: {}", this.oauth2Config.getMode(), this.oauth2Config.issuer());
+            log.info("[ R2MO ] ---> OAuth2 Token：{} / ( Issuer ) = {}", this.oauth2Config.getMode(), this.oauth2Config.issuer());
             // 配置 Authorization Server（委托）
             this.authorizationServerConfig.configureAuthorizationServer(security);
 

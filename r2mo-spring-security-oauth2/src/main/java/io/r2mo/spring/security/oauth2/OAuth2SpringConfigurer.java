@@ -23,11 +23,11 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  */
 @Configuration
 @Slf4j
-public class OAuth2SecurityConfigurer extends SecurityWebConfigurerBase {
+public class OAuth2SpringConfigurer extends SecurityWebConfigurerBase {
 
     private final ConfigSecurityOAuth2 oauth2Config;
 
-    public OAuth2SecurityConfigurer() {
+    public OAuth2SpringConfigurer() {
         super();
         this.oauth2Config = SpringUtil.getBean(ConfigSecurityOAuth2.class);
     }

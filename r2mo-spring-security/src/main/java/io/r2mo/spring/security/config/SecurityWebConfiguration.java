@@ -116,13 +116,13 @@ public class SecurityWebConfiguration {
             }
         });
 
-        
+
         // 加载不同模式的认证器
         if (this.config.isBasic()) {
             // 加载 Basic 认证器
+            log.info("[ R2MO ] ----> 执行 `Basic` 配置器");
             final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config, BasicSpringAuthenticator::new);
             authenticator.configure(http, this.failure);
-            log.info("[ R2MO ] 启用 Basic 认证器");
         }
 
 

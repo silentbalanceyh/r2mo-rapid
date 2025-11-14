@@ -10,15 +10,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.stereotype.Component;
@@ -26,11 +23,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * OAuth2 Access Token Filter
@@ -48,20 +41,11 @@ public class OAuth2AccessTokenFilter extends OncePerRequestFilter {
     private static final String HEADER_AUTHORIZATION = HttpHeaders.AUTHORIZATION;
     private static final String BEARER_PREFIX = "Bearer ";
 
-    private static final String CLAIM_CLIENT_ID = OAuth2ParameterNames.CLIENT_ID; // "client_id"
-    private static final String CLAIM_USERNAME = OAuth2ParameterNames.USERNAME; // "username"
-    private static final String CLAIM_SCOPE = OAuth2ParameterNames.SCOPE; // "scope"
-    private static final String CLAIM_SUB = "sub";
-
-    private static final String AUTH_SCOPE_PREFIX = "SCOPE_";
-    private static final String ATTR_ISSUED_AT = "issued_at";
-    private static final String ATTR_EXPIRES_AT = "expires_at";
-
     private final ConfigSecurityOAuth2 config;
 
     // 可选注入：如果有 AuthenticationManager，会把 BearerTokenAuthenticationToken 发给它处理（通常由 Provider 组合）
     private AuthenticationManager authenticationManager;
-    private JwtDecoder jwtDecoder;
+    private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
     private OpaqueTokenIntrospector opaqueTokenIntrospector;
 
     public OAuth2AccessTokenFilter(final ConfigSecurityOAuth2 config) {
@@ -74,7 +58,7 @@ public class OAuth2AccessTokenFilter extends OncePerRequestFilter {
     }
 
     @org.springframework.beans.factory.annotation.Autowired(required = false)
-    public void setJwtDecoder(final JwtDecoder jwtDecoder) {
+    public void setJwtDecoder(final org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder) {
         this.jwtDecoder = jwtDecoder;
     }
 
@@ -84,7 +68,6 @@ public class OAuth2AccessTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected void doFilterInternal(@NonNull final HttpServletRequest request,
                                     @NonNull final HttpServletResponse response,
                                     @NonNull final FilterChain filterChain) throws ServletException, IOException {
@@ -139,20 +122,13 @@ public class OAuth2AccessTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        final String principal = firstNonBlank(
-            asString(jwt.getClaimAsString(CLAIM_USERNAME)),
-            asString(jwt.getClaimAsString(CLAIM_SUB)),
-            asString(jwt.getClaimAsString(CLAIM_CLIENT_ID))
-        );
+        final String principal = OAuth2AccessTokenHelper.extractPrincipalFromJwt(jwt);
         if (!StringUtils.hasText(principal)) {
             return;
         }
 
-        final Set<String> scopes = extractScopesFromClaim(jwt.getClaim(CLAIM_SCOPE));
-        final var authorities = scopes.stream()
-            .filter(StringUtils::hasText)
-            .map(s -> new SimpleGrantedAuthority(AUTH_SCOPE_PREFIX + s))
-            .collect(Collectors.toList());
+        final Set<String> scopes = OAuth2AccessTokenHelper.extractScopesFromClaim(jwt.getClaim(OAuth2AccessTokenHelper.CLAIM_SCOPE));
+        final var authorities = OAuth2AccessTokenHelper.toAuthorities(scopes);
 
         // 对于 JWT，使用 JwtAuthenticationToken
         final JwtAuthenticationToken authentication = new JwtAuthenticationToken(jwt, authorities);
@@ -164,21 +140,13 @@ public class OAuth2AccessTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        final String principalName = principal.getName();
-        final String principalFromAttr = asString(principal.getAttribute(CLAIM_USERNAME));
-        final String principalSub = asString(principal.getAttribute(CLAIM_SUB));
-        final String principalClient = asString(principal.getAttribute(CLAIM_CLIENT_ID));
-
-        final String principalId = firstNonBlank(principalFromAttr, principalSub, principalClient, principalName);
+        final String principalId = OAuth2AccessTokenHelper.extractPrincipalFromOpaque(principal);
         if (!StringUtils.hasText(principalId)) {
             return;
         }
 
-        final Set<String> scopes = extractScopesFromClaim(principal.getAttribute(CLAIM_SCOPE));
-        final var authorities = scopes.stream()
-            .filter(StringUtils::hasText)
-            .map(s -> new SimpleGrantedAuthority(AUTH_SCOPE_PREFIX + s))
-            .collect(Collectors.toList());
+        final Set<String> scopes = OAuth2AccessTokenHelper.extractScopesFromClaim(principal.getAttribute(OAuth2AccessTokenHelper.CLAIM_SCOPE));
+        final var authorities = OAuth2AccessTokenHelper.toAuthorities(scopes);
 
         // 对于 Opaque，构建 BearerTokenAuthentication
         final OAuth2AccessToken accessToken = new OAuth2AccessToken(
@@ -197,43 +165,6 @@ public class OAuth2AccessTokenFilter extends OncePerRequestFilter {
         final String header = request.getHeader(HEADER_AUTHORIZATION);
         if (StringUtils.hasText(header) && header.startsWith(BEARER_PREFIX)) {
             return header.substring(BEARER_PREFIX.length());
-        }
-        return null;
-    }
-
-    private static String asString(final Object obj) {
-        return obj == null ? null : obj.toString();
-    }
-
-    private static Set<String> extractScopesFromClaim(final Object claim) {
-        if (claim == null) {
-            return Collections.emptySet();
-        }
-        if (claim instanceof Collection) {
-            return ((Collection<?>) claim).stream()
-                .map(Object::toString)
-                .flatMap(s -> Arrays.stream(s.split(" ")))
-                .filter(StringUtils::hasText)
-                .collect(Collectors.toSet());
-        }
-        final String raw = claim.toString();
-        if (!StringUtils.hasText(raw)) {
-            return Collections.emptySet();
-        }
-        return Arrays.stream(raw.split(" "))
-            .map(String::trim)
-            .filter(StringUtils::hasText)
-            .collect(Collectors.toSet());
-    }
-
-    private static String firstNonBlank(final String... values) {
-        if (values == null) {
-            return null;
-        }
-        for (final String v : values) {
-            if (StringUtils.hasText(v)) {
-                return v;
-            }
         }
         return null;
     }

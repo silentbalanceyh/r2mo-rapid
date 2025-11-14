@@ -4,6 +4,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
 import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2Native;
+import io.r2mo.spring.security.oauth2.token.OAuth2JwkSourceManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +28,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @Slf4j
-public class OAuth2SecurityEncoder {
+public class OAuth2SpringEncoder {
 
     @Autowired(required = false)
     private ResourceLoader resourceLoader;

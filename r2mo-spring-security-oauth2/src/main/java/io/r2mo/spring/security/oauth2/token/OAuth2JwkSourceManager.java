@@ -1,4 +1,4 @@
-package io.r2mo.spring.security.oauth2;
+package io.r2mo.spring.security.oauth2.token;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;

@@ -1,4 +1,4 @@
-package io.r2mo.spring.security.oauth2.bean;
+package io.r2mo.spring.security.oauth2.token;
 
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;

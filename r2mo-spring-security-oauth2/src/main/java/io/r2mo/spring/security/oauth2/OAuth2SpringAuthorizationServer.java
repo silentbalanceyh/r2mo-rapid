@@ -1,9 +1,9 @@
 package io.r2mo.spring.security.oauth2;
 
 import io.r2mo.spi.SPI;
-import io.r2mo.spring.security.oauth2.bean.OAuth2JwtTokenCustomizer;
 import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
 import io.r2mo.spring.security.oauth2.config.OAuth2TokenMode;
+import io.r2mo.spring.security.oauth2.token.OAuth2JwtTokenCustomizer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -128,34 +128,64 @@ public class OAuth2SpringAuthorizationServer {
 
         if (issuer != null && !issuer.isBlank()) {
             builder.issuer(issuer);
-            log.info("[ R2MO ] 配置 Authorization Server Issuer: {}", issuer);
+            log.info("[ R2MO ] 配置 Authorization Server / ( Issuer ) = {}", issuer);
         }
 
         // 自定义端点路径
         final var settings = this.oauth2Config.getServerSettings();
-        if (settings != null) {
-            if (settings.getAuthorizationEndpoint() != null) {
-                builder.authorizationEndpoint(settings.getAuthorizationEndpoint());
-            }
-            if (settings.getTokenEndpoint() != null) {
-                builder.tokenEndpoint(settings.getTokenEndpoint());
-            }
-            if (settings.getJwkSetEndpoint() != null) {
-                builder.jwkSetEndpoint(settings.getJwkSetEndpoint());
-            }
-            if (settings.getTokenRevocationEndpoint() != null) {
-                builder.tokenRevocationEndpoint(settings.getTokenRevocationEndpoint());
-            }
-            if (settings.getTokenIntrospectionEndpoint() != null) {
-                builder.tokenIntrospectionEndpoint(settings.getTokenIntrospectionEndpoint());
-            }
-            if (settings.getOidcConfigurationEndpoint() != null) {
-                log.warn("[ R2MO ] OIDC 配置端点暂不支持自定义");
-            }
-            if (settings.getOidcUserInfoEndpoint() != null) {
-                builder.oidcUserInfoEndpoint(settings.getOidcUserInfoEndpoint());
-            }
+
+        // 授权端点
+        String uriAuthorization = settings != null ? settings.getAuthorizationEndpoint() : null;
+        if (uriAuthorization == null) {
+            uriAuthorization = OAuth2Endpoint.AUTHORIZE();
         }
+        log.info("[ R2MO ]     ----> {} （授权端点）", uriAuthorization);
+        builder.authorizationEndpoint(uriAuthorization);
+
+        // 令牌端点
+        String uriToken = settings != null ? settings.getTokenEndpoint() : null;
+        if (uriToken == null) {
+            uriToken = OAuth2Endpoint.TOKEN();
+        }
+        log.info("[ R2MO ]     ----> {} （令牌端点）", uriToken);
+        builder.tokenEndpoint(uriToken);
+
+        // JWK Set 端点
+        String uriJwkSet = settings != null ? settings.getJwkSetEndpoint() : null;
+        if (uriJwkSet == null) {
+            uriJwkSet = OAuth2Endpoint.JWKS();
+        }
+        log.info("[ R2MO ]     ----> {} （JWK Set 端点）", uriJwkSet);
+        builder.jwkSetEndpoint(uriJwkSet);
+
+        // 令牌撤销端点
+        String uriTokenRevocation = settings != null ? settings.getTokenRevocationEndpoint() : null;
+        if (uriTokenRevocation == null) {
+            uriTokenRevocation = OAuth2Endpoint.REVOKE();
+        }
+        log.info("[ R2MO ]     ----> {} （令牌撤销端点）", uriTokenRevocation);
+        builder.tokenRevocationEndpoint(uriTokenRevocation);
+
+        // 令牌内省端点
+        String uriTokenIntrospection = settings != null ? settings.getTokenIntrospectionEndpoint() : null;
+        if (uriTokenIntrospection == null) {
+            uriTokenIntrospection = OAuth2Endpoint.INTROSPECT();
+        }
+        log.info("[ R2MO ]     ----> {} （令牌内省端点）", uriTokenIntrospection);
+        builder.tokenIntrospectionEndpoint(uriTokenIntrospection);
+
+        // OIDC 配置端点（暂不支持自定义）
+        if (settings != null && settings.getOidcConfigurationEndpoint() != null) {
+            log.warn("[ R2MO ] OIDC 配置端点暂不支持自定义");
+        }
+
+        // OIDC UserInfo 端点
+        String uriOidcUserInfo = settings != null ? settings.getOidcUserInfoEndpoint() : null;
+        if (uriOidcUserInfo == null) {
+            uriOidcUserInfo = "/userinfo";
+        }
+        log.info("[ R2MO ]     ----> {} （OIDC UserInfo 端点）", uriOidcUserInfo);
+        builder.oidcUserInfoEndpoint(uriOidcUserInfo);
 
         log.info("[ R2MO ] 配置 AuthorizationServerSettings 完成");
         return builder.build();
