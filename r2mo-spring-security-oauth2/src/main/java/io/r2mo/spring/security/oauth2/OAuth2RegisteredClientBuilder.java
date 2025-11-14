@@ -10,10 +10,5 @@ import java.util.Set;
  * @author lang : 2025-11-14
  */
 public interface OAuth2RegisteredClientBuilder {
-
-    RegisteredClient build();
-
-    default Set<RegisteredClient> buildSet() {
-        return Set.of(this.build());
-    }
+    Set<RegisteredClient> build();
 }

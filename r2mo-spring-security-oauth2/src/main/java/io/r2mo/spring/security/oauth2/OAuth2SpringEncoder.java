@@ -2,8 +2,9 @@ package io.r2mo.spring.security.oauth2;
 
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
-import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2Native;
+import io.r2mo.spring.security.oauth2.config.ConfigOAuth2;
+import io.r2mo.spring.security.oauth2.config.ConfigOAuth2Client;
+import io.r2mo.spring.security.oauth2.config.ConfigOAuth2Spring;
 import io.r2mo.spring.security.oauth2.token.OAuth2JwkSourceManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class OAuth2SpringEncoder {
     private ResourceLoader resourceLoader;
 
     @Autowired
-    private ConfigSecurityOAuth2 oauth2Config;
+    private ConfigOAuth2 oauth2Config;
 
     /**
      * 配置 JWK Source（用于 JWT 签名）
@@ -62,7 +63,7 @@ public class OAuth2SpringEncoder {
     public OpaqueTokenIntrospector configureOpaqueTokenIntrospector() {
         // 1) 优先使用原生配置（如果存在）
         try {
-            final ConfigSecurityOAuth2Native nativeCfg = this.oauth2Config.getNativeCfg();
+            final ConfigOAuth2Spring nativeCfg = this.oauth2Config.getNativeCfg();
             if (nativeCfg != null && nativeCfg.getResourceserver() != null
                 && nativeCfg.getResourceserver().getOpaqueToken() != null
                 && nativeCfg.getResourceserver().getOpaqueToken().isEnabled()) {
@@ -77,7 +78,7 @@ public class OAuth2SpringEncoder {
             }
 
             // 2) 回退到插件配置：serverSettings.tokenIntrospectionEndpoint + issuer
-            final ConfigSecurityOAuth2.ServerSettings settings = this.oauth2Config.getServerSettings();
+            final ConfigOAuth2.ServerSettings settings = this.oauth2Config.getServerSettings();
             if (settings != null && settings.getTokenIntrospectionEndpoint() != null && this.oauth2Config.issuer() != null) {
                 final String endpoint = settings.getTokenIntrospectionEndpoint();
                 final String issuer = this.oauth2Config.issuer();
@@ -90,7 +91,7 @@ public class OAuth2SpringEncoder {
                 String clientId = null;
                 String clientSecret = null;
                 if (this.oauth2Config.getClients() != null) {
-                    for (final ConfigSecurityOAuth2.Client c : this.oauth2Config.getClients()) {
+                    for (final ConfigOAuth2Client c : this.oauth2Config.getClients()) {
                         if (c.getGrantTypes() != null && c.getGrantTypes().contains("client_credentials")
                             && StringUtils.hasText(c.getClientId()) && StringUtils.hasText(c.getClientSecret())) {
                             clientId = c.getClientId();

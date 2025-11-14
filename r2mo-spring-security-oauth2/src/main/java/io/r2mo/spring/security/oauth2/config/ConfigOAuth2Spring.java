@@ -22,7 +22,7 @@ import java.util.Map;
 @Configuration
 @ConfigurationProperties(prefix = "spring.security.oauth2")
 @Data
-public class ConfigSecurityOAuth2Native implements Serializable {
+public class ConfigOAuth2Spring implements Serializable {
 
     /**
      * Authorization Server 相关配置
@@ -40,7 +40,7 @@ public class ConfigSecurityOAuth2Native implements Serializable {
      * Client 相关配置
      * spring.security.oauth2.client.*
      */
-    private Client client = new Client();
+    private ConfigOAuth2SpringClient client = new ConfigOAuth2SpringClient();
 
     /**
      * 全局判断：是否配置过任意原生 OAuth2 相关属性
@@ -137,19 +137,5 @@ public class ConfigSecurityOAuth2Native implements Serializable {
                 return (this.introspectionUri != null && !this.introspectionUri.isBlank());
             }
         }
-    }
-
-    // ========================
-    // 子配置：OAuth2 Client
-    // ========================
-
-    @Data
-    public static class Client implements Serializable {
-
-        /**
-         * 这里只提供一个开关判断是否使用原生 client 配置，
-         * 具体字段可在未来根据需要再扩展。
-         */
-        private boolean enabled;
     }
 }

@@ -5,7 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
+import io.r2mo.spring.security.oauth2.config.ConfigOAuth2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -33,10 +33,10 @@ import java.util.UUID;
 @Slf4j
 public class OAuth2JwkSourceManager {
 
-    private final ConfigSecurityOAuth2 config;
+    private final ConfigOAuth2 config;
     private final ResourceLoader resourceLoader;
 
-    public OAuth2JwkSourceManager(final ConfigSecurityOAuth2 config, final ResourceLoader resourceLoader) {
+    public OAuth2JwkSourceManager(final ConfigOAuth2 config, final ResourceLoader resourceLoader) {
         this.config = config;
         this.resourceLoader = resourceLoader;
     }
@@ -102,7 +102,7 @@ public class OAuth2JwkSourceManager {
      */
     private KeyPair loadKeyPairFromKeyStore() {
         try {
-            final ConfigSecurityOAuth2.JwkKeyStore keyStoreConfig = this.config.getJwk().getKeyStore();
+            final ConfigOAuth2.JwkKeyStore keyStoreConfig = this.config.getJwk().getKeyStore();
 
             // 加载 KeyStore 文件
             final Resource resource = this.resourceLoader.getResource(keyStoreConfig.getLocation());

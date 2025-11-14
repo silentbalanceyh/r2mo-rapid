@@ -69,6 +69,8 @@
 
         <!-- 🌷 加密解密核心 -->
         <module>r2mo-jce</module>
+        <!-- 🌷 认证授权核心 -->
+        <module>r2mo-jaas</module>
 
         <!-- 🌷 数据类型实现 -->
         <module>r2mo-typed-hutool</module>
@@ -93,6 +95,7 @@
         <module>r2mo-spring-security</module>
         <module>r2mo-spring-security-jwt</module>
         <module>r2mo-spring-security-oauth2</module>
+        <module>r2mo-spring-security-oauth2client</module>
 
         <!-- 🌷 Vertx 模块专用 -->
         <module>r2mo-vertx</module>
@@ -107,7 +110,6 @@
         <module>r2mo-boot-spring</module>
         <module>r2mo-boot-spring-default</module><!-- ☘️ Bootstrap 实现层（默认）-->
         <module>r2mo-boot-vertx</module>
-        <module>r2mo-jaas</module>
     </modules>
     <build>
         <plugins>

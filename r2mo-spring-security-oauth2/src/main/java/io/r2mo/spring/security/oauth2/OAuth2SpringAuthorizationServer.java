@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.oauth2;
 
 import io.r2mo.spi.SPI;
-import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
+import io.r2mo.spring.security.oauth2.config.ConfigOAuth2;
 import io.r2mo.spring.security.oauth2.config.OAuth2TokenMode;
 import io.r2mo.spring.security.oauth2.token.OAuth2JwtTokenCustomizer;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +34,9 @@ import java.util.List;
 @Slf4j
 public class OAuth2SpringAuthorizationServer {
 
-    private final ConfigSecurityOAuth2 oauth2Config;
+    private final ConfigOAuth2 oauth2Config;
 
-    public OAuth2SpringAuthorizationServer(final ConfigSecurityOAuth2 oauth2Config) {
+    public OAuth2SpringAuthorizationServer(final ConfigOAuth2 oauth2Config) {
         this.oauth2Config = oauth2Config;
     }
 

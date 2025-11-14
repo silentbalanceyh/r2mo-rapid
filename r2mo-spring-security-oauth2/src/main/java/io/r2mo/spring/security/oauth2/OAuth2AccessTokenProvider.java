@@ -1,6 +1,6 @@
 package io.r2mo.spring.security.oauth2;
 
-import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
+import io.r2mo.spring.security.oauth2.config.ConfigOAuth2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -29,7 +29,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-@ConditionalOnBean(ConfigSecurityOAuth2.class)
+@ConditionalOnBean(ConfigOAuth2.class)
 public class OAuth2AccessTokenProvider implements AuthenticationProvider {
 
     private static final String CLAIM_CLIENT_ID = OAuth2AccessTokenHelper.CLAIM_CLIENT_ID;

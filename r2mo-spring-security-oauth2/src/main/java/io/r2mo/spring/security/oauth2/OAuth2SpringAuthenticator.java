@@ -4,7 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.jaas.enums.TypeToken;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.extension.SpringAuthenticatorBase;
-import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
+import io.r2mo.spring.security.oauth2.config.ConfigOAuth2;
 import io.r2mo.spring.security.oauth2.token.OAuth2TokenBuilder;
 import io.r2mo.spring.security.oauth2.token.OAuth2TokenBuilderRefresh;
 import io.r2mo.spring.security.token.TokenBuilderManager;
@@ -29,14 +29,14 @@ import java.util.Objects;
 @Slf4j
 public class OAuth2SpringAuthenticator extends SpringAuthenticatorBase {
 
-    private final ConfigSecurityOAuth2 oauth2Config;
+    private final ConfigOAuth2 oauth2Config;
 
     private final OAuth2SpringAuthorizationServer authorizationServerConfig;
 
     public OAuth2SpringAuthenticator(final ConfigSecurity configuration) {
         super(configuration);
         // 从 Spring 容器获取 OAuth2 配置
-        this.oauth2Config = SpringUtil.getBean(ConfigSecurityOAuth2.class);
+        this.oauth2Config = SpringUtil.getBean(ConfigOAuth2.class);
         this.authorizationServerConfig = SpringUtil.getBean(OAuth2SpringAuthorizationServer.class);
     }
 
@@ -56,7 +56,7 @@ public class OAuth2SpringAuthenticator extends SpringAuthenticatorBase {
 
         try {
             log.info("[ R2MO ] 认证授权服务器 / OAuth2 AuthorizationServer...");
-            log.info("[ R2MO ] ---> OAuth2 Token：{} / ( Issuer ) = {}", this.oauth2Config.getMode(), this.oauth2Config.issuer());
+            log.info("[ R2MO ] ---> OAuth2 Token 模式 = `{}`", this.oauth2Config.getMode());
             // 配置 Authorization Server（委托）
             this.authorizationServerConfig.configureAuthorizationServer(security);
 

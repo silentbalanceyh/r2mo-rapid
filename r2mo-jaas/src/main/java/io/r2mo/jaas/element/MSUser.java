@@ -4,6 +4,9 @@ import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.jaas.session.UserClaim;
+import io.r2mo.spi.SPI;
+import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -101,6 +104,15 @@ public class MSUser extends AbstractNormObject implements Serializable {
 
     /**
      * 令牌常用数据
+     * <pre>
+     *     - id: 用户唯一标识
+     *     - username: 账号名
+     *     可选：
+     *     - email: 邮箱（如果有）
+     *     - mobile: 手机号（如果有）
+     *     - 其他 ID 标识
+     *     如果扩展，则直接提取
+     * </pre>
      *
      * @return 令牌常用数据
      */
@@ -108,18 +120,30 @@ public class MSUser extends AbstractNormObject implements Serializable {
         final Map<String, Object> tokenData = new TreeMap<>();
         tokenData.put(LoginID.ID, this.getId());
         tokenData.put(LoginID.USERNAME, this.username);
-        if (StrUtil.isEmpty(this.email)) {
-            tokenData.put(LoginID.EMAIL, this.email);
-        }
-        if (StrUtil.isEmpty(this.mobile)) {
-            tokenData.put(LoginID.MOBILE, this.mobile);
-        }
-        Arrays.stream(TypeID.values()).forEach(typeId -> {
-            final Object value = this.id(typeId);
-            if (Objects.nonNull(value)) {
-                tokenData.put(typeId.name(), value);
+
+        final UserClaim claim = CCT_TOKEN.pick(() -> SPI.findOneOf(UserClaim.class));
+        if (Objects.isNull(claim)) {
+            // 上述是必须的
+            if (StrUtil.isEmpty(this.email)) {
+                tokenData.put(LoginID.EMAIL, this.email);
             }
-        });
+            if (StrUtil.isEmpty(this.mobile)) {
+                tokenData.put(LoginID.MOBILE, this.mobile);
+            }
+            Arrays.stream(TypeID.values()).forEach(typeId -> {
+                final Object value = this.id(typeId);
+                if (Objects.nonNull(value)) {
+                    tokenData.put(typeId.name(), value);
+                }
+            });
+        } else {
+            final Map<String, Object> claimData = claim.token(this);
+            if (Objects.nonNull(claimData)) {
+                tokenData.putAll(claimData);
+            }
+        }
         return tokenData;
     }
+
+    private static final Cc<String, UserClaim> CCT_TOKEN = Cc.openThread();
 }

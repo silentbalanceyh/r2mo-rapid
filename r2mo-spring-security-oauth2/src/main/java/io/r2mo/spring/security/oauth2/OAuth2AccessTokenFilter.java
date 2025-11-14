@@ -1,6 +1,6 @@
 package io.r2mo.spring.security.oauth2;
 
-import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
+import io.r2mo.spring.security.oauth2.config.ConfigOAuth2;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,20 +35,20 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-@ConditionalOnBean(ConfigSecurityOAuth2.class)
+@ConditionalOnBean(ConfigOAuth2.class)
 public class OAuth2AccessTokenFilter extends OncePerRequestFilter {
 
     private static final String HEADER_AUTHORIZATION = HttpHeaders.AUTHORIZATION;
     private static final String BEARER_PREFIX = "Bearer ";
 
-    private final ConfigSecurityOAuth2 config;
+    private final ConfigOAuth2 config;
 
     // 可选注入：如果有 AuthenticationManager，会把 BearerTokenAuthenticationToken 发给它处理（通常由 Provider 组合）
     private AuthenticationManager authenticationManager;
     private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
     private OpaqueTokenIntrospector opaqueTokenIntrospector;
 
-    public OAuth2AccessTokenFilter(final ConfigSecurityOAuth2 config) {
+    public OAuth2AccessTokenFilter(final ConfigOAuth2 config) {
         this.config = config;
     }
 

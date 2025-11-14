@@ -2,7 +2,7 @@ package io.r2mo.spring.security.oauth2;
 
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.spring.security.extension.AuthSwitcher;
-import io.r2mo.spring.security.oauth2.config.ConfigSecurityOAuth2;
+import io.r2mo.spring.security.oauth2.config.ConfigOAuth2;
 import io.r2mo.typed.annotation.SPID;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,10 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SPID
 public class OAuth2Switcher implements AuthSwitcher {
-    private final ConfigSecurityOAuth2 config;
+    private final ConfigOAuth2 config;
 
     public OAuth2Switcher() {
-        this.config = SpringUtil.getBean(ConfigSecurityOAuth2.class);
+        this.config = SpringUtil.getBean(ConfigOAuth2.class);
     }
 
     @Override

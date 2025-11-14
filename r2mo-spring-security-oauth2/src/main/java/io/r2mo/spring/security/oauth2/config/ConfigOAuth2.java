@@ -38,7 +38,7 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties(prefix = "security.oauth2")
 @Data
-public class ConfigSecurityOAuth2 implements Serializable {
+public class ConfigOAuth2 implements Serializable {
 
     // ---------------- 基础开关 ----------------
 
@@ -102,9 +102,9 @@ public class ConfigSecurityOAuth2 implements Serializable {
     private ServerSettings serverSettings = new ServerSettings();
 
     /**
-     * 静态客户端列表，启动时同步到 oauth2_registered_client。
+     * 静态客户端列表，启动时同步到 oauth2_registered_client
      */
-    private List<Client> clients = new ArrayList<>();
+    private List<ConfigOAuth2Client> clients = new ArrayList<>();
 
     // ---------------- 注入的其它配置（可选） ----------------
 
@@ -112,7 +112,7 @@ public class ConfigSecurityOAuth2 implements Serializable {
      * 可选：原生 spring.security.oauth2.* 配置
      */
     @Autowired(required = false)
-    private ConfigSecurityOAuth2Native nativeCfg;
+    private ConfigOAuth2Spring nativeCfg;
 
     /**
      * 可选：原有 security.jwt 配置，用于复用过期时间等。
@@ -313,43 +313,4 @@ public class ConfigSecurityOAuth2 implements Serializable {
         private String oidcUserInfoEndpoint;
     }
 
-    @Data
-    public static class Client implements Serializable {
-
-        private String clientId;
-        private String clientSecret;
-        private String clientName;
-
-        /**
-         * 授权模式：
-         * authorization_code / refresh_token / client_credentials / password / device_code ...
-         */
-        private List<String> grantTypes = new ArrayList<>();
-
-        /**
-         * 客户端认证方式：
-         * client_secret_basic / client_secret_post / none ...
-         */
-        private List<String> authMethods = new ArrayList<>();
-
-        /**
-         * 授权回调地址列表
-         */
-        private List<String> redirectUris = new ArrayList<>();
-
-        /**
-         * 登出回调地址列表（可选）
-         */
-        private List<String> postLogoutRedirectUris = new ArrayList<>();
-
-        /**
-         * Scope 列表
-         */
-        private List<String> scopes = new ArrayList<>();
-
-        /**
-         * 是否需要授权确认页
-         */
-        private boolean requireConsent;
-    }
 }
