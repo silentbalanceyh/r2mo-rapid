@@ -7,6 +7,7 @@ import io.github.silentbalanceyh.r2mo.core.RouteHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,9 @@ public class VertxHttpServer implements HttpServer {
         CompletableFuture<Void> future = new CompletableFuture<>();
 
         Router router = Router.router(vertx);
+        
+        // Add body handler to parse request bodies
+        router.route().handler(BodyHandler.create());
 
         // Register all routes
         routes.forEach((path, handler) -> {
