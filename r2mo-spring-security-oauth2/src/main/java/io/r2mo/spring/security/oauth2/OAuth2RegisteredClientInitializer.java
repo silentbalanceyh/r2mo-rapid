@@ -46,6 +46,7 @@ public class OAuth2RegisteredClientInitializer {
     public RegisteredClientRepository build(final JdbcTemplate jdbcTemplate) {
         final JdbcRegisteredClientRepository repository = new JdbcRegisteredClientRepository(jdbcTemplate);
 
+        // 原生配置处理 Client
         if (!this.config.isOn()) {
             log.info("[ R2MO ] OAuth2 插件未启用，跳过客户端初始化");
             return repository;
@@ -67,8 +68,27 @@ public class OAuth2RegisteredClientInitializer {
             log.info("[ R2MO ] OAuth2 客户端构建器：{} / 数量：{}", each.getClass().getName(), clientSet.size());
             clientSet.stream()
                 .filter(Objects::nonNull)
-                .forEach(repository::save);
+                .forEach(client -> this.saveClientSafely(repository, client));
         });
+    }
+
+    /**
+     * 安全地保存客户端，避免重复注册
+     * 
+     * @param repository 客户端仓库
+     * @param client 要保存的客户端
+     */
+    private void saveClientSafely(JdbcRegisteredClientRepository repository, RegisteredClient client) {
+        // 检查客户端是否已存在，防止重复注册
+        RegisteredClient existingClient = repository.findByClientId(client.getClientId());
+        if (existingClient == null) {
+            // 客户端不存在，安全保存
+            repository.save(client);
+            log.info("[ R2MO ] OAuth2 客户端已保存: {}", client.getClientId());
+        } else {
+            // 客户端已存在，跳过保存
+            log.info("[ R2MO ] OAuth2 客户端已存在，跳过保存: {}", client.getClientId());
+        }
     }
 
     /**

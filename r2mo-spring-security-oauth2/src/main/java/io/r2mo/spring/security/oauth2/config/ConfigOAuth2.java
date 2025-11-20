@@ -136,7 +136,7 @@ public class ConfigOAuth2 implements Serializable {
      * - enabled = true 且存在原生配置 → 让位给 spring.security.oauth2 → false
      */
     public boolean isOn() {
-        return this.enabled && !this.isNative();
+        return this.enabled || this.isNative();
     }
 
     /**
