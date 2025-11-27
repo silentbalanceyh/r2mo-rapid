@@ -3,7 +3,6 @@ package io.r2mo.spring.security.config;
 import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.auth.UserDetailsCommon;
 import io.r2mo.spring.security.basic.BasicSpringAuthenticator;
-import io.r2mo.spring.security.extension.AuthSwitcher;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
 import io.r2mo.spring.security.extension.handler.SecurityHandler;
 import io.r2mo.spring.security.extension.valve.RequestValve;
@@ -15,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,7 +34,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 核心安全配置，基于 Spring Security 实现的基础配置
@@ -88,9 +88,6 @@ public class SecurityWebConfiguration {
             // ---- 自定义异常处理
             .exceptionHandling(this.failure.handler());
 
-
-        final AuthSwitcher switcher = SPI.findOneOf(AuthSwitcher.class);
-        final boolean isOAuth2 = Objects.nonNull(switcher) && switcher.hasOAuth2();
         // 请求执行链式处理
         http.authorizeHttpRequests(request -> {
 
@@ -105,18 +102,32 @@ public class SecurityWebConfiguration {
             // swagger 资源处理
             final RequestValve valveSwagger = RequestValve.of(RequestValveSwagger::new);
             valveSwagger.execute(request, this.config);
+            
+            // auth 资源处理
+            final RequestValve valueAuth = RequestValve.of(RequestValveAuth::new);
+            valueAuth.execute(request, this.config, this.mvc(introspector));
+        });
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public SecurityFilterChain securityFilter(final HttpSecurity http,
+                                              final HandlerMappingIntrospector introspector)
+        throws Exception {
+
+        http
+            // ---- 自定义异常处理
+            .exceptionHandling(this.failure.handler());
+
+        // 请求执行链式处理
+        http.authorizeHttpRequests(request -> {
 
             // auth 资源处理
             final RequestValve valueAuth = RequestValve.of(RequestValveAuth::new);
             valueAuth.execute(request, this.config, this.mvc(introspector));
-
-            // 其他请求都需要执行认证
-            if (!isOAuth2) {
-                request.anyRequest().authenticated();
-            }
         });
-
-
         // 加载不同模式的认证器
         if (this.config.isBasic()) {
             // 加载 Basic 认证器
@@ -125,13 +136,11 @@ public class SecurityWebConfiguration {
             authenticator.configure(http, this.failure);
         }
 
-
         final List<SecurityWebConfigurer> configurerList = SPI.findMany(SecurityWebConfigurer.class);
         for (final SecurityWebConfigurer configurer : configurerList) {
             log.info("[ R2MO ] ----> 执行 `{}` 配置器", configurer.getClass().getName());
             configurer.configure(http, introspector);
         }
-
         return http.build();
     }
 

@@ -74,20 +74,20 @@ public class OAuth2RegisteredClientInitializer {
 
     /**
      * 安全地保存客户端，避免重复注册
-     * 
+     *
      * @param repository 客户端仓库
-     * @param client 要保存的客户端
+     * @param client     要保存的客户端
      */
-    private void saveClientSafely(JdbcRegisteredClientRepository repository, RegisteredClient client) {
+    private void saveClientSafely(final JdbcRegisteredClientRepository repository, final RegisteredClient client) {
         // 检查客户端是否已存在，防止重复注册
-        RegisteredClient existingClient = repository.findByClientId(client.getClientId());
+        final RegisteredClient existingClient = repository.findByClientId(client.getClientId());
         if (existingClient == null) {
             // 客户端不存在，安全保存
             repository.save(client);
             log.info("[ R2MO ] OAuth2 客户端已保存: {}", client.getClientId());
         } else {
             // 客户端已存在，跳过保存
-            log.info("[ R2MO ] OAuth2 客户端已存在，跳过保存: {}", client.getClientId());
+            log.info("[ R2MO ] ( Ok ) OAuth2 客户端已存在，跳过保存: {}", client.getClientId());
         }
     }
 

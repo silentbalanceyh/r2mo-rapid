@@ -2,6 +2,7 @@ package io.r2mo.spring.security.oauth2;
 
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.extension.RequestSkip;
+import org.springframework.http.HttpMethod;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -47,9 +48,13 @@ public class RequestSkipOAuth2 implements RequestSkip {
         // ============================
 
         // 授权端点：
-        // - 浏览器会被重定向到这里，由 Authorization Server 再触发登录页面
-        // - 此处不走业务侧 Authenticator，避免双重拦截
-        uris.add(OAuth2Endpoint.AUTHORIZE());
+        /*
+         * FIX: OAuth2 协议规定：/oauth2/authorize 端点是让用户在浏览器中访问的，标准动作是 GET
+         * - 浏览器会被重定向到这里，由 Authorization Server 再触发登录页面
+         * - 此处不走业务侧 Authenticator，避免双重拦截
+         * 格式：/oauth2/authorize:GET
+         */
+        uris.add(OAuth2Endpoint.AUTHORIZE() + ":" + HttpMethod.GET);
 
         // Token 颁发端点：
         // - client_credentials / authorization_code / refresh_token 等都打到这里
