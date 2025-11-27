@@ -1,20 +1,25 @@
 package io.r2mo.spring.security.oauth2;
 
+import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.spi.SPI;
+import io.r2mo.spring.security.config.ConfigSecurityUri;
 import io.r2mo.spring.security.oauth2.config.ConfigOAuth2;
 import io.r2mo.spring.security.oauth2.config.OAuth2TokenMode;
 import io.r2mo.spring.security.oauth2.token.OAuth2JwtTokenCustomizer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2TokenEndpointConfigurer;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OidcConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 import java.util.Comparator;
 import java.util.List;
@@ -35,9 +40,11 @@ import java.util.List;
 public class OAuth2SpringAuthorizationServer {
 
     private final ConfigOAuth2 oauth2Config;
+    private final ConfigSecurityUri securityUriConfig;
 
     public OAuth2SpringAuthorizationServer(final ConfigOAuth2 oauth2Config) {
         this.oauth2Config = oauth2Config;
+        this.securityUriConfig = SpringUtil.getBean(ConfigSecurityUri.class);
     }
 
 
@@ -78,14 +85,47 @@ public class OAuth2SpringAuthorizationServer {
      */
     public void configureAuthorizationServer(final HttpSecurity http) throws Exception {
 
-        // 确保应用默认的 Authorization Server 配置
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+        // 1. 获取 Authorization Server 中的 Configurer 实例
+        final OAuth2AuthorizationServerConfigurer configurer =
+            OAuth2AuthorizationServerConfigurer.authorizationServer();
 
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-            // 配置 OIDC
-            .oidc(this::configureOidc)
-            // 配置自定义 AuthenticationConverter（SPI）
-            .tokenEndpoint(this::configureConverters);
+        http
+            // 2. 设置匹配器：只拦截授权服务器相关的端点（如 /oauth2/authorize, /oauth2/token 等）
+            //    这相当于原来的 securityMatcher 逻辑
+            .securityMatcher(configurer.getEndpointsMatcher())
+
+            // 3. 应该使用 Configurer
+            .with(configurer, server -> server
+                // 配置 OIDC
+                .oidc(this::configureOidc)
+                // 配置自定义 AuthenticationConverter（SPI）
+                .tokenEndpoint(this::configureConverters)
+            )
+
+            // ============================================================
+            // [关键修复 1]：必须显式要求认证！
+            // 否则 /oauth2/authorize 会被视为匿名允许，进而穿透 Filter 报 404
+            // ============================================================
+            .authorizeHttpRequests(authorize ->
+                authorize.anyRequest().authenticated()
+            )
+
+            // =======================================================
+            // [核心修复]：开启表单登录
+            // 如果没有这句，Spring 根本不知道去哪里找登录页
+            // =======================================================
+            .formLogin(Customizer.withDefaults())
+
+            // ============================================================
+            // [关键修复 2]：配置异常处理（重定向到登录页）
+            // 如果没有这一步，未登录用户访问授权端点时不知道该去哪
+            // ============================================================
+            .exceptionHandling(exceptions -> exceptions
+                .defaultAuthenticationEntryPointFor(
+                    new LoginUrlAuthenticationEntryPoint(this.securityUriConfig.getLogin()), // 假设你的登录页路径是 /login
+                    new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                )
+            );
 
         // 注册自定义 AuthenticationProvider（SPI）
         this.configureProviders(http);

@@ -35,12 +35,23 @@ public class OAuth2SpringConfigurer extends SecurityWebConfigurerBase {
     @Override
     public void configure(final HttpSecurity http, final HandlerMappingIntrospector introspector) {
         if (this.oauth2Config == null || !this.oauth2Config.isOn()) {
-            log.debug("[ R2MO ] OAuth2 未启用或配置缺失，跳过 Bean 配置");
+            log.debug("[ R2MO ] OAuth2 未启用或配置缺失，跳过“资源服务器”配置");
             return;
         }
 
 
-        final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config(), OAuth2SpringAuthenticator::new);
+        final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config(), OAuth2SpringAuthResource::new);
+        authenticator.configure(http, this.handler());
+    }
+
+    @Override
+    public void configureHighPriority(final HttpSecurity http, final HandlerMappingIntrospector introspector) {
+        if (this.oauth2Config == null || !this.oauth2Config.isOn()) {
+            log.debug("[ R2MO ] OAuth2 未启用或配置缺失，跳过“认证授权服务器”配置");
+            return;
+        }
+
+        final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config(), OAuth2SpringAuthPredicate::new);
         authenticator.configure(http, this.handler());
     }
 }

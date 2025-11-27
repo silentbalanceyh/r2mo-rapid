@@ -63,8 +63,10 @@ import java.util.stream.Collectors;
 @Data
 @RefreshScope
 public class ConfigSecurity implements Serializable {
+
     private List<String> ignoreUris;
 
+    private ConfigSecurityUri uri = new ConfigSecurityUri();
     private ConfigSecurityLimit limit = new ConfigSecurityLimit();
     private ConfigSecurityCaptcha captcha;
     private ConfigSecurityJwt jwt;

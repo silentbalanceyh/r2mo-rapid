@@ -2,7 +2,6 @@ package io.r2mo.spring.security.jwt;
 
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
-import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.auth.AuthUserDetail;
 import io.r2mo.spring.security.extension.AuthSwitcher;
 import io.r2mo.spring.security.jwt.token.JwtTokenGenerator;
@@ -35,9 +34,6 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
     private final JwtTokenGenerator jwtTokenGenerator;
     private final UserCache userCache;
 
-
-    private final Boolean shouldSkip = null;
-
     public JwtAuthenticateFilter(final JwtTokenGenerator jwtTokenGenerator) {
         this.jwtTokenGenerator = jwtTokenGenerator;
         this.userCache = UserCache.of();
@@ -48,7 +44,7 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
                                     @NonNull final HttpServletResponse response,
                                     @NonNull final FilterChain filterChain) throws ServletException, IOException {
 
-        final AuthSwitcher authSwitcher = SPI.findOneOf(AuthSwitcher.class);
+        final AuthSwitcher authSwitcher = AuthSwitcher.of();
 
         // 0. 检查是否应该跳过（OAuth2 JWT 模式启用时）
         if (authSwitcher.hasJwt()) {

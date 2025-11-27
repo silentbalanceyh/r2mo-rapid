@@ -58,6 +58,28 @@ public class SecurityWebConfiguration {
     private final ConfigSecurity config;
 
     @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public SecurityFilterChain securityFilter(final HttpSecurity http,
+                                              final HandlerMappingIntrospector introspector) throws Exception {
+        http
+            // ---- 使用自动 CORS
+            .cors(Customizer.withDefaults())
+            // ---- 禁用 CSRF
+            .csrf(CsrfConfigurer::disable)
+            // ---- 禁用 Session
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+            // ---- 自定义异常处理
+            .exceptionHandling(this.failure.handler());
+
+        final List<SecurityWebConfigurer> configurerList = SPI.findMany(SecurityWebConfigurer.class);
+        for (final SecurityWebConfigurer configurer : configurerList) {
+            log.info("[ R2MO ] ----> 执行 `{}` 认证配置器", configurer.getClass().getName());
+            configurer.configureHighPriority(http, introspector);
+        }
+        return http.build();
+    }
+
+    @Bean
     public SecurityFilterChain resourceFilter(final HttpSecurity http,
                                               final HandlerMappingIntrospector introspector)
         throws Exception {
@@ -88,6 +110,7 @@ public class SecurityWebConfiguration {
             // ---- 自定义异常处理
             .exceptionHandling(this.failure.handler());
 
+
         // 请求执行链式处理
         http.authorizeHttpRequests(request -> {
 
@@ -102,45 +125,31 @@ public class SecurityWebConfiguration {
             // swagger 资源处理
             final RequestValve valveSwagger = RequestValve.of(RequestValveSwagger::new);
             valveSwagger.execute(request, this.config);
-            
-            // auth 资源处理
-            final RequestValve valueAuth = RequestValve.of(RequestValveAuth::new);
-            valueAuth.execute(request, this.config, this.mvc(introspector));
-        });
-
-        return http.build();
-    }
-
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SecurityFilterChain securityFilter(final HttpSecurity http,
-                                              final HandlerMappingIntrospector introspector)
-        throws Exception {
-
-        http
-            // ---- 自定义异常处理
-            .exceptionHandling(this.failure.handler());
-
-        // 请求执行链式处理
-        http.authorizeHttpRequests(request -> {
 
             // auth 资源处理
             final RequestValve valueAuth = RequestValve.of(RequestValveAuth::new);
             valueAuth.execute(request, this.config, this.mvc(introspector));
+
+            // 其他请求都需要执行认证
+            request.anyRequest().authenticated();
         });
+
+
         // 加载不同模式的认证器
         if (this.config.isBasic()) {
             // 加载 Basic 认证器
-            log.info("[ R2MO ] ----> 执行 `Basic` 配置器");
+            log.info("[ R2MO ] ----> 执行 `Basic` 资源配置器");
             final SpringAuthenticator authenticator = SpringAuthenticator.of(this.config, BasicSpringAuthenticator::new);
             authenticator.configure(http, this.failure);
         }
 
+
         final List<SecurityWebConfigurer> configurerList = SPI.findMany(SecurityWebConfigurer.class);
         for (final SecurityWebConfigurer configurer : configurerList) {
-            log.info("[ R2MO ] ----> 执行 `{}` 配置器", configurer.getClass().getName());
+            log.info("[ R2MO ] ----> 执行 `{}` 资源配置器", configurer.getClass().getName());
             configurer.configure(http, introspector);
         }
+
         return http.build();
     }
 

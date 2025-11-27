@@ -1,5 +1,8 @@
 package io.r2mo.spring.security.extension;
 
+import io.r2mo.spi.SPI;
+import io.r2mo.typed.cc.Cc;
+
 /**
  * 认证方式选择器
  * <pre>
@@ -10,6 +13,13 @@ package io.r2mo.spring.security.extension;
  * @author lang : 2025-11-13
  */
 public interface AuthSwitcher {
+
+    Cc<String, AuthSwitcher> CC_SWITCHER = Cc.openThread();
+
+    static AuthSwitcher of() {
+        return CC_SWITCHER.pick(() -> SPI.findOneOf(AuthSwitcher.class));
+    }
+
     boolean hasJwt();
 
     boolean hasOAuth2();
