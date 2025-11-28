@@ -4,14 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import io.r2mo.typed.json.JArray;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -53,7 +46,7 @@ class UTType {
         if (obj.getClass().isArray()) {
             if (obj instanceof Object[]) {
                 // 📝 对象数组
-                return Arrays.asList((Object[]) obj);
+                return Arrays.stream(flattenValues(obj)).toList();
             } else {
                 // 🔢 基本类型数组需要特殊处理
                 return Arrays.stream((Object[]) Array.newInstance(
@@ -185,5 +178,42 @@ class UTType {
                     || "false".equals(lower);
             }
         }
+    }
+     static Object[] flattenValues(Object... values) {
+        if (values == null || values.length == 0) {
+            return new Object[0];
+        }
+
+        List<Object> resultList = new ArrayList<>();
+        Deque<Object> stack = new ArrayDeque<>();
+
+        // 将所有输入压入栈
+        for (int i = values.length - 1; i >= 0; i--) {
+            stack.push(values[i]);
+        }
+
+        // 迭代展开
+        while (!stack.isEmpty()) {
+            Object current = stack.pop();
+
+            Class<?> clazz = current.getClass();
+
+            if (clazz.isArray()) {
+                int len = Array.getLength(current);
+                // 倒序压入栈，保持顺序
+                for (int i = len - 1; i >= 0; i--) {
+                    stack.push(Array.get(current, i));
+                }
+            } else if (current instanceof List<?> list) {
+                // 倒序压入栈，保持顺序
+                for (int i = list.size() - 1; i >= 0; i--) {
+                    stack.push(list.get(i));
+                }
+            } else {
+                resultList.add(current);
+            }
+        }
+
+        return resultList.toArray();
     }
 }
