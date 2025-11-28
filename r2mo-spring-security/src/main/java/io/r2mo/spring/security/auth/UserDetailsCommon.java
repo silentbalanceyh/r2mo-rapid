@@ -2,6 +2,7 @@ package io.r2mo.spring.security.auth;
 
 import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,6 +14,7 @@ import java.util.Objects;
  * @author lang : 2025-11-12
  */
 @Service
+@Slf4j
 public class UserDetailsCommon implements UserDetailsService {
 
     @Override
