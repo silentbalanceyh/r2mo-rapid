@@ -33,7 +33,12 @@ public class RequestSkipOAuth2 implements RequestSkip {
     public Set<String> openApi(final ConfigSecurity security) {
         final Set<String> uris = new LinkedHashSet<>();
         // 配置白名单，防止页面的 Exceeded maxRedirects
-        uris.add(this.securityUriConfig.getLogin() + ":" + HttpMethod.GET);
+        /*
+         * 此处不能追加这个页面，会抛出
+         * org.springframework.web.servlet.resource.NoResourceFoundException: No static resource login
+         * 此处的配置应该转换到 form 表单中去处理，而不是这样来处理
+         */
+        // uris.add(this.securityUriConfig.getLogin() + ":" + HttpMethod.GET);
         uris.add(this.securityUriConfig.getError() + ":" + HttpMethod.GET);
         // 返回不可变集合，避免外层误修改
         return Set.copyOf(uris);

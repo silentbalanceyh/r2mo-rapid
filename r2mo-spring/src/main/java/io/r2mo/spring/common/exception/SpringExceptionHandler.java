@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -30,6 +32,15 @@ import java.io.IOException;
 public class SpringExceptionHandler {
     private final FailOr failJvm = SPI.V_ABORT.failJvm();
     private final FailOr failSpring = SPI.V_ABORT.failContainer();
+
+    /*
+     * 🟢【新增这个方法】放在最前面
+     * 遇到 Security 的异常（401/403），直接抛出，交给 Spring Security 框架处理（它会处理成重定向）
+     */
+    @ExceptionHandler({AccessDeniedException.class, AuthenticationException.class})
+    public void handleSecurityExceptions(final Exception ex) throws Exception {
+        throw ex;
+    }
 
     // -------------- Jvm 类型
     @ExceptionHandler(ServletException.class)

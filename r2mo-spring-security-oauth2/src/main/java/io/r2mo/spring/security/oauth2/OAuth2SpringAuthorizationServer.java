@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2TokenEndpointConfigurer;
@@ -109,12 +108,6 @@ public class OAuth2SpringAuthorizationServer {
             .authorizeHttpRequests(authorize ->
                 authorize.anyRequest().authenticated()
             )
-
-            // =======================================================
-            // [核心修复]：开启表单登录
-            // 如果没有这句，Spring 根本不知道去哪里找登录页
-            // =======================================================
-            .formLogin(Customizer.withDefaults())
 
             // ============================================================
             // [关键修复 2]：配置异常处理（重定向到登录页）

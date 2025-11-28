@@ -20,7 +20,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -61,15 +61,8 @@ public class SecurityWebConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain securityFilter(final HttpSecurity http,
                                               final HandlerMappingIntrospector introspector) throws Exception {
-        http
-            // ---- 使用自动 CORS
-            .cors(Customizer.withDefaults())
-            // ---- 禁用 CSRF
-            .csrf(CsrfConfigurer::disable)
-            // ---- 禁用 Session
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-            // ---- 自定义异常处理
-            .exceptionHandling(this.failure.handler());
+        // 共享过滤器配置
+        this.sharedFilter(http);
 
         final List<SecurityWebConfigurer> configurerList = SPI.findMany(SecurityWebConfigurer.class);
         for (final SecurityWebConfigurer configurer : configurerList) {
@@ -79,10 +72,7 @@ public class SecurityWebConfiguration {
         return http.build();
     }
 
-    @Bean
-    public SecurityFilterChain resourceFilter(final HttpSecurity http,
-                                              final HandlerMappingIntrospector introspector)
-        throws Exception {
+    private void sharedFilter(final HttpSecurity http) throws Exception {
         // 基础安全配置
         http
             /*
@@ -103,13 +93,28 @@ public class SecurityWebConfiguration {
             .cors(Customizer.withDefaults())
             // ---- 禁用 CSRF
             .csrf(CsrfConfigurer::disable)
-            // ---- 禁用表单模式
-            .formLogin(AbstractHttpConfigurer::disable)
             // ---- 禁用 Session
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             // ---- 自定义异常处理
             .exceptionHandling(this.failure.handler());
 
+
+        http
+            /*
+             * OAuth 2 中必须，所以开启简易的表单模式（多一个登录界面）
+             * 关于表单登录的更多信息，请参考：
+             * 此处简易表单模式对 Basic 和 Jwt 认证没有任何影响，但在 OAuth 2 模式下是有必要的，但是，前提是登录
+             * 接口没有被覆盖 /login，而且配置中没有去覆盖这种模式，否则这种机制会失效！
+             */
+            .formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
+    }
+
+    @Bean
+    public SecurityFilterChain resourceFilter(final HttpSecurity http,
+                                              final HandlerMappingIntrospector introspector)
+        throws Exception {
+        // 共享过滤器配置
+        this.sharedFilter(http);
 
         // 请求执行链式处理
         http.authorizeHttpRequests(request -> {
