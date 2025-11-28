@@ -1,6 +1,8 @@
 package io.r2mo.spring.security.oauth2.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.r2mo.spi.SPI;
+import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +37,32 @@ public class ConfigOAuth2SpringClient {
     // Inner Class: Registration
     // ==================================================
 
+    /**
+     * Registration 的格式处理
+     * <pre>
+     *     spring:
+     *       security:
+     *         oauth2:
+     *           client:
+     *             registration:
+     *               provider:
+     *               client-id:
+     *               client-secret:
+     *               client-authentication-method:
+     *               authorization-grant-type: x,y,z
+     *               redirect-uri:
+     *               post-logout-redirect-uri:
+     *               scope: x,y,z
+     *               client-name:
+     *               client-setting:
+     *                 require-proof-key: false
+     *                 require-authorization-consent: false
+     *               token-setting:
+     *                 expired-at: ??? // 分钟
+     *                 refresh-at: ??? // 天
+     *                 reuse-refresh-token:  true|false
+     * </pre>
+     */
     @Data
     public static class Registration {
 
@@ -57,12 +85,21 @@ public class ConfigOAuth2SpringClient {
         @JsonProperty("redirect-uri")
         private String redirectUri;
 
+        @JsonProperty("post-logout-redirect-uri")
+        private String redirectUriPostLogout;
+
         @JsonProperty("scope")
         private List<String> scope = new ArrayList<>();
 
         @JsonProperty("client-name")
         @Nullable
         private String clientName;
+
+        @JsonProperty("client-setting")
+        private JObject settingClient = SPI.J();
+
+        @JsonProperty("token-setting")
+        private JObject settingToken = SPI.J();
     }
 
     // ==================================================

@@ -1,11 +1,17 @@
 package io.r2mo.spring.security.oauth2.client;
 
+import io.r2mo.spi.SPI;
+import io.r2mo.typed.json.JObject;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -48,6 +54,42 @@ class OAuth2RegisteredClientHelper {
             }
         }
         return types;
+    }
+
+    static Set<String> parseScopes(final List<String> scopes) {
+        final Set<String> scopeSet = new HashSet<>();
+        if (scopes != null && !scopes.isEmpty()) {
+            scopeSet.addAll(scopes);
+        } else {
+            scopeSet.add("openid");
+        }
+        return scopeSet;
+    }
+
+    static TokenSettings parseTokenSettings(final JObject settingJ) {
+        if (SPI.V_UTIL.isEmpty(settingJ)) {
+            return null;
+        }
+        final TokenSettings.Builder builder = TokenSettings.builder();
+        final int minutes = settingJ.getInt("expired-at", 30);
+        final int days = settingJ.getInt("refresh-at", 7);
+        final boolean reuse = settingJ.getBool("reuse-refresh-token", false);
+        builder.accessTokenTimeToLive(Duration.ofMinutes(minutes));
+        builder.refreshTokenTimeToLive(Duration.ofDays(days));
+        builder.reuseRefreshTokens(reuse);
+        return builder.build();
+    }
+
+    static ClientSettings parseClientSettings(final JObject settingJ) {
+        if (SPI.V_UTIL.isEmpty(settingJ)) {
+            return null;
+        }
+        final ClientSettings.Builder builder = ClientSettings.builder();
+        final boolean requireAuth = settingJ.getBool("require-proof-key", false);
+        final boolean requireConsent = settingJ.getBool("require-authorization-consent", false);
+        builder.requireAuthorizationConsent(requireConsent);
+        builder.requireProofKey(requireAuth);
+        return builder.build();
     }
 
     static Set<ClientAuthenticationMethod> parseClientAuthMethods(final String methodStr) {
