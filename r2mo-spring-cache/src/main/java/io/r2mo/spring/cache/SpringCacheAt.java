@@ -44,7 +44,7 @@ class SpringCacheAt<K, V> extends CacheAtBase<K, V> {
         this.formattedName = this.formatCacheName();
         // 2. 尝试初始化 Manager
         this.managerOf();
-        return false;
+        return true;
     }
 
     /**

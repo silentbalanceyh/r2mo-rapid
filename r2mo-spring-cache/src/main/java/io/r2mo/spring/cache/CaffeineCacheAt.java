@@ -33,7 +33,7 @@ class CaffeineCacheAt<K, V> extends CacheAtBase<K, V> {
     protected boolean build() {
         // 初始化时构建 Cache 实例
         this.cacheOf();
-        return false;
+        return true;
     }
 
     /**

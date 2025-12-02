@@ -38,7 +38,7 @@ class RedisCacheAt<K, V> extends CacheAtBase<K, V> {
     @Override
     protected boolean build() {
         this.managerOf();
-        return false;
+        return true;
     }
 
     /**

@@ -34,7 +34,7 @@ class RedCacheAt<K, V> extends CacheAtBase<K, V> {
     protected boolean build() {
         // 初始化时预加载 Manager
         this.managerOf();
-        return false;
+        return true;
     }
 
     /**

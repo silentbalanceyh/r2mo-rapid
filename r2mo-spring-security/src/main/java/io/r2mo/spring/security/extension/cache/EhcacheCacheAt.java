@@ -30,7 +30,7 @@ class EhcacheCacheAt<K, V> extends CacheAtBase<K, V> {
          */
         this.managerOf();
 
-        return false;
+        return true;
     }
 
     private CacheManager managerOf() {
