@@ -1,4 +1,4 @@
-package io.r2mo.spring.security.extension;
+package io.r2mo.spring.security.extension.cache;
 
 import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * @author lang : 2025-11-12
  */
-public interface CacheOfFactory {
+public interface CacheAtSecurity {
 
     CacheAt<UUID, UserAt> userAt();
 

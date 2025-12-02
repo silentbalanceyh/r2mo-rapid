@@ -18,6 +18,11 @@ import java.util.stream.Collectors;
  * <pre>
  *     application.yml 中的格式如
  *     security:
+ *        uri:
+ *          welcome: /welcome
+ *          login: /login
+ *          logout: /logout
+ *          error: /error
  *        limit:
  *          session: 8192               # 最大会话数
  *          token: 4096                 # Token 的最大数量，控制 Token / Refresh
@@ -31,6 +36,7 @@ import java.util.stream.Collectors;
  *          tenant: true
  *
  *        basic:
+ *          enabled: true
  *          realm: "R2MO Realm"
  *
  *        captcha:
@@ -49,6 +55,7 @@ import java.util.stream.Collectors;
  *            size: 20
  *
  *        jwt:
+ *          enabled: true
  *          issuer: "R2MO Issuer"       # 签发者
  *          expiredAt: 30m              # 单位分钟
  *          refreshAt: 7d               # 单位天
@@ -63,7 +70,6 @@ import java.util.stream.Collectors;
 @Data
 @RefreshScope
 public class ConfigSecurity implements Serializable {
-
     private List<String> ignoreUris;
 
     private ConfigSecurityUri uri = new ConfigSecurityUri();

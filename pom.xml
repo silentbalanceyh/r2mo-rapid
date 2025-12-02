@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>r2mo-rapid</artifactId>
-    <version>1.0.30</version>
+    <version>1.0.31</version>
     <properties>
         <rachel-momo.version>1.0.16</rachel-momo.version>
-        <r2mo.version>1.0.30</r2mo.version>
+        <r2mo.version>1.0.31</r2mo.version>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -88,6 +88,7 @@
 
         <!-- 🌷 Spring 模块专用 -->
         <module>r2mo-spring</module>
+        <module>r2mo-spring-cache</module>
         <module>r2mo-spring-mybatisplus</module>
         <module>r2mo-spring-json</module>
         <module>r2mo-spring-excel</module>
@@ -212,7 +213,8 @@
             <!--
             双容器启动层
             - Spring
-              - 启动层 -> r2mo-boot-spring（带实现）
+              - 启动层 -> r2mo-boot-spring
+                         r2mo-boot-spring-default（默认实现）
               - 核心层 -> r2mo-spring
                       -> r2mo-spring-security 扩展
             - Vertx
@@ -226,6 +228,11 @@
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
+                <artifactId>r2mo-boot-spring-default</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
                 <artifactId>r2mo-spring</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
@@ -234,6 +241,7 @@
                 <artifactId>r2mo-spring-security</artifactId>
                 <version>${r2mo.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-boot-vertx</artifactId>
@@ -286,17 +294,23 @@
             - r2mo-typed-hutool
             - r2mo-typed-vertx
             - r2mo-io-local
-            - r2mo-spring-mybatisplus
-            - r2mo-spring-json
+            - r2mo-spring-cache
             - r2mo-spring-excel
+            - r2mo-spring-json
             - r2mo-spring-junit5
-            - r2mo-vertx-junit5
+            - r2mo-spring-mybatisplus
+            - r2mo-spring-security
+            - r2mo-spring-security-jwt
+            - r2mo-spring-security-oauth2
+            - r2mo-spring-security-oauth2client
             -->
             <!--
             以下部分也不做统一管理，可自己选择版本
             - r2mo-vertx-jooq
             - r2mo-vertx-jooq-jdbc
             - r2mo-vertx-jooq-generate
+            - r2mo-vertx-jooq-shared
+            - r2mo-vertx-junit5
             -->
         </dependencies>
     </dependencyManagement>

@@ -1,0 +1,6 @@
+- 0   / EhCacheCacheAtSecurity
+- 50  / CaffeineCacheAtSecurity
+- 100 / RedisCacheAtSecurity
+- 200 / RedCacheAtSecurity
+- 300 / SpringCacheAtSecurity
+优先级的排序按照此处的数字从高到低进行匹配，数字越大优先级越高，但是默认 SPI 只配置了 EhCacheCacheAtSecurity，如果要启用其他则是自定义配置，优先级具有排他性，所以只有在多个配置时才会生效。

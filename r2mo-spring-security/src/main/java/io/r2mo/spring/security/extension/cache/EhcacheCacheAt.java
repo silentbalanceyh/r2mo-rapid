@@ -13,31 +13,21 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
  * @author lang : 2025-11-12
  */
 @SuppressWarnings("all")
-public class CacheAtEhcache<K, V> extends CacheAtBase<K, V> {
-    private final Class<K> clazzK;
-    private final Class<V> clazzV;
+class EhcacheCacheAt<K, V> extends CacheAtBase<K, V> {
     /**
      * 缓存管理器，此处必须是静态的，否则无法达到共享的目的
      */
     private static Cc<String, CacheManager> CC_MANAGER = Cc.open();
 
-    CacheAtEhcache(final String name, final Class<K> clazzK, final Class<V> clazzV) {
-        super(name);
-        this.clazzK = clazzK;
-        this.clazzV = clazzV;
-    }
-
-    private Class<K> classKey() {
-        return this.clazzK;
-    }
-
-    private Class<V> classValue() {
-        return this.clazzV;
+    EhcacheCacheAt(final String name, final Class<K> clazzK, final Class<V> clazzV) {
+        super(name, clazzK, clazzV);
     }
 
     @Override
     protected boolean build() {
-        // 创建缓存
+        /*
+         * 先构造缓存管理器的名称
+         */
         this.managerOf();
 
         return false;
@@ -56,7 +46,7 @@ public class CacheAtEhcache<K, V> extends CacheAtBase<K, V> {
                     .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(this.duration))
                 )
                 .build(true);
-        }, this.name());
+        }, this.manager());
     }
 
     private Cache<K, V> cacheOf() {
@@ -64,23 +54,23 @@ public class CacheAtEhcache<K, V> extends CacheAtBase<K, V> {
     }
 
     @Override
-    public void put(final K key, final V value) {
+    public void doPut(final K key, final V value) {
         this.cacheOf().put(key, value);
     }
 
     @Override
-    public boolean remove(final K key) {
+    public boolean doRemove(final K key) {
         this.cacheOf().remove(key);
-        return false;
+        return true;
     }
 
     @Override
-    public V find(final K key) {
+    public V doFind(final K key) {
         return this.cacheOf().get(key);
     }
 
     @Override
-    public void clear() {
+    public void doClear() {
         this.cacheOf().clear();
     }
 }
