@@ -1,4 +1,4 @@
-package io.r2mo.dbcp.hikari;
+package io.r2mo.dbe.common.hikari;
 
 /**
  * @author lang : 2025-10-18

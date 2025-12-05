@@ -1,4 +1,4 @@
-package io.r2mo.dbcp.hikari;
+package io.r2mo.dbe.common.hikari;
 
 /**
  * Hikari 配置项常量（OPT_ 前缀）

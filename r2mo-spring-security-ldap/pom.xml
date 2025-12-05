@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -9,17 +9,13 @@
         <version>1.0.31</version>
     </parent>
 
-    <artifactId>r2mo-dbe</artifactId>
-    <name>R2MO::DBE</name>
+    <artifactId>r2mo-spring-security-ldap</artifactId>
+    <name>R2MO::Spring::Security::LDAP</name>
+
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>
-            <artifactId>r2mo-ams</artifactId>
-        </dependency>
-        <!-- 默认使用 Hikari Cp -->
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
+            <artifactId>r2mo-spring-security</artifactId>
         </dependency>
     </dependencies>
 </project>

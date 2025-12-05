@@ -1,4 +1,4 @@
-package io.r2mo.dbcp.hikari;
+package io.r2mo.dbe.common.hikari;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

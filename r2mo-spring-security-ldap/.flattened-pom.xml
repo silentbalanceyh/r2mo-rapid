@@ -3,11 +3,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
-  <artifactId>r2mo-dbe</artifactId>
+  <artifactId>r2mo-spring-security-ldap</artifactId>
   <version>1.0.31</version>
-  <name>R2MO::DBE</name>
+  <name>R2MO::Spring::Security::LDAP</name>
   <description>R2MO Rapid Framework for Delivery</description>
-  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-dbe</url>
+  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-spring-security-ldap</url>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -26,10 +26,10 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-dbe</connection>
-    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-dbe</developerConnection>
+    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-spring-security-ldap</connection>
+    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-spring-security-ldap</developerConnection>
     <tag>v1.0.31</tag>
-    <url>https://www.zerows.io/r2mo-dbe</url>
+    <url>https://www.zerows.io/r2mo-spring-security-ldap</url>
   </scm>
   <distributionManagement>
     <repository>
@@ -46,14 +46,8 @@
   <dependencies>
     <dependency>
       <groupId>io.zerows</groupId>
-      <artifactId>r2mo-ams</artifactId>
+      <artifactId>r2mo-spring-security</artifactId>
       <version>1.0.31</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.zaxxer</groupId>
-      <artifactId>HikariCP</artifactId>
-      <version>7.0.2</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

@@ -81,22 +81,35 @@
         <module>r2mo-io-local</module>
 
         <!-- 🌷 Database Engine 实现 -->
-        <module>r2mo-dbcp-hikari</module>
         <module>r2mo-dbe</module>
         <module>r2mo-dbe-jooq</module>
         <module>r2mo-dbe-mybatisplus</module>
 
+        <!-- 🌷 集成模块实现 -->
+        <module>r2mo-xync-email</module>
+        <module>r2mo-xync-sms</module>
+        <module>r2mo-xync-weco</module>
+
         <!-- 🌷 Spring 模块专用 -->
         <module>r2mo-spring</module>
         <module>r2mo-spring-cache</module>
+        <module>r2mo-spring-email</module>
+        <module>r2mo-spring-excel</module>
         <module>r2mo-spring-mybatisplus</module>
         <module>r2mo-spring-json</module>
-        <module>r2mo-spring-excel</module>
         <module>r2mo-spring-junit5</module>
+        <module>r2mo-spring-sms</module>
+        <module>r2mo-spring-weco</module>
+
+        <!-- 🌷 Spring Security 扩展 -->
         <module>r2mo-spring-security</module>
+        <module>r2mo-spring-security-email</module>
         <module>r2mo-spring-security-jwt</module>
+        <module>r2mo-spring-security-ldap</module>
         <module>r2mo-spring-security-oauth2</module>
         <module>r2mo-spring-security-oauth2client</module>
+        <module>r2mo-spring-security-sms</module>
+        <module>r2mo-spring-security-weco</module>
 
         <!-- 🌷 Vertx 模块专用 -->
         <module>r2mo-vertx</module>
