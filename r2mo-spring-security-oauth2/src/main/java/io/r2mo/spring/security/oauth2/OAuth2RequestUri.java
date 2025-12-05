@@ -3,7 +3,7 @@ package io.r2mo.spring.security.oauth2;
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityUri;
-import io.r2mo.spring.security.extension.RequestSkip;
+import io.r2mo.spring.security.extension.RequestUri;
 import org.springframework.http.HttpMethod;
 
 import java.util.LinkedHashSet;
@@ -21,16 +21,16 @@ import java.util.Set;
  *
  * @author lang : 2025-11-13
  */
-public class RequestSkipOAuth2 implements RequestSkip {
+public class OAuth2RequestUri implements RequestUri {
 
     private final ConfigSecurityUri securityUriConfig;
 
-    public RequestSkipOAuth2() {
+    public OAuth2RequestUri() {
         this.securityUriConfig = SpringUtil.getBean(ConfigSecurityUri.class);
     }
 
     @Override
-    public Set<String> openApi(final ConfigSecurity security) {
+    public Set<String> ignores(final ConfigSecurity security) {
         final Set<String> uris = new LinkedHashSet<>();
         // 配置白名单，防止页面的 Exceeded maxRedirects
         /*

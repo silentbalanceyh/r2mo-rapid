@@ -3,6 +3,7 @@ package io.r2mo.spring.security.config;
 import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.auth.UserDetailsCommon;
 import io.r2mo.spring.security.basic.BasicSpringAuthenticator;
+import io.r2mo.spring.security.extension.RequestUri;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
 import io.r2mo.spring.security.extension.handler.SecurityHandler;
 import io.r2mo.spring.security.extension.valve.RequestValve;
@@ -27,13 +28,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 核心安全配置，基于 Spring Security 实现的基础配置
@@ -59,10 +67,10 @@ public class SecurityWebConfiguration {
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SecurityFilterChain securityFilter(final HttpSecurity http,
-                                              final HandlerMappingIntrospector introspector) throws Exception {
+    public SecurityFilterChain filterOfAuthenticate(final HttpSecurity http,
+                                                    final HandlerMappingIntrospector introspector) throws Exception {
         // 共享过滤器配置
-        this.sharedFilter(http);
+        this.filterOfShared(http);
 
         final List<SecurityWebConfigurer> configurerList = SPI.findMany(SecurityWebConfigurer.class);
         for (final SecurityWebConfigurer configurer : configurerList) {
@@ -72,7 +80,7 @@ public class SecurityWebConfiguration {
         return http.build();
     }
 
-    private void sharedFilter(final HttpSecurity http) throws Exception {
+    private void filterOfShared(final HttpSecurity http) throws Exception {
         // 基础安全配置
         http
             /*
@@ -110,11 +118,13 @@ public class SecurityWebConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain resourceFilter(final HttpSecurity http,
-                                              final HandlerMappingIntrospector introspector)
+    public SecurityFilterChain filterOfResource(final HttpSecurity http,
+                                                final HandlerMappingIntrospector introspector)
         throws Exception {
         // 共享过滤器配置
-        this.sharedFilter(http);
+        this.filterOfShared(http);
+        // 智能缓存
+        this.filterOfCache(http);
 
         // 请求执行链式处理
         http.authorizeHttpRequests(request -> {
@@ -156,6 +166,46 @@ public class SecurityWebConfiguration {
         }
 
         return http.build();
+    }
+
+    private void filterOfCache(final HttpSecurity http) throws Exception {
+        // 限定 SPI 注册的 URI 路径，只要加载则忽略
+        final List<RequestUri> found = SPI.findMany(RequestUri.class);
+        final Set<String> uriNoCache = new HashSet<>();
+        for (final RequestUri item : found) {
+            final Set<String> ignoreUris = item.noCache(this.config);
+            // 收集所有忽略缓存的 URI
+            uriNoCache.addAll(ignoreUris);
+        }
+
+
+        // 构造匹配器
+        final List<RequestMatcher> matchers = uriNoCache.stream()
+            .map(AntPathRequestMatcher::new)
+            .collect(Collectors.toUnmodifiableList());
+        // 使用 OrRequestMatcher 将所有规则组合成“只要命中其中一个就不缓存”
+        final HttpSessionRequestCache cacheExtension = this.httpRequestCache(matchers);
+
+        http.requestCache(cache -> cache.requestCache(cacheExtension));
+    }
+
+    private HttpSessionRequestCache httpRequestCache(final List<RequestMatcher> matchers) {
+        final OrRequestMatcher matcherNoCache = new OrRequestMatcher(matchers);
+        // 设置
+        final HttpSessionRequestCache cacheExtension = new HttpSessionRequestCache();
+        cacheExtension.setRequestMatcher(request -> {
+            // A. 如果请求在“不缓存黑名单”中，直接返回 false (拒绝缓存)
+            if (matcherNoCache.matches(request)) {
+                return false;
+            }
+
+            // B. 默认逻辑：Security 默认不缓存 favicon 等静态资源
+            // 这里我们保留默认的判断逻辑，或者你自己写简单的判断
+            // 比如：只缓存 GET 请求 (OAuth2 授权通常是 GET)
+            final String method = request.getMethod();
+            return "GET".equalsIgnoreCase(method);
+        });
+        return cacheExtension;
     }
 
     @Bean

@@ -3,7 +3,7 @@ package io.r2mo.spring.security.extension.valve;
 
 import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.config.ConfigSecurity;
-import io.r2mo.spring.security.extension.RequestSkip;
+import io.r2mo.spring.security.extension.RequestUri;
 import io.r2mo.typed.common.Kv;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -35,10 +35,10 @@ public class RequestValveAuth implements RequestValve {
 
 
         // 限定 SPI 注册的 URI 路径，只要加载则忽略
-        final List<RequestSkip> found = SPI.findMany(RequestSkip.class);
-        for (final RequestSkip item : found) {
-            final Set<String> ignoreUris = item.openApi(config);
-            log.info("[ R2MO ] SPI 组件：{} 注册公开访问URI: {}", item.getClass().getName(), ignoreUris);
+        final List<RequestUri> found = SPI.findMany(RequestUri.class);
+        for (final RequestUri item : found) {
+            final Set<String> ignoreUris = item.ignores(config);
+            log.debug("[ R2MO ] SPI 组件：{} 注册公开访问URI: {}", item.getClass().getName(), ignoreUris);
             authUris.addAll(ignoreUris);
         }
 
@@ -51,22 +51,15 @@ public class RequestValveAuth implements RequestValve {
             final String uri = kv.key();
             final MvcRequestMatcher matcher = builder.pattern(uri);
             final HttpMethod method = kv.value();
-            if (Objects.nonNull(method)) {
+            // null -> 不设置
+            // *    -> 不设置
+            if (Objects.nonNull(method) && !"*".equals(method.name())) {
                 matcher.setMethod(method);
             }
             content.append("\t `").append(Objects.isNull(method) ? "*" : method)
                 .append(" ").append(uri).append("`\n");
             registry.requestMatchers(matcher).permitAll();
         }
-
-
-        /*
-         * 所有方法都包含，主要是为了支持 OPTIONS 预检请求以及
-         * - GET /auth/captcha: 获取验证码
-         */
-        final MvcRequestMatcher matcher = builder.pattern("/auth/**");
-        registry.requestMatchers(matcher).permitAll();
-        content.append("\t `* /auth/**`");
         log.info(content.toString());
     }
 }

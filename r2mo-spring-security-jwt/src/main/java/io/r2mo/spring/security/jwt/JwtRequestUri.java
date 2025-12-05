@@ -1,18 +1,18 @@
 package io.r2mo.spring.security.jwt;
 
 import io.r2mo.spring.security.config.ConfigSecurity;
-import io.r2mo.spring.security.extension.RequestSkip;
+import io.r2mo.spring.security.extension.RequestUri;
 
 import java.util.Set;
 
 /**
  * @author lang : 2025-11-12
  */
-public class RequestSkipJwt implements RequestSkip {
+public class JwtRequestUri implements RequestUri {
     @Override
-    public Set<String> openApi(final ConfigSecurity security) {
+    public Set<String> ignores(final ConfigSecurity security) {
         return Set.of(
-            "/jwt/login"
+            "/auth/login-jwt"
         );
     }
 }

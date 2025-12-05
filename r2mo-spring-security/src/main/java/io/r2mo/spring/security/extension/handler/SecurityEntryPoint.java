@@ -1,8 +1,11 @@
 package io.r2mo.spring.security.extension.handler;
 
 import cn.hutool.extra.spring.SpringUtil;
+import io.r2mo.spi.SPI;
 import io.r2mo.spring.common.exception.SpringAbortExecutor;
+import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityUri;
+import io.r2mo.spring.security.extension.RequestUri;
 import io.r2mo.typed.exception.WebException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +24,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author lang : 2025-11-11
@@ -33,17 +38,40 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
 
     private final RequestMatcher htmlMatcher;
 
+    private final RequestMatcher blackMatcher;
+
     private final AuthenticationEntryPoint htmlDelegate;
 
     public SecurityEntryPoint() {
-        final ConfigSecurityUri configuration = SpringUtil.getBean(ConfigSecurityUri.class);
-        this.htmlDelegate = new LoginUrlAuthenticationEntryPoint(configuration.getLogin());
-        this.htmlMatcher = new OrRequestMatcher(
-            // 如果 Accept 头包含 text/html (浏览器)
-            new MediaTypeRequestMatcher(MediaType.TEXT_HTML),
-            // 或者 显式访问 OAuth2 授权端点
-            new AntPathRequestMatcher(configuration.getLogin())
-        );
+        final ConfigSecurity security = SpringUtil.getBean(ConfigSecurity.class);
+        // 重定向配置
+        this.htmlDelegate = new LoginUrlAuthenticationEntryPoint(security.getUri().getLogin());
+        this.htmlMatcher = this.matchRedirect(security);
+        // 黑名单配置
+        this.blackMatcher = this.matchBlack(security);
+    }
+
+    private RequestMatcher matchBlack(final ConfigSecurity security) {
+        final List<RequestUri> found = SPI.findMany(RequestUri.class);
+        final List<RequestMatcher> matchers = found.stream()
+            .flatMap(it -> it.noRedirect(security).stream())
+            .map(AntPathRequestMatcher::new)
+            .collect(Collectors.toUnmodifiableList());
+        if (matchers.isEmpty()) {
+            // 可能未配置
+            return null;
+        }
+        return new OrRequestMatcher(matchers);
+    }
+
+    private RequestMatcher matchRedirect(final ConfigSecurity security) {
+        final ConfigSecurityUri configuration = security.getUri();
+        final List<RequestMatcher> matchers = new ArrayList<>();
+        // 如果 Accept 头包含 text/html (浏览器)
+        matchers.add(new MediaTypeRequestMatcher(MediaType.TEXT_HTML));
+        // 或者 显式访问 OAuth2 授权端点
+        matchers.add(new AntPathRequestMatcher(configuration.getLogin()));
+        return new OrRequestMatcher(matchers);
     }
 
     @SafeVarargs
@@ -57,12 +85,36 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
     public void commence(final HttpServletRequest request, final HttpServletResponse response,
                          final AuthenticationException authException)
         throws IOException, ServletException {
-        // 3. 【核心修改】判断是否需要跳转
-        if (this.htmlMatcher.matches(request)) {
-            // 如果是网页或OAuth流程，转交标准处理器（执行 302 重定向）
-            this.htmlDelegate.commence(request, response, authException);
+
+
+        // 1. 黑名单优先级最高
+        if (Objects.nonNull(this.blackMatcher) && this.blackMatcher.matches(request)) {
+            // 直接执行异常处理器
+            this.commenceJson(request, response, authException);
             return;
         }
+
+
+        // 2. 白名单优先级其次
+        if (this.htmlMatcher.matches(request)) {
+            // 如果是网页或OAuth流程，转交标准处理器（执行 302 重定向）
+            this.commenceHtml(request, response, authException);
+            return;
+        }
+
+        // 3. 其他情况，直接返回 JSON 响应
+        this.commenceJson(request, response, authException);
+    }
+
+    private void commenceHtml(final HttpServletRequest request, final HttpServletResponse response,
+                              final AuthenticationException authException)
+        throws IOException, ServletException {
+        // 直接交给 Spring Security 默认的重定向处理器
+        this.htmlDelegate.commence(request, response, authException);
+    }
+
+    private void commenceJson(final HttpServletRequest request, final HttpServletResponse response,
+                              final AuthenticationException authException) {
 
         // 执行特定操作
         this.waitFor.forEach(consumer -> consumer.accept(response));

@@ -38,7 +38,7 @@ public class OAuth2CommonController {
      *
      * @return 处理结果
      */
-    @GetMapping("/authorized/{registrationId}")
+    @GetMapping("/oauth2/authorized/{registrationId}")
     public JObject handleCallback(@PathVariable("registrationId") final String registrationId,
                                   @RequestParam(name = "code", required = false) final String code,
                                   @RequestParam(name = "state", required = false) final String state,
