@@ -5,7 +5,8 @@ io.r2mo.spring.security.config.ConfigSecurityUri
 io.r2mo.spring.security.config.ConfigSecurityCaptcha
 io.r2mo.spring.security.extension.handler.SecurityHandler
 io.r2mo.spring.security.extension.handler.SecurityEntryPoint
-io.r2mo.spring.security.extension.handler.SecurityDeniedHandler
+io.r2mo.spring.security.extension.handler.SecurityHandler403Denied
+io.r2mo.spring.security.extension.handler.SecurityHandler401Unauthorized
 io.r2mo.spring.security.auth.AuthServiceManager
 io.r2mo.spring.security.extension.captcha.CaptchaServiceImage
 io.r2mo.spring.security.extension.captcha.CaptchaConfiguration

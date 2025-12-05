@@ -7,6 +7,7 @@ import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserSession;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 
 import java.util.Objects;
 
@@ -51,7 +52,12 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
         log.info("[ R2MO ] 验证加载：identifier = {} / provider = {}", identifier, this.getClass().getName());
         final UserAt userAt = this.findUser(identifier);
         // 查找内容写缓存
-        UserSession.of().userAt(userAt);
-        return userAt;
+        try {
+            UserSession.of().userAt(userAt);
+            return userAt;
+        } catch (final Throwable ex) {
+            // 包装后抛出，才能触发 Handler
+            throw new InternalAuthenticationServiceException(ex.getMessage(), ex);
+        }
     }
 }

@@ -21,7 +21,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -104,9 +103,10 @@ public class SecurityWebConfiguration {
             // ---- 禁用 Session
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             // ---- 自定义异常处理
-            .exceptionHandling(this.failure.handler());
+            .exceptionHandling(this.failure.handlerException());
 
 
+        final ConfigSecurityUri uri = this.config.getUri();
         http
             /*
              * OAuth 2 中必须，所以开启简易的表单模式（多一个登录界面）
@@ -114,7 +114,17 @@ public class SecurityWebConfiguration {
              * 此处简易表单模式对 Basic 和 Jwt 认证没有任何影响，但在 OAuth 2 模式下是有必要的，但是，前提是登录
              * 接口没有被覆盖 /login，而且配置中没有去覆盖这种模式，否则这种机制会失效！
              */
-            .formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
+            .formLogin(form -> form
+                // 🟢【修改点 2】：配置登录页面和处理 URL (配合 Thymeleaf + SPI)
+                .loginPage(uri.getLogin())       // 例如 "/login"
+                .loginProcessingUrl(uri.getLogin())
+
+                // 🟢【修改点 3】：注入登录失败处理器！
+                // 只有配了它，loadUserByUsername 中的异常才会被捕获并返回 JSON，而不是 500
+                .failureHandler(this.failure.handlerUnauthorized())
+
+                .permitAll()
+            );
     }
 
     @Bean

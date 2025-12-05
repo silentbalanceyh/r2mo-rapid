@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,6 +71,7 @@
             background-color: #40a9ff;
         }
 
+        /* 错误消息样式 */
         .error-message {
             background-color: #fff2f0;
             border: 1px solid #ffccc7;
@@ -97,7 +98,11 @@
         <h2>OAuth2 统一认证</h2>
     </div>
 
-    <form action="/login" method="post">
+    <div th:if="${error}" class="error-message">
+        账号或密码错误，请重试
+    </div>
+
+    <form th:action="@{/login}" method="post">
         <div class="form-item">
             <input type="text" name="username" class="form-input" placeholder="请输入账号" required autofocus>
         </div>

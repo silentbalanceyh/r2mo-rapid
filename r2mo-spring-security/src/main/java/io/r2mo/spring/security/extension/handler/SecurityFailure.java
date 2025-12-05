@@ -2,8 +2,12 @@ package io.r2mo.spring.security.extension.handler;
 
 import io.r2mo.base.web.FailOr;
 import io.r2mo.spring.common.exception.FailOrSpring;
+import io.r2mo.spring.common.exception.SpringAbortExecutor;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.AbstractException;
+import io.r2mo.typed.exception.WebException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * @author lang : 2025-11-11
@@ -47,5 +51,18 @@ class SecurityFailure {
 
         // 如果找到了最深层的 AbstractException，返回它；否则返回原始异常
         return deepestFound != null ? deepestFound : authException;
+    }
+
+    public static void handleFailure(final HttpServletRequest request, final HttpServletResponse response,
+                                     final Throwable cause) {
+        // 反向封装
+        if (cause instanceof final WebException webException) {
+            SpringAbortExecutor.handleFailure(webException, response);
+            return;
+        }
+
+        final WebException webException = SecurityFailure.of().transform(cause, request, response);
+        // 执行异常处理
+        SpringAbortExecutor.handleFailure(webException, response);
     }
 }
