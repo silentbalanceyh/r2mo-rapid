@@ -81,11 +81,11 @@ public class OAuth2Page {
             /*
              * 智能匹配 Redirect URI
              * 数据库中可能配了多个 URI，此处需要找到匹配当前回调路径的 URI
-             * - 默认地址：/authorized/{registrationId}
+             * - 默认地址：/oauth2/authorized/{registrationId}
              * 验证配置的 URI 是否包含当前的内容
              */
             final String uriCallback = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/authorized/" + registrationId)
+                .path("/oauth2/authorized/" + registrationId)
                 .toUriString();
 
             assert client != null;
@@ -143,6 +143,13 @@ public class OAuth2Page {
 
             final JObject responseJ = SPI.J();
             responseJ.put(responseBody);
+
+            // SPI 扩展 --> 根据 CLIENT/{registrationId} 进行回调处理
+            final OAuth2ClientCallback callback = OAuth2ClientCallback.of(registrationId);
+            if (Objects.nonNull(callback)) {
+                return callback.handleCallback(responseJ, client);
+            }
+
             return responseJ;
         } catch (final Exception ex) {
             throw new _500ServerInternalException(ex.getMessage());
@@ -166,6 +173,13 @@ public class OAuth2Page {
     }
 
     public String handleLoginHtml(final Resource page, final String error) {
+        // SPI 唯一扩展 --> 生成新的 /login 对应的 HTML 内容页面
+        final OAuth2PageLogin found = OAuth2PageLogin.of();
+        if (Objects.nonNull(found)) {
+            return found.loginPage(error);
+        }
+
+
         try {
             // 1. 读取文件内容为字符串
             final String html = StreamUtils.copyToString(
