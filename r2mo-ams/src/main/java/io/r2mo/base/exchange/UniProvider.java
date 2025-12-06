@@ -1,5 +1,7 @@
 package io.r2mo.base.exchange;
 
+import io.r2mo.typed.exception.web._501NotSupportException;
+
 /**
  * @author lang : 2025-12-05
  */
@@ -22,10 +24,11 @@ public interface UniProvider {
      *
      * @return 上游消息ID (Upstream Message ID) - 用于后续在日志或回调中追踪消息状态
      */
-    String send(UniAccount account, UniMessage<?> message, UniContext context);
+    default String send(final UniAccount account, final UniMessage<?> message, final UniContext context) {
+        throw new _501NotSupportException("[ R2MO ] 当前 Provider 不支持此方法！/ send");
+    }
 
     /**
-     * 【双向交换】 (Request / Response)
      * 此时不再需要传入期望的返回类型，返回一个通用的 UniResponse 容器。
      * 由调用方拿到 Response 后，自己决定如何解析 content。
      *
@@ -35,5 +38,7 @@ public interface UniProvider {
      *
      * @return 统一响应容器
      */
-    UniResponse exchange(UniAccount account, UniMessage<?> request, UniContext context);
+    default UniResponse exchange(final UniAccount account, final UniMessage<?> request, final UniContext context) {
+        throw new _501NotSupportException("[ R2MO ] 当前 Provider 不支持此方法！/ exchange");
+    }
 }

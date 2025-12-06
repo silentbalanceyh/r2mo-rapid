@@ -21,6 +21,14 @@ public class R2MO extends _UtilNum {
         return UTJson.valueT(jsonJ, field, constructorFn);
     }
 
+    public static <T> T valueT(final JObject jsonJ, final String field, final T defaultValue) {
+        return UTJson.valueT(jsonJ, field, () -> defaultValue);
+    }
+
+    public static <T> T valueT(final JObject jsonJ, final String field) {
+        return UTJson.valueT(jsonJ, field, () -> null);
+    }
+
     public static byte[] serialize(final Object object) {
         return UTJvm.serialize(object);
     }
@@ -87,5 +95,27 @@ public class R2MO extends _UtilNum {
 
     public static boolean isNamedSQL(final String name) {
         return UTName.isNamedSQL(name);
+    }
+
+    /**
+     * 简单验证电子邮件地址格式
+     *
+     * @param email 待验证的字符串
+     *
+     * @return 如果字符串符合基本电子邮件格式，则返回 true；否则返回 false。
+     */
+    public static boolean isEmail(final String email) {
+        return UTIs.isEmail(email);
+    }
+
+    /**
+     * 验证中国大陆手机号码格式
+     *
+     * @param mobile 待验证的字符串
+     *
+     * @return 如果字符串符合中国大陆手机号码格式，则返回 true；否则返回 false。
+     */
+    public static boolean isMobile(final String mobile) {
+        return UTIs.isMobile(mobile);
     }
 }

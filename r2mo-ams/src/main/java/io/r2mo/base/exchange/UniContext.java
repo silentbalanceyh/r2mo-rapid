@@ -12,7 +12,6 @@ public interface UniContext {
     String KEY_PROTOCOL = "protocol";   // e.g. "https", "smtp", "pop3"
     String KEY_SSL = "ssl";             // e.g. true/false
     String KEY_TIMEOUT = "timeout";     // e.g. 5000 (ms)
-    String KEY_PROXY = "proxy";         // 代理对象
 
     // --- 核心方法 ---
 

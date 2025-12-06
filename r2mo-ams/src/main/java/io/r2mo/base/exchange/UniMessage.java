@@ -32,4 +32,6 @@ public interface UniMessage<T> {
     T payload();                    // 消息内容
 
     Map<String, Object> header();   // 消息头
+
+    <H> H header(String key);          // 获取指定头信息
 }

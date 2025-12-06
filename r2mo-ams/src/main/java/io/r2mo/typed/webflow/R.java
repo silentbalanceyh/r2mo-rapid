@@ -91,6 +91,12 @@ public class R<T> implements Serializable {
         return Objects.isNull(this.failed) ? null : this.failed.getCode();
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("info")
+    public String getInfo() {
+        return Objects.isNull(this.failed) ? null : this.failed.getInfo();
+    }
+
     @JsonIgnore
     public boolean hasError() {
         return Objects.nonNull(this.failed);
