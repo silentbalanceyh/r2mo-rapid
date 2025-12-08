@@ -153,7 +153,15 @@ public class ForLocaleCommon implements ForLocale {
         if (messageKey == null) {
             return null;
         }
-        final String pattern = lookup(BASE_INFO, messageKey, DEFAULT_LOCALE);
+        return this.formatI18n(BASE_INFO, messageKey, messageArgs);
+    }
+
+    @Override
+    public String formatI18n(final String filename, final String messageKey, final Object... messageArgs) {
+        if (messageKey == null) {
+            return null;
+        }
+        final String pattern = lookup(filename, messageKey, DEFAULT_LOCALE);
         final String template = pattern != null ? pattern : messageKey;
         return formatPattern(template, messageArgs);
     }

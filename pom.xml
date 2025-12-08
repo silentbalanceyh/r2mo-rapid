@@ -123,6 +123,7 @@
         <module>r2mo-boot-spring</module>
         <module>r2mo-boot-spring-default</module><!-- ☘️ Bootstrap 实现层（默认）-->
         <module>r2mo-boot-vertx</module>
+        <module>r2mo-spring-template</module>
     </modules>
     <build>
         <plugins>

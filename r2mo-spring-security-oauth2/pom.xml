@@ -17,6 +17,11 @@
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring-security</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-spring-template</artifactId>
+            <version>${r2mo.version}</version>
+        </dependency>
 
         <!-- Spring JDBC -->
         <dependency>
@@ -28,10 +33,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-authorization-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

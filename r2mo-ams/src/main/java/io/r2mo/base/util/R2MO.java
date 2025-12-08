@@ -4,6 +4,7 @@ import io.r2mo.typed.json.JObject;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
@@ -12,6 +13,10 @@ import java.util.function.Supplier;
  * @author lang : 2025-09-20
  */
 public class R2MO extends _UtilNum {
+
+    public static String uiDate(final int value, final TimeUnit unit) {
+        return UTDisplay.uiDate(value, unit);
+    }
 
     public static <T> T valueT(final T value, final Supplier<T> constructorFn) {
         return UTJson.valueT(value, constructorFn);

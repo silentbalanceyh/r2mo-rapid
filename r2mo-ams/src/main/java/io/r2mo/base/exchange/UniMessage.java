@@ -29,6 +29,8 @@ public interface UniMessage<T> {
      */
     Set<String> to();
 
+    void addTo(String... toList);
+
     T payload();                    // 消息内容
 
     Map<String, Object> header();   // 消息头

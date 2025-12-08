@@ -29,6 +29,11 @@ public class EmailAccount extends BaseAccount {
         this.credential = credential;
     }
 
+    public EmailAccount signature(final String signature) {
+        this.signature = signature;
+        return this;
+    }
+
     /**
      * 获取发送签名 (在邮件场景下即 From Address)
      * <p>

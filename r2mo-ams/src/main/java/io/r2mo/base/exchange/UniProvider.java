@@ -1,6 +1,11 @@
 package io.r2mo.base.exchange;
 
+import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._501NotSupportException;
+import io.r2mo.typed.json.JObject;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * @author lang : 2025-12-05
@@ -40,5 +45,61 @@ public interface UniProvider {
      */
     default UniResponse exchange(final UniAccount account, final UniMessage<?> request, final UniContext context) {
         throw new _501NotSupportException("[ R2MO ] 当前 Provider 不支持此方法！/ exchange");
+    }
+
+
+    Cc<String, UniProvider.Wait<?>> CC_WAIT = Cc.openThread();
+
+    @SuppressWarnings("unchecked")
+    static <T> UniProvider.Wait<T> waitFor(final Supplier<Wait<T>> constructorFn) {
+        return (UniProvider.Wait<T>) CC_WAIT.pick(constructorFn::get, String.valueOf(constructorFn.hashCode()));
+    }
+
+    /**
+     * 转换器，用于将输入的数据转换为对应的发送对象，为就绪专用组件
+     * <pre>
+     *     - CONFIG：配置对象类型
+     *     - JObject：输入的数据
+     * </pre>
+     *
+     * @author lang : 2025-12-07
+     */
+    interface Wait<CONFIG> {
+        /**
+         * 构造发送者账号
+         * <pre>
+         *     1. 账号提取带有优先级
+         *     2. 账号按服务器中的 EmailDomain 配置进行构造（不构造多余）
+         * </pre>
+         *
+         * @param params 参数
+         * @param config 配置
+         *
+         * @return 账号
+         */
+        UniAccount account(JObject params, CONFIG config);
+
+        /**
+         * 构造上下文
+         * <pre>
+         *     1. 上下文分析分为两类：发送上下文 / 接收上下文
+         *     2. 上下文按服务器中的 EmailDomain 配置进行构造
+         *     3. 发送上下文基于 SMTP 等发送协议，接收上下文基于 POP3/IMAP （二选一）
+         * </pre>
+         *
+         * @param params 参数
+         * @param config 配置
+         * @param sendOr 发送或接收
+         *
+         * @return 上下文
+         */
+        UniContext context(JObject params, CONFIG config, boolean sendOr);
+
+        UniMessage<String> message(JObject params, Map<String, Object> header,
+                                   CONFIG config);
+
+        default UniMessage<String> message(final JObject params, final CONFIG config) {
+            return this.message(params, Map.of(), config);
+        }
     }
 }

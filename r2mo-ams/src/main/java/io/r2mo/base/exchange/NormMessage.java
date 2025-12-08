@@ -44,9 +44,9 @@ public class NormMessage<T> implements UniMessage<T> {
         return (H) this.header.get(key);
     }
 
-    public NormMessage<T> addTo(final String... to) {
+    @Override
+    public void addTo(final String... to) {
         this.to.addAll(Arrays.asList(to));
-        return this;
     }
 
     public NormMessage<T> header(final String key, final Object value) {

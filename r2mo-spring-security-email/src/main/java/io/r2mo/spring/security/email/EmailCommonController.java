@@ -1,11 +1,8 @@
 package io.r2mo.spring.security.email;
 
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.function.Fn;
-import io.r2mo.spi.SPI;
-import io.r2mo.spring.email.EmailClient;
 import io.r2mo.spring.security.email.exception._80301Exception400EmailRequired;
 import io.r2mo.spring.security.email.exception._80302Exception400EmailFormat;
 import io.r2mo.typed.json.JObject;
@@ -14,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.Set;
 
 /**
  * 核心接口
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class EmailCommonController {
 
     @Autowired
-    private EmailClient client;
+    private EmailService service;
 
     /**
      * <pre>
@@ -49,13 +48,9 @@ public class EmailCommonController {
         Fn.jvmKo(StrUtil.isEmpty(email), _80301Exception400EmailRequired.class);
         // 邮箱格式检查
         Fn.jvmKo(!R2MO.isEmail(email), _80302Exception400EmailFormat.class);
-        // 生成随机验证码发送
-        final JObject prepared = SPI.J();
-        prepared.put("to", email);
-        prepared.put("code", RandomUtil.randomNumbers(6));
-        // 获取响应信息
-        final JObject response = this.client.send("CAPTCHA_EMAIL", prepared);
-        return null;
+        // 构造 to 清单
+        final Set<String> toSet = Set.of(email);
+        return this.service.sendCaptcha(toSet);
     }
 
     /**
