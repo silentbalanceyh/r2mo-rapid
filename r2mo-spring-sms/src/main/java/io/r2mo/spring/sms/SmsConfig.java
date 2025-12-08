@@ -2,6 +2,7 @@ package io.r2mo.spring.sms;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.r2mo.xync.sms.SmsContext;
+import io.r2mo.xync.sms.SmsCredential;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -43,4 +44,11 @@ public class SmsConfig implements Serializable {
     private String region;
     @JsonProperty(SmsContext.KEY_HOST)
     private String host;
+
+    public SmsCredential getCredential() {
+        final SmsCredential credential = new SmsCredential();
+        credential.accessId(this.accessId);
+        credential.accessSecret(this.accessSecret);
+        return credential;
+    }
 }

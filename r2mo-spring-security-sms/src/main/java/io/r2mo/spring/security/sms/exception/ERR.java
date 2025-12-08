@@ -1,4 +1,4 @@
-package io.r2mo.spring.sms.exception;
+package io.r2mo.spring.security.sms.exception;
 
 import io.r2mo.spring.common.exception.SpringE;
 import org.springframework.http.HttpStatus;

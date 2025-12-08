@@ -12,6 +12,6 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true, chain = true)
 @EqualsAndHashCode(callSuper = false)
 public class SmsCredential implements UniCredential {
-    private String mobile;
-    private String password;
+    private String accessId;
+    private String accessSecret;
 }

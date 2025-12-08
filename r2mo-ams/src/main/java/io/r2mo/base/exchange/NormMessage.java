@@ -27,7 +27,11 @@ public class NormMessage<T> implements UniMessage<T> {
     @Setter(AccessLevel.NONE)
     private Set<String> to = new HashSet<>();
 
-    private Map<String, Object> header = new HashMap<>();
+    @Setter(AccessLevel.NONE)
+    private final Map<String, Object> header = new HashMap<>();
+
+    @Setter(AccessLevel.NONE)
+    private final Map<String, Object> params = new HashMap<>();
 
     public NormMessage(final String id) {
         this.id = id;
@@ -51,6 +55,17 @@ public class NormMessage<T> implements UniMessage<T> {
 
     public NormMessage<T> header(final String key, final Object value) {
         this.header.put(key, value);
+        return this;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <V> V params(final String key) {
+        return (V) this.params.get(key);
+    }
+
+    public NormMessage<T> params(final String key, final Object value) {
+        this.params.put(key, value);
         return this;
     }
 }

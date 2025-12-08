@@ -15,7 +15,7 @@ public class SmsAccount extends BaseAccount {
     private String signature;
 
     public SmsAccount(final SmsCredential credential) {
-        super(Objects.requireNonNull(credential).mobile());
+        super(Objects.requireNonNull(credential).accessId());
         this.credential = credential;
     }
 

@@ -1,4 +1,4 @@
-package io.r2mo.spring.sms;
+package io.r2mo.spring.security.sms;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -22,6 +22,7 @@ import java.time.Duration;
 public class SmsCaptchaConfig {
     private int length = 6;
     private int expiredAt = 60;
+    private String template;
 
     public Duration expiredAt() {
         return Duration.ofSeconds(this.expiredAt);

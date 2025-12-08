@@ -5,6 +5,7 @@ import io.r2mo.base.exchange.BaseContext;
 /**
  * @author lang : 2025-12-08
  */
+@SuppressWarnings("all")
 public class SmsContext extends BaseContext {
 
     public static final String KEY_ACCESS_ID = "access_id";
@@ -23,24 +24,13 @@ public class SmsContext extends BaseContext {
         this.set(KEY_HOST, "dysmsapi.aliyuncs.com");
     }
 
-    public SmsContext setAccessId(final String accessId) {
-        this.set(KEY_ACCESS_ID, accessId);
-        return this;
-    }
-
-    public SmsContext setAccessSecret(final String accessSecret) {
-        this.set(KEY_ACCESS_SECRET, accessSecret);
-        return this;
-    }
-
-    public SmsContext setSignName(final String signName) {
-        this.set(KEY_SIGN_NAME, signName);
-        return this;
-    }
-
     public SmsContext setTimeoutConnect(final int timeoutConnect) {
         this.set(KEY_TIMEOUT_CONNECT, timeoutConnect);
         return this;
+    }
+
+    public int getTimeoutRead() {
+        return this.get(KEY_TIMEOUT_READ);
     }
 
     public SmsContext setTimeoutRead(final int timeoutRead) {
@@ -48,9 +38,21 @@ public class SmsContext extends BaseContext {
         return this;
     }
 
+    public int getTimeoutConnect() {
+        return this.get(KEY_TIMEOUT_CONNECT);
+    }
+
     public SmsContext setRegion(final String region) {
         this.set(KEY_REGION, region);
         return this;
+    }
+
+    public String getRegion() {
+        return this.get(KEY_REGION);
+    }
+
+    public String getProduct() {
+        return this.get(KEY_PRODUCT);
     }
 
     public SmsContext setHost(final String host) {

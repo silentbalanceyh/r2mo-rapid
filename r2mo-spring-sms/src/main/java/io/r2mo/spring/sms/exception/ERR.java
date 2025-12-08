@@ -10,4 +10,5 @@ interface ERR {
     SpringE _80351 = SpringE.of(-80351).state(HttpStatus.NOT_FOUND);
     SpringE _80352 = SpringE.of(-80352).state(HttpStatus.NOT_FOUND);
     SpringE _80353 = SpringE.of(-80353).state(HttpStatus.NOT_FOUND);
+    SpringE _80354 = SpringE.of(-80354).state(HttpStatus.NOT_FOUND);
 }

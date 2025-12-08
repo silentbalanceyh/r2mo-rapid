@@ -1,5 +1,6 @@
 package io.r2mo.base.exchange;
 
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
@@ -55,6 +56,13 @@ public interface UniProvider {
         return (UniProvider.Wait<T>) CC_WAIT.pick(constructorFn::get, String.valueOf(constructorFn.hashCode()));
     }
 
+    static JObject replySuccess(final String messageId) {
+        final JObject resultJ = SPI.J();
+        resultJ.put("id", messageId);
+        resultJ.put("success", Boolean.TRUE);
+        return resultJ;
+    }
+
     /**
      * 转换器，用于将输入的数据转换为对应的发送对象，为就绪专用组件
      * <pre>
@@ -80,24 +88,32 @@ public interface UniProvider {
         UniAccount account(JObject params, CONFIG config);
 
         /**
-         * 构造上下文
+         * 构造上下文：发送上下文，无选择
          * <pre>
-         *     1. 上下文分析分为两类：发送上下文 / 接收上下文
-         *     2. 上下文按服务器中的 EmailDomain 配置进行构造
-         *     3. 发送上下文基于 SMTP 等发送协议，接收上下文基于 POP3/IMAP （二选一）
+         *     1. 上下文按服务器中的 EmailDomain 配置进行构造
+         *     2. 发送上下文基于 SMTP 等发送协议
          * </pre>
          *
          * @param params 参数
          * @param config 配置
-         * @param sendOr 发送或接收
          *
          * @return 上下文
          */
-        UniContext context(JObject params, CONFIG config, boolean sendOr);
+        UniContext context(JObject params, CONFIG config);
 
-        default UniContext context(final JObject params, final CONFIG config) {
-            return this.context(params, config, true);
-        }
+        /**
+         * 构造上下文：接收上下文（二选一）
+         * <pre>
+         *     1. 上下文按服务器中的 EmailDomain 配置进行构造
+         *     2. 接收上下文基于 POP3/IMAP （二选一）
+         * </pre>
+         *
+         * @param params 参数
+         * @param config 配置
+         *
+         * @return 上下文
+         */
+        UniContext contextClient(JObject params, CONFIG config);
 
         /**
          * 构造消息对象

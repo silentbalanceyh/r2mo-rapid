@@ -1,9 +1,9 @@
-package io.r2mo.spring.sms;
+package io.r2mo.spring.security.sms;
 
 import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.spring.security.exception._80241Exception400PasswordRequired;
-import io.r2mo.spring.sms.exception._80381Exception400MobileRequired;
+import io.r2mo.spring.security.sms.exception._80381Exception400MobileRequired;
 import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;

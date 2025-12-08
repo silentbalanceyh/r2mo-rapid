@@ -1,32 +1,100 @@
 package io.r2mo.spring.sms;
 
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
+import io.r2mo.base.exchange.NormMessage;
 import io.r2mo.base.exchange.UniAccount;
 import io.r2mo.base.exchange.UniContext;
 import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniProvider;
+import io.r2mo.base.util.R2MO;
+import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.xync.sms.SmsAccount;
+import io.r2mo.xync.sms.SmsContext;
+import io.r2mo.xync.sms.SmsCredential;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
+ * 重点说明
+ * <pre>
+ *     此处发送短信的上下文和对应的账号（access_id, access_secret）来构造不重复的 Account 和 Context
+ * </pre>
+ *
  * @author lang : 2025-12-08
  */
 @Slf4j
 public class SmsWaitSpring implements UniProvider.Wait<SmsConfig> {
 
+    private static final Cc<String, UniAccount> CC_ACCOUNT = Cc.open();
+
+    private static final Cc<String, UniContext> CC_CONTEXT = Cc.open();
+
     @Override
     public UniAccount account(final JObject params, final SmsConfig smsConfig) {
-        return null;
+        final SmsCredential credential = smsConfig.getCredential();
+        return CC_ACCOUNT.pick(() -> {
+            // 构造基础的 UniAccount
+            final SmsAccount account = new SmsAccount(credential)
+                .signature(smsConfig.getSignName());
+            // 是否带有额外配置信息
+            log.info("[ R2MO ] 构造短信发送 Access Id: {} / 签名: {}", account.getId(), account.signature());
+            return account;
+        }, String.valueOf(credential.hashCode()));
     }
 
     @Override
-    public UniContext context(final JObject params, final SmsConfig smsConfig, final boolean sendOr) {
-        return null;
+    public UniContext context(final JObject params, final SmsConfig smsConfig) {
+        Objects.requireNonNull(smsConfig);
+        return CC_CONTEXT.pick(() -> {
+            // 构造上下文
+            final SmsContext context = new SmsContext()
+                .setTimeoutConnect(smsConfig.getTimeoutConnect())
+                .setTimeoutRead(smsConfig.getTimeoutRead());
+            // 是否设置了高级功能
+            final String region = smsConfig.getRegion();
+            if (StrUtil.isNotEmpty(region)) {
+                context.setRegion(region);
+            }
+            final String host = smsConfig.getHost();
+            if (StrUtil.isNotEmpty(host)) {
+                context.setHost(host);
+            }
+            return context;
+        }, String.valueOf(smsConfig.hashCode()));
     }
 
     @Override
-    public UniMessage<String> message(final JObject params, final Map<String, Object> header, final SmsConfig smsConfig) {
-        return null;
+    public UniContext contextClient(final JObject params, final SmsConfig smsConfig) {
+        throw new _501NotSupportException("[ R2MO ] 此方法不支持接收上下文对象！");
+    }
+
+    @Override
+    public UniMessage<String> message(final JObject params, final Map<String, Object> headers, final SmsConfig smsConfig) {
+        // 消息标识
+        String id = R2MO.valueT(params, "id");
+        if (StrUtil.isEmpty(id)) {
+            id = RandomUtil.randomNumbers(4);
+        }
+        final NormMessage<String> message = new NormMessage<>(id);
+
+        // template
+        final String template = R2MO.valueT(params, "template");
+        message.params("template", template);                           // 用 payload 当 template code 用！
+        log.info("[ R2MO ] 构造短信 ID: {} / 模板：{}", id, template);
+
+
+        // captcha
+        final String captcha = R2MO.valueT(params, "captcha");
+        message.params("captcha", captcha);
+
+
+        // 消息头
+        headers.forEach(message::header);
+        return message;
     }
 }

@@ -40,12 +40,9 @@ public class EmailWaitSpring implements UniProvider.Wait<EmailConfigServer> {
     @Override
     public UniAccount account(final JObject params, final EmailConfigServer emailConfigServer) {
         final EmailCredential credential = emailConfigServer.getCredential();
-        if (Objects.isNull(credential)) {
-            return null;
-        }
         return CC_ACCOUNT.pick(() -> {
             // 构造基础的 UniAccount
-            final EmailAccount account = new EmailAccount(emailConfigServer.getCredential());
+            final EmailAccount account = new EmailAccount(credential);
             // 是否带有额外配置信息
             log.info("[ R2MO ] 构造邮件发送账号: {} / 签名：{}", account.getId(), account.signature());
 
@@ -87,18 +84,21 @@ public class EmailWaitSpring implements UniProvider.Wait<EmailConfigServer> {
     }
 
     @Override
-    public UniContext context(final JObject params, final EmailConfigServer emailConfigServer,
-                              final boolean sendOr) {
-        if (sendOr) {
-            final EmailDomain domainSender = emailConfigServer.getSender();
+    public UniContext context(final JObject params, final EmailConfigServer emailConfigServer) {
+        final EmailDomain domainSender = emailConfigServer.getSender();
 
-            this.buildAccount(params, emailConfigServer, domainSender);
+        this.buildAccount(params, emailConfigServer, domainSender);
 
-            return this.buildContext(params, domainSender);
-        } else {
-            final EmailDomain domainReceiver = emailConfigServer.getReceiver();
-            return this.buildContext(params, domainReceiver);
-        }
+        return this.buildContext(params, domainSender);
+    }
+
+    @Override
+    public UniContext contextClient(final JObject params, final EmailConfigServer emailConfigServer) {
+        final EmailDomain domainReceiver = emailConfigServer.getReceiver();
+
+        this.buildAccount(params, emailConfigServer, domainReceiver);
+
+        return this.buildContext(params, domainReceiver);
     }
 
     /**

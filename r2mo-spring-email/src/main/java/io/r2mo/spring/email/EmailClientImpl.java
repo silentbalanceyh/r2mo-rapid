@@ -37,7 +37,7 @@ public class EmailClientImpl implements EmailClient {
         // 2. 根据配置发送邮件
         final UniProvider.Wait<EmailConfigServer> wait = UniProvider.waitFor(EmailWaitSpring::new);
         final UniAccount account = wait.account(params, this.serverConfig);
-        final UniContext context = wait.context(params, this.serverConfig, true);
+        final UniContext context = wait.context(params, this.serverConfig);
 
 
         // 3. 消息构造（每次都构造新消息）
@@ -46,12 +46,6 @@ public class EmailClientImpl implements EmailClient {
 
         final UniProvider provider = CC_PROVIDER.pick(() -> SPI.findOne(UniProvider.class, "UNI_EMAIL"));
         final String result = provider.send(account, message, context);
-
-
-        // 4. 返回结果
-        final JObject resultJ = SPI.J();
-        resultJ.put("id", result);
-        resultJ.put("success", Boolean.TRUE);
-        return resultJ;
+        return UniProvider.replySuccess(result);
     }
 }

@@ -1,4 +1,4 @@
-package io.r2mo.spring.security.email;
+package io.r2mo.spring.security.sms;
 
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.util.R2MO;
@@ -7,9 +7,9 @@ import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.spring.security.auth.AuthService;
 import io.r2mo.spring.security.auth.AuthTokenResponse;
-import io.r2mo.spring.security.email.exception._80301Exception400EmailRequired;
-import io.r2mo.spring.security.email.exception._80302Exception400EmailFormat;
-import io.r2mo.spring.security.email.exception._80303Exception500SendingFailure;
+import io.r2mo.spring.security.sms.exception._80381Exception400MobileRequired;
+import io.r2mo.spring.security.sms.exception._80382Exception400MobileFormat;
+import io.r2mo.spring.security.sms.exception._80383Exception500SendingFailure;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 核心接口
  * <pre>
- *     /auth/email-send
- *     /auth/email-login
+ *     /auth/sms-send
+ *     /auth/sms-login
  * </pre>
  *
- * @author lang : 2025-12-05
+ * @author lang : 2025-12-08
  */
 @RestController
 @Slf4j
-public class EmailCommonController {
+public class SmsCommonController {
 
     @Autowired
-    private EmailService service;
+    private SmsService service;
 
     @Autowired
     private AuthService authService;
@@ -39,7 +39,7 @@ public class EmailCommonController {
     /**
      * <pre>
      *     {
-     *         "email": "account@xxx.com"
+     *         "mobile": "13800000000"
      *     }
      * </pre>
      *
@@ -47,36 +47,36 @@ public class EmailCommonController {
      *
      * @return 发送结果
      */
-    @PostMapping("/auth/email-send")
+    @PostMapping("/auth/sms-send")
     public Boolean send(@RequestBody final JObject params) {
-        final String email = R2MO.valueT(params, LoginID.EMAIL);
-        // 必须输入邮箱
-        Fn.jvmKo(StrUtil.isEmpty(email), _80301Exception400EmailRequired.class);
-        // 邮箱格式检查
-        Fn.jvmKo(!R2MO.isEmail(email), _80302Exception400EmailFormat.class, email);
+        final String mobile = R2MO.valueT(params, LoginID.MOBILE);
+        // 必须输入手机号
+        Fn.jvmKo(StrUtil.isEmpty(mobile), _80381Exception400MobileRequired.class);
+        // 手机格式检查
+        Fn.jvmKo(!R2MO.isMobile(mobile), _80382Exception400MobileFormat.class, mobile);
         // 构造 to 清单
-        final boolean sent = this.service.sendCaptcha(email);
+        final boolean sent = this.service.sendCaptcha(mobile);
         // 发送过程失败
-        Fn.jvmKo(!sent, _80303Exception500SendingFailure.class, email);
-        // 验证码处理过程
+        Fn.jvmKo(!sent, _80383Exception500SendingFailure.class, mobile);
+        // 验证处理过程
         return true;
     }
 
     /**
      * <pre>
-     *    {
-     *        "email": "???",
-     *        "captcha": "1234"
-     *    }
+     *     {
+     *         "mobile": "???",
+     *         "captcha": "1234"
+     *     }
      * </pre>
      *
      * @param params 参数信息
      *
      * @return 发送结果
      */
-    @PostMapping("/auth/email-login")
+    @PostMapping("/auth/sms-login")
     public AuthTokenResponse login(final JObject params) {
-        final EmailLoginRequest request = new EmailLoginRequest(params);
+        final SmsLoginRequest request = new SmsLoginRequest(params);
         final UserAt userAt = this.authService.login(request);
         return new AuthTokenResponse(userAt);
     }

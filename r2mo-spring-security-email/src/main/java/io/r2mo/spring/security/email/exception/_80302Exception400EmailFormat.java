@@ -7,7 +7,7 @@ import io.r2mo.spring.common.exception.SpringException;
  */
 public class _80302Exception400EmailFormat extends SpringException {
 
-    public _80302Exception400EmailFormat() {
-        super(ERR._80302);
+    public _80302Exception400EmailFormat(final String email) {
+        super(ERR._80302, email);
     }
 }

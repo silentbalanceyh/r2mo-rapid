@@ -1,10 +1,12 @@
 package io.r2mo.spring.security.auth;
 
 import cn.hutool.extra.spring.SpringUtil;
+import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.jaas.element.MSEmployee;
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;
+import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserSession;
 import io.r2mo.spring.security.exception._80204Exception401PasswordNotMatch;
 import io.r2mo.spring.security.exception._80244Exception401LoginTypeWrong;
@@ -13,6 +15,7 @@ import io.r2mo.typed.enums.TypeLogin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -98,5 +101,26 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
             // 包装后抛出，才能触发 Handler
             throw new _80250Exception401Unauthorized.Unauthorized(ex.getMessage(), identifier);
         }
+    }
+
+    /**
+     * 验证码模式专用的检查
+     *
+     * @param request  登录请求
+     * @param userAt   存储的用户记录
+     * @param duration 配置提取的时间（会影响 UserCache）
+     *
+     * @return 是否匹配
+     */
+    protected boolean isMatched(final LoginRequest request, final UserAt userAt,
+                                final Duration duration) {
+        final CaptchaArgs captchaArgs = CaptchaArgs.of(this.loginType(), duration);
+        final String id = request.getId();
+        final String codeStored = UserCache.of().authorize(id, captchaArgs);
+        if (Objects.isNull(codeStored)) {
+            return false;
+        }
+        final String code = request.getCredential();
+        return codeStored.equals(code);
     }
 }
