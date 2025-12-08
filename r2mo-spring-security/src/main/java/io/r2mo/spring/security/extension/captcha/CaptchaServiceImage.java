@@ -4,9 +4,9 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.core.codec.Base64;
-import io.r2mo.jaas.auth.LoginCaptcha;
-import io.r2mo.jaas.enums.TypeLogin;
+import io.r2mo.jaas.auth.CaptchaRequest;
 import io.r2mo.jaas.session.UserCache;
+import io.r2mo.spring.security.config.ConfigSecurityCaptcha;
 import io.r2mo.typed.common.Kv;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +30,7 @@ public class CaptchaServiceImage implements CaptchaService {
 
     private final CodeGenerator captchaGenerator;
     private final Font captchaFont;
+    private final ConfigSecurityCaptcha configCaptcha;
 
     @Override
     public Map<String, String> generate() {
@@ -46,14 +47,14 @@ public class CaptchaServiceImage implements CaptchaService {
 
         // 3. 存入 UserCache（类型为 CAPTCHA）
         final Kv<String, String> generated = Kv.create(captchaKey, code);
-        UserCache.of().authorize(generated, TypeLogin.CAPTCHA);
+        UserCache.of().authorize(generated, this.configCaptcha.forArguments());
 
         // 4. 转为 Base64 图片
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             captcha.write(out);
             final String base64Image = Base64.encode(out.toByteArray());
             final Map<String, String> result = new HashMap<>();
-            result.put(LoginCaptcha.ID, captchaKey);
+            result.put(CaptchaRequest.ID, captchaKey);
             result.put("image", "data:image/png;base64," + base64Image);
             return result;
         } catch (final Exception e) {
@@ -69,7 +70,7 @@ public class CaptchaServiceImage implements CaptchaService {
         }
 
         // 从缓存中获取并自动移除（一次性使用）
-        final String storedCode = UserCache.of().authorize(captchaId, TypeLogin.CAPTCHA);
+        final String storedCode = UserCache.of().authorize(captchaId, this.configCaptcha.forArguments());
         if (storedCode == null) {
             return false;
         }
@@ -84,8 +85,9 @@ public class CaptchaServiceImage implements CaptchaService {
 
     @Override
     public void invalidate(final String captchaKey) {
-        if (captchaKey != null) {
-            UserCache.of().authorize(captchaKey, TypeLogin.CAPTCHA);
+        if (captchaKey == null) {
+            return;
         }
+        UserCache.of().authorizeKo(captchaKey, this.configCaptcha.forArguments());
     }
 }

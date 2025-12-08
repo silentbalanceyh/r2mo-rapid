@@ -1,5 +1,7 @@
 package io.r2mo.xync.email;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.map.MapUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.r2mo.typed.domain.BaseConfig;
 import lombok.AccessLevel;
@@ -9,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 配置信息，通常只负责配置
@@ -43,7 +46,43 @@ public class EmailDomain extends BaseConfig implements Serializable {
     public EmailDomain(final EmailProtocol protocol) {
         this.protocol = protocol;
     }
+    // --- 核心修改：增加绑定逻辑 ---
 
+    /**
+     * 将 Map 属性绑定到当前对象
+     * 1. 识别标准字段 (host, port...)
+     * 2. 不识别的字段扔进 Extension (BaseConfig)
+     */
+    public void bind(final Map<String, Object> props) {
+        if (MapUtil.isEmpty(props)) {
+            return;
+        }
+
+        props.forEach((key, value) -> {
+            switch (key) {
+                case "host":
+                    this.setHost(Convert.toStr(value));
+                    break;
+                // 默认端口逻辑交给外部检查，这里默认为0
+                case "port":
+                    this.setPort(Convert.toInt(value, 0));
+                    break;
+                case "ssl":
+                    this.setSsl(Convert.toBool(value, false));
+                    break;
+                case "username":
+                    this.setUsername(Convert.toStr(value));
+                    break;
+                case "password":
+                    this.setPassword(Convert.toStr(value));
+                    break;
+                // 关键：扁平化处理，不认识的 Key 全部作为扩展属性
+                default:
+                    this.putExtension(key, value);
+                    break;
+            }
+        });
+    }
     // --- 关键：手动桥接 YAML 的扁平属性到 credential 对象 ---
 
     public void setUsername(final String username) {

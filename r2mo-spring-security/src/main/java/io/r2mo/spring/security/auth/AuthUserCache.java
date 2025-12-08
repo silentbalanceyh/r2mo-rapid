@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.auth;
 
+import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.element.MSUser;
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserContext;
@@ -99,15 +99,15 @@ public class AuthUserCache implements UserCache {
     }
 
     @Override
-    public void authorize(final Kv<String, String> generated, final TypeLogin type) {
-        final CacheAt<String, String> cache = this.factory().ofAuthorize(type);
+    public void authorize(final Kv<String, String> generated, final CaptchaArgs configuration) {
+        final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         cache.put(generated.key(), generated.value());
         log.info("[ R2MO ] 生成验证码：id = {} / code = {}", generated.key(), generated.value());
     }
 
     @Override
-    public String authorize(final String consumerId, final TypeLogin type) {
-        final CacheAt<String, String> cache = this.factory().ofAuthorize(type);
+    public String authorize(final String consumerId, final CaptchaArgs configuration) {
+        final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         final String generated = cache.find(consumerId);
         if (Objects.isNull(generated)) {
             return null;
@@ -116,8 +116,8 @@ public class AuthUserCache implements UserCache {
     }
 
     @Override
-    public void authorizeKo(final String consumerId, final TypeLogin type) {
-        final CacheAt<String, String> cache = this.factory().ofAuthorize(type);
+    public void authorizeKo(final String consumerId, final CaptchaArgs configuration) {
+        final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         cache.remove(consumerId);
         log.info("[ R2MO ] 消费验证码：id = {}", consumerId);
     }

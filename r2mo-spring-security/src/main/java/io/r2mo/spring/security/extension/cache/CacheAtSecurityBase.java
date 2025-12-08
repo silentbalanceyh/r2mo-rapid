@@ -2,17 +2,16 @@ package io.r2mo.spring.security.extension.cache;
 
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.base.util.R2MO;
+import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserContext;
 import io.r2mo.spring.security.config.ConfigSecurity;
-import io.r2mo.spring.security.config.ConfigSecurityCaptcha;
 import io.r2mo.spring.security.config.ConfigSecurityJwt;
 import io.r2mo.spring.security.config.ConfigSecurityLimit;
 import io.r2mo.typed.cc.CacheAt;
 import io.r2mo.typed.cc.Cc;
-import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.exception.web._501NotSupportException;
 
 import java.time.Duration;
@@ -39,42 +38,41 @@ public abstract class CacheAtSecurityBase implements CacheAtSecurity {
         this.duration = Duration.ofMinutes(this.security.getLimit().getTimeout());
     }
 
-    /**
-     * 获取授权码缓存的限制配置
-     */
-    protected Kv<Long, Duration> findLimit(final TypeLogin type) {
-        Duration duration = null;
-
-        // 处理验证码特殊情况
-        if (type.name().startsWith(TypeLogin.CAPTCHA.name())) {
-            if (!this.security.isCaptcha()) {
-                throw new _501NotSupportException("[ R2MO ] 未启用图片验证码功能！");
-            }
-            final ConfigSecurityCaptcha captcha = this.security.getCaptcha();
-            duration = Duration.ofSeconds(captcha.getExpiredAt());
+    private void ensureAuthorize(final CaptchaArgs configuration) {
+        final TypeLogin type = configuration.type();
+        if (TypeLogin.CAPTCHA == type && !this.security.isCaptcha()) {
+            throw new _501NotSupportException("[ R2MO ] 未启用图片验证码功能！");
         }
-
-        final ConfigSecurityLimit limit = this.security.getLimit();
-        if (Objects.isNull(duration)) {
-            final Kv<Long, Duration> kv = limit.getLimit(type);
-            if (Objects.nonNull(kv)) {
-                return kv;
-            }
-            duration = Duration.ofSeconds(60); // 默认60秒
-        }
-
-        final long authorizeSize = limit.getAuthorize();
-        return Kv.create(authorizeSize, duration);
     }
 
+    /**
+     * 验证码的设置一定是在传入之前就创建好了，确保设置过程中的唯一性，主要包含
+     *
+     * @param configuration 验证码配置
+     *
+     * @return 验证码缓存
+     */
     @Override
-    public CacheAt<String, String> ofAuthorize(final TypeLogin type) {
-        Objects.requireNonNull(type, "[ R2MO ] 授权码类型不可为空！");
-        final String name = UserCache.NAME_AUTHORIZE + "@" + type.name() + "/" + this.getClass().getName();
+    public CacheAt<String, String> ofAuthorize(final CaptchaArgs configuration) {
+        // 验证配置信息
+        this.ensureAuthorize(configuration);
+        Objects.requireNonNull(configuration, "[ R2MO ] Captcha 配置不可为空！");
+
+
+        // 此处新版的名称改成 configuration 的 hashCode，只要配置不相同，则 hashCode 肯定不同
+        final String name = UserCache.NAME_AUTHORIZE + "@" + configuration.hashCode();
         return (CacheAt<String, String>) CC_CACHE.pick(() -> {
             final CacheAt<String, String> ofAuthorize = this.create(name, String.class, String.class);
-            final Kv<Long, Duration> limit = this.findLimit(type);
-            ofAuthorize.configure(limit.value(), limit.key());
+
+
+            // 提取核心配置信息
+            final ConfigSecurityLimit limit = this.security.getLimit();
+            final long size = limit.getAuthorize();
+            final Duration duration = configuration.duration();
+
+
+            // 执行配置初始化完成
+            ofAuthorize.configure(duration, size);
             return ofAuthorize;
         }, name);
     }

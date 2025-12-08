@@ -35,6 +35,10 @@ public abstract class BaseConfig implements Serializable {
         return (T) this.extension.get(key);
     }
 
+    public boolean hasExtension(final String key) {
+        return this.extension.containsKey(key);
+    }
+
     public void cleanExtension() {
         this.extension.clear();
     }

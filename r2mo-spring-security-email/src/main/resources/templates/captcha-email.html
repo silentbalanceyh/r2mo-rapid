@@ -72,7 +72,7 @@
 
         <div class="verification-code" th:text="${captcha}">XXXXXX</div>
 
-        <p>该验证码将在 <strong>${expiredAt}</strong> 后失效，请尽快使用。</p>
+        <p>该验证码将在 <strong th:text="${expiredAt}">5分钟</strong> 后失效，请尽快使用。</p>
 
         <p class="note">如果您没有请求此验证码，请忽略此邮件。</p>
     </div>

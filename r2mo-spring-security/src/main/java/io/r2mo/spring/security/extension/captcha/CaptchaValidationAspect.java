@@ -1,6 +1,6 @@
 package io.r2mo.spring.security.extension.captcha;
 
-import io.r2mo.jaas.auth.LoginCaptcha;
+import io.r2mo.jaas.auth.CaptchaRequest;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.exception._80222Exception401CaptchaWrong;
 import io.r2mo.spring.security.exception._80242Exception400CaptchaRequired;
@@ -56,7 +56,7 @@ public class CaptchaValidationAspect {
         }
 
         // 全部逻辑封装进 readCaptcha
-        final LoginCaptcha payload = this.readCaptcha(request, joinPoint);
+        final CaptchaRequest payload = this.readCaptcha(request, joinPoint);
 
         final String captchaId = payload.getCaptchaId().trim();
         final String captcha = payload.getCaptcha().trim();
@@ -74,11 +74,11 @@ public class CaptchaValidationAspect {
      * 从请求体读取 JSON，解析为 LoginCaptcha，并校验 captchaId 与 captcha 非空。
      * 若任一环节失败，抛出对应的业务异常。
      */
-    private LoginCaptcha readCaptcha(final HttpServletRequest request, final JoinPoint joinPoint) {
+    private CaptchaRequest readCaptcha(final HttpServletRequest request, final JoinPoint joinPoint) {
         // 1. 解析 JSON
-        final LoginCaptcha payload;
+        final CaptchaRequest payload;
         try (final InputStream inputStream = request.getInputStream()) {
-            payload = JBase.jackson().readValue(inputStream, LoginCaptcha.class);
+            payload = JBase.jackson().readValue(inputStream, CaptchaRequest.class);
         } catch (final IOException e) {
             log.warn("[ R2MO ] 无法解析请求体中的 JSON 数据", e);
             throw new _400BadRequestException("[ R2MO ] 请求体格式无效，无法读取验证码信息");

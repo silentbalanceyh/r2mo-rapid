@@ -3,16 +3,17 @@ package io.r2mo.spring.security.email;
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.function.Fn;
+import io.r2mo.spring.security.auth.AuthService;
 import io.r2mo.spring.security.email.exception._80301Exception400EmailRequired;
 import io.r2mo.spring.security.email.exception._80302Exception400EmailFormat;
+import io.r2mo.spring.security.email.exception._80303Exception500SendingFailure;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.Set;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 核心接口
@@ -30,6 +31,9 @@ public class EmailCommonController {
     @Autowired
     private EmailService service;
 
+    @Autowired
+    private AuthService authService;
+
     /**
      * <pre>
      *     {
@@ -42,6 +46,7 @@ public class EmailCommonController {
      * @return 发送结果
      */
     @PostMapping("/auth/email-send")
+    @ResponseBody
     public Boolean send(@RequestBody final JObject params) {
         final String email = R2MO.valueT(params, "email");
         // 必须输入邮箱
@@ -49,8 +54,11 @@ public class EmailCommonController {
         // 邮箱格式检查
         Fn.jvmKo(!R2MO.isEmail(email), _80302Exception400EmailFormat.class);
         // 构造 to 清单
-        final Set<String> toSet = Set.of(email);
-        return this.service.sendCaptcha(toSet);
+        final boolean sent = this.service.sendCaptcha(email);
+        // 发送过程失败
+        Fn.jvmKo(!sent, _80303Exception500SendingFailure.class, email);
+        // 验证码处理过程
+        return true;
     }
 
     /**

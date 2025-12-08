@@ -15,5 +15,9 @@
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-ams</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+        </dependency>
     </dependencies>
 </project>

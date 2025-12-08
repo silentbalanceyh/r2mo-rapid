@@ -50,7 +50,8 @@ public class EmailClientImpl implements EmailClient {
 
         // 4. 返回结果
         final JObject resultJ = SPI.J();
-        resultJ.put("result", result);
+        resultJ.put("id", result);
+        resultJ.put("success", Boolean.TRUE);
         return resultJ;
     }
 }

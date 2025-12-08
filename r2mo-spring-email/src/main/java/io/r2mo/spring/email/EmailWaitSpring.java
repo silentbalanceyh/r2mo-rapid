@@ -32,6 +32,7 @@ import java.util.UUID;
  */
 @Slf4j
 public class EmailWaitSpring implements UniProvider.Wait<ConfigEmailServer> {
+    private static final String TIMEOUT = "timeout";
     // 发送者账号跟着配置走
     private static final Cc<String, UniAccount> CC_ACCOUNT = Cc.open();
     // 邮箱设置上下文跟着配置走
@@ -140,9 +141,10 @@ public class EmailWaitSpring implements UniProvider.Wait<ConfigEmailServer> {
             context.setSsl(domain.isSsl());
             context.setProtocol(domain.getProtocol().name());
             // timeout 特殊属性
-            int timeout = R2MO.valueT(params, "timeout", -1);
-            if (timeout <= 0) {
-                timeout = domain.getExtension("timeout");
+            int timeout = R2MO.valueT(params, TIMEOUT, -1);
+            // Fix Issue: Cannot invoke "java.lang.Integer.intValue()" because the return value of "getExtension(String)" is null
+            if (timeout <= 0 && domain.hasExtension(TIMEOUT)) {
+                timeout = domain.getExtension(TIMEOUT);
             }
             context.setTimeout(timeout);
 

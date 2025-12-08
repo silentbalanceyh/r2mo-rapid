@@ -7,5 +7,10 @@ import java.util.Set;
  */
 public interface EmailService {
 
-    boolean sendCaptcha(Set<String> toSet);
+    default boolean sendCaptcha(final Set<String> toSet) {
+        toSet.forEach(this::sendCaptcha);
+        return true;
+    }
+
+    boolean sendCaptcha(String to);
 }

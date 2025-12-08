@@ -1,5 +1,7 @@
 package io.r2mo.spring.security.config;
 
+import io.r2mo.jaas.auth.CaptchaArgs;
+import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.typed.exception.web._401UnauthorizedException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.Serializable;
+import java.time.Duration;
 
 /**
  * @author lang : 2025-11-10
@@ -23,6 +26,12 @@ public class ConfigSecurityCaptcha implements Serializable {
      * 0s 会导致 {@link _401UnauthorizedException} 的过期异常信息。
      */
     private int expiredAt = 60;
+
+    public CaptchaArgs forArguments() {
+        final Duration duration = Duration.ofSeconds(this.expiredAt);
+        return CaptchaArgs.of(TypeLogin.CAPTCHA, duration);
+    }
+
     /**
      * 验证码图片宽度
      */

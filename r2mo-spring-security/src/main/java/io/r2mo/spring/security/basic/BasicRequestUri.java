@@ -33,11 +33,11 @@ public class BasicRequestUri implements RequestUri {
          * estMatcherDelegatingAuthorizationManager : Checking authorization on GET /login using org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer$$Lambda/0x0000007801ada300@6186b13c
          * o.s.security.web.FilterChainProxy        : Secured GET /login
          */
-        return Set.of("/auth/login");
+        return Set.of("/auth/**");
     }
 
     @Override
     public Set<String> noRedirect(final ConfigSecurity security) {
-        return noCache(security);
+        return this.noCache(security);
     }
 }

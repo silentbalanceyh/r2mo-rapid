@@ -4,6 +4,8 @@ import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.jaas.session.UserAt;
 import org.springframework.security.core.AuthenticationException;
 
+import java.time.Duration;
+
 /**
  * @author lang : 2025-11-11
  */
@@ -23,7 +25,7 @@ public interface AuthService {
      *
      * @return 是否允许登录
      */
-    default String authorize(final LoginRequest loginRequest) {
+    default String authorize(final LoginRequest loginRequest, final Duration duration) {
         return null;
     }
 

@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author lang : 2025-11-10
  */
 @Data
-public class LoginCaptcha implements Serializable {
+public class CaptchaRequest implements Serializable {
 
     public static final String ID = "captchaId";
     public static final String CODE = "captcha";

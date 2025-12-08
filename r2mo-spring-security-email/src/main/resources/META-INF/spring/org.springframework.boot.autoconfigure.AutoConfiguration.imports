@@ -1,3 +1,4 @@
 io.r2mo.spring.security.email.EmailCommonController
 io.r2mo.spring.security.email.EmailCaptchaConfig
 io.r2mo.spring.security.email.EmailServiceImpl
+io.r2mo.spring.security.email.EmailServicePreAuth

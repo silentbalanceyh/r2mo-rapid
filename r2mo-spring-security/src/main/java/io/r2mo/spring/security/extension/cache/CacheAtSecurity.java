@@ -1,6 +1,6 @@
 package io.r2mo.spring.security.extension.cache;
 
-import io.r2mo.jaas.enums.TypeLogin;
+import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserContext;
 import io.r2mo.typed.cc.CacheAt;
@@ -22,5 +22,5 @@ public interface CacheAtSecurity {
 
     CacheAt<String, UUID> ofRefresh();
 
-    CacheAt<String, String> ofAuthorize(TypeLogin type);
+    CacheAt<String, String> ofAuthorize(CaptchaArgs configuration);
 }

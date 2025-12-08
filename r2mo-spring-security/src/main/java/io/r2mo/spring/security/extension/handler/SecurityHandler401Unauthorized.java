@@ -1,5 +1,6 @@
 package io.r2mo.spring.security.extension.handler;
 
+import io.r2mo.spring.security.exception.BridgeAuthenticationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +20,10 @@ public class SecurityHandler401Unauthorized implements AuthenticationFailureHand
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response,
                                         final AuthenticationException authException) throws IOException, ServletException {
         // 直接返回 401 状态码
+        if (authException instanceof final BridgeAuthenticationException customFailure) {
+            SecurityFailure.handleFailure(request, response, customFailure.toFailure());
+            return;
+        }
         // 转换成统一的 WebException
         final Throwable cause = SecurityFailure.findExceptionAt(authException);
         SecurityFailure.handleFailure(request, response, cause);
