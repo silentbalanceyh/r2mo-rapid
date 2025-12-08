@@ -79,7 +79,10 @@ public class QrAnalyzerJoin implements QrAnalyzer<Condition> {
             return DSL.falseCondition();
         }
         final Kv<String, String> kv = this.ref.find().key();
-        return JooqHelper.transform(kv.key(), id, this::findColumn);
+        /*
+         * FIX-DBE:这里需要获取到value值而不是key,不然在后续流程无法做映射
+         */
+        return JooqHelper.transform(kv.value(), id, this::findColumn);
     }
 
     @Override
