@@ -29,6 +29,7 @@ public class EmailAccount extends BaseAccount {
         this.credential = credential;
     }
 
+    @SuppressWarnings("all")
     public EmailAccount signature(final String signature) {
         this.signature = signature;
         return this;

@@ -23,7 +23,7 @@ public class EmailClientImpl implements EmailClient {
     private ForTpl thymeleafTpl;
 
     @Autowired
-    private ConfigEmailServer serverConfig;
+    private EmailConfigServer serverConfig;
 
     private static final Cc<String, UniProvider> CC_PROVIDER = Cc.openThread();
 
@@ -35,7 +35,7 @@ public class EmailClientImpl implements EmailClient {
 
 
         // 2. 根据配置发送邮件
-        final UniProvider.Wait<ConfigEmailServer> wait = UniProvider.waitFor(EmailWaitSpring::new);
+        final UniProvider.Wait<EmailConfigServer> wait = UniProvider.waitFor(EmailWaitSpring::new);
         final UniAccount account = wait.account(params, this.serverConfig);
         final UniContext context = wait.context(params, this.serverConfig, true);
 

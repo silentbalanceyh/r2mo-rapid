@@ -95,6 +95,19 @@ public interface UniProvider {
          */
         UniContext context(JObject params, CONFIG config, boolean sendOr);
 
+        default UniContext context(final JObject params, final CONFIG config) {
+            return this.context(params, config, true);
+        }
+
+        /**
+         * 构造消息对象
+         *
+         * @param params 参数信息
+         * @param header 头部信息
+         * @param config 配置信息
+         *
+         * @return 消息对象
+         */
         UniMessage<String> message(JObject params, Map<String, Object> header,
                                    CONFIG config);
 

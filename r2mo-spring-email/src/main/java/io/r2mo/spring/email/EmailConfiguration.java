@@ -2,7 +2,7 @@ package io.r2mo.spring.email;
 
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.function.Fn;
-import io.r2mo.spring.email.exception._80320Exception404AccountMissing;
+import io.r2mo.spring.email.exception._80320Exception404Account;
 import io.r2mo.spring.email.exception._80321Exception404ServerConfig;
 import io.r2mo.xync.email.EmailDomain;
 import jakarta.annotation.PostConstruct;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class EmailConfiguration {
 
     @Autowired
-    private ConfigEmailServer configServer;
+    private EmailConfigServer configServer;
 
     @PostConstruct
     public void configured() {
@@ -23,7 +23,7 @@ public class EmailConfiguration {
         final String password = this.configServer.getPassword();
         // 账号检查
         Fn.jvmKo(StrUtil.isEmpty(username) || StrUtil.isEmpty(password),
-            _80320Exception404AccountMissing.class);
+            _80320Exception404Account.class);
 
         final EmailDomain stmpServer = this.configServer.getSmtp();
         // SMTP 服务检查

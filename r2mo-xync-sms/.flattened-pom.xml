@@ -43,6 +43,14 @@
       <url>https://central.sonatype.com</url>
     </snapshotRepository>
   </distributionManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.zerows</groupId>
+      <artifactId>r2mo-ams</artifactId>
+      <version>1.0.31</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
   <build>
     <plugins>
       <plugin>

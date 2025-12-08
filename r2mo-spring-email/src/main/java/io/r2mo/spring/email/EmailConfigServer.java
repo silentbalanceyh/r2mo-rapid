@@ -55,7 +55,7 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @SuppressWarnings("all")
-public class ConfigEmailServer implements Serializable, EnvironmentAware, InitializingBean {
+public class EmailConfigServer implements Serializable, EnvironmentAware, InitializingBean {
     // 1. 全局默认配置
     private String username;
     private String password;

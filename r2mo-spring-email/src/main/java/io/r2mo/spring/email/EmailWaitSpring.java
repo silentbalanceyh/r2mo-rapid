@@ -31,22 +31,21 @@ import java.util.UUID;
  * @author lang : 2025-12-07
  */
 @Slf4j
-public class EmailWaitSpring implements UniProvider.Wait<ConfigEmailServer> {
-    private static final String TIMEOUT = "timeout";
+public class EmailWaitSpring implements UniProvider.Wait<EmailConfigServer> {
     // 发送者账号跟着配置走
     private static final Cc<String, UniAccount> CC_ACCOUNT = Cc.open();
     // 邮箱设置上下文跟着配置走
     private static final Cc<String, UniContext> CC_CONTEXT = Cc.open();
 
     @Override
-    public UniAccount account(final JObject params, final ConfigEmailServer configEmailServer) {
-        final EmailCredential credential = configEmailServer.getCredential();
+    public UniAccount account(final JObject params, final EmailConfigServer emailConfigServer) {
+        final EmailCredential credential = emailConfigServer.getCredential();
         if (Objects.isNull(credential)) {
             return null;
         }
         return CC_ACCOUNT.pick(() -> {
             // 构造基础的 UniAccount
-            final EmailAccount account = new EmailAccount(configEmailServer.getCredential());
+            final EmailAccount account = new EmailAccount(emailConfigServer.getCredential());
             // 是否带有额外配置信息
             log.info("[ R2MO ] 构造邮件发送账号: {} / 签名：{}", account.getId(), account.signature());
 
@@ -68,7 +67,7 @@ public class EmailWaitSpring implements UniProvider.Wait<ConfigEmailServer> {
 
     @Override
     public UniMessage<String> message(final JObject params, final Map<String, Object> headers,
-                                      final ConfigEmailServer configEmailServer) {
+                                      final EmailConfigServer emailConfigServer) {
         // 消息标识
         String id = R2MO.valueT(params, "id");
         if (StrUtil.isEmpty(id)) {
@@ -88,16 +87,16 @@ public class EmailWaitSpring implements UniProvider.Wait<ConfigEmailServer> {
     }
 
     @Override
-    public UniContext context(final JObject params, final ConfigEmailServer configEmailServer,
+    public UniContext context(final JObject params, final EmailConfigServer emailConfigServer,
                               final boolean sendOr) {
         if (sendOr) {
-            final EmailDomain domainSender = configEmailServer.getSender();
+            final EmailDomain domainSender = emailConfigServer.getSender();
 
-            this.buildAccount(params, configEmailServer, domainSender);
+            this.buildAccount(params, emailConfigServer, domainSender);
 
             return this.buildContext(params, domainSender);
         } else {
-            final EmailDomain domainReceiver = configEmailServer.getReceiver();
+            final EmailDomain domainReceiver = emailConfigServer.getReceiver();
             return this.buildContext(params, domainReceiver);
         }
     }
@@ -114,7 +113,7 @@ public class EmailWaitSpring implements UniProvider.Wait<ConfigEmailServer> {
      * @param configServer 全局配置
      * @param domain       配置域
      */
-    private void buildAccount(final JObject params, final ConfigEmailServer configServer,
+    private void buildAccount(final JObject params, final EmailConfigServer configServer,
                               final EmailDomain domain) {
         String username = R2MO.valueT(params, "username");
         if (StrUtil.isEmpty(username)) {
@@ -134,21 +133,19 @@ public class EmailWaitSpring implements UniProvider.Wait<ConfigEmailServer> {
         Objects.requireNonNull(domain);
         return CC_CONTEXT.pick(() -> {
             // 构造上下文 UniContext
-            final EmailContext context = new EmailContext();
-            // 上下文核心构造
-            context.setHost(domain.getHost());
-            context.setPort(domain.getPort());
-            context.setSsl(domain.isSsl());
-            context.setProtocol(domain.getProtocol().name());
+            final EmailContext context = new EmailContext()
+                .setHost(domain.getHost())
+                .setPort(domain.getPort())
+                .setSsl(domain.isSsl())
+                .setProtocol(domain.getProtocol().name());
             // timeout 特殊属性
-            int timeout = R2MO.valueT(params, TIMEOUT, -1);
+            int timeout = R2MO.valueT(params, UniContext.KEY_TIMEOUT, -1);
             // Fix Issue: Cannot invoke "java.lang.Integer.intValue()" because the return value of "getExtension(String)" is null
-            if (timeout <= 0 && domain.hasExtension(TIMEOUT)) {
-                timeout = domain.getExtension(TIMEOUT);
+            if (timeout <= 0 && domain.hasExtension(UniContext.KEY_TIMEOUT)) {
+                timeout = domain.getExtension(UniContext.KEY_TIMEOUT);
             }
-            context.setTimeout(timeout);
 
-            return context;
+            return context.setTimeout(timeout);
         }, domain.getProtocol() + "@" + domain.hashCode());
     }
 }
