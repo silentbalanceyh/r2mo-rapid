@@ -18,7 +18,7 @@ public class EmailServicePreAuth implements ServicePreAuth {
 
     @Override
     public Kv<String, String> authorize(final String identifier) {
-        // 1. 生成验证码
+        // 生成验证码
         final int length = this.config.getLength();
         final String captcha = RandomUtil.randomNumbers(length);
         return Kv.create(identifier, captcha);

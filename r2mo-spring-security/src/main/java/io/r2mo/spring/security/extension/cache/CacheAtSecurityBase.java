@@ -3,7 +3,6 @@ package io.r2mo.spring.security.extension.cache;
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.jaas.auth.CaptchaArgs;
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserContext;
@@ -12,6 +11,7 @@ import io.r2mo.spring.security.config.ConfigSecurityJwt;
 import io.r2mo.spring.security.config.ConfigSecurityLimit;
 import io.r2mo.typed.cc.CacheAt;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.exception.web._501NotSupportException;
 
 import java.time.Duration;

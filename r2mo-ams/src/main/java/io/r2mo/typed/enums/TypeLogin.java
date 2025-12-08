@@ -1,4 +1,4 @@
-package io.r2mo.jaas.enums;
+package io.r2mo.typed.enums;
 
 /**
  * 登录类型的枚举，不同于ID类型

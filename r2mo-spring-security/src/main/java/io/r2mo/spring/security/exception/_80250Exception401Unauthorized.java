@@ -1,5 +1,6 @@
 package io.r2mo.spring.security.exception;
 
+import io.r2mo.spring.common.exception.SpringAuthenticationException;
 import io.r2mo.spring.common.exception.SpringException;
 
 /**
@@ -10,7 +11,7 @@ public class _80250Exception401Unauthorized extends SpringException {
         super(ERR._80250, identifier, details);
     }
 
-    public static class Unauthorized extends BridgeAuthenticationException {
+    public static class Unauthorized extends SpringAuthenticationException {
 
         public Unauthorized(final String msg, final String identifier) {
             super(msg, identifier, null);

@@ -4,12 +4,12 @@ import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.jaas.element.MSEmployee;
 import io.r2mo.jaas.element.MSUser;
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserSession;
 import io.r2mo.spring.security.exception._80204Exception401PasswordNotMatch;
 import io.r2mo.spring.security.exception._80244Exception401LoginTypeWrong;
 import io.r2mo.spring.security.exception._80250Exception401Unauthorized;
+import io.r2mo.typed.enums.TypeLogin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -46,6 +46,8 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
         return userAt;
     }
 
+    // --------------- 提供默认方法让子类重写
+
     /**
      * 常用的密码检查
      *
@@ -63,9 +65,13 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
         return Objects.requireNonNull(this.encoder).matches(credential, user.getPassword());
     }
 
+    public TypeLogin loginType() {
+        return TypeLogin.PASSWORD;
+    }
+    // --------------- 子类必须实现的方法
+
     public abstract UserAt findUser(String id);
 
-    public abstract TypeLogin loginType();
 
     protected UserAt ofUserAt(final MSUser user) {
         return UserSession.of().userAt(user);

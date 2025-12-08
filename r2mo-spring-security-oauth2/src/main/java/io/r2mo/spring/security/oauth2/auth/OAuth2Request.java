@@ -1,8 +1,8 @@
 package io.r2mo.spring.security.oauth2.auth;
 
 import io.r2mo.jaas.auth.LoginRequest;
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.typed.domain.BaseScope;
+import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

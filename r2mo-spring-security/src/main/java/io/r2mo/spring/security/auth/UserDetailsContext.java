@@ -1,6 +1,6 @@
 package io.r2mo.spring.security.auth;
 
-import io.r2mo.jaas.enums.TypeLogin;
+import io.r2mo.typed.enums.TypeLogin;
 
 /**
  * @author lang : 2025-11-12

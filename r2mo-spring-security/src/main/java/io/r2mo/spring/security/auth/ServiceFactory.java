@@ -1,8 +1,8 @@
 package io.r2mo.spring.security.auth;
 
 import cn.hutool.extra.spring.SpringUtil;
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.exception.web._404NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;

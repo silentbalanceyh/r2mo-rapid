@@ -1,7 +1,7 @@
 package io.r2mo.jaas.auth;
 
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.typed.domain.extension.AbstractScope;
+import io.r2mo.typed.enums.TypeLogin;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

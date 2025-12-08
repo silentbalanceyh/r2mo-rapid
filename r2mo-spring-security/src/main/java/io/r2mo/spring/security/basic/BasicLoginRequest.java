@@ -2,10 +2,10 @@ package io.r2mo.spring.security.basic;
 
 import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.auth.LoginRequest;
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.spring.security.exception._80240Exception400UsernameRequired;
 import io.r2mo.spring.security.exception._80241Exception400PasswordRequired;
 import io.r2mo.typed.domain.BaseScope;
+import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,6 +22,7 @@ import java.util.Objects;
  *         "captchaId": "必须内容（多线程模式下必须）"
  *     }
  * </pre>
+ * 账号模式下 username 可能会导致误输入，所以必须包含 captchaId 来区分验证码是否匹配，手机和邮箱格式下不会出现此问题
  *
  * @author lang : 2025-11-11
  */

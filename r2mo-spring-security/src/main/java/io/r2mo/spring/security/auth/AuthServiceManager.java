@@ -2,11 +2,11 @@ package io.r2mo.spring.security.auth;
 
 import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.auth.LoginRequest;
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.spring.security.exception._80243Exception401UserNotFound;
 import io.r2mo.typed.common.Kv;
+import io.r2mo.typed.enums.TypeLogin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;

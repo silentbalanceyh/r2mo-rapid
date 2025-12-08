@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.auth;
 
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.jaas.session.UserAt;
+import io.r2mo.typed.enums.TypeLogin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

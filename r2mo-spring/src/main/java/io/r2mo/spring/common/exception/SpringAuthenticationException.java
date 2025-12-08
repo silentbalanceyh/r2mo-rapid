@@ -1,6 +1,6 @@
-package io.r2mo.spring.security.exception;
+package io.r2mo.spring.common.exception;
 
-import io.r2mo.jaas.enums.TypeLogin;
+import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.exception.WebException;
 import org.springframework.security.core.AuthenticationException;
 
@@ -12,12 +12,12 @@ import org.springframework.security.core.AuthenticationException;
  *
  * @author lang : 2025-12-08
  */
-public abstract class BridgeAuthenticationException extends AuthenticationException {
+public abstract class SpringAuthenticationException extends AuthenticationException {
 
     protected final String identifier;
     protected final TypeLogin type;
 
-    public BridgeAuthenticationException(final String msg, final String identifier, final TypeLogin type) {
+    public SpringAuthenticationException(final String msg, final String identifier, final TypeLogin type) {
         super(msg);
         this.identifier = identifier;
         this.type = type;

@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.config;
 
 import io.r2mo.jaas.auth.CaptchaArgs;
-import io.r2mo.jaas.enums.TypeLogin;
+import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.exception.web._401UnauthorizedException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

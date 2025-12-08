@@ -3,17 +3,18 @@ package io.r2mo.spring.security.email;
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.function.Fn;
+import io.r2mo.jaas.session.UserAt;
 import io.r2mo.spring.security.auth.AuthService;
+import io.r2mo.spring.security.auth.AuthTokenResponse;
 import io.r2mo.spring.security.email.exception._80301Exception400EmailRequired;
 import io.r2mo.spring.security.email.exception._80302Exception400EmailFormat;
 import io.r2mo.spring.security.email.exception._80303Exception500SendingFailure;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 核心接口
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *
  * @author lang : 2025-12-05
  */
-@Controller
+@RestController
 @Slf4j
 public class EmailCommonController {
 
@@ -46,7 +47,6 @@ public class EmailCommonController {
      * @return 发送结果
      */
     @PostMapping("/auth/email-send")
-    @ResponseBody
     public Boolean send(@RequestBody final JObject params) {
         final String email = R2MO.valueT(params, "email");
         // 必须输入邮箱
@@ -63,7 +63,10 @@ public class EmailCommonController {
 
     /**
      * <pre>
-     *
+     *    {
+     *        "email": "???",
+     *        "captcha": "1234"
+     *    }
      * </pre>
      *
      * @param params 参数信息
@@ -71,8 +74,9 @@ public class EmailCommonController {
      * @return 发送结果
      */
     @PostMapping("/auth/email-login")
-    public JObject login(final JObject params) {
-
-        return null;
+    public AuthTokenResponse login(final JObject params) {
+        final EmailLoginRequest request = new EmailLoginRequest(params);
+        final UserAt userAt = this.authService.login(request);
+        return new AuthTokenResponse(userAt);
     }
 }
