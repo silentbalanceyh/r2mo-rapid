@@ -1,4 +1,4 @@
-package io.r2mo.xync.wechat;
+package io.r2mo.xync.weco;
 
 import io.r2mo.base.exchange.UniCredential;
 import lombok.Data;
@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true, chain = true)
 @EqualsAndHashCode(callSuper = false)
-public class WechatCredential implements UniCredential {
+public class WeChatCredential implements UniCredential {
     /**
      * 微信后台的 AppID
      */

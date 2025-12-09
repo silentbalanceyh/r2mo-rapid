@@ -1,0 +1,33 @@
+package io.r2mo.spring.weco;
+
+import io.r2mo.typed.json.JObject;
+
+/**
+ * 企业微信 (WeCom) 业务客户端
+ * <p>
+ * 定义标准化的企业微信 OAuth2 交互行为。
+ * </p>
+ *
+ * @author lang : 2025-12-09
+ */
+public interface WeComClient {
+
+    /**
+     * 获取企业微信扫码登录 URL
+     *
+     * @param redirectUri 回调地址 (需在企微应用后台配置可信域名)
+     * @param state       防伪随机串
+     *
+     * @return 包含 url 的响应对象
+     */
+    JObject authUrl(String redirectUri, String state);
+
+    /**
+     * 执行登录：使用 Code 换取企业成员信息
+     *
+     * @param code 企微回调的临时授权码
+     *
+     * @return 包含 UserID (企业成员ID) 或 OpenID (非企业成员) 的响应对象
+     */
+    JObject login(String code);
+}

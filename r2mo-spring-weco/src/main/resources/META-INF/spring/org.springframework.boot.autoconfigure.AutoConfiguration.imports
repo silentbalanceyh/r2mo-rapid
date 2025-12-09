@@ -1,0 +1,4 @@
+io.r2mo.spring.weco.WeCoConfig
+io.r2mo.spring.weco.WeCoConfiguration
+io.r2mo.spring.weco.WeChatClientImpl
+io.r2mo.spring.weco.WeComClientImpl
