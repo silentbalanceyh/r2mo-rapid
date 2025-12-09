@@ -46,8 +46,26 @@
   <dependencies>
     <dependency>
       <groupId>io.zerows</groupId>
+      <artifactId>r2mo-spring</artifactId>
+      <version>1.0.31</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.zerows</groupId>
       <artifactId>r2mo-spring-security</artifactId>
       <version>1.0.31</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-ldap</artifactId>
+      <version>3.4.11</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-ldap</artifactId>
+      <version>6.4.12</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
