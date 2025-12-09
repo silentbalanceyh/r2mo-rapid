@@ -43,6 +43,26 @@
       <url>https://central.sonatype.com</url>
     </snapshotRepository>
   </distributionManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.zerows</groupId>
+      <artifactId>r2mo-ams</artifactId>
+      <version>1.0.31</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.binarywang</groupId>
+      <artifactId>weixin-java-cp</artifactId>
+      <version>4.7.9-20251205.162836</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.binarywang</groupId>
+      <artifactId>weixin-java-mp</artifactId>
+      <version>4.7.9-20251205.162836</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
   <build>
     <plugins>
       <plugin>
