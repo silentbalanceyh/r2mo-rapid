@@ -7,11 +7,17 @@ package io.r2mo.typed.enums;
  *     - 验证码（图片验证码归入这一类） / 验证链接
  *     BuiltIn 流程：
  *     - PASSWORD
+ *     ID_前缀一定会有一个 {@link TypeID} 和它对应，表示 ID 的类型
  * </pre>
  *
  * @author lang : 2025-11-13
  */
 public enum TypeLogin {
+    ID_WECHAT,          // 微信号
+    ID_WECOM,           // 企微
+    /**
+     * 下边枚举值和 {@link TypeID} 无关，主要是从技术上区分不同的登录方式而已
+     */
     // -- Pre
     CAPTCHA,         // 验证码
     LINK,            // 验证链接

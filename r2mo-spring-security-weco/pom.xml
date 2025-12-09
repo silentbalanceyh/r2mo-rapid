@@ -11,5 +11,19 @@
 
     <artifactId>r2mo-spring-security-weco</artifactId>
     <name>R2MO::Spring::Security::WeChat / WeCom</name>
-
+    <dependencies>
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-spring-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-spring-weco</artifactId>
+            <version>${r2mo.version}</version>
+        </dependency>
+    </dependencies>
 </project>

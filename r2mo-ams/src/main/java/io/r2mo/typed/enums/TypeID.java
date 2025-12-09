@@ -1,10 +1,13 @@
-package io.r2mo.jaas.enums;
+package io.r2mo.typed.enums;
 
 /**
  * @author lang : 2025-11-10
  */
 public enum TypeID {
+    // 已完成的部分
     WECHAT,     // 微信
+    WECOM,      // 企微
+    // ----------- 待开发
     ALIPAY,     // 支付宝
     TAOBAO,     // 淘宝
     WEIBO,      // 微博

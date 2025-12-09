@@ -9,7 +9,7 @@ import io.r2mo.spring.security.auth.AuthService;
 import io.r2mo.spring.security.auth.AuthTokenResponse;
 import io.r2mo.spring.security.sms.exception._80381Exception400MobileRequired;
 import io.r2mo.spring.security.sms.exception._80382Exception400MobileFormat;
-import io.r2mo.spring.security.sms.exception._80383Exception500SendingFailure;
+import io.r2mo.spring.security.sms.exception._80383Exception500MobileSending;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ public class SmsCommonController {
         // 构造 to 清单
         final boolean sent = this.service.sendCaptcha(mobile);
         // 发送过程失败
-        Fn.jvmKo(!sent, _80383Exception500SendingFailure.class, mobile);
+        Fn.jvmKo(!sent, _80383Exception500MobileSending.class, mobile);
         // 验证处理过程
         return true;
     }

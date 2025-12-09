@@ -1,6 +1,6 @@
 package io.r2mo.jaas.auth;
 
-import io.r2mo.jaas.enums.TypeID;
+import io.r2mo.typed.enums.TypeID;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

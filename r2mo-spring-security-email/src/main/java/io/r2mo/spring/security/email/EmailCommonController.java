@@ -9,7 +9,7 @@ import io.r2mo.spring.security.auth.AuthService;
 import io.r2mo.spring.security.auth.AuthTokenResponse;
 import io.r2mo.spring.security.email.exception._80301Exception400EmailRequired;
 import io.r2mo.spring.security.email.exception._80302Exception400EmailFormat;
-import io.r2mo.spring.security.email.exception._80303Exception500SendingFailure;
+import io.r2mo.spring.security.email.exception._80303Exception500EmailSending;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ public class EmailCommonController {
         // 构造 to 清单
         final boolean sent = this.service.sendCaptcha(email);
         // 发送过程失败
-        Fn.jvmKo(!sent, _80303Exception500SendingFailure.class, email);
+        Fn.jvmKo(!sent, _80303Exception500EmailSending.class, email);
         // 验证码处理过程
         return true;
     }

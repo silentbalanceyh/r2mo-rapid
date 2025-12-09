@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.ldap;
 
 import io.r2mo.function.Fn;
-import io.r2mo.spring.security.ldap.exception._80402Exception401AuthFailure;
+import io.r2mo.spring.security.ldap.exception._80402Exception401LdapAuthFailure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -41,10 +41,10 @@ public class LdapServiceImpl implements LdapService {
             authenticated = this.ldapTemplate.authenticate(query.base(), query.filter().toString(), password);
         } catch (final Exception ex) {
             log.error(ex.getMessage(), ex);
-            throw new _80402Exception401AuthFailure(account);
+            throw new _80402Exception401LdapAuthFailure(account);
         }
 
-        Fn.jvmKo(!authenticated, _80402Exception401AuthFailure.class, account);
+        Fn.jvmKo(!authenticated, _80402Exception401LdapAuthFailure.class, account);
 
 
         // 4. 提取真实的 email
