@@ -30,4 +30,20 @@ public interface WeChatClient {
      * @return 包含 OpenID、Nickname 等用户信息的响应对象
      */
     JObject login(String code);
+
+    /**
+     * 获取扫码登录二维码
+     *
+     * @return 包含 qrUrl, uuid 等信息的响应对象
+     */
+    JObject qrCode();
+
+    /**
+     * 检查扫码状态
+     *
+     * @param uuid 扫码会话 ID
+     *
+     * @return 包含 status (WAITING/SUCCESS/EXPIRED) 和 openId (如果成功) 的响应对象
+     */
+    JObject checkStatus(String uuid);
 }

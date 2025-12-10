@@ -58,7 +58,14 @@ public class WeChatServiceImpl implements WeChatService {
 
     @Override
     public JObject getQrCode() {
-        return null;
+        this.checkEnabled();
+        return this.weChatClient.qrCode();
+    }
+
+    @Override
+    public JObject checkStatus(final String uuid) {
+        this.checkEnabled();
+        return this.weChatClient.checkStatus(uuid);
     }
 
     private void checkEnabled() {

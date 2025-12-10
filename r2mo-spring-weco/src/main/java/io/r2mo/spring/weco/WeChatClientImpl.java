@@ -58,6 +58,32 @@ public class WeChatClientImpl implements WeChatClient {
         return this.doExchange(params, headers);
     }
 
+    @Override
+    public JObject qrCode() {
+        final JObject params = SPI.J();
+
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoConstant.APP_AUTH_QR,
+            "expireSeconds", String.valueOf(this.config.getWechat().getExpireSeconds())
+        );
+
+        return this.doExchange(params, headers);
+    }
+
+    @Override
+    public JObject checkStatus(final String uuid) {
+        // Payload 约定为 UUID (对应 WeCoActionStatus 的 request.payload())
+        // WeCoBuilder 会将 "code" 或 "content" 作为 Payload
+        final JObject params = SPI.J()
+            .put("code", uuid);
+
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoConstant.APP_STATUS
+        );
+
+        return this.doExchange(params, headers);
+    }
+
     /**
      * 核心交换逻辑
      */

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,4 +59,24 @@ public class WeChatCommonController {
     // 模式二：扫码登录 (PC端/非微信环境使用)
     // ==========================================
 
+    /**
+     * 获取微信扫码登录二维码
+     * <p>GET /auth/wechat-qrcode</p>
+     */
+    @GetMapping("/auth/wechat-qrcode")
+    public JObject getQrCode() {
+        return this.weChatService.getQrCode();
+    }
+
+    /**
+     * 检查扫码状态
+     * <p>POST /auth/wechat-status</p>
+     *
+     * @param params 请求参数 { "uuid": "..." }
+     */
+    @PostMapping("/auth/wechat-status")
+    public JObject checkStatus(@RequestBody final JObject params) {
+        final String uuid = params.getString("uuid");
+        return this.weChatService.checkStatus(uuid);
+    }
 }

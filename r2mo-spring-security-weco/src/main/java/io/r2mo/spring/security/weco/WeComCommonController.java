@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,5 +59,28 @@ public class WeComCommonController {
         final UserAt userAt = this.authService.login(requestValid);
 
         return new AuthTokenResponse(userAt);
+    }
+
+    /**
+     * 获取企业微信扫码登录二维码 (SSO URL)
+     * <p>GET /auth/wecom-qrcode</p>
+     *
+     * @param redirectUri   回调地址 (必需)
+     */
+    @GetMapping("/auth/wecom-qrcode")
+    public JObject getQrCode(@RequestParam final String redirectUri) {
+        return this.weComService.getQrCode(redirectUri);
+    }
+
+    /**
+     * 检查扫码状态
+     * <p>POST /auth/wecom-status</p>
+     *
+     * @param params 请求参数 { "uuid": "..." }
+     */
+    @PostMapping("/auth/wecom-status")
+    public JObject checkStatus(@RequestBody final JObject params) {
+        final String uuid = params.getString("uuid");
+        return this.weComService.checkStatus(uuid);
     }
 }

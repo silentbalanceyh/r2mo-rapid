@@ -47,4 +47,13 @@ public interface WeChatService {
      * @return 登录二维码获取
      */
     JObject getQrCode();
+
+    /**
+     * 检查扫码状态
+     *
+     * @param uuid 扫码会话 ID
+     *
+     * @return 包含 status 的结果对象
+     */
+    JObject checkStatus(String uuid);
 }

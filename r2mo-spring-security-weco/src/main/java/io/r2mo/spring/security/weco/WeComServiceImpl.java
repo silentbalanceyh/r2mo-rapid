@@ -61,6 +61,18 @@ public class WeComServiceImpl implements WeComService {
         return request;
     }
 
+    @Override
+    public JObject getQrCode(final String redirectUri) {
+        this.checkEnabled();
+        return this.weComClient.qrCode(redirectUri);
+    }
+
+    @Override
+    public JObject checkStatus(final String uuid) {
+        this.checkEnabled();
+        return this.weComClient.checkStatus(uuid);
+    }
+
     private void checkEnabled() {
         // 参照 WeChat 实现，此处配置缺失抛出 401 AuthFailure 类型异常
         Fn.jvmKo(Objects.isNull(this.config.getWecom()), _80553Exception401WeComAuthFailure.class);

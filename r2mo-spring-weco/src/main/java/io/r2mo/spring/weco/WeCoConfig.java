@@ -74,6 +74,7 @@ public class WeCoConfig implements Serializable {
         private String secret;
         private String token;
         private String aesKey;
+        private Integer expireSeconds = 300;
 
         /**
          * 独立代理 (优先级高于全局 proxy)
@@ -97,6 +98,7 @@ public class WeCoConfig implements Serializable {
         private String corpId;
         private String secret;
         private Integer agentId;
+        private Integer expireSeconds = 300;
 
         /**
          * 独立代理 (优先级高于全局 proxy)

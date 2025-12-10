@@ -30,4 +30,22 @@ public interface WeComClient {
      * @return 包含 UserID (企业成员ID) 或 OpenID (非企业成员) 的响应对象
      */
     JObject login(String code);
+
+    /**
+     * 获取扫码登录二维码 (SSO URL)
+     *
+     * @param redirectUri   回调地址 (必需)
+     *
+     * @return 包含 qrUrl, uuid 等信息的响应对象
+     */
+    JObject qrCode(String redirectUri);
+
+    /**
+     * 检查扫码状态
+     *
+     * @param uuid 扫码会话 ID
+     *
+     * @return 包含 status (WAITING/SUCCESS/EXPIRED) 和 userId (如果成功) 的响应对象
+     */
+    JObject checkStatus(String uuid);
 }

@@ -53,6 +53,32 @@ public class WeComClientImpl implements WeComClient {
         return this.doExchange(params, headers);
     }
 
+    @Override
+    public JObject qrCode(final String redirectUri) {
+        final JObject params = SPI.J();
+
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoConstant.APP_AUTH_QR,
+            "expireSeconds", String.valueOf(this.config.getWecom().getExpireSeconds()),
+            WeCoConstant.HEADER_REDIRECT_URI, redirectUri
+        );
+
+        return this.doExchange(params, headers);
+    }
+
+    @Override
+    public JObject checkStatus(final String uuid) {
+        // Payload 约定为 UUID
+        final JObject params = SPI.J()
+            .put("code", uuid);
+
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoConstant.APP_STATUS
+        );
+
+        return this.doExchange(params, headers);
+    }
+
     private JObject doExchange(final JObject params, final Map<String, Object> headers) {
         // 1. 获取企微转换器
         final UniProvider.Wait<WeCoConfig.WeCom> wait = UniProvider.waitFor(WeComWaitSpring::new);

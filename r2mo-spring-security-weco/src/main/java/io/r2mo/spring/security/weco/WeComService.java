@@ -32,4 +32,22 @@ public interface WeComService {
      * @return 填充了 UserID 的完整请求对象
      */
     WeComLoginRequest validate(WeComLoginRequest request);
+
+    /**
+     * 获取登录二维码 (SSO URL)
+     *
+     * @param redirectUri   回调地址 (必需)
+     *
+     * @return 登录二维码获取
+     */
+    JObject getQrCode(String redirectUri);
+
+    /**
+     * 检查扫码状态
+     *
+     * @param uuid 扫码会话 ID
+     *
+     * @return 包含 status 的结果对象
+     */
+    JObject checkStatus(String uuid);
 }
