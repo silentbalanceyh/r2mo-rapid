@@ -1,6 +1,6 @@
 package io.r2mo.spring.security.weco;
 
-import io.r2mo.spi.SPI;
+import io.r2mo.base.util.R2MO;
 import io.r2mo.spring.security.auth.AuthService;
 import io.r2mo.spring.security.auth.AuthTokenResponse;
 import io.r2mo.typed.exception.web._501NotSupportException;
@@ -63,12 +63,10 @@ public class WeChatCommonController {
     /**
      * 获取微信扫码登录二维码
      * <p>GET /auth/wechat-qrcode</p>
-     *
-     * @param expireSeconds 二维码有效时间（秒），默认300秒
      */
     @GetMapping("/auth/wechat-qrcode")
-    public JObject getQrCode(@RequestParam(defaultValue = "300") final Integer expireSeconds) {
-        throw new _501NotSupportException("[ R2MO ] /auth/wechat-qrcode 等待开发！");
+    public JObject getQrCode() {
+        return this.weChatService.getQrCode();
     }
 
     /**
@@ -79,28 +77,7 @@ public class WeChatCommonController {
      */
     @PostMapping("/auth/wechat-status")
     public JObject checkStatus(@RequestBody final JObject params) {
-        throw new _501NotSupportException("[ R2MO ] /auth/wechat-status 等待开发！");
-    }
-
-    /**
-     * 微信服务器配置验证接口 (GET 请求)
-     */
-    @GetMapping("/auth/wechat-callback")
-    public String callback(
-        @RequestParam(name = "signature", required = false) final String signature,
-        @RequestParam(name = "timestamp", required = false) final String timestamp,
-        @RequestParam(name = "nonce", required = false) final String nonce,
-        @RequestParam(name = "echostr", required = false) final String echostr) {
-
-        final JObject params = SPI.J();
-        params.put("signature", signature);
-        params.put("timestamp", timestamp);
-        params.put("nonce", nonce);
-        final boolean checked = this.weChatService.checkEcho(params);
-        if (checked) {
-            log.info("[ R2MO ] 签名检查通过：{}", echostr);
-            return echostr;
-        }
-        return "";
+        final String uuid = R2MO.valueT(params, "uuid");
+        return this.weChatService.checkStatus(uuid);
     }
 }

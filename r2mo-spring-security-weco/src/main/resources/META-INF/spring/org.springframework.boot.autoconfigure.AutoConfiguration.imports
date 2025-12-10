@@ -1,4 +1,5 @@
 io.r2mo.spring.security.weco.WeChatCommonController
+io.r2mo.spring.security.weco.WeChatCallbackController
 io.r2mo.spring.security.weco.WeChatServiceImpl
 io.r2mo.spring.security.weco.WeComCommonController
 io.r2mo.spring.security.weco.WeComServiceImpl

@@ -51,13 +51,5 @@ public interface WeCoSession {
      *
      * @return 存储的状态 (可能是状态常量，也可能是 OpenID)
      */
-    String get(String uuid);
-
-    /**
-     * 移除指定的会话。
-     * 扫码登录成功后，可调用此方法清理临时状态。
-     *
-     * @param uuid 会话唯一标识
-     */
-    void remove(String uuid);
+    String get(String uuid, Duration expireSeconds);
 }

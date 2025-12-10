@@ -80,7 +80,8 @@ public class WeChatClientImpl implements WeChatClient {
             .put("code", uuid);
 
         final Map<String, Object> headers = Map.of(
-            "action", WeCoActionType.APP_STATUS.name()
+            "action", WeCoActionType.APP_STATUS.name(),
+            "expireSeconds", String.valueOf(this.config.getWechat().getExpireSeconds())
         );
 
         return this.doExchange(params, headers);

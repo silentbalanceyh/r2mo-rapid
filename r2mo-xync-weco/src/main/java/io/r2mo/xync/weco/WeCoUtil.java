@@ -12,7 +12,6 @@ import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author lang : 2025-12-10
@@ -74,8 +73,7 @@ public class WeCoUtil {
                                   final int expireSeconds) {
         // 2. 存储初始状态到 SPI
         final String sessionKey = WeCoSession.keyOf(uuid);
-        // 缓存时间比二维码有效期稍长 (多加60秒的缓冲)
-        final Duration storeDuration = Duration.ofSeconds(expireSeconds).plusSeconds(60);
+        final Duration storeDuration = Duration.ofSeconds(expireSeconds);
 
         // 调用通过 SPI 机制获取的 WeCoSession 实例
         WeCoSession.of().save(
@@ -95,12 +93,20 @@ public class WeCoUtil {
         return response;
     }
 
-    public static JObject replyStatus(final String uuid) {
-        Objects.requireNonNull(uuid);
+    public static JObject replyStatus(final UniMessage<String> request) {
+        // 读取 expireSeconds
+        final int expireSeconds = inputExpired(request);
+        // Payload 约定为 UUID 字符串
+        final String uuid = request.payload();
+
+        if (uuid == null) {
+            throw new _400BadRequestException("[ R2MO ] 缺少 Payload 参数: UUID");
+        }
 
         // 1. 构建缓存 Key 并查询 SPI 存储
         final String sessionKey = WeCoSession.keyOf(uuid);
-        final String status = WeCoSession.of().get(sessionKey);
+        final Duration storeDuration = Duration.ofSeconds(expireSeconds);
+        final String status = WeCoSession.of().get(sessionKey, storeDuration);
 
         final JObject result = SPI.J();
 

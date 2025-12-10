@@ -2,10 +2,8 @@ package io.r2mo.xync.weco.wechat;
 
 import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniResponse;
-import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.xync.weco.WeCoAction;
-import io.r2mo.xync.weco.WeCoSession;
 import io.r2mo.xync.weco.WeCoUtil;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
@@ -19,10 +17,6 @@ import java.util.UUID;
  * @author lang : 2025-12-10
  */
 class WeChatActionQrCode extends WeChatAction implements WeCoAction<Void> {
-
-    // 【关键变更】通过 SPI 机制查找 WeCoSession 的单实例实现
-    private final WeCoSession weCoSession = SPI.findOneOf(WeCoSession.class);
-
     /**
      * 构造函数：仅注入 WxMpService（WeCoSession 通过 SPI 自动获取）
      */

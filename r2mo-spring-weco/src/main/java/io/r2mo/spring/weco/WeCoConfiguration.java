@@ -41,10 +41,13 @@ public class WeCoConfiguration {
         }
 
         // AppID 检查
-        Fn.jvmKo(StrUtil.isBlank(wechat.getAppId()), _80501Exception500WeChatConfig.class, "app-id");
+        Fn.jvmKo(StrUtil.isEmpty(wechat.getAppId()), _80501Exception500WeChatConfig.class, "app-id");
 
         // Secret 检查
-        Fn.jvmKo(StrUtil.isBlank(wechat.getSecret()), _80501Exception500WeChatConfig.class, "secret");
+        Fn.jvmKo(StrUtil.isEmpty(wechat.getSecret()), _80501Exception500WeChatConfig.class, "secret");
+
+        // Token 检查
+        Fn.jvmKo(StrUtil.isEmpty(wechat.getToken()), _80501Exception500WeChatConfig.class, "token");
 
         log.info("[ R2MO ] ----> 已启用 WeChat (公众号) 服务模块！[AppID: {}]", wechat.getAppId());
         return true;

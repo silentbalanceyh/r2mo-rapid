@@ -2,7 +2,6 @@ package io.r2mo.xync.weco.wecom;
 
 import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniResponse;
-import io.r2mo.typed.exception.web._400BadRequestException;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.xync.weco.WeCoAction;
 import io.r2mo.xync.weco.WeCoUtil;
@@ -45,14 +44,8 @@ class WeComActionStatus extends WeComAction implements WeCoAction<String> {
      */
     @Override
     public UniResponse execute(final UniMessage<String> request) {
-        // Payload 约定为 UUID 字符串
-        final String uuid = request.payload();
 
-        if (uuid == null) {
-            throw new _400BadRequestException("[ R2MO ] 缺少 Payload 参数: UUID");
-        }
-
-        final JObject result = WeCoUtil.replyStatus(uuid);
+        final JObject result = WeCoUtil.replyStatus(request);
 
         return UniResponse.success(result);
     }
