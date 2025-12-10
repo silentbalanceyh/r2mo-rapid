@@ -45,7 +45,7 @@ public class WeChatServiceImpl implements WeChatService {
 
         // 2. 提取关键信息 (OpenID)
         final String openId = result.getString("openid");
-        Fn.jvmKo(Objects.isNull(openId), _80502Exception501WeChatDisabled.class);
+        Fn.jvmKo(Objects.isNull(openId), _80503Exception401WeChatAuthFailure.class);
 
         // 3. 填充身份标识
         // 这里会自动联动设置父类的 id = openId
@@ -68,7 +68,13 @@ public class WeChatServiceImpl implements WeChatService {
         return this.weChatClient.checkStatus(uuid);
     }
 
+    @Override
+    public boolean checkEcho(final JObject params) {
+        this.checkEnabled();
+        return this.weChatClient.checkEcho(params);
+    }
+
     private void checkEnabled() {
-        Fn.jvmKo(Objects.isNull(this.config.getWechat()), _80503Exception401WeChatAuthFailure.class);
+        Fn.jvmKo(Objects.isNull(this.config.getWechat()), _80502Exception501WeChatDisabled.class);
     }
 }

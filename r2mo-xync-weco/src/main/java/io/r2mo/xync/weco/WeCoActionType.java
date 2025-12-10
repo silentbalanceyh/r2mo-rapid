@@ -42,11 +42,13 @@ public enum WeCoActionType {
      * 动作：检查扫码状态 (PC 端轮询用)
      * <br>实现：检查缓存中 UUID 是否已关联 OpenID。
      */
-    APP_STATUS("检查扫码状态");
+    APP_STATUS("检查扫码状态"),
 
     // ==========================================
     // 枚举属性定义
     // ==========================================
+
+    APP_PRE("配置接口检查");
 
     @Getter
     private final String description;

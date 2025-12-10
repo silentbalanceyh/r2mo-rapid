@@ -5,6 +5,7 @@ import io.r2mo.base.exchange.UniContext;
 import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniProvider;
 import io.r2mo.base.exchange.UniResponse;
+import io.r2mo.base.util.R2MO;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
@@ -83,6 +84,15 @@ public class WeChatClientImpl implements WeChatClient {
         );
 
         return this.doExchange(params, headers);
+    }
+
+    @Override
+    public boolean checkEcho(final JObject params) {
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoActionType.APP_PRE.name()
+        );
+        final JObject checked = this.doExchange(params, headers);
+        return R2MO.valueT(checked, "success");
     }
 
     /**

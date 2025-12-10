@@ -46,4 +46,20 @@ public interface WeChatClient {
      * @return 包含 status (WAITING/SUCCESS/EXPIRED) 和 openId (如果成功) 的响应对象
      */
     JObject checkStatus(String uuid);
+
+    /**
+     * 接口配置信息检查
+     * <pre>
+     *     {
+     *         "signature": "???",
+     *         "timestamp": "???",
+     *         "nonce": "???"
+     *     }
+     * </pre>
+     *
+     * @param params 检查参数
+     *
+     * @return 响应信息
+     */
+    boolean checkEcho(JObject params);
 }

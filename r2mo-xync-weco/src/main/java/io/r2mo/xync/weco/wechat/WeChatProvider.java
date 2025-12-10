@@ -11,7 +11,7 @@ import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._500ServerInternalException;
 import io.r2mo.xync.weco.WeCoAction;
 import io.r2mo.xync.weco.WeCoActionType;
-import io.r2mo.xync.weco.WeCoConstant;
+import io.r2mo.xync.weco.WeCoUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
@@ -95,9 +95,10 @@ public class WeChatProvider implements UniProvider {
             final WxMpDefaultConfigImpl config = new WxMpDefaultConfigImpl();
             config.setAppId(cred.appId());
             config.setSecret(cred.secret());
+            config.setToken(ctx.getToken());
 
             // 使用 Helper 统一处理代理
-            WeCoConstant.Helper.applyProxy(config, ctx.getProxy());
+            WeCoUtil.applyProxy(config, ctx.getProxy());
 
             // 注入重试
             config.setMaxRetryTimes(ctx.getMaxRetry());

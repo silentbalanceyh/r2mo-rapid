@@ -1,5 +1,8 @@
 package io.r2mo.xync.weco;
 
+import io.r2mo.spi.SPI;
+import io.r2mo.typed.cc.Cc;
+
 import java.time.Duration;
 
 /**
@@ -7,6 +10,12 @@ import java.time.Duration;
  * * 职责：存储和获取扫码登录流程中的临时会话状态 (UUID -> OpenID)。
  */
 public interface WeCoSession {
+
+    Cc<String, WeCoSession> CC_SESSION = Cc.openThread();
+
+    static WeCoSession of() {
+        return CC_SESSION.pick(() -> SPI.findOneOf(WeCoSession.class));
+    }
 
     int MAX_EXPIRE_SECONDS = 2592000; // 30天
     /** Redis 缓存 Key 前缀 */

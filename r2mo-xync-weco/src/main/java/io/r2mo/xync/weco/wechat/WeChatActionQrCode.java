@@ -1,22 +1,15 @@
 package io.r2mo.xync.weco.wechat;
 
-import cn.hutool.core.util.StrUtil;
 import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniResponse;
 import io.r2mo.spi.SPI;
-import io.r2mo.typed.exception.web._400BadRequestException;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.xync.weco.WeCoAction;
-import io.r2mo.xync.weco.WeCoActionType;
-import io.r2mo.xync.weco.WeCoConstant;
 import io.r2mo.xync.weco.WeCoSession;
-import io.r2mo.xync.weco.WeCoStatus;
+import io.r2mo.xync.weco.WeCoUtil;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -61,23 +54,8 @@ class WeChatActionQrCode extends WeChatAction implements WeCoAction<Void> {
      */
     @Override
     public UniResponse execute(final UniMessage<Void> request) throws Exception {
-        final String expireSecondsStr = request.header("expireSeconds");
-
-        if (StrUtil.isBlank(expireSecondsStr)) {
-            throw new _400BadRequestException("[R2MO] Header 缺少 'expireSeconds' 参数，该参数为必填项。");
-        }
-
-        final int expireSeconds;
-        try {
-            expireSeconds = Integer.parseInt(expireSecondsStr);
-            if (expireSeconds <= 0 || expireSeconds > WeCoSession.MAX_EXPIRE_SECONDS) {
-                throw new _400BadRequestException(
-                    "expireSeconds 必须大于0且小于等于 " + WeCoSession.MAX_EXPIRE_SECONDS + " (30天)。"
-                );
-            }
-        } catch (final NumberFormatException e) {
-            throw new _400BadRequestException("expireSeconds 必须是一个有效的整数值。");
-        }
+        // 读取 expireSeconds
+        final int expireSeconds = WeCoUtil.inputExpired(request);
 
         final String uuid = UUID.randomUUID().toString().replace("-", "");
 
@@ -85,26 +63,7 @@ class WeChatActionQrCode extends WeChatAction implements WeCoAction<Void> {
         final WxMpQrCodeTicket ticket = this.service().getQrcodeService().qrCodeCreateTmpTicket(uuid, expireSeconds);
         final String qrUrl = this.service().getQrcodeService().qrCodePictureUrl(ticket.getTicket());
 
-        // 2. 存储初始状态到 SPI
-        final String sessionKey = WeCoSession.keyOf(uuid);
-        // 缓存时间比二维码有效期稍长 (多加60秒的缓冲)
-        final Duration storeDuration = Duration.ofSeconds(expireSeconds).plusSeconds(60);
-
-        // 调用通过 SPI 机制获取的 WeCoSession 实例
-        this.weCoSession.save(
-            sessionKey,
-            WeCoStatus.WAITING.name(),
-            storeDuration
-        );
-
-        // 3. 封装结果返回给上层 Service
-        final Map<String, Object> result = new HashMap<>();
-        result.put(WeCoConstant.PARAM_UUID, uuid);
-        result.put("qrUrl", qrUrl);
-        result.put("expireSeconds", expireSeconds);
-        result.put("actionType", WeCoActionType.APP_AUTH_QR.name());
-        final JObject response = SPI.J();
-        response.put(result);
+        final JObject response = WeCoUtil.replyQr(uuid, qrUrl, expireSeconds);
         return UniResponse.success(response);
     }
 }

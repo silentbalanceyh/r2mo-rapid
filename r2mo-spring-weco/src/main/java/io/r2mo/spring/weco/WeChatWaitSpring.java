@@ -58,7 +58,7 @@ public class WeChatWaitSpring implements UniProvider.Wait<WeCoConfig.WeChat> {
             }
 
             // 2. 可以在此处扩展超时等其他配置
-
+            ctx.setToken(config.getToken());
             log.info("[ R2MO ] 构造 WeChat 上下文, Proxy: {}", (config.getProxy() != null));
             return ctx;
         }, String.valueOf(config.hashCode()));

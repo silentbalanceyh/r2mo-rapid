@@ -21,5 +21,10 @@
             <artifactId>r2mo-xync-weco</artifactId>
             <version>${r2mo.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-spring-cache</artifactId>
+            <version>${r2mo.version}</version>
+        </dependency>
     </dependencies>
 </project>

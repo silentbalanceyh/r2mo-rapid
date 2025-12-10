@@ -56,4 +56,6 @@ public interface WeChatService {
      * @return 包含 status 的结果对象
      */
     JObject checkStatus(String uuid);
+
+    boolean checkEcho(JObject params);
 }

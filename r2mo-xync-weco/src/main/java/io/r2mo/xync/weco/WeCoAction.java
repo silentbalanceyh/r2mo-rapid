@@ -28,4 +28,5 @@ public interface WeCoAction<T> {
      * @throws Exception 操作可能抛出的异常 (如网络错误、参数缺失、微信API调用失败)。
      */
     UniResponse execute(final UniMessage<T> request) throws Exception;
+
 }

@@ -11,7 +11,7 @@ import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._500ServerInternalException;
 import io.r2mo.xync.weco.WeCoAction;
 import io.r2mo.xync.weco.WeCoActionType;
-import io.r2mo.xync.weco.WeCoConstant;
+import io.r2mo.xync.weco.WeCoUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.cp.api.WxCpService;
 import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
@@ -98,7 +98,7 @@ public class WeComProvider implements UniProvider {
             config.setAgentId(cred.agentId()); // 企微扫码强制要求 AgentId
 
             // 使用 Helper 统一处理代理
-            WeCoConstant.Helper.applyProxy(config, ctx.getProxy());
+            WeCoUtil.applyProxy(config, ctx.getProxy());
 
             // 注入 Host (企微私有化部署支持)
             // 如果 Context 指定了 Host，则修改 BaseApiUrl

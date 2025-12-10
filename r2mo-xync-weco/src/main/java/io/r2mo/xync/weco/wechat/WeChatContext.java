@@ -15,6 +15,7 @@ public class WeChatContext extends BaseContext {
     public static final String KEY_LANG = "lang";
     public static final String KEY_MAX_RETRY = "max_retry";
     public static final String KEY_PROXY = "proxy"; // 存储 UniProxy 对象
+    public static final String KEY_TOKEN = "token";
 
     // --- 2. Value Constants (默认值) ---
     public static final String DEF_HOST = "api.weixin.qq.com";
@@ -61,6 +62,15 @@ public class WeChatContext extends BaseContext {
 
     public WeChatContext setMaxRetry(final int maxRetry) {
         this.set(KEY_MAX_RETRY, maxRetry);
+        return this;
+    }
+
+    public String getToken() {
+        return this.get(KEY_TOKEN);
+    }
+
+    public WeChatContext setToken(final String token) {
+        this.set(KEY_TOKEN, token);
         return this;
     }
 

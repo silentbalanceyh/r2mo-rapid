@@ -28,6 +28,7 @@ class WeChatAction {
             this.put(WeCoActionType.WX_LOGIN_BY, WeChatActionLogin::new);
             this.put(WeCoActionType.APP_AUTH_QR, WeChatActionQrCode::new);
             this.put(WeCoActionType.APP_STATUS, WeChatActionStatus::new);
+            this.put(WeCoActionType.APP_PRE, WeChatActionPre::new);
         }
     };
     private final WxMpService service;

@@ -51,7 +51,7 @@ public class WeComServiceImpl implements WeComService {
         }
 
         // 参照 WeChat 实现，此处校验失败抛出 501 Disabled 类型异常
-        Fn.jvmKo(Objects.isNull(userId), _80552Exception501WeComDisabled.class);
+        Fn.jvmKo(Objects.isNull(userId), _80553Exception401WeComAuthFailure.class);
 
         // 3. 填充身份标识
         // 这里会自动联动设置父类的 id = userId
@@ -75,6 +75,6 @@ public class WeComServiceImpl implements WeComService {
 
     private void checkEnabled() {
         // 参照 WeChat 实现，此处配置缺失抛出 401 AuthFailure 类型异常
-        Fn.jvmKo(Objects.isNull(this.config.getWecom()), _80553Exception401WeComAuthFailure.class);
+        Fn.jvmKo(Objects.isNull(this.config.getWecom()), _80552Exception501WeComDisabled.class);
     }
 }
