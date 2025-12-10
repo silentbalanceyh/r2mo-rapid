@@ -22,6 +22,8 @@ public class FactoryDBActionMybatisPlus extends FactoryDBActionBase {
 
     @SuppressWarnings("all")
     private static final Cc<String, OpJoin> CCT_OP_JOIN = Cc.openThread();
+    // 子类必须
+    private static final Cc<String, DBLoad> CC_DB_LOAD = Cc.openThread();
 
     @Override
     protected <T, EXECUTOR> OpAggr ofAggr(final Class<T> entityCls, final EXECUTOR executor) {
@@ -87,9 +89,6 @@ public class FactoryDBActionMybatisPlus extends FactoryDBActionBase {
     public <T, EXECUTOR, CONDITION> OpJoin<T, CONDITION> opJoin(final DBRef ref, final EXECUTOR executor) {
         return CCT_OP_JOIN.pick(() -> new OpJoinImpl<>(ref, (MPJBaseMapper<T>) executor), String.valueOf(ref.hashCode()));
     }
-
-    // 子类必须
-    private static final Cc<String, DBLoad> CC_DB_LOAD = Cc.openThread();
 
     @Override
     public DBLoad loader() {

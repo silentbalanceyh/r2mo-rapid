@@ -29,10 +29,24 @@ import java.util.Objects;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class BasicLoginRequest extends LoginRequest {
+    public static final TypeLogin TYPE = TypeLogin.PASSWORD;
     private String username;
     private String password;
     private String captcha;
     private String captchaId;
+
+    public BasicLoginRequest() {
+    }
+
+    public BasicLoginRequest(final JObject request) {
+        this.setUsername(request.getString(LoginID.USERNAME));
+        this.setPassword(request.getString("password"));
+        this.setCaptcha(request.getString("captcha"));
+        this.app(request.getString(BaseScope.F_APP_ID));
+        this.tenant(request.getString(BaseScope.F_TENANT_ID));
+        // 如果使用 JObject 构造，构造完成后验证！
+        this.requestValidated();
+    }
 
     public void setUsername(final String username) {
         this.username = username;
@@ -47,21 +61,6 @@ public class BasicLoginRequest extends LoginRequest {
     @Override
     public TypeLogin type() {
         return TYPE;
-    }
-
-    public static final TypeLogin TYPE = TypeLogin.PASSWORD;
-
-    public BasicLoginRequest() {
-    }
-
-    public BasicLoginRequest(final JObject request) {
-        this.setUsername(request.getString(LoginID.USERNAME));
-        this.setPassword(request.getString("password"));
-        this.setCaptcha(request.getString("captcha"));
-        this.app(request.getString(BaseScope.F_APP_ID));
-        this.tenant(request.getString(BaseScope.F_TENANT_ID));
-        // 如果使用 JObject 构造，构造完成后验证！
-        this.requestValidated();
     }
 
     // 特殊认证流程，必须保证 username 和 password 都不为空

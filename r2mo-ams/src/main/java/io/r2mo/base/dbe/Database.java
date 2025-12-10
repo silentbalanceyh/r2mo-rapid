@@ -73,6 +73,39 @@ public class Database implements Serializable, JElement {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, Object> extension = new HashMap<>();
 
+    public static <T> Database createDatabase(final T databaseObj) {
+        if (databaseObj == null) {
+            return null;
+        }
+        return createDatabase(SPI.J(databaseObj));
+    }
+
+    public static Database createDatabase(final JObject databaseJ) {
+        if (UT.isEmpty(databaseJ)) {
+            return null;
+        }
+        final Database database = new Database();
+        database.fromJObject(databaseJ);
+        return database;
+    }
+
+    /**
+     * 数据库连接测试
+     */
+    public static boolean isConnected(final Database database) {
+        try {
+            DriverManager.getConnection(
+                database.getUrl(),
+                database.getUsername(),
+                database.getPasswordDecrypted()
+            );
+            return true;
+        } catch (final SQLException ex) {
+            log.error(ex.getMessage(), ex);
+            return false;
+        }
+    }
+
     @JsonAnySetter            // 反序列化时：任何未匹配到属性的键都会进这里
     public void putExtension(final String key, final Object value) {
         if (value instanceof final JObject valueJ) {
@@ -91,6 +124,8 @@ public class Database implements Serializable, JElement {
     public <T> T getExtension(final String extensionKey) {
         return (T) this.extension.get(extensionKey);
     }
+
+    // -------------- 除开 Get / Set 的特殊方法 -----------------
 
     @Override
     public JObject toJObject() {
@@ -128,8 +163,6 @@ public class Database implements Serializable, JElement {
         return this;
     }
 
-    // -------------- 除开 Get / Set 的特殊方法 -----------------
-
     public String getPasswordDecrypted() {
         return EDCrypto.decryptPassword(this.password);
     }
@@ -149,6 +182,8 @@ public class Database implements Serializable, JElement {
         return -1 == value ? defaultValue : value;
     }
 
+    // -------------- 静态检查方法 -----------------
+
     public long getLong(final String optionKey) {
         return this.getLong(optionKey, -1L);
     }
@@ -166,8 +201,6 @@ public class Database implements Serializable, JElement {
     public int hashCode() {
         return Objects.hashCode(this.url);
     }
-
-    // -------------- 静态检查方法 -----------------
 
     /**
      * 目前版本所有连接池只允许 One Of 选择一个，若有多个可以考虑 user-cp 的方式实现多个连接池的功能，比如筛选和聚合
@@ -188,39 +221,6 @@ public class Database implements Serializable, JElement {
                 throw new IllegalStateException("[R2MO] 检测到多个连接池配置: " + a + ", " + b);
             })
             .orElse(null);
-    }
-
-    public static <T> Database createDatabase(final T databaseObj) {
-        if (databaseObj == null) {
-            return null;
-        }
-        return createDatabase(SPI.J(databaseObj));
-    }
-
-    public static Database createDatabase(final JObject databaseJ) {
-        if (UT.isEmpty(databaseJ)) {
-            return null;
-        }
-        final Database database = new Database();
-        database.fromJObject(databaseJ);
-        return database;
-    }
-
-    /**
-     * 数据库连接测试
-     */
-    public static boolean isConnected(final Database database) {
-        try {
-            DriverManager.getConnection(
-                database.getUrl(),
-                database.getUsername(),
-                database.getPasswordDecrypted()
-            );
-            return true;
-        } catch (final SQLException ex) {
-            log.error(ex.getMessage(), ex);
-            return false;
-        }
     }
 
     public boolean isConnected() {

@@ -21,13 +21,12 @@ import java.util.function.Function;
  */
 public class DBResult {
 
+    private static final Cc<String, DBResult> CC_RESULT = Cc.openThread();
     private final DBRef ref;
 
     private DBResult(final DBRef ref) {
         this.ref = ref;
     }
-
-    private static final Cc<String, DBResult> CC_RESULT = Cc.openThread();
 
     public static DBResult of(final DBRef ref) {
         final String cachedKey = String.valueOf(ref.hashCode());

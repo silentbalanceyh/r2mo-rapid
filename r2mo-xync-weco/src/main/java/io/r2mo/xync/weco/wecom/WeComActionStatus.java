@@ -16,7 +16,7 @@ import me.chanjar.weixin.cp.api.WxCpService;
  *
  * @author lang : 2025-12-10
  */
-public class WeComActionStatus extends WeComAction implements WeCoAction<String> {
+class WeComActionStatus extends WeComAction implements WeCoAction<String> {
 
     // 通过 SPI 机制查找 WeCoSession 的单实例实现
     private final WeCoSession weCoSession = SPI.findOneOf(WeCoSession.class);
@@ -24,7 +24,7 @@ public class WeComActionStatus extends WeComAction implements WeCoAction<String>
     /**
      * 构造函数：仅注入 WxCpService（Service 在此动作中非必须，但遵循架构保留）
      */
-    public WeComActionStatus(final WxCpService service) {
+    WeComActionStatus(final WxCpService service) {
         super(service);
     }
 

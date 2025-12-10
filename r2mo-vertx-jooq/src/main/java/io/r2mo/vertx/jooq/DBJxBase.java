@@ -22,11 +22,10 @@ import java.util.Set;
  * @author lang : 2025-10-25
  */
 class DBJxBase {
+    protected final DBRef ref;
     private final DBS dbs;
     private final Vertx vertxRef;
     private final DBJ<?> dbj;
-    protected final DBRef ref;
-
     private final MultiKeyMap<DBEx<?>> dbeMap = new MultiKeyMap<>();
 
     protected DBJxBase(final DBRef ref, final DBS dbs) {
@@ -37,6 +36,25 @@ class DBJxBase {
         this.afterConstruct(ref, dbs);
         this.ref = ref;
         this.dbj = DBJ.of(ref, dbs);
+    }
+
+    protected DBJxBase(final Join join, final DBS dbs) {
+        this.dbs = dbs;
+        this.vertxRef = AsyncDBContext.vertxStatic(dbs);
+        Objects.requireNonNull(this.vertxRef, "[ R2MO ] (ADB) 关键步骤 DBS 无法初始化 Vertx 引用！");
+
+        // 前置注册：第一加载阶段
+        this.beforeConstruct(join, dbs);
+
+        // 🍀 双重检查
+        LoadREF.of().loadVerify(Set.of(join.from(), join.to()));
+
+        // 加载流程
+        final DBLoad loader = SPI.SPI_DB.loader();
+        final DBNode leftNode = loader.configure(join.from(), join.vFrom(), dbs);
+        final DBNode rightNode = loader.configure(join.to(), join.vTo(), dbs);
+        this.ref = DBRef.of(leftNode, rightNode, Kv.create(join.fromField(), join.toField()));
+        this.dbj = DBJ.of(this.ref, dbs);
     }
 
     private void afterConstruct(final DBRef ref, final DBS dbs) {
@@ -89,25 +107,6 @@ class DBJxBase {
         final Class<?> daoRight = join.to();
         final DBEx<?> dbeRight = DBEx.of(daoRight, dbs, join.vTo());
         this.dbeMap.put(daoRight.getName(), dbeRight);
-    }
-
-    protected DBJxBase(final Join join, final DBS dbs) {
-        this.dbs = dbs;
-        this.vertxRef = AsyncDBContext.vertxStatic(dbs);
-        Objects.requireNonNull(this.vertxRef, "[ R2MO ] (ADB) 关键步骤 DBS 无法初始化 Vertx 引用！");
-
-        // 前置注册：第一加载阶段
-        this.beforeConstruct(join, dbs);
-
-        // 🍀 双重检查
-        LoadREF.of().loadVerify(Set.of(join.from(), join.to()));
-
-        // 加载流程
-        final DBLoad loader = SPI.SPI_DB.loader();
-        final DBNode leftNode = loader.configure(join.from(), join.vFrom(), dbs);
-        final DBNode rightNode = loader.configure(join.to(), join.vTo(), dbs);
-        this.ref = DBRef.of(leftNode, rightNode, Kv.create(join.fromField(), join.toField()));
-        this.dbj = DBJ.of(this.ref, dbs);
     }
 
     protected DBEx<?> executor(final Class<?> daoOr) {

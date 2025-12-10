@@ -36,17 +36,12 @@ public class WeComContext extends BaseContext {
 
     // --- Fluent API ---
 
-    public WeComContext setHost(final String host) {
-        this.set(KEY_HOST, host);
-        return this;
-    }
-
     public String getHost() {
         return this.get(KEY_HOST);
     }
 
-    public WeComContext setTimeout(final int timeout) {
-        this.set(KEY_TIMEOUT, timeout);
+    public WeComContext setHost(final String host) {
+        this.set(KEY_HOST, host);
         return this;
     }
 
@@ -54,8 +49,8 @@ public class WeComContext extends BaseContext {
         return this.getOrDefault(KEY_TIMEOUT, DEF_TIMEOUT);
     }
 
-    public WeComContext setMaxRetry(final int maxRetry) {
-        this.set(KEY_MAX_RETRY, maxRetry);
+    public WeComContext setTimeout(final int timeout) {
+        this.set(KEY_TIMEOUT, timeout);
         return this;
     }
 
@@ -63,14 +58,19 @@ public class WeComContext extends BaseContext {
         return this.getOrDefault(KEY_MAX_RETRY, DEF_MAX_RETRY);
     }
 
+    public WeComContext setMaxRetry(final int maxRetry) {
+        this.set(KEY_MAX_RETRY, maxRetry);
+        return this;
+    }
+
     // --- 代理对象操作 ---
+
+    public NormProxy getProxy() {
+        return this.get(KEY_PROXY);
+    }
 
     public WeComContext setProxy(final NormProxy proxy) {
         this.set(KEY_PROXY, proxy);
         return this;
-    }
-
-    public NormProxy getProxy() {
-        return this.get(KEY_PROXY);
     }
 }

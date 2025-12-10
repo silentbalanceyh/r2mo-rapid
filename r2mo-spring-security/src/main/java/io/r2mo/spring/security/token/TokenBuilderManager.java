@@ -16,9 +16,9 @@ import java.util.function.Supplier;
 @Slf4j
 public class TokenBuilderManager {
 
-    private static TokenBuilderManager INSTANCE;
     private static final ConcurrentMap<TypeToken, Supplier<TokenBuilder>> CC_SUPPLIER = new ConcurrentHashMap<>();
     private static final Cc<String, TokenBuilder> CCT_BUILDER = Cc.openThread();
+    private static TokenBuilderManager INSTANCE;
 
     private TokenBuilderManager() {
     }

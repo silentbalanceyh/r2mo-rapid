@@ -30,6 +30,11 @@ class WeChatAction {
             this.put(WeCoActionType.APP_STATUS, WeChatActionStatus::new);
         }
     };
+    private final WxMpService service;
+
+    protected WeChatAction(final WxMpService service) {
+        this.service = service;
+    }
 
     static <T> WeCoAction<T> of(final WeCoActionType actionType, final WxMpService service) {
         final Function<WxMpService, WeCoAction> constructorFn = SUPPLIER.get(actionType);
@@ -38,12 +43,6 @@ class WeChatAction {
         }
         final String cacheKey = WeChatAction.class.getName() + "@" + actionType.name();
         return (WeCoAction<T>) WeCoAction.CC_ACTION.pick(() -> constructorFn.apply(service), cacheKey);
-    }
-
-    private final WxMpService service;
-
-    protected WeChatAction(final WxMpService service) {
-        this.service = service;
     }
 
     protected WxMpService service() {

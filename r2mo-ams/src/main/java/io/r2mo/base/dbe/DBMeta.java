@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Slf4j
 public class DBMeta {
-    private static DBMeta INSTANCE = new DBMeta();
     /*
      * 双模式
      * - entityName = DBNode
@@ -26,6 +25,7 @@ public class DBMeta {
      * - daoCls     = DBNode
      */
     private static final ConcurrentMap<Class<?>, DBNode> SMART = new ConcurrentHashMap<>();
+    private static DBMeta INSTANCE = new DBMeta();
 
     private DBMeta() {
     }

@@ -29,6 +29,16 @@ public class EmailLoginRequest extends LoginRequest {
     private String email;
     private String captcha;
 
+    public EmailLoginRequest() {
+    }
+
+    public EmailLoginRequest(final JObject request) {
+        this.setEmail(request.getString(LoginID.EMAIL));
+        this.setCaptcha(request.getString("captcha"));
+        // 如果使用 JObject 构造，构造完成后验证！
+        this.requestValidated();
+    }
+
     public void setEmail(final String email) {
         this.email = email;
         this.setId(email);
@@ -42,16 +52,6 @@ public class EmailLoginRequest extends LoginRequest {
     @Override
     public TypeLogin type() {
         return TypeLogin.EMAIL;
-    }
-
-    public EmailLoginRequest() {
-    }
-
-    public EmailLoginRequest(final JObject request) {
-        this.setEmail(request.getString(LoginID.EMAIL));
-        this.setCaptcha(request.getString("captcha"));
-        // 如果使用 JObject 构造，构造完成后验证！
-        this.requestValidated();
     }
 
     public void requestValidated() {

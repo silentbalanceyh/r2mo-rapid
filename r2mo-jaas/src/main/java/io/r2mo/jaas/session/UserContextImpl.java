@@ -20,8 +20,8 @@ import java.util.concurrent.ConcurrentMap;
 class UserContextImpl implements UserContext {
     @Setter(AccessLevel.NONE)
     private final UUID id;
-    private MSUser logged;
     private final ConcurrentMap<UUID, MSEmployee> employee = new ConcurrentHashMap<>();
+    private MSUser logged;
 
     UserContextImpl(final UUID id) {
         this.id = id;

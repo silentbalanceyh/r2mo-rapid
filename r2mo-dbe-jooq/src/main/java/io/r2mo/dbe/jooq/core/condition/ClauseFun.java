@@ -25,36 +25,6 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings("all")
 class ClauseFun {
-    static Object eachFn(final Object value, final Function<Object, Object> convert) {
-        if (value instanceof final JArray array) {
-            final JArray result = SPI.A();
-            array.toList().stream().map(convert)
-                .filter(Objects::nonNull)
-                .forEach(result::add);
-            return result;
-        } else {
-            return convert.apply(value);
-        }
-    }
-
-    private static Condition dateOr(final Field field,
-                                    final Supplier<Condition> dateSupplier,
-                                    final Supplier<Condition> otherSupplier) {
-        final Class<?> type = field.getType();
-        if (LocalDate.class == type) { // 如果字段是 LocalDate
-            return dateSupplier.get();
-        } else { // 如果是其他类型
-            return otherSupplier.get();
-        }
-    }
-
-    private static Condition dateEq(final Field field, QValue qValue) {
-        final LocalDate date = qValue.toDate();
-        final Condition min = field.ge(date.atStartOfDay());
-        final Condition max = field.lt(date.plusDays(1).atStartOfDay());
-        return min.and(max);
-    }
-
     static ConcurrentMap<Class<?>, Supplier<Clause>> CLAUSE_MAP = new ConcurrentHashMap<>() {
         {
             this.put(Objects.class, ClauseString::new);
@@ -70,7 +40,6 @@ class ClauseFun {
             this.put(Integer.class, ClauseNumber::new);
         }
     };
-
     static ConcurrentMap<String, BiFunction<Field, QValue, Condition>> NORM_MAP = new ConcurrentHashMap<>() {
         {
             // LT
@@ -105,7 +74,6 @@ class ClauseFun {
             this.put(QCV.Op.CONTAIN, (field, qValue) -> field.contains(qValue.value()));
         }
     };
-
     static ConcurrentMap<String, BiFunction<Field, QValue, Condition>> DATE_MAP = new ConcurrentHashMap<>() {
         {
             // LT 小于
@@ -151,7 +119,6 @@ class ClauseFun {
             this.put(QCV.Op.NULL, (field, qValue) -> field.isNull());
         }
     };
-
     static ConcurrentMap<String, BiFunction<Field, QValue, Condition>> MARK_MAP = new ConcurrentHashMap<>() {
         {
             // Day 精度的日期范围查询
@@ -180,4 +147,34 @@ class ClauseFun {
             });
         }
     };
+
+    static Object eachFn(final Object value, final Function<Object, Object> convert) {
+        if (value instanceof final JArray array) {
+            final JArray result = SPI.A();
+            array.toList().stream().map(convert)
+                .filter(Objects::nonNull)
+                .forEach(result::add);
+            return result;
+        } else {
+            return convert.apply(value);
+        }
+    }
+
+    private static Condition dateOr(final Field field,
+                                    final Supplier<Condition> dateSupplier,
+                                    final Supplier<Condition> otherSupplier) {
+        final Class<?> type = field.getType();
+        if (LocalDate.class == type) { // 如果字段是 LocalDate
+            return dateSupplier.get();
+        } else { // 如果是其他类型
+            return otherSupplier.get();
+        }
+    }
+
+    private static Condition dateEq(final Field field, QValue qValue) {
+        final LocalDate date = qValue.toDate();
+        final Condition min = field.ge(date.atStartOfDay());
+        final Condition max = field.lt(date.plusDays(1).atStartOfDay());
+        return min.and(max);
+    }
 }

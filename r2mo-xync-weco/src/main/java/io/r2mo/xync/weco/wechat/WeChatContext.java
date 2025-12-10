@@ -46,17 +46,12 @@ public class WeChatContext extends BaseContext {
         return this;
     }
 
-    public WeChatContext setLang(final String lang) {
-        this.set(KEY_LANG, lang);
-        return this;
-    }
-
     public String getLang() {
         return this.get(KEY_LANG);
     }
 
-    public WeChatContext setMaxRetry(final int maxRetry) {
-        this.set(KEY_MAX_RETRY, maxRetry);
+    public WeChatContext setLang(final String lang) {
+        this.set(KEY_LANG, lang);
         return this;
     }
 
@@ -64,7 +59,21 @@ public class WeChatContext extends BaseContext {
         return this.getOrDefault(KEY_MAX_RETRY, DEF_MAX_RETRY);
     }
 
+    public WeChatContext setMaxRetry(final int maxRetry) {
+        this.set(KEY_MAX_RETRY, maxRetry);
+        return this;
+    }
+
     // --- 代理对象操作 ---
+
+    /**
+     * 获取代理对象
+     *
+     * @return 可能为 null
+     */
+    public NormProxy getProxy() {
+        return this.get(KEY_PROXY);
+    }
 
     /**
      * 设置代理对象
@@ -74,14 +83,5 @@ public class WeChatContext extends BaseContext {
     public WeChatContext setProxy(final NormProxy proxy) {
         this.set(KEY_PROXY, proxy);
         return this;
-    }
-
-    /**
-     * 获取代理对象
-     *
-     * @return 可能为 null
-     */
-    public NormProxy getProxy() {
-        return this.get(KEY_PROXY);
     }
 }

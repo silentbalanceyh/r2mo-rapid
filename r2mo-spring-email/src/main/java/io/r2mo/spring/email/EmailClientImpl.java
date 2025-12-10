@@ -19,13 +19,11 @@ import java.util.Set;
 @Service
 public class EmailClientImpl implements EmailClient {
 
+    private static final Cc<String, UniProvider> CC_PROVIDER = Cc.openThread();
     @Autowired
     private ForTpl thymeleafTpl;
-
     @Autowired
     private EmailConfigServer serverConfig;
-
-    private static final Cc<String, UniProvider> CC_PROVIDER = Cc.openThread();
 
     @Override
     public JObject send(final String template, final JObject params, final Set<String> toSet) {

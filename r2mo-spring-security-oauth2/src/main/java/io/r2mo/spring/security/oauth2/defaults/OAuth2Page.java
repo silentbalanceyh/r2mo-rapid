@@ -39,10 +39,9 @@ import java.util.Set;
 public class OAuth2Page {
 
     private final static Cc<String, OAuth2Page> CC_SKELETON = Cc.openThread();
-    private static ConfigOAuth2 CONFIG;
     // State 参数的分隔符，格式：{业务状态}_VC_{CODE_VERIFIER}
     private static final String STATE_SEPARATOR = "_VC_";
-
+    private static ConfigOAuth2 CONFIG;
     private final RestTemplate restTemplate = new RestTemplate();
 
     private OAuth2Page() {

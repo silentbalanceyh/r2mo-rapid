@@ -8,14 +8,14 @@ package io.r2mo.base.secure;
 public interface EDCrypto {
     String FOR_DATABASE = "CRYPTO_FOR_DATABASE";
 
+    static String decryptPassword(final String password) {
+        return EDCryptoDoctor.decryptPassword(password);
+    }
+
     // -------------------------------- 正常模式 --------------------------------
     // 加密
     String encrypt(String plainText);
 
     // 解密
     String decrypt(String cipherText);
-
-    static String decryptPassword(final String password) {
-        return EDCryptoDoctor.decryptPassword(password);
-    }
 }

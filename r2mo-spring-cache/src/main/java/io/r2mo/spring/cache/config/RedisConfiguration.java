@@ -25,10 +25,9 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(ConfigCache.class)
 public class RedisConfiguration {
 
+    private final RedisConnectionFactory factory;
     @Autowired
     private ConfigCache configuration;
-
-    private final RedisConnectionFactory factory;
 
     public RedisConfiguration() {
         this.factory = SpringUtil.getBean(RedisConnectionFactory.class);

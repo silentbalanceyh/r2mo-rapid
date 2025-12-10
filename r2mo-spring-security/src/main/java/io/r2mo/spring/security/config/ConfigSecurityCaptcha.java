@@ -26,12 +26,6 @@ public class ConfigSecurityCaptcha implements Serializable {
      * 0s 会导致 {@link _401UnauthorizedException} 的过期异常信息。
      */
     private int expiredAt = 60;
-
-    public CaptchaArgs forArguments() {
-        final Duration duration = Duration.ofSeconds(this.expiredAt);
-        return CaptchaArgs.of(TypeLogin.CAPTCHA, duration);
-    }
-
     /**
      * 验证码图片宽度
      */
@@ -52,6 +46,11 @@ public class ConfigSecurityCaptcha implements Serializable {
      * 验证码字体配置
      */
     private ConfigFont font = new ConfigFont();
+
+    public CaptchaArgs forArguments() {
+        final Duration duration = Duration.ofSeconds(this.expiredAt);
+        return CaptchaArgs.of(TypeLogin.CAPTCHA, duration);
+    }
 
     @Data
     @Configuration

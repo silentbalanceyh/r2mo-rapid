@@ -14,27 +14,27 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 /**
- * <p>
- * ${className} 请求
- * </p>
- *
- * @author ${author}
- * @since ${date}
- */
+* <p>
+    * ${className} 请求
+    * </p>
+*
+* @author ${author}
+* @since ${date}
+*/
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Schema(name = "${entityDisplay}请求")
 public class ${className}CommonRequest extends PreRequest implements WebRequest<${entityName}> {
 ${fieldsRequest}
 
-    @Override
-    public ${entityName} data() {
-        final ${entityName} entity = new ${entityName}();
+@Override
+public ${entityName} data() {
+final ${entityName} entity = new ${entityName}();
 
-        this.writeScope(entity);
+this.writeScope(entity);
 
-        this.writeTo(entity);
+this.writeTo(entity);
 
-        return entity;
-    }
+return entity;
+}
 }

@@ -27,7 +27,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -213,8 +219,8 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
 
         // 按分块索引排序，确保按正确顺序合并
         final List<StoreChunk> sortedChunks = allChunks.stream()
-                .sorted(Comparator.comparingLong(StoreChunk::getIndex))
-                .toList();
+            .sorted(Comparator.comparingLong(StoreChunk::getIndex))
+            .toList();
         // 执行合并操作
         try (final OutputStream outputStream = Files.newOutputStream(finalFilePath, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
             for (final StoreChunk chunk : sortedChunks) {
@@ -266,7 +272,7 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
                 final Binary data = TransDownload.of().read(chunk.getStorePath());
                 if (data == null || data.length() != chunk.getSize()) {
                     log.warn("[ R2MO ] 分块大小校验失败: chunkId={}, 期望: {}, 实际: {}",
-                            chunk.getId(), chunk.getSize(), (data != null ? data.length() : "null"));
+                        chunk.getId(), chunk.getSize(), (data != null ? data.length() : "null"));
                 }
 
                 // 哈希校验（如果chunk中有存储期望的哈希值）
@@ -338,9 +344,9 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
      */
     private StoreChunk findChunk(final List<StoreChunk> chunks, final int index) {
         return chunks.stream()
-                .filter(chunk -> chunk.getIndex().equals(index))
-                .findFirst()
-                .orElse(null);
+            .filter(chunk -> chunk.getIndex().equals(index))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -364,17 +370,17 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
         WAITING_CHUNKS.put(token, waitingList);
     }
 
-//    /**
-//     * 检查分块是否在指定范围内
-//     */
-//    private boolean isChunkInRange(final StoreChunk chunk, final FileRange range) {
-//        final long chunkStart = chunk.getIndex();
-//        final long chunkEnd = chunkStart + chunk.getSize();
-//        final long rangeStart = range.getStart();
-//        final long rangeEnd = range.getEnd();
-//
-//        return (chunkStart >= rangeStart && chunkStart <= rangeEnd) ||
-//                (chunkEnd >= rangeStart && chunkEnd <= rangeEnd) ||
-//                (chunkStart <= rangeStart && chunkEnd >= rangeEnd);
-//    }
+    //    /**
+    //     * 检查分块是否在指定范围内
+    //     */
+    //    private boolean isChunkInRange(final StoreChunk chunk, final FileRange range) {
+    //        final long chunkStart = chunk.getIndex();
+    //        final long chunkEnd = chunkStart + chunk.getSize();
+    //        final long rangeStart = range.getStart();
+    //        final long rangeEnd = range.getEnd();
+    //
+    //        return (chunkStart >= rangeStart && chunkStart <= rangeEnd) ||
+    //                (chunkEnd >= rangeStart && chunkEnd <= rangeEnd) ||
+    //                (chunkStart <= rangeStart && chunkEnd >= rangeEnd);
+    //    }
 }

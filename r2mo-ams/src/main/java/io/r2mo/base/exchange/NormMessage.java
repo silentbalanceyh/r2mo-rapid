@@ -19,19 +19,14 @@ import java.util.Set;
 public class NormMessage<T> implements UniMessage<T> {
 
     private final String id;
-
-    private String subject;
-
-    private T payload;
-
-    @Setter(AccessLevel.NONE)
-    private Set<String> to = new HashSet<>();
-
     @Setter(AccessLevel.NONE)
     private final Map<String, Object> header = new HashMap<>();
-
     @Setter(AccessLevel.NONE)
     private final Map<String, Object> params = new HashMap<>();
+    private String subject;
+    private T payload;
+    @Setter(AccessLevel.NONE)
+    private Set<String> to = new HashSet<>();
 
     public NormMessage(final String id) {
         this.id = id;

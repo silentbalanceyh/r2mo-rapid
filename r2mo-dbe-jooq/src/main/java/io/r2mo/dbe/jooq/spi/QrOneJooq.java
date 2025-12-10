@@ -43,7 +43,7 @@ class QrOneJooq<T> extends AbstractDbJooq<T> implements QrOne<T> {
         if (StrUtil.isEmpty(field)) {
             return Optional.empty();
         }
-        
+
         return this.findOne(this.analyzer().where(field, value));
     }
 

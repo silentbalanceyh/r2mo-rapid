@@ -8,7 +8,7 @@ public interface GenProcessor {
 
     void generate(Class<?> entity, GenConfig config);
 
-    default GenField getFieldProcessor(){
+    default GenField getFieldProcessor() {
         return null;
     }
 }

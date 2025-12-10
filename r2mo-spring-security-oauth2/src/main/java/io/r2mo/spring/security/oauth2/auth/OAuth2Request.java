@@ -33,16 +33,6 @@ public abstract class OAuth2Request extends LoginRequest {
      */
     protected String scope;
 
-    @Override
-    public TypeLogin type() {
-        return TypeLogin.OAUTH2;
-    }
-
-    /**
-     * 获取 OAuth2 授权类型
-     */
-    public abstract AuthorizationGrantType typeGrant();
-
     protected OAuth2Request() {
     }
 
@@ -53,6 +43,16 @@ public abstract class OAuth2Request extends LoginRequest {
         this.app(request.getString(BaseScope.F_APP_ID));
         this.tenant(request.getString(BaseScope.F_TENANT_ID));
     }
+
+    @Override
+    public TypeLogin type() {
+        return TypeLogin.OAUTH2;
+    }
+
+    /**
+     * 获取 OAuth2 授权类型
+     */
+    public abstract AuthorizationGrantType typeGrant();
 }
 
 

@@ -48,40 +48,31 @@ public class SPI {
     // 🏭 SPI 工厂单例
     // ======================
 
-    /** 🎭 对象工厂（Json 工具、对象处理） */
-    private static final FactoryObject SPI_OBJECT = ProviderOfFactory.forObject();
-
     /** 🗄️ 数据库操作工厂 */
     public static final FactoryDBAction SPI_DB = ProviderOfFactory.forDBAction();
-
     /** 💾 IO 工厂 */
     public static final FactoryIo SPI_IO = ProviderOfFactory.forIo();
-
     /** 🌐 Web 工厂 */
     public static final FactoryWeb SPI_WEB = ProviderOfFactory.forWeb();
-
     /** 📊 SPI 接口类型与实现类映射表（已加载的实现类缓存） */
     public static final ConcurrentMap<Class<?>, Class<?>> SPI_META = ProviderOfFactory.meta();
+    /** 🗂️ IO 存储工具 */
+    public static final HStore V_STORE = SPI_IO.ioAction();
 
 
     // ======================
     // 🧰 专用组件工具
     // ======================
-
-    /** 📑 JSON 工具（序列化、反序列化、格式化） */
-    public static final JUtil V_UTIL = SPI_OBJECT.jsonUtil();
-
-    /** 🗂️ IO 存储工具 */
-    public static final HStore V_STORE = SPI_IO.ioAction();
-
     /** 📡 Web 状态码处理器 */
     public static final ForStatus V_STATUS = SPI_WEB.ofStatus();
-
     /** 🌍 Web 国际化/多语言处理器 */
     public static final ForLocale V_LOCALE = SPI_WEB.ofLocale();
-
     /** ⛔ Web 异常/中断处理器 */
     public static final ForAbort V_ABORT = SPI_WEB.ofAbort();
+    /** 🎭 对象工厂（Json 工具、对象处理） */
+    private static final FactoryObject SPI_OBJECT = ProviderOfFactory.forObject();
+    /** 📑 JSON 工具（序列化、反序列化、格式化） */
+    public static final JUtil V_UTIL = SPI_OBJECT.jsonUtil();
 
 
     // ======================

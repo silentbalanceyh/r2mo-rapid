@@ -41,6 +41,14 @@ public class UserSession {
         this.cache = UserCache.of();
     }
 
+    // --------------- 上边为提取值的 API ---------------
+    public static UserSession of() {
+        if (Objects.isNull(INSTANCE)) {
+            INSTANCE = new UserSession();
+        }
+        return INSTANCE;
+    }
+
     public UserContext context(final MSUser user, final List<MSEmployee> employee) {
         // 构造
         final UserContextImpl context = new UserContextImpl(user.getId());
@@ -96,18 +104,10 @@ public class UserSession {
         if (Objects.isNull(userAt)) {
             return null;
         }
-        return context(userAt.id());
+        return this.context(userAt.id());
     }
 
     public UserContext context(final UUID id) {
         return this.cache.context(id);
-    }
-
-    // --------------- 上边为提取值的 API ---------------
-    public static UserSession of() {
-        if (Objects.isNull(INSTANCE)) {
-            INSTANCE = new UserSession();
-        }
-        return INSTANCE;
     }
 }

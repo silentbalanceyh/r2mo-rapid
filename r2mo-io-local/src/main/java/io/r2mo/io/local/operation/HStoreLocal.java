@@ -70,8 +70,8 @@ public class HStoreLocal extends HStoreLocalMeta {
     }
 
     @Override
-    public Binary inBinary(String filename, FileRange fileRange,HProgressor progressorRef) {
-        return LocalRafReader.inBinary(filename,fileRange,progressorRef);
+    public Binary inBinary(final String filename, final FileRange fileRange, final HProgressor progressorRef) {
+        return LocalRafReader.inBinary(filename, fileRange, progressorRef);
     }
 
     @Override

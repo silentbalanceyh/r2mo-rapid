@@ -24,7 +24,7 @@ import java.util.UUID;
  *
  * @author lang : 2025-12-10
  */
-public class WeComActionQrCode extends WeComAction implements WeCoAction<Void> {
+class WeComActionQrCode extends WeComAction implements WeCoAction<Void> {
 
     // 【关键变更】通过 SPI 机制查找 WeCoSession 的单实例实现
     private final WeCoSession weCoSession = SPI.findOneOf(WeCoSession.class);
@@ -32,7 +32,7 @@ public class WeComActionQrCode extends WeComAction implements WeCoAction<Void> {
     /**
      * 构造函数：仅注入 WxCpService（WeCoSession 通过 SPI 自动获取）
      */
-    public WeComActionQrCode(final WxCpService service) {
+    WeComActionQrCode(final WxCpService service) {
         super(service);
     }
 

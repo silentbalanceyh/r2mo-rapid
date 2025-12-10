@@ -36,8 +36,13 @@ import java.util.TimeZone;
 @EnableConfigurationProperties(ConfigCache.class)
 public class RedissonConfiguration {
 
+    private static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     @Autowired
     private ConfigCache configuration;
+
+    private static boolean isVirtual() {
+        return Threading.VIRTUAL.isActive(SpringUtil.getBean(Environment.class));
+    }
 
     @Bean
     public RedissonAutoConfigurationCustomizer redissonCustomizer() {
@@ -93,10 +98,6 @@ public class RedissonConfiguration {
         };
     }
 
-    private static boolean isVirtual() {
-        return Threading.VIRTUAL.isActive(SpringUtil.getBean(Environment.class));
-    }
-
     /**
      * 临时处理
      *
@@ -117,7 +118,5 @@ public class RedissonConfiguration {
         final TypedJsonJacksonCodec jsonCodec = new TypedJsonJacksonCodec(Object.class, om);
         return new CompositeCodec(StringCodec.INSTANCE, jsonCodec, jsonCodec);
     }
-
-    private static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
 }

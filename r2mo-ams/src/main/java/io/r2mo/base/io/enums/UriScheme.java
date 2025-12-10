@@ -139,14 +139,6 @@ public enum UriScheme {
         this.networkBased = networkBased;
     }
 
-    public String value() {
-        return this.scheme;
-    }
-
-    public String description() {
-        return this.description;
-    }
-
     /**
      * 根据scheme字符串获取对应的枚举值
      *
@@ -208,6 +200,14 @@ public enum UriScheme {
             }
         }
         return localSchemes;
+    }
+
+    public String value() {
+        return this.scheme;
+    }
+
+    public String description() {
+        return this.description;
     }
 
     @Override

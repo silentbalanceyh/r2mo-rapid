@@ -26,9 +26,44 @@ import java.util.concurrent.ConcurrentMap;
 public class JooqDatabase extends Database {
 
 
+    @SuppressWarnings("all")
+    public static ConcurrentMap<DatabaseType, SQLDialect> DIALECT = new ConcurrentHashMap<>() {
+        {
+            // Jooq Supported Default
+            // MySQL
+            this.put(DatabaseType.MYSQL_8, SQLDialect.MYSQL);
+            this.put(DatabaseType.MYSQL_5, SQLDialect.MYSQL);
+            this.put(DatabaseType.TIDB, SQLDialect.MYSQL);
+
+            // PgSQL
+            this.put(DatabaseType.PGSQL, SQLDialect.POSTGRES);
+            this.put(DatabaseType.COCKROACHDB, SQLDialect.POSTGRES);
+
+            // Other
+            this.put(DatabaseType.MARIADB, SQLDialect.MARIADB);
+            this.put(DatabaseType.SQLLITE_3, SQLDialect.SQLITE);
+            this.put(DatabaseType.TRINO, SQLDialect.TRINO);
+            this.put(DatabaseType.YUGABYTEDB, SQLDialect.YUGABYTEDB);
+            this.put(DatabaseType.DERBY, SQLDialect.DERBY);
+            this.put(DatabaseType.FIREBIRD, SQLDialect.FIREBIRD);
+            this.put(DatabaseType.H2, SQLDialect.H2);
+            this.put(DatabaseType.HSQLDB, SQLDialect.HSQLDB);
+
+            // Experimental / Deprecated
+            this.put(DatabaseType.DUCKDB, SQLDialect.DUCKDB);
+            this.put(DatabaseType.CUBRID, SQLDialect.CUBRID);
+            this.put(DatabaseType.IGNITE, SQLDialect.IGNITE);
+
+            // Other will use DEFAULT instead for future
+            for (DatabaseType category : DatabaseType.values()) {
+                if (!this.containsKey(category)) {
+                    this.put(category, SQLDialect.DEFAULT);
+                }
+            }
+        }
+    };
     @JsonIgnore
     private Configuration configuration;
-
     @JsonIgnore
     private DSLContext context;
 
@@ -81,41 +116,4 @@ public class JooqDatabase extends Database {
         }
         return this.configuration;
     }
-
-    @SuppressWarnings("all")
-    public static ConcurrentMap<DatabaseType, SQLDialect> DIALECT = new ConcurrentHashMap<>() {
-        {
-            // Jooq Supported Default
-            // MySQL
-            this.put(DatabaseType.MYSQL_8, SQLDialect.MYSQL);
-            this.put(DatabaseType.MYSQL_5, SQLDialect.MYSQL);
-            this.put(DatabaseType.TIDB, SQLDialect.MYSQL);
-
-            // PgSQL
-            this.put(DatabaseType.PGSQL, SQLDialect.POSTGRES);
-            this.put(DatabaseType.COCKROACHDB, SQLDialect.POSTGRES);
-
-            // Other
-            this.put(DatabaseType.MARIADB, SQLDialect.MARIADB);
-            this.put(DatabaseType.SQLLITE_3, SQLDialect.SQLITE);
-            this.put(DatabaseType.TRINO, SQLDialect.TRINO);
-            this.put(DatabaseType.YUGABYTEDB, SQLDialect.YUGABYTEDB);
-            this.put(DatabaseType.DERBY, SQLDialect.DERBY);
-            this.put(DatabaseType.FIREBIRD, SQLDialect.FIREBIRD);
-            this.put(DatabaseType.H2, SQLDialect.H2);
-            this.put(DatabaseType.HSQLDB, SQLDialect.HSQLDB);
-
-            // Experimental / Deprecated
-            this.put(DatabaseType.DUCKDB, SQLDialect.DUCKDB);
-            this.put(DatabaseType.CUBRID, SQLDialect.CUBRID);
-            this.put(DatabaseType.IGNITE, SQLDialect.IGNITE);
-
-            // Other will use DEFAULT instead for future
-            for (DatabaseType category : DatabaseType.values()) {
-                if (!this.containsKey(category)) {
-                    this.put(category, SQLDialect.DEFAULT);
-                }
-            }
-        }
-    };
 }

@@ -12,9 +12,9 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
  */
 @Slf4j
 public class ServiceFactory {
-    private static ServiceFactory MANAGER;
     private static final Cc<String, ServicePreAuth> CC_PRE_AUTH = Cc.open();
     private static final Cc<String, ServiceUserAt> CC_USER_AT = Cc.open();
+    private static ServiceFactory MANAGER;
 
     private ServiceFactory() {
     }

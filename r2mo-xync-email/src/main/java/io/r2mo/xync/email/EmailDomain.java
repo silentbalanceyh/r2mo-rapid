@@ -29,10 +29,6 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class EmailDomain extends BaseConfig implements Serializable {
-    private String host;
-    private int port;
-    private boolean ssl;
-
     @JsonIgnore
     @Accessors(chain = true, fluent = true)
     private final EmailCredential credential = new EmailCredential();
@@ -42,6 +38,9 @@ public class EmailDomain extends BaseConfig implements Serializable {
     @Setter(AccessLevel.NONE)
     @JsonIgnore
     private final EmailProtocol protocol;
+    private String host;
+    private int port;
+    private boolean ssl;
 
     public EmailDomain(final EmailProtocol protocol) {
         this.protocol = protocol;
@@ -85,16 +84,12 @@ public class EmailDomain extends BaseConfig implements Serializable {
     }
     // --- 关键：手动桥接 YAML 的扁平属性到 credential 对象 ---
 
-    public void setUsername(final String username) {
-        this.credential.username(username);
-    }
-
-    public void setPassword(final String password) {
-        this.credential.password(password);
-    }
-
     public String getUsername() {
         return this.credential.username();
+    }
+
+    public void setUsername(final String username) {
+        this.credential.username(username);
     }
 
     // 禁止序列化出去（防止日志打印或 API 返回泄露密码）
@@ -102,5 +97,9 @@ public class EmailDomain extends BaseConfig implements Serializable {
     @JsonIgnore
     public String getPassword() {
         return this.credential.password();
+    }
+
+    public void setPassword(final String password) {
+        this.credential.password(password);
     }
 }

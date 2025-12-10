@@ -29,17 +29,14 @@ import java.util.function.Function;
  */
 @SuppressWarnings("all")
 class DBExBase<T> {
-    private final DBS dbs;
-    private final Vertx vertxRef;
-
-
-    // 映射和元数据
-    @Accessors(fluent = true, chain = true)
-    private final AsyncMeta metadata;
-
     // 桥接：同步和异步
     protected final DBE<T> dbe;
     protected final AsyncDBE<T> dbeAsync;
+    private final DBS dbs;
+    private final Vertx vertxRef;
+    // 映射和元数据
+    @Accessors(fluent = true, chain = true)
+    private final AsyncMeta metadata;
 
     protected DBExBase(final Class<T> daoCls, final DBS dbs) {
         // 提取 Database 引用，构造同步专用的 DSLContext

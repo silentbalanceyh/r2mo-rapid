@@ -13,6 +13,20 @@ import java.util.function.Supplier;
  */
 public interface UniProvider {
 
+    Cc<String, UniProvider.Wait<?>> CC_WAIT = Cc.openThread();
+
+    @SuppressWarnings("unchecked")
+    static <T> UniProvider.Wait<T> waitFor(final Supplier<Wait<T>> constructorFn) {
+        return (UniProvider.Wait<T>) CC_WAIT.pick(constructorFn::get, String.valueOf(constructorFn.hashCode()));
+    }
+
+    static JObject replySuccess(final String messageId) {
+        final JObject resultJ = SPI.J();
+        resultJ.put("id", messageId);
+        resultJ.put("success", Boolean.TRUE);
+        return resultJ;
+    }
+
     String channel();                                   // 渠道标识
 
     Class<? extends UniCredential> credentialType();    // 凭证类型
@@ -46,21 +60,6 @@ public interface UniProvider {
      */
     default UniResponse exchange(final UniAccount account, final UniMessage<?> request, final UniContext context) {
         throw new _501NotSupportException("[ R2MO ] 当前 Provider 不支持此方法！/ exchange");
-    }
-
-
-    Cc<String, UniProvider.Wait<?>> CC_WAIT = Cc.openThread();
-
-    @SuppressWarnings("unchecked")
-    static <T> UniProvider.Wait<T> waitFor(final Supplier<Wait<T>> constructorFn) {
-        return (UniProvider.Wait<T>) CC_WAIT.pick(constructorFn::get, String.valueOf(constructorFn.hashCode()));
-    }
-
-    static JObject replySuccess(final String messageId) {
-        final JObject resultJ = SPI.J();
-        resultJ.put("id", messageId);
-        resultJ.put("success", Boolean.TRUE);
-        return resultJ;
     }
 
     /**

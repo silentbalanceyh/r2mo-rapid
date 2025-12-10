@@ -8,6 +8,24 @@ import java.time.Duration;
  */
 public interface WeCoSession {
 
+    int MAX_EXPIRE_SECONDS = 2592000; // 30天
+    /** Redis 缓存 Key 前缀 */
+    String CACHE_KEY_PREFIX = "weco:scan:"; // 接口静态常量
+
+    /**
+     * 统一生成扫码登录的 Redis Key
+     *
+     * @param uuid 会话 UUID
+     *
+     * @return 完整的 Redis Key
+     */
+    static String keyOf(final String uuid) { // 接口静态方法
+        if (uuid == null || uuid.isEmpty()) {
+            throw new IllegalArgumentException("UUID 不能为空，无法构建缓存 Key");
+        }
+        return CACHE_KEY_PREFIX + uuid;
+    }
+
     /**
      * 保存或更新一个扫码会话的状态。
      *
@@ -33,22 +51,4 @@ public interface WeCoSession {
      * @param uuid 会话唯一标识
      */
     void remove(String uuid);
-
-    int MAX_EXPIRE_SECONDS = 2592000; // 30天
-    /** Redis 缓存 Key 前缀 */
-    String CACHE_KEY_PREFIX = "weco:scan:"; // 接口静态常量
-
-    /**
-     * 统一生成扫码登录的 Redis Key
-     *
-     * @param uuid 会话 UUID
-     *
-     * @return 完整的 Redis Key
-     */
-    static String keyOf(final String uuid) { // 接口静态方法
-        if (uuid == null || uuid.isEmpty()) {
-            throw new IllegalArgumentException("UUID 不能为空，无法构建缓存 Key");
-        }
-        return CACHE_KEY_PREFIX + uuid;
-    }
 }

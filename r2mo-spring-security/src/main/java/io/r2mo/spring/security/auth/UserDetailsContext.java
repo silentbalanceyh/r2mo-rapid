@@ -8,12 +8,12 @@ import io.r2mo.typed.enums.TypeLogin;
 public class UserDetailsContext {
     private static final ThreadLocal<TypeLogin> STRATEGY = new ThreadLocal<>();
 
-    public static void setStrategy(final TypeLogin typeID) {
-        STRATEGY.set(typeID);
-    }
-
     public static TypeLogin getStrategy() {
         return STRATEGY.get();
+    }
+
+    public static void setStrategy(final TypeLogin typeID) {
+        STRATEGY.set(typeID);
     }
 
     public static void clearStrategy() {

@@ -51,6 +51,13 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
         this.blackMatcher = this.matchBlack(security);
     }
 
+    @SafeVarargs
+    public static SecurityEntryPoint of(final Consumer<HttpServletResponse>... consumers) {
+        final SecurityEntryPoint instance = new SecurityEntryPoint();
+        instance.waitFor.addAll(Arrays.asList(consumers));
+        return instance;
+    }
+
     private RequestMatcher matchBlack(final ConfigSecurity security) {
         final List<RequestUri> found = SPI.findMany(RequestUri.class);
         final List<RequestMatcher> matchers = found.stream()
@@ -72,13 +79,6 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
         // 或者 显式访问 OAuth2 授权端点
         matchers.add(new AntPathRequestMatcher(configuration.getLogin()));
         return new OrRequestMatcher(matchers);
-    }
-
-    @SafeVarargs
-    public static SecurityEntryPoint of(final Consumer<HttpServletResponse>... consumers) {
-        final SecurityEntryPoint instance = new SecurityEntryPoint();
-        instance.waitFor.addAll(Arrays.asList(consumers));
-        return instance;
     }
 
     @Override

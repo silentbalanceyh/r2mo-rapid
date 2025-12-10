@@ -14,19 +14,13 @@ public class SmsContext extends BaseContext {
 
     public static final String KEY_TIMEOUT_CONNECT = "timeout_connect";
     public static final String KEY_TIMEOUT_READ = "timeout_read";
-
-    private static final String KEY_PRODUCT = "product";
     public static final String KEY_REGION = "region";
+    private static final String KEY_PRODUCT = "product";
 
     public SmsContext() {
         this.set(KEY_PRODUCT, "Dysmsapi");
         this.set(KEY_REGION, "cn-hangzhou");
         this.set(KEY_HOST, "dysmsapi.aliyuncs.com");
-    }
-
-    public SmsContext setTimeoutConnect(final int timeoutConnect) {
-        this.set(KEY_TIMEOUT_CONNECT, timeoutConnect);
-        return this;
     }
 
     public int getTimeoutRead() {
@@ -42,13 +36,18 @@ public class SmsContext extends BaseContext {
         return this.get(KEY_TIMEOUT_CONNECT);
     }
 
-    public SmsContext setRegion(final String region) {
-        this.set(KEY_REGION, region);
+    public SmsContext setTimeoutConnect(final int timeoutConnect) {
+        this.set(KEY_TIMEOUT_CONNECT, timeoutConnect);
         return this;
     }
 
     public String getRegion() {
         return this.get(KEY_REGION);
+    }
+
+    public SmsContext setRegion(final String region) {
+        this.set(KEY_REGION, region);
+        return this;
     }
 
     public String getProduct() {

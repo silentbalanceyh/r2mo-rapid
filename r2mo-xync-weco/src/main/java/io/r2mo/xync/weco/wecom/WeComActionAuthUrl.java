@@ -14,9 +14,9 @@ import me.chanjar.weixin.cp.api.WxCpService;
  *
  * @author lang : 2025-12-10
  */
-public class WeComActionAuthUrl extends WeComAction implements WeCoAction<Void> {
+class WeComActionAuthUrl extends WeComAction implements WeCoAction<Void> {
 
-    public WeComActionAuthUrl(final WxCpService service) {
+    WeComActionAuthUrl(final WxCpService service) {
         super(service);
     }
 

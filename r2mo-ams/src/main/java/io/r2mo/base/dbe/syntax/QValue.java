@@ -19,12 +19,11 @@ import java.util.function.Function;
 @Slf4j
 public class QValue implements QLeaf {
 
-    private Class<?> type;
     private final QOp op;
     private final String field;
-    private String mark;    // 第三位标记，出现了 startAt,<,day 中第三位会出现数据转换，主要针对时间格式
-
     private final Object value;
+    private Class<?> type;
+    private String mark;    // 第三位标记，出现了 startAt,<,day 中第三位会出现数据转换，主要针对时间格式
     private Integer level = 0;
 
     private QValue(final String field, final QOp op, final Object value) {

@@ -1,6 +1,5 @@
 package io.r2mo.spring.security.weco;
 
-import io.r2mo.spring.security.weco.WeComLoginRequest;
 import io.r2mo.typed.json.JObject;
 
 /**

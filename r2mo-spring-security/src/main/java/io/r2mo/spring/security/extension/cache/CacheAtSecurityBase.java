@@ -26,10 +26,10 @@ import java.util.UUID;
 @SuppressWarnings("unchecked")
 public abstract class CacheAtSecurityBase implements CacheAtSecurity {
 
+    protected static final Cc<String, CacheAt<?, ?>> CC_CACHE = Cc.open();
     protected final ConfigSecurity security;
     protected final long size;
     protected final Duration duration;
-    protected static final Cc<String, CacheAt<?, ?>> CC_CACHE = Cc.open();
 
     public CacheAtSecurityBase() {
         this.security = SpringUtil.getBean(ConfigSecurity.class);

@@ -30,12 +30,12 @@ import java.util.concurrent.ConcurrentMap;
  * @author lang : 2025-10-20
  */
 class DBExJson<T> extends DBExFuture<T> {
+    private final DBVector<T> mapped;
+
     protected DBExJson(final Class<T> daoCls, final DBS dbs) {
         super(daoCls, dbs);
         this.mapped = DBVector.of(this.metadata());
     }
-
-    private final DBVector<T> mapped;
 
     @SuppressWarnings("all")
     protected DBVector<T> mapped() {

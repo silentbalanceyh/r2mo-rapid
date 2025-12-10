@@ -7,9 +7,6 @@ package io.r2mo.dbe.common.hikari;
  * - 附带旧版（legacy）键，便于兼容/迁移
  */
 final class HikariOpts {
-    private HikariOpts() {
-    }
-
     /* ===== Hikari 常用项（spring.datasource.hikari.*）===== */
     static final String OPT_POOL_NAME = "pool-name";
     static final String OPT_MAXIMUM_POOL_SIZE = "maximum-pool-size";
@@ -30,7 +27,6 @@ final class HikariOpts {
     static final String OPT_CONNECTION_INIT_SQL = "connection-init-sql";
     static final String OPT_ALLOW_POOL_SUSPENSION = "allow-pool-suspension";
     static final String OPT_REGISTER_MBEANS = "register-mbeans";
-
     // ===== MySQL Driver dataSourceProperties.*（不带前缀）=====
     static final String DSP_CACHE_PREP_STMTS = "cachePrepStmts";
     static final String DSP_PREP_STMT_CACHE_SIZE = "prepStmtCacheSize";
@@ -46,4 +42,7 @@ final class HikariOpts {
     static final String DSP_USE_UNICODE = "useUnicode";
     static final String DSP_CHARACTER_ENCODING = "characterEncoding";
     static final String DSP_SERVER_TIMEZONE = "serverTimezone";
+
+    private HikariOpts() {
+    }
 }

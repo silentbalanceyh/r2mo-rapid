@@ -35,39 +35,30 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 public class MSUser extends AbstractNormObject implements Serializable {
 
+    private static final Cc<String, UserClaim> CCT_TOKEN = Cc.openThread();
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private final ConcurrentMap<TypeID, LoginID> idMap = new ConcurrentHashMap<>();
-
     @Schema(description = "账号名")
     private String username;
-
     @Schema(description = "密码")
     private String password;
-
     @Schema(description = "描述")
     private String description;
-
     @Schema(description = "昵称")
     private String nickname;
-
     @Schema(description = "头像")
     private String avator;
-
     @Schema(description = "邮箱")
     private String email;
-
     @Schema(description = "手机号")
     private String mobile;
-
     @Schema(description = "角色")
     @Accessors(chain = true, fluent = true)
     private List<MSRole> roles = new ArrayList<>();
-
     @Schema(description = "用户组")
     @Accessors(chain = true, fluent = true)
     private List<MSGroup> groups = new ArrayList<>();
-
     @JsonIgnore
     @Accessors(chain = true, fluent = true)
     private ConcurrentMap<String, Object> extension = new ConcurrentHashMap<>();
@@ -144,6 +135,4 @@ public class MSUser extends AbstractNormObject implements Serializable {
         }
         return tokenData;
     }
-
-    private static final Cc<String, UserClaim> CCT_TOKEN = Cc.openThread();
 }

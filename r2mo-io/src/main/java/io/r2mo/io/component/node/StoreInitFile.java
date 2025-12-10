@@ -121,7 +121,7 @@ class StoreInitFile implements StoreInit<StoreFile> {
     public TransferResponse output(final StoreFile node) {
         final TransferResponse response = new TransferResponse();
         node.outTo(response);
-        
+
         response.setSize(node.getSize());
         response.setIsMultipart(node.getIsMultipart());
         response.setFile(node);

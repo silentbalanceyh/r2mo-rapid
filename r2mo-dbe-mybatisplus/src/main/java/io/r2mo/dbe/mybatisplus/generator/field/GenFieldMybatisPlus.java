@@ -8,7 +8,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author lang : 2025-09-04
@@ -28,7 +32,7 @@ public class GenFieldMybatisPlus implements GenField {
     public String generateReq(final Class<?> entity, final GenConfig config) {
         final Set<String> ignoreSet = new HashSet<>(DEFAULT_REQ_IGNORE);
         final Set<String> customIgnore = config.getMetadata().getIgnoreReq();
-        if(customIgnore != null) {
+        if (customIgnore != null) {
             ignoreSet.addAll(customIgnore);
         }
         return this.generate(entity, ignoreSet);
@@ -38,7 +42,7 @@ public class GenFieldMybatisPlus implements GenField {
     public String generateResp(final Class<?> entity, final GenConfig config) {
         final Set<String> ignoreSet = new HashSet<>(DEFAULT_RESP_IGNORE);
         final Set<String> customIgnore = config.getMetadata().getIgnoreResp();
-        if(customIgnore != null) {
+        if (customIgnore != null) {
             ignoreSet.addAll(customIgnore);
         }
         return this.generate(entity, ignoreSet);
@@ -81,12 +85,12 @@ public class GenFieldMybatisPlus implements GenField {
         return String.join("\n", lines);
     }
 
-    private boolean isValid(final Field field){
+    private boolean isValid(final Field field) {
         // 静态字段去掉
-        if(Modifier.isStatic(field.getModifiers())) {
+        if (Modifier.isStatic(field.getModifiers())) {
             return false;
         }
-        if(field.isAnnotationPresent(JsonIgnore.class)){
+        if (field.isAnnotationPresent(JsonIgnore.class)) {
             return false;
         }
         final TableField tableField = field.getDeclaredAnnotation(TableField.class);
@@ -97,7 +101,7 @@ public class GenFieldMybatisPlus implements GenField {
         final List<String> lines = new ArrayList<>();
         final Schema schema = field.getAnnotation(Schema.class);
         final StringBuilder lineSwagger = new StringBuilder();
-        if(schema != null) {
+        if (schema != null) {
             lineSwagger.append("    @Schema(");
             if (!schema.description().isBlank()) {
                 lineSwagger.append("description = \"").append(schema.description()).append("\"");

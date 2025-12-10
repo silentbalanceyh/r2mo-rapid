@@ -29,6 +29,16 @@ public class SmsLoginRequest extends LoginRequest {
     private String mobile;
     private String captcha;
 
+    public SmsLoginRequest() {
+    }
+
+    public SmsLoginRequest(final JObject request) {
+        this.setMobile(request.getString(LoginID.MOBILE));
+        this.setCaptcha(request.getString("captcha"));
+        // 如果使用 JObject 构造，构造完成后验证！
+        this.requestValidated();
+    }
+
     public void setMobile(final String mobile) {
         this.mobile = mobile;
         this.setId(mobile);
@@ -43,17 +53,6 @@ public class SmsLoginRequest extends LoginRequest {
     public TypeLogin type() {
         return TypeLogin.SMS;
     }
-
-    public SmsLoginRequest() {
-    }
-
-    public SmsLoginRequest(final JObject request) {
-        this.setMobile(request.getString(LoginID.MOBILE));
-        this.setCaptcha(request.getString("captcha"));
-        // 如果使用 JObject 构造，构造完成后验证！
-        this.requestValidated();
-    }
-
 
     public void requestValidated() {
         if (Objects.isNull(this.mobile)) {

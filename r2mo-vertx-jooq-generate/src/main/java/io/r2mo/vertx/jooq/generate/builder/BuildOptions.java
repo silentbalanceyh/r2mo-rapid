@@ -7,6 +7,7 @@ public class BuildOptions {
 
     private ConverterInstantiationMethod converterInstantiationMethod;
     private Set<BuildFlag> buildFlags;
+
     public BuildOptions() {
         this(ConverterInstantiationMethod.SINGLETON, EnumSet.noneOf(BuildFlag.class));
     }

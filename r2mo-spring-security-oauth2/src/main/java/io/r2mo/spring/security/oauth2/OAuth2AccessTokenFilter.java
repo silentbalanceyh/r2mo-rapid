@@ -52,6 +52,14 @@ public class OAuth2AccessTokenFilter extends OncePerRequestFilter {
         this.config = config;
     }
 
+    private static String extractBearerToken(final HttpServletRequest request) {
+        final String header = request.getHeader(HEADER_AUTHORIZATION);
+        if (StringUtils.hasText(header) && header.startsWith(BEARER_PREFIX)) {
+            return header.substring(BEARER_PREFIX.length());
+        }
+        return null;
+    }
+
     @org.springframework.beans.factory.annotation.Autowired(required = false)
     public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -159,13 +167,5 @@ public class OAuth2AccessTokenFilter extends OncePerRequestFilter {
 
         final BearerTokenAuthentication authentication = new BearerTokenAuthentication(principal, accessToken, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    private static String extractBearerToken(final HttpServletRequest request) {
-        final String header = request.getHeader(HEADER_AUTHORIZATION);
-        if (StringUtils.hasText(header) && header.startsWith(BEARER_PREFIX)) {
-            return header.substring(BEARER_PREFIX.length());
-        }
-        return null;
     }
 }

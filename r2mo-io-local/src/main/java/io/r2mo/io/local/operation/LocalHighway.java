@@ -71,7 +71,7 @@ class LocalHighway {
                 try {
                     progressCallback.onProgress(0L);
                 } catch (final Exception ignored) {
-                    
+
                 }
             }
 

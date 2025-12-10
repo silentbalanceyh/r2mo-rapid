@@ -32,11 +32,6 @@ public class DBJ<T> extends DBEJ<Condition, T, DSLContext> {
         this.analyzer = new QrAnalyzerJoin(ref);
     }
 
-    @Override
-    protected QrAnalyzer<Condition> analyzer() {
-        return this.analyzer;
-    }
-
     /**
      * Jooq 有比较特殊的点，是因为它没有注解，所以 {@link DBNode} 中的信息无法直接通过 {@link DBMeta} 获取到，所以在
      * 执行 Join 的过程中最好是直接在外层将 {@link DBRef} 直接构造并且传递过来，有了外层传递的 {@link DBRef} 之后，就
@@ -59,5 +54,10 @@ public class DBJ<T> extends DBEJ<Condition, T, DSLContext> {
         final String cacheKey = ref.hashCode() + "@" + dbs.hashCode();
         final JooqDatabase database = (JooqDatabase) dbs.getDatabase();
         return (DBJ<T>) CCT_DBE.pick(() -> new DBJ<>(ref, database.getContext()), cacheKey);
+    }
+
+    @Override
+    protected QrAnalyzer<Condition> analyzer() {
+        return this.analyzer;
     }
 }

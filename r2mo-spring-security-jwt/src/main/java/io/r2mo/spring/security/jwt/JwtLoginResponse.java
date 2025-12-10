@@ -18,11 +18,10 @@ import java.util.Objects;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class JwtLoginResponse extends LoginResponse {
-    private String tokenType = "Bearer";
-    private long expiresIn;
-
     private static final TokenBuilderManager MANAGER = TokenBuilderManager.of();
     private static final ConfigSecurity CONFIG = SpringUtil.getBean(ConfigSecurity.class);
+    private String tokenType = "Bearer";
+    private long expiresIn;
 
     public JwtLoginResponse(final UserAt userAt) {
         super(userAt);

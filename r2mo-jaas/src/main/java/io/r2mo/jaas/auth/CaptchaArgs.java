@@ -21,6 +21,7 @@ import java.util.Objects;
  */
 public class CaptchaArgs implements Serializable {
 
+    private static final Cc<String, CaptchaArgs> CC_CAPTCHA = Cc.open();
     private final Duration duration;
     private final TypeLogin type;
 
@@ -30,8 +31,6 @@ public class CaptchaArgs implements Serializable {
         // 默认使用 60 秒
         this.duration = Objects.isNull(duration) ? Duration.ofSeconds(60) : duration;
     }
-
-    private static final Cc<String, CaptchaArgs> CC_CAPTCHA = Cc.open();
 
     public static CaptchaArgs of(final TypeLogin type,
                                  final Duration duration) {

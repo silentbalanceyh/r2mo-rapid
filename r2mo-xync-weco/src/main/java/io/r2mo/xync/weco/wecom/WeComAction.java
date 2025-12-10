@@ -16,7 +16,7 @@ import java.util.function.Function;
  * @author lang : 2025-12-10
  */
 @SuppressWarnings("all")
-public class WeComAction {
+class WeComAction {
 
     // Action 构造函数映射表
     private static final ConcurrentMap<WeCoActionType, Function<WxCpService, WeCoAction>> SUPPLIER = new ConcurrentHashMap<>() {
@@ -28,6 +28,13 @@ public class WeComAction {
             this.put(WeCoActionType.APP_STATUS, WeComActionStatus::new);
         }
     };
+    private final WxCpService service;
+
+    // --- 基类职责 ---
+
+    protected WeComAction(final WxCpService service) {
+        this.service = service;
+    }
 
     /**
      * 工厂方法：获取或创建指定的 WeCoAction 实例
@@ -43,14 +50,6 @@ public class WeComAction {
 
         // 使用 WeCoAction.CC_ACTION 缓存 Action 实例
         return (WeCoAction<T>) WeCoAction.CC_ACTION.pick(() -> constructorFn.apply(service), cacheKey);
-    }
-
-    // --- 基类职责 ---
-
-    private final WxCpService service;
-
-    protected WeComAction(final WxCpService service) {
-        this.service = service;
     }
 
     /**

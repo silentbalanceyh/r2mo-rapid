@@ -17,11 +17,6 @@ public enum AlgNorm {
         this.jcaName = jcaName;
     }
 
-    /** 返回对应的 JCA 算法名（如 "RSA"、"Ed25519"） */
-    public String jcaName() {
-        return this.jcaName;
-    }
-
     /** 宽松解析：支持枚举名或 JCA 名称，大小写不敏感 */
     public static AlgNorm from(final String name) {
         if (name == null) {
@@ -40,5 +35,10 @@ public enum AlgNorm {
             }
             throw new IllegalArgumentException("[ R2MO ] 算法不支持：" + name);
         }
+    }
+
+    /** 返回对应的 JCA 算法名（如 "RSA"、"Ed25519"） */
+    public String jcaName() {
+        return this.jcaName;
     }
 }

@@ -132,6 +132,7 @@ public class RFS {
      * 获取已上传的分块列表
      *
      * @param token 传输令牌
+     *
      * @return 已上传的分块列表
      */
     public List<StoreChunk> getUploadedChunks(final String token) {
@@ -143,6 +144,7 @@ public class RFS {
      * 获取待上传的分块列表
      *
      * @param token 传输令牌
+     *
      * @return 待上传的分块列表
      */
     public List<StoreChunk> getWaitingChunks(final String token) {
@@ -154,6 +156,7 @@ public class RFS {
      * 获取全部分块信息
      *
      * @param token 传输令牌
+     *
      * @return 全部分块列表
      */
     public List<StoreChunk> getAllChunks(final String token) {
@@ -165,6 +168,7 @@ public class RFS {
      * 获取全部分块信息（通过资源ID）
      *
      * @param id 资源ID
+     *
      * @return 全部分块列表
      */
     public List<StoreChunk> getAllChunks(final UUID id) {
@@ -176,6 +180,7 @@ public class RFS {
      * 计算上传进度
      *
      * @param token 传输令牌
+     *
      * @return 上传进度百分比（0-100）
      */
     public double getUploadProgress(final String token) {
@@ -193,32 +198,35 @@ public class RFS {
      * 计算已上传数据总量
      *
      * @param token 传输令牌
+     *
      * @return 已上传字节数
      */
     public long getUploadedSize(final String token) {
         final List<StoreChunk> uploadedChunks = this.getUploadedChunks(token);
         return uploadedChunks.stream()
-                .mapToLong(StoreChunk::getSize)
-                .sum();
+            .mapToLong(StoreChunk::getSize)
+            .sum();
     }
 
     /**
      * 计算总数据量
      *
      * @param token 传输令牌
+     *
      * @return 总字节数
      */
     public long getTotalSize(final String token) {
         final List<StoreChunk> allChunks = this.getAllChunks(token);
         return allChunks.stream()
-                .mapToLong(StoreChunk::getSize)
-                .sum();
+            .mapToLong(StoreChunk::getSize)
+            .sum();
     }
 
     /**
      * 检查传输是否已完成
      *
      * @param token 传输令牌
+     *
      * @return 是否完成
      */
     public boolean isComplete(final String token) {
@@ -231,6 +239,7 @@ public class RFS {
      * 完成分块传输并合并文件
      *
      * @param token 传输令牌
+     *
      * @return 传输结果
      */
     public TransferResult completeUpload(final String token) {
@@ -242,6 +251,7 @@ public class RFS {
      * 取消分块传输
      *
      * @param token 传输令牌
+     *
      * @return 传输结果
      */
     public TransferResult cancelUpload(final String token) {
@@ -253,6 +263,7 @@ public class RFS {
      * 验证分块完整性（哈希校验）
      *
      * @param token 传输令牌
+     *
      * @return 是否完整
      */
     public boolean validateChunks(final String token) {
@@ -274,6 +285,7 @@ public class RFS {
      * 获取传输统计信息
      *
      * @param token 传输令牌
+     *
      * @return 统计信息字符串
      */
     public String getTransferStats(final String token) {
@@ -283,8 +295,8 @@ public class RFS {
         final boolean isComplete = this.isComplete(token);
 
         return String.format(
-                "传输统计: 进度=%.2f%%, 已上传=%d/%d bytes, 完成状态=%s",
-                progress, uploadedSize, totalSize, isComplete ? "是" : "否"
+            "传输统计: 进度=%.2f%%, 已上传=%d/%d bytes, 完成状态=%s",
+            progress, uploadedSize, totalSize, isComplete ? "是" : "否"
         );
     }
 }

@@ -18,12 +18,6 @@ import java.util.Map;
  */
 public class JObjectDeserializer extends JsonDeserializer<JObject> {
 
-    @Override
-    public JObject deserialize(final JsonParser parser, final DeserializationContext context) throws IOException {
-        final JsonNode node = parser.getCodec().readTree(parser);
-        return parseNode(node, (ObjectMapper) parser.getCodec());
-    }
-
     static JObject parseNode(final JsonNode node, final ObjectMapper codec) {
         if (node == null || node.isNull()) {
             return SPI.J();
@@ -112,5 +106,11 @@ public class JObjectDeserializer extends JsonDeserializer<JObject> {
         final String trimmed = str.trim();
         return (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
             (trimmed.startsWith("[") && trimmed.endsWith("]"));
+    }
+
+    @Override
+    public JObject deserialize(final JsonParser parser, final DeserializationContext context) throws IOException {
+        final JsonNode node = parser.getCodec().readTree(parser);
+        return parseNode(node, (ObjectMapper) parser.getCodec());
     }
 }

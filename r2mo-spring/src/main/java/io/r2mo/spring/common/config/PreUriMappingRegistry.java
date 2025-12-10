@@ -20,8 +20,7 @@ public class PreUriMappingRegistry implements ApplicationRunner {
 
     private final RequestMappingHandlerMapping handlerMapping;
 
-    public PreUriMappingRegistry(@Qualifier("requestMappingHandlerMapping")
-                                 final RequestMappingHandlerMapping handlerMapping) {
+    public PreUriMappingRegistry(@Qualifier("requestMappingHandlerMapping") final RequestMappingHandlerMapping handlerMapping) {
         this.handlerMapping = handlerMapping;
         log.info("[ R2MO ] PreUriMappingRegistry 创建完成，处理器映射类: {}",
             handlerMapping != null ? handlerMapping.getClass().getName() : "null");

@@ -12,9 +12,9 @@ import me.chanjar.weixin.cp.bean.WxCpOauth2UserInfo;
  *
  * @author lang : 2025-12-10
  */
-public class WeComActionLogin extends WeComAction implements WeCoAction<String> {
+class WeComActionLogin extends WeComAction implements WeCoAction<String> {
 
-    public WeComActionLogin(final WxCpService service) {
+    WeComActionLogin(final WxCpService service) {
         super(service);
     }
 
