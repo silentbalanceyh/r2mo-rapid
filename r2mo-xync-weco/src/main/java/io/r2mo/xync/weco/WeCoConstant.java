@@ -11,34 +11,8 @@ import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
  */
 public interface WeCoConstant {
     // ==========================================
-    // 动作定义 (Actions)
-    // ==========================================
-
-    // 这两个动作对应：微信内部打开应用 -> 扫码授权 -> 进入应用
-    /**
-     * 动作：获取扫码登录 URL
-     */
-    String WX_AUTH_URL = "WX_AUTH_URL";
-
-    /**
-     * 动作：使用 Code 换取用户信息
-     */
-    String WX_LOGIN_BY = "WX_LOGIN_BY";
-
-    // 这两个动作对应：应用中点开微信二维码 -> 扫码 -> 进入应用
-    // ==========================================
     // 参数键定义 (Keys)
     // ==========================================
-    /**
-     * 动作：获取扫码登录的二维码 (PC 端展示用)
-     * <br>对应实现：生成 UUID -> 调微信接口换图片 -> 存入缓存
-     */
-    String APP_AUTH_QR = "APP_AUTH_QR";
-    /**
-     * 动作：检查扫码状态 (PC 端轮询用)
-     * <br>对应实现：查缓存看 UUID 是否关联了 OpenID
-     */
-    String APP_STATUS = "APP_STATUS";
 
     // --- Header Keys ---
     String HEADER_REDIRECT_URI = "redirectUri";

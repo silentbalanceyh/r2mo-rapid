@@ -8,6 +8,7 @@ import io.r2mo.base.exchange.UniResponse;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.xync.weco.WeCoActionType;
 import io.r2mo.xync.weco.WeCoConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class WeChatClientImpl implements WeChatClient {
         // 2. 设置头部指令
         // 告诉 Provider 执行 "获取认证URL" 操作，并传递必要参数
         final Map<String, Object> headers = Map.of(
-            "action", WeCoConstant.WX_AUTH_URL,
+            "action", WeCoActionType.WX_AUTH_URL.name(),
             WeCoConstant.HEADER_REDIRECT_URI, redirectUri,
             WeCoConstant.HEADER_STATE, state
         );
@@ -52,7 +53,7 @@ public class WeChatClientImpl implements WeChatClient {
 
         // 2. 设置头部指令 (执行登录)
         final Map<String, Object> headers = Map.of(
-            "action", WeCoConstant.WX_LOGIN_BY
+            "action", WeCoActionType.WX_LOGIN_BY.name()
         );
 
         return this.doExchange(params, headers);
@@ -63,7 +64,7 @@ public class WeChatClientImpl implements WeChatClient {
         final JObject params = SPI.J();
 
         final Map<String, Object> headers = Map.of(
-            "action", WeCoConstant.APP_AUTH_QR,
+            "action", WeCoActionType.APP_AUTH_QR.name(),
             "expireSeconds", String.valueOf(this.config.getWechat().getExpireSeconds())
         );
 
@@ -78,7 +79,7 @@ public class WeChatClientImpl implements WeChatClient {
             .put("code", uuid);
 
         final Map<String, Object> headers = Map.of(
-            "action", WeCoConstant.APP_STATUS
+            "action", WeCoActionType.APP_STATUS.name()
         );
 
         return this.doExchange(params, headers);
