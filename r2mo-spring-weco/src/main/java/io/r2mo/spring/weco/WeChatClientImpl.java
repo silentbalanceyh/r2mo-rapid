@@ -8,7 +8,7 @@ import io.r2mo.base.exchange.UniResponse;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
-import io.r2mo.xync.weco.WeCoAction;
+import io.r2mo.xync.weco.WeCoConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +36,9 @@ public class WeChatClientImpl implements WeChatClient {
         // 2. 设置头部指令
         // 告诉 Provider 执行 "获取认证URL" 操作，并传递必要参数
         final Map<String, Object> headers = Map.of(
-            "action", WeCoAction.GET_AUTH_URL,
-            WeCoAction.HEADER_REDIRECT_URI, redirectUri,
-            WeCoAction.HEADER_STATE, state
+            "action", WeCoConstant.WX_AUTH_URL,
+            WeCoConstant.HEADER_REDIRECT_URI, redirectUri,
+            WeCoConstant.HEADER_STATE, state
         );
 
         return this.doExchange(params, headers);
@@ -52,7 +52,7 @@ public class WeChatClientImpl implements WeChatClient {
 
         // 2. 设置头部指令 (执行登录)
         final Map<String, Object> headers = Map.of(
-            "action", WeCoAction.LOGIN_BY_CODE
+            "action", WeCoConstant.WX_LOGIN_BY
         );
 
         return this.doExchange(params, headers);

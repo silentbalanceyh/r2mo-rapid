@@ -1,4 +1,4 @@
-package io.r2mo.xync.weco;
+package io.r2mo.xync.weco.wechat;
 
 import io.r2mo.base.exchange.BaseContext;
 import io.r2mo.base.exchange.NormProxy;

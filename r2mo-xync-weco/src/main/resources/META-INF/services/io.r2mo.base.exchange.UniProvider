@@ -1,2 +1,2 @@
-io.r2mo.xync.weco.WeChatProvider
-io.r2mo.xync.weco.WeComProvider
+io.r2mo.xync.weco.wechat.WeChatProvider
+io.r2mo.xync.weco.wecom.WeComProvider

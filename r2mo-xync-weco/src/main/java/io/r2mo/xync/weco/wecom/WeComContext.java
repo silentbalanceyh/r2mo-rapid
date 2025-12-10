@@ -1,4 +1,4 @@
-package io.r2mo.xync.weco;
+package io.r2mo.xync.weco.wecom;
 
 import io.r2mo.base.exchange.BaseContext;
 import io.r2mo.base.exchange.NormProxy;
@@ -14,6 +14,10 @@ public class WeComContext extends BaseContext {
     // --- 1. Key Constants ---
     public static final String KEY_MAX_RETRY = "max_retry";
     public static final String KEY_PROXY = "proxy";
+    public static final String KEY_HOST = "host";
+    public static final String KEY_PROTOCOL = "protocol";
+    public static final String KEY_SSL = "ssl";
+    public static final String KEY_TIMEOUT = "timeout";
 
     // --- 2. Value Constants ---
     public static final String DEF_HOST = "qyapi.weixin.qq.com";
@@ -37,9 +41,17 @@ public class WeComContext extends BaseContext {
         return this;
     }
 
+    public String getHost() {
+        return this.get(KEY_HOST);
+    }
+
     public WeComContext setTimeout(final int timeout) {
         this.set(KEY_TIMEOUT, timeout);
         return this;
+    }
+
+    public int getTimeout() {
+        return this.getOrDefault(KEY_TIMEOUT, DEF_TIMEOUT);
     }
 
     public WeComContext setMaxRetry(final int maxRetry) {

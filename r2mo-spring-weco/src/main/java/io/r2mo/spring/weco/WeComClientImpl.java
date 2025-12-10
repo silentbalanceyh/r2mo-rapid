@@ -8,7 +8,7 @@ import io.r2mo.base.exchange.UniResponse;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
-import io.r2mo.xync.weco.WeCoAction;
+import io.r2mo.xync.weco.WeCoConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +32,9 @@ public class WeComClientImpl implements WeComClient {
         final JObject params = SPI.J();
 
         final Map<String, Object> headers = Map.of(
-            "action", WeCoAction.GET_AUTH_URL,
-            WeCoAction.HEADER_REDIRECT_URI, redirectUri,
-            WeCoAction.HEADER_STATE, state
+            "action", WeCoConstant.WX_AUTH_URL,
+            WeCoConstant.HEADER_REDIRECT_URI, redirectUri,
+            WeCoConstant.HEADER_STATE, state
         );
 
         return this.doExchange(params, headers);
@@ -47,7 +47,7 @@ public class WeComClientImpl implements WeComClient {
             .put("code", code);
 
         final Map<String, Object> headers = Map.of(
-            "action", WeCoAction.LOGIN_BY_CODE
+            "action", WeCoConstant.WX_LOGIN_BY
         );
 
         return this.doExchange(params, headers);

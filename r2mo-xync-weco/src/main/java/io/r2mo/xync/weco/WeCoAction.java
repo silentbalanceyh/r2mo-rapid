@@ -1,57 +1,31 @@
 package io.r2mo.xync.weco;
 
-import io.r2mo.base.exchange.NormProxy;
-import me.chanjar.weixin.cp.config.impl.WxCpDefaultConfigImpl;
-import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
+import io.r2mo.base.exchange.UniMessage;
+import io.r2mo.base.exchange.UniResponse;
+import io.r2mo.typed.cc.Cc;
 
 /**
- * 微信/企微 认证动作常量
+ * 微信/企微 认证动作的底层执行接口 (Command 抽象)
+ * <p>
+ * 每个具体的 WeCoActionType 都会有一个实现该接口的类与之对应。
+ * Service 客户端 (WxMpService/WxCpService) 应该通过构造函数注入并持有。
+ * </p>
  *
- * @author lang : 2025-12-09
+ * @param <T> UniMessage 中 Payload 的类型 (如 String for Code, Void for QR code request)
+ *
+ * @author lang : 2025-12-10
  */
-public interface WeCoAction {
-    /**
-     * 动作：获取扫码登录 URL
-     */
-    String GET_AUTH_URL = "GET_AUTH_URL";
+public interface WeCoAction<T> {
+
+    Cc<String, WeCoAction<?>> CC_ACTION = Cc.openThread();
 
     /**
-     * 动作：使用 Code 换取用户信息
+     * 执行具体的微信/企微操作命令。
+     *
+     * @param request 封装了 Header (如 redirectUri) 和 Payload (如 Code) 的请求消息。
+     *
+     * @return 包含操作结果的 UniResponse。
+     * @throws Exception 操作可能抛出的异常 (如网络错误、参数缺失、微信API调用失败)。
      */
-    String LOGIN_BY_CODE = "LOGIN_BY_CODE";
-
-    // --- Header Keys ---
-    String HEADER_REDIRECT_URI = "redirectUri";
-    String HEADER_STATE = "state";
-
-    /**
-     * 内部帮助类：统一处理配置注入（代理等）
-     */
-    class Helper {
-        /**
-         * 为微信公众号 Config 应用代理
-         */
-        public static void applyProxy(final WxMpDefaultConfigImpl config, final NormProxy proxy) {
-            if (proxy == null) {
-                return;
-            }
-            config.setHttpProxyHost(proxy.getHost());
-            config.setHttpProxyPort(proxy.getPort());
-            config.setHttpProxyUsername(proxy.getUsername());
-            config.setHttpProxyPassword(proxy.getPassword());
-        }
-
-        /**
-         * 为企业微信 Config 应用代理
-         */
-        public static void applyProxy(final WxCpDefaultConfigImpl config, final NormProxy proxy) {
-            if (proxy == null) {
-                return;
-            }
-            config.setHttpProxyHost(proxy.getHost());
-            config.setHttpProxyPort(proxy.getPort());
-            config.setHttpProxyUsername(proxy.getUsername());
-            config.setHttpProxyPassword(proxy.getPassword());
-        }
-    }
+    UniResponse execute(final UniMessage<T> request) throws Exception;
 }

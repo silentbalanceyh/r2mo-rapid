@@ -6,9 +6,9 @@ import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniProvider;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
-import io.r2mo.xync.weco.WeComAccount;
-import io.r2mo.xync.weco.WeComContext;
-import io.r2mo.xync.weco.WeComCredential;
+import io.r2mo.xync.weco.wecom.WeComAccount;
+import io.r2mo.xync.weco.wecom.WeComContext;
+import io.r2mo.xync.weco.wecom.WeComCredential;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;

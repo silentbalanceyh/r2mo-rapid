@@ -14,6 +14,10 @@ import io.r2mo.typed.json.JObject;
  */
 public interface WeChatService {
 
+    // ==========================================
+    // 模式一：OAuth2 网页授权 (手机微信内使用)
+    // ==========================================
+
     /**
      * 获取微信扫码登录 URL
      *
@@ -32,4 +36,15 @@ public interface WeChatService {
      * @return 填充了 OpenID 的完整请求对象
      */
     WeChatLoginRequest validate(WeChatLoginRequest request);
+
+    // ==========================================
+    // 模式二：扫码登录 (PC端/非微信环境使用)
+    // ==========================================
+
+    /**
+     * 获取登录二维码
+     *
+     * @return 登录二维码获取
+     */
+    JObject getQrCode();
 }

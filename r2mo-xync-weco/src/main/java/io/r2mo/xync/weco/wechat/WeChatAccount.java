@@ -1,4 +1,4 @@
-package io.r2mo.xync.weco;
+package io.r2mo.xync.weco.wechat;
 
 import io.r2mo.base.exchange.BaseAccount;
 import io.r2mo.base.exchange.UniCredential;

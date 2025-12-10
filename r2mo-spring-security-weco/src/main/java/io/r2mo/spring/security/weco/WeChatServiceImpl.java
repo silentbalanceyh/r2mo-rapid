@@ -56,6 +56,11 @@ public class WeChatServiceImpl implements WeChatService {
         return request;
     }
 
+    @Override
+    public JObject getQrCode() {
+        return null;
+    }
+
     private void checkEnabled() {
         Fn.jvmKo(Objects.isNull(this.config.getWechat()), _80503Exception401WeChatAuthFailure.class);
     }

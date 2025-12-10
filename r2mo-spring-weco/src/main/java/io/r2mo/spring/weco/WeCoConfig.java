@@ -1,8 +1,8 @@
 package io.r2mo.spring.weco;
 
 import io.r2mo.base.exchange.NormProxy;
-import io.r2mo.xync.weco.WeChatCredential;
-import io.r2mo.xync.weco.WeComCredential;
+import io.r2mo.xync.weco.wechat.WeChatCredential;
+import io.r2mo.xync.weco.wecom.WeComCredential;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

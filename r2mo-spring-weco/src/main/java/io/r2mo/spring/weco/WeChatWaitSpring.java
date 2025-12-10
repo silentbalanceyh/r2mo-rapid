@@ -6,9 +6,9 @@ import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniProvider;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
-import io.r2mo.xync.weco.WeChatAccount;
-import io.r2mo.xync.weco.WeChatContext;
-import io.r2mo.xync.weco.WeChatCredential;
+import io.r2mo.xync.weco.wechat.WeChatAccount;
+import io.r2mo.xync.weco.wechat.WeChatContext;
+import io.r2mo.xync.weco.wechat.WeChatCredential;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
