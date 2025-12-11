@@ -11,7 +11,7 @@ import io.r2mo.typed.enums.TypeLogin;
  *
  * @author lang : 2025-12-08
  */
-public abstract class EmailServiceUserAtBase extends ServiceUserAtBase {
+public abstract class UserAtBaseEmail extends ServiceUserAtBase {
 
     @Override
     public TypeLogin loginType() {

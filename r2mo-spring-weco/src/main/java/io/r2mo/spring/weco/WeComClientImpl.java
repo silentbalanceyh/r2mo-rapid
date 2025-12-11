@@ -56,14 +56,18 @@ public class WeComClientImpl implements WeComClient {
     }
 
     @Override
-    public JObject qrCode(final String redirectUri) {
+    public JObject qrCode(final String state) {
         final JObject params = SPI.J();
+
+        final WeCoConfig.WeComCp wecomConfig = this.config.getWecomCp();
 
         final Map<String, Object> headers = Map.of(
             "action", WeCoActionType.APP_AUTH_QR.name(),
-            "expireSeconds", String.valueOf(this.config.getWecomCp().getExpireSeconds()),
-            WeCoConstant.HEADER_REDIRECT_URI, redirectUri
+            "expireSeconds", String.valueOf(wecomConfig.getExpireSeconds()),
+            WeCoConstant.HEADER_REDIRECT_URI, wecomConfig.getUrlCallback()
         );
+        // 状态统一专用（保证企微可登录成功的关键）
+        params.put("content", state);
 
         return this.doExchange(params, headers);
     }

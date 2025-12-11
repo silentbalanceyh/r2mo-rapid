@@ -4,10 +4,13 @@ import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniResponse;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.xync.weco.WeCoAction;
+import io.r2mo.xync.weco.WeCoSession;
+import io.r2mo.xync.weco.WeCoStatus;
 import io.r2mo.xync.weco.WeCoUtil;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
+import java.time.Duration;
 import java.util.UUID;
 
 /**
@@ -56,6 +59,15 @@ class WeChatActionQrCode extends WeChatAction implements WeCoAction<Void> {
         // 1. 调用 WxJava 获取临时二维码 Ticket
         final WxMpQrCodeTicket ticket = this.service().getQrcodeService().qrCodeCreateTmpTicket(uuid, expireSeconds);
         final String qrUrl = this.service().getQrcodeService().qrCodePictureUrl(ticket.getTicket());
+
+        // 2. （微信必须要此步骤）存储初始状态到 SPI
+        final String sessionKey = WeCoSession.keyOf(uuid);
+        final Duration storeDuration = Duration.ofSeconds(expireSeconds);
+        WeCoSession.of().save(
+            sessionKey,
+            WeCoStatus.WAITING.name(),
+            storeDuration
+        );
 
         final JObject response = WeCoUtil.replyQr(uuid, qrUrl, expireSeconds);
         return UniResponse.success(response);

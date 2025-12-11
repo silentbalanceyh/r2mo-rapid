@@ -16,5 +16,4 @@ public abstract class WeCoApp implements Serializable {
     private String secret;
     /** 独立代理（优先级高于全局代理） **/
     private NormProxy proxy;
-
 }

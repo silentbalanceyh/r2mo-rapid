@@ -80,15 +80,18 @@ public class WeCoConfiguration {
         }
 
         // CorpID 检查
-        Fn.jvmKo(StrUtil.isBlank(wecom.getCorpId()), _80551Exception500WeComConfig.class, "corp-id");
+        Fn.jvmKo(StrUtil.isEmpty(wecom.getCorpId()), _80551Exception500WeComConfig.class, "corp-id");
 
         // Secret 检查
-        Fn.jvmKo(StrUtil.isBlank(wecom.getSecret()), _80551Exception500WeComConfig.class, "secret");
+        Fn.jvmKo(StrUtil.isEmpty(wecom.getSecret()), _80551Exception500WeComConfig.class, "secret");
 
         // AgentID 检查
         Fn.jvmKo(wecom.getAgentId() == null, _80551Exception500WeComConfig.class, "agent-id");
 
-        log.info("[ R2MO ] ----> 已启用 WeCom (企业微信) 服务模块！[CorpID:{}, AgentID: {}]", wecom.getCorpId(), wecom.getAgentId());
+        // Callback 检查（必须配置）
+        Fn.jvmKo(StrUtil.isEmpty(wecom.getUrlCallback()), _80551Exception500WeComConfig.class, "callback");
+
+        log.info("[ R2MO ] ----> 已启用 WeCom (企业微信) 服务模块！[CorpID: {}, AgentID: {}]", wecom.getCorpId(), wecom.getAgentId());
         return true;
     }
 }

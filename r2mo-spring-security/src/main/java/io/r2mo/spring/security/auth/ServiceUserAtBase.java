@@ -27,9 +27,15 @@ import java.util.Objects;
 public abstract class ServiceUserAtBase implements ServiceUserAt {
 
     protected final PasswordEncoder encoder;
+    private TypeLogin typeLogin;
 
     public ServiceUserAtBase() {
         this.encoder = SpringUtil.getBean(PasswordEncoder.class);
+    }
+
+    protected ServiceUserAtBase(final TypeLogin typeLogin) {
+        this();
+        this.typeLogin = typeLogin;
     }
 
     @Override
@@ -69,7 +75,7 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
     }
 
     public TypeLogin loginType() {
-        return TypeLogin.PASSWORD;
+        return Objects.isNull(this.typeLogin) ? TypeLogin.PASSWORD : this.typeLogin;
     }
     // --------------- 子类必须实现的方法
 

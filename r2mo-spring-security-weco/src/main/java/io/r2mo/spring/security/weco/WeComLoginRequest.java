@@ -1,5 +1,6 @@
 package io.r2mo.spring.security.weco;
 
+import io.r2mo.base.util.R2MO;
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.spring.security.exception._80241Exception400PasswordRequired;
 import io.r2mo.typed.enums.TypeLogin;
@@ -19,6 +20,7 @@ public class WeComLoginRequest extends LoginRequest {
      * 临时授权码 (前端传递)
      */
     private String code;
+    private String state;
 
     /**
      * 企业成员 UserID (后端换取后填充)
@@ -32,6 +34,7 @@ public class WeComLoginRequest extends LoginRequest {
 
     public WeComLoginRequest(final JObject request) {
         this.setCode(request.getString("code"));
+        this.state = R2MO.valueT(request, "state");
         // 构造完成后立即验证
         this.requestValidated();
     }

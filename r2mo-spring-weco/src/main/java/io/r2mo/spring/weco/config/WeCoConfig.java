@@ -10,6 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 微信体系统一配置映射
@@ -130,6 +132,10 @@ public class WeCoConfig implements Serializable {
         private String token;
         private String aesKey;
         private Integer expireSeconds = 300;
+        /** 企微回调地址 **/
+        private String urlCallback;
+        /** 黑名单地址 **/
+        private List<String> blockDomains = new ArrayList<>();
 
         /**
          * 快捷转换为底层凭证对象
@@ -145,13 +151,13 @@ public class WeCoConfig implements Serializable {
 
         @Override
         public String getAppId() {
-            log.warn("[ R2MO ] 企微配置中的 getAppId() 方法已被废弃，请使用 corpId 字段代替。");
+            // log.warn("[ R2MO ] 企微配置中的 getAppId() 方法已被废弃，请使用 corpId 字段代替。");
             return this.corpId;
         }
 
         @Override
         public void setAppId(final String appId) {
-            log.warn("[ R2MO ] 企微配置中的 setAppId() 方法已被废弃，请使用 corpId 字段代替。");
+            // log.warn("[ R2MO ] 企微配置中的 setAppId() 方法已被废弃，请使用 corpId 字段代替。");
             this.corpId = appId;
         }
     }

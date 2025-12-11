@@ -8,13 +8,13 @@ import io.r2mo.typed.enums.TypeLogin;
 /**
  * @author lang : 2025-12-11
  */
-public abstract class WeChatServiceUserAtBase extends ServiceUserAtBase {
+public abstract class UserAtBaseWeChat extends ServiceUserAtBase {
 
     @Override
     public TypeLogin loginType() {
         return TypeLogin.ID_WECHAT;
     }
-    
+
     @Override
     public boolean isMatched(LoginRequest request, final UserAt userAt) {
         return true;
