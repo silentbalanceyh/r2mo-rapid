@@ -46,6 +46,9 @@ import java.util.function.Supplier;
 @Slf4j
 final class FnOut {
 
+    // 工具类不需要实例化
+    private FnOut() { /* no-op */ }
+
     /**
      * 尝试基于异常类型生成一个失败的 Future；若类型不匹配则返回成功 Future(null)。
      *
@@ -91,9 +94,6 @@ final class FnOut {
             return Future.failedFuture(reflectError);
         }
     }
-
-    // 工具类不需要实例化
-    private FnOut() { /* no-op */ }
 
     @SuppressWarnings("all")
     static <T> Function<Throwable, T> otherwiseFn(final Supplier<T> supplier) {

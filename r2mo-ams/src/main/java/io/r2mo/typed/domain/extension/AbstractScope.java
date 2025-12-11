@@ -1,5 +1,6 @@
 package io.r2mo.typed.domain.extension;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.r2mo.typed.domain.BaseScope;
 import lombok.Data;
 
@@ -8,7 +9,9 @@ import lombok.Data;
  */
 @Data
 public abstract class AbstractScope implements BaseScope {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String app;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String tenant;
 
     @Override

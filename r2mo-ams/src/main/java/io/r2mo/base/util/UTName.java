@@ -6,15 +6,9 @@ import java.util.Set;
  * @author lang : 2025-10-24
  */
 class UTName {
-    // ✅ 跨常见数据库（PG/MySQL/SQLServer/Oracle/SQLite）的“共同最小子集”校验
-    static boolean isNamedSQL(final String raw) {
-        return validateSqlIdentifierCommonReport(raw).ok;
-    }
-
-    /* --------- 下面是实现细节：报告 + 校验逻辑 --------- */
-
     private static final int COMMON_MAX_LEN = 30; // 取 Oracle 30 作为共同下限（更保守更可移植）
 
+    /* --------- 下面是实现细节：报告 + 校验逻辑 --------- */
     private static final Set<String> RESERVED_COMMON = Set.of(
         // 一组保守的 SQL92/常见保留字（全大写比对）
         "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "ALTER", "DROP", "TRUNCATE",
@@ -30,21 +24,25 @@ class UTName {
         "EXISTS", "ANY", "SOME", "ALL", "WITH", "OVER", "PARTITION", "RANGE", "ROWS",
         "TOP", "RETURNING", "MERGE", "MINUS", "EXCEPT", "INTERSECT"
     );
+    /* 关键字/保留字清单（面向 Java 16+，含 record 与单独下划线） */
+    private static final java.util.Set<String> JAVA_RESERVED = java.util.Set.of(
+        // 关键字
+        "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
+        "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float",
+        "for", "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native",
+        "new", "package", "private", "protected", "public", "return", "short", "static", "strictfp",
+        "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try", "void",
+        "volatile", "while",
+        // 新增/重要
+        "record",  // Java 16 起为关键字
+        "_",       // Java 9 起单独下划线是关键字（不可用作标识符）
+        // 字面量（也不可作为标识符）
+        "true", "false", "null"
+    );
 
-    /** 校验报告：ok=false 时，reason 给出第一处不通过原因 */
-    private static final class SqlIdReport {
-        final boolean ok;
-        final String reason;
-
-        SqlIdReport(final boolean ok, final String reason) {
-            this.ok = ok;
-            this.reason = reason;
-        }
-
-        @Override
-        public String toString() {
-            return (this.ok ? "OK" : "FAIL") + (this.reason == null ? "" : (": " + this.reason));
-        }
+    // ✅ 跨常见数据库（PG/MySQL/SQLServer/Oracle/SQLite）的“共同最小子集”校验
+    static boolean isNamedSQL(final String raw) {
+        return validateSqlIdentifierCommonReport(raw).ok;
     }
 
     /** 生成详细报告，便于调试（不想要报告可只用上面的 boolean 入口） */
@@ -134,19 +132,19 @@ class UTName {
         return true;
     }
 
-    /* 关键字/保留字清单（面向 Java 16+，含 record 与单独下划线） */
-    private static final java.util.Set<String> JAVA_RESERVED = java.util.Set.of(
-        // 关键字
-        "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
-        "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float",
-        "for", "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native",
-        "new", "package", "private", "protected", "public", "return", "short", "static", "strictfp",
-        "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try", "void",
-        "volatile", "while",
-        // 新增/重要
-        "record",  // Java 16 起为关键字
-        "_",       // Java 9 起单独下划线是关键字（不可用作标识符）
-        // 字面量（也不可作为标识符）
-        "true", "false", "null"
-    );
+    /** 校验报告：ok=false 时，reason 给出第一处不通过原因 */
+    private static final class SqlIdReport {
+        final boolean ok;
+        final String reason;
+
+        SqlIdReport(final boolean ok, final String reason) {
+            this.ok = ok;
+            this.reason = reason;
+        }
+
+        @Override
+        public String toString() {
+            return (this.ok ? "OK" : "FAIL") + (this.reason == null ? "" : (": " + this.reason));
+        }
+    }
 }

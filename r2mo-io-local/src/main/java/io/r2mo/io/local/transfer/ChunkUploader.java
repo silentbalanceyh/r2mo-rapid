@@ -128,106 +128,106 @@ public class ChunkUploader {
 
     private ChunkSession findSessionByToken(final String token) {
         return this.activeSessions.stream()
-                .filter(session -> session.getToken().equals(token))
-                .findFirst()
-                .orElse(null);
+            .filter(session -> session.getToken().equals(token))
+            .findFirst()
+            .orElse(null);
     }
 
 
-//    /**
-//     * 开始分片上传
-//     */
-//    public CompletableFuture<UploadResult> startUpload(final ChunkSession session) {
-//        return CompletableFuture.supplyAsync(() -> {
-//            try {
-//                final Path filePath = Paths.get(session.getFilePath());
-//
-//                try (final RandomAccessFile raf = new RandomAccessFile(filePath.toFile(), "r")) {
-//                    for (int chunkIndex = 0; chunkIndex < session.getTotalChunks(); chunkIndex++) {
-//                        if (session.isChunkUploaded(chunkIndex)) {
-//                            continue; // 跳过已上传的分片
-//                        }
-//
-//                        final long chunkStart = (long) chunkIndex * this.chunkSize;
-//                        final int currentChunkSize = (int) Math.min(this.chunkSize, session.getFileSize() - chunkStart);
-//
-//                        // 读取分片数据
-//                        final byte[] chunkData = this.readChunk(raf, chunkStart, currentChunkSize);
-//
-//                        // 创建分片信息
-//                        final StoreChunk chunk = this.createChunk(chunkIndex, chunkStart, currentChunkSize);
-//
-//                        // 上传分片
-//                        try (final InputStream chunkStream = new ByteArrayInputStream(chunkData)) {
-//                            final TransferResult result = this.rfs.ioUpload(this.createChunkUploadRequest(session), chunkStream, chunk);
-//
-//                            if (result == TransferResult.SUCCESS) {
-//                                session.markChunkUploaded(chunkIndex);
-//                                log.debug("分片上传成功: {}-{}, 大小: {} bytes",
-//                                        session.getFileName(), chunkIndex, currentChunkSize);
-//                            } else {
-//                                throw new RuntimeException("分片上传失败: " + chunkIndex);
-//                            }
-//                        }
-//
-//                        // 更新进度
-//                        this.updateProgress(session);
-//                    }
-//                }
-//
-//                // 完成传输
-//                final TransferResult finalResult = this.rfs.completeUpload(session.getToken());
-//
-//                final UploadResult uploadResult = new UploadResult(
-//                        finalResult == TransferResult.SUCCESS,
-//                        session.getFileName(),
-//                        session.getFileSize(),
-//                        session.getToken(),
-//                        finalResult == TransferResult.SUCCESS ? "上传成功" : "上传失败"
-//                );
-//
-//                // 清理会话
-//                this.activeSessions.remove(session);
-//
-//                return uploadResult;
-//
-//            } catch (final Exception e) {
-//                log.error("分片上传失败: {}", session.getFileName(), e);
-//                throw new RuntimeException("分片上传失败: " + session.getFileName(), e);
-//            }
-//        }, this.executorService);
-//    }
+    //    /**
+    //     * 开始分片上传
+    //     */
+    //    public CompletableFuture<UploadResult> startUpload(final ChunkSession session) {
+    //        return CompletableFuture.supplyAsync(() -> {
+    //            try {
+    //                final Path filePath = Paths.get(session.getFilePath());
+    //
+    //                try (final RandomAccessFile raf = new RandomAccessFile(filePath.toFile(), "r")) {
+    //                    for (int chunkIndex = 0; chunkIndex < session.getTotalChunks(); chunkIndex++) {
+    //                        if (session.isChunkUploaded(chunkIndex)) {
+    //                            continue; // 跳过已上传的分片
+    //                        }
+    //
+    //                        final long chunkStart = (long) chunkIndex * this.chunkSize;
+    //                        final int currentChunkSize = (int) Math.min(this.chunkSize, session.getFileSize() - chunkStart);
+    //
+    //                        // 读取分片数据
+    //                        final byte[] chunkData = this.readChunk(raf, chunkStart, currentChunkSize);
+    //
+    //                        // 创建分片信息
+    //                        final StoreChunk chunk = this.createChunk(chunkIndex, chunkStart, currentChunkSize);
+    //
+    //                        // 上传分片
+    //                        try (final InputStream chunkStream = new ByteArrayInputStream(chunkData)) {
+    //                            final TransferResult result = this.rfs.ioUpload(this.createChunkUploadRequest(session), chunkStream, chunk);
+    //
+    //                            if (result == TransferResult.SUCCESS) {
+    //                                session.markChunkUploaded(chunkIndex);
+    //                                log.debug("分片上传成功: {}-{}, 大小: {} bytes",
+    //                                        session.getFileName(), chunkIndex, currentChunkSize);
+    //                            } else {
+    //                                throw new RuntimeException("分片上传失败: " + chunkIndex);
+    //                            }
+    //                        }
+    //
+    //                        // 更新进度
+    //                        this.updateProgress(session);
+    //                    }
+    //                }
+    //
+    //                // 完成传输
+    //                final TransferResult finalResult = this.rfs.completeUpload(session.getToken());
+    //
+    //                final UploadResult uploadResult = new UploadResult(
+    //                        finalResult == TransferResult.SUCCESS,
+    //                        session.getFileName(),
+    //                        session.getFileSize(),
+    //                        session.getToken(),
+    //                        finalResult == TransferResult.SUCCESS ? "上传成功" : "上传失败"
+    //                );
+    //
+    //                // 清理会话
+    //                this.activeSessions.remove(session);
+    //
+    //                return uploadResult;
+    //
+    //            } catch (final Exception e) {
+    //                log.error("分片上传失败: {}", session.getFileName(), e);
+    //                throw new RuntimeException("分片上传失败: " + session.getFileName(), e);
+    //            }
+    //        }, this.executorService);
+    //    }
 
-//    /**
-//     * 恢复上传会话
-//     */
-//    public CompletableFuture<UploadResult> resumeUpload(final String token) {
-//        return CompletableFuture.supplyAsync(() -> {
-//            try {
-//                // 获取已上传的分片信息
-//                final List<StoreChunk> uploadedChunks = this.rfs.getUploadedChunks(token);
-//                final List<StoreChunk> allChunks = this.rfs.getAllChunks(token);
-//
-//                // 查找对应的会话
-//                final ChunkSession session = this.findSessionByToken(token);
-//                if (session == null) {
-//                    throw new RuntimeException("找不到对应的上传会话: " + token);
-//                }
-//
-//                // 更新已上传的分片状态
-//                for (final StoreChunk chunk : uploadedChunks) {
-//                    session.markChunkUploaded(chunk.getIndex());
-//                }
-//
-//                // 继续上传
-//                return this.startUpload(session).get();
-//
-//            } catch (final Exception e) {
-//                log.error("恢复上传失败: {}", token, e);
-//                throw new RuntimeException("恢复上传失败: " + token, e);
-//            }
-//        }, this.executorService);
-//    }
+    //    /**
+    //     * 恢复上传会话
+    //     */
+    //    public CompletableFuture<UploadResult> resumeUpload(final String token) {
+    //        return CompletableFuture.supplyAsync(() -> {
+    //            try {
+    //                // 获取已上传的分片信息
+    //                final List<StoreChunk> uploadedChunks = this.rfs.getUploadedChunks(token);
+    //                final List<StoreChunk> allChunks = this.rfs.getAllChunks(token);
+    //
+    //                // 查找对应的会话
+    //                final ChunkSession session = this.findSessionByToken(token);
+    //                if (session == null) {
+    //                    throw new RuntimeException("找不到对应的上传会话: " + token);
+    //                }
+    //
+    //                // 更新已上传的分片状态
+    //                for (final StoreChunk chunk : uploadedChunks) {
+    //                    session.markChunkUploaded(chunk.getIndex());
+    //                }
+    //
+    //                // 继续上传
+    //                return this.startUpload(session).get();
+    //
+    //            } catch (final Exception e) {
+    //                log.error("恢复上传失败: {}", token, e);
+    //                throw new RuntimeException("恢复上传失败: " + token, e);
+    //            }
+    //        }, this.executorService);
+    //    }
 
 
 }

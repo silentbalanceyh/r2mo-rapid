@@ -29,7 +29,7 @@ public interface DBFor {
     static DBFor ofRemove() {
         return CCT_DB_FOR.pick(DBForRemove::new, DBForRemove.class.getName());
     }
-    
+
     static DBFor of(final Supplier<DBFor> supplier) {
         return CCT_DB_FOR.pick(supplier, String.valueOf(supplier.hashCode()));
     }

@@ -4,7 +4,16 @@ import cn.hutool.core.util.StrUtil;
 import io.r2mo.typed.json.JArray;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -179,13 +188,14 @@ class UTType {
             }
         }
     }
-     static Object[] flattenValues(Object... values) {
+
+    static Object[] flattenValues(final Object... values) {
         if (values == null || values.length == 0) {
             return new Object[0];
         }
 
-        List<Object> resultList = new ArrayList<>();
-        Deque<Object> stack = new ArrayDeque<>();
+        final List<Object> resultList = new ArrayList<>();
+        final Deque<Object> stack = new ArrayDeque<>();
 
         // 将所有输入压入栈
         for (int i = values.length - 1; i >= 0; i--) {
@@ -194,17 +204,17 @@ class UTType {
 
         // 迭代展开
         while (!stack.isEmpty()) {
-            Object current = stack.pop();
+            final Object current = stack.pop();
 
-            Class<?> clazz = current.getClass();
+            final Class<?> clazz = current.getClass();
 
             if (clazz.isArray()) {
-                int len = Array.getLength(current);
+                final int len = Array.getLength(current);
                 // 倒序压入栈，保持顺序
                 for (int i = len - 1; i >= 0; i--) {
                     stack.push(Array.get(current, i));
                 }
-            } else if (current instanceof List<?> list) {
+            } else if (current instanceof final List<?> list) {
                 // 倒序压入栈，保持顺序
                 for (int i = list.size() - 1; i >= 0; i--) {
                     stack.push(list.get(i));

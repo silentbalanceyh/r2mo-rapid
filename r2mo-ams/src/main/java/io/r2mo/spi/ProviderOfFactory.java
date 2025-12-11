@@ -1,5 +1,6 @@
 package io.r2mo.spi;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -49,6 +51,8 @@ class ProviderOfFactory {
         return META_CLASS;
     }
 
+    private static final Set<Class<?>> ONCE_LOGGER = new ConcurrentHashSet<>();
+
     /**
      * 根据优先级查找最高优先级的 SPI 实现
      *
@@ -76,11 +80,16 @@ class ProviderOfFactory {
             return Integer.compare(priority1, priority2);
         }).orElse(null);
 
-        final SPID spid = highest.getClass().getDeclaredAnnotation(SPID.class);
-        log.info("[ R2MO ] SPI 实现类按优先级查找: interface = {} / 优先级最高实例 = {} / 优先级 = {}",
-            clazz.getName(),
-            highest.getClass().getName(),
-            Objects.isNull(spid) ? null : spid.priority());
+        final Class<?> implClass = highest.getClass();
+        if (!ONCE_LOGGER.contains(implClass)) {
+            // 打印一次
+            final SPID spid = implClass.getDeclaredAnnotation(SPID.class);
+            log.info("[ R2MO ] SPI 实现类按优先级查找: interface = {} / 优先级最高实例 = {} / 优先级 = {}",
+                clazz.getName(),
+                implClass.getName(),
+                Objects.isNull(spid) ? null : spid.priority());
+            ONCE_LOGGER.add(implClass);
+        }
 
         return highest;
     }
@@ -108,8 +117,17 @@ class ProviderOfFactory {
                 final String implName = annoSPI.value();
                 return StrUtil.equals(name, implName);
             }).findAny().orElse(null);
-            log.info("[ R2MO ] SPI 实现类按名称查找: interface = {} / SPID = {} / {}",
-                clazz.getName(), name, Objects.isNull(found) ? null : found.getClass().getName());
+            if (Objects.isNull(found)) {
+                log.info("[ R2MO ] SPI 实现类按名称查找: interface = {} / name = {} / null",
+                    clazz.getName(), name);
+            } else {
+                final Class<?> implClass = found.getClass();
+                if (!ONCE_LOGGER.contains(implClass)) {
+                    log.info("[ R2MO ] SPI 实现类按名称查找: interface = {} / name = {} / {}",
+                        clazz.getName(), name, implClass.getName());
+                    ONCE_LOGGER.add(implClass);
+                }
+            }
             return found;
         }
     }

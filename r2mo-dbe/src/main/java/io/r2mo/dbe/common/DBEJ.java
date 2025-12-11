@@ -19,11 +19,9 @@ import java.util.Optional;
  * @author lang : 2025-10-23
  */
 public abstract class DBEJ<QR, T, EXECUTOR> {
-    private final EXECUTOR executor;
-
     protected final OpJoin<T, QR> opJoin;
-
     protected final DBRef ref;
+    private final EXECUTOR executor;
 
     /**
      * 此处的 DBRef 必须是完整的

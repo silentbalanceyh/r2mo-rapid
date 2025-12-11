@@ -1,5 +1,7 @@
 package io.r2mo.spring.security.config;
 
+import io.r2mo.jaas.auth.CaptchaArgs;
+import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.exception.web._401UnauthorizedException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.Serializable;
+import java.time.Duration;
 
 /**
  * @author lang : 2025-11-10
@@ -43,6 +46,11 @@ public class ConfigSecurityCaptcha implements Serializable {
      * 验证码字体配置
      */
     private ConfigFont font = new ConfigFont();
+
+    public CaptchaArgs forArguments() {
+        final Duration duration = Duration.ofSeconds(this.expiredAt);
+        return CaptchaArgs.of(TypeLogin.CAPTCHA, duration);
+    }
 
     @Data
     @Configuration

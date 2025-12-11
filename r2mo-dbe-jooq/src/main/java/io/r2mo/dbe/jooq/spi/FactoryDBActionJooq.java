@@ -24,6 +24,8 @@ public class FactoryDBActionJooq extends FactoryDBActionBase {
 
     @SuppressWarnings("all")
     private static final Cc<String, OpJoin> CCT_OP_JOIN = Cc.openThread();
+    // 子类必须
+    private static final Cc<String, DBLoad> CC_DB_LOAD = Cc.openThread();
 
     @Override
     @SuppressWarnings("all")
@@ -97,9 +99,6 @@ public class FactoryDBActionJooq extends FactoryDBActionBase {
         // 配置单个数据库
         return JooqDBS.getOrCreate(database);
     }
-
-    // 子类必须
-    private static final Cc<String, DBLoad> CC_DB_LOAD = Cc.openThread();
 
     @Override
     public DBLoad loader() {

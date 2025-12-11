@@ -34,6 +34,22 @@ public class Join {
         this.toField = Objects.isNull(toField) ? this.ID() : toField;
     }
 
+    public static Join of(final Class<?> from, final Class<?> to) {
+        return new Join(from, null, to, null);
+    }
+
+    public static Join of(final Class<?> from, final String fromField, final Class<?> to) {
+        return new Join(from, fromField, to, null);
+    }
+
+    public static Join of(final Class<?> from, final Class<?> to, final String fromField) {
+        return new Join(from, null, to, fromField);
+    }
+
+    public static Join of(final Class<?> from, final String fromField, final Class<?> to, final String toField) {
+        return new Join(from, fromField, to, toField);
+    }
+
     public Join from(final Class<?> from, final String fromField) {
         this.from = from;
         this.fromField = Objects.isNull(fromField) ? this.ID() : fromField;
@@ -80,22 +96,6 @@ public class Join {
 
     protected String ID() {
         return ID;
-    }
-
-    public static Join of(final Class<?> from, final Class<?> to) {
-        return new Join(from, null, to, null);
-    }
-
-    public static Join of(final Class<?> from, final String fromField, final Class<?> to) {
-        return new Join(from, fromField, to, null);
-    }
-
-    public static Join of(final Class<?> from, final Class<?> to, final String fromField) {
-        return new Join(from, null, to, fromField);
-    }
-
-    public static Join of(final Class<?> from, final String fromField, final Class<?> to, final String toField) {
-        return new Join(from, fromField, to, toField);
     }
 
 }

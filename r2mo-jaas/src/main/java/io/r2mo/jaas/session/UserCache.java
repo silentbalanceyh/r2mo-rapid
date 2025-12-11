@@ -1,6 +1,6 @@
 package io.r2mo.jaas.session;
 
-import io.r2mo.jaas.enums.TypeLogin;
+import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Kv;
@@ -71,11 +71,11 @@ public interface UserCache {
     UserAt find(UUID id);
 
     // ----- 临时验证码（授权码）专用缓存
-    void authorize(Kv<String, String> generated, TypeLogin type);
+    void authorize(Kv<String, String> generated, CaptchaArgs config);
 
-    String authorize(String consumerId, TypeLogin type);
+    String authorize(String consumerId, CaptchaArgs config);
 
-    void authorizeKo(String consumerId, TypeLogin type);
+    void authorizeKo(String consumerId, CaptchaArgs config);
 
     // ----- 令牌部分专用缓存
     // --- Access Token ---

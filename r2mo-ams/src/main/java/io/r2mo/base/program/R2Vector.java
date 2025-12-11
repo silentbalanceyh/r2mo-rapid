@@ -53,20 +53,44 @@ import java.util.function.BiPredicate;
 @Data
 @Slf4j
 public class R2Vector implements Serializable {
+    private static final Cc<String, R2Vector> CC_VECTOR = Cc.open();
+    private static final HStore STORE = SPI.V_STORE;
     @JsonSerialize(using = ClassSerializer.class)
     @JsonDeserialize(using = ClassDeserializer.class)
     private Class<?> type;
-
     @JsonIgnore
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private R2Mapping vField = new R2Mapping();
-
-
     @JsonIgnore
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private R2Mapping vColumn = new R2Mapping();
+
+    public static R2Vector of(final String mappingFile) {
+        if (StrUtil.isEmpty(mappingFile)) {
+            throw new _501NotSupportException("[ R2MO ] 映射文件路径不能为空！");
+        }
+        if (Objects.isNull(STORE)) {
+            throw new _404NotFoundException("[ R2MO ] 无法找到存储实现，此操作依赖存储实现！");
+        }
+        return CC_VECTOR.pick(() -> {
+            /* 先从当前目录加载，然后从 ClassPath 加载 */
+            final String filename = STORE.pHome(mappingFile);
+            JObject data = STORE.inYaml(filename);
+            if (Objects.isNull(data)) {
+                log.info("[ R2MO ] 尝试从 ClassPath 中加载映射文件：{}", mappingFile);
+                final URL url = Thread.currentThread().getContextClassLoader().getResource(filename);
+                data = STORE.inYaml(url);
+            }
+            final JObject mapping = SPI.V_UTIL.valueJObject(data, "mapping");
+            final R2Vector vector = SPI.V_UTIL.deserializeJson(data, R2Vector.class);
+            final ConcurrentMap<String, String> mapData = new ConcurrentHashMap<>();
+            mapping.toMap().forEach((field, fieldJ) -> mapData.put(field, (String) fieldJ));
+            vector.mapping(mapData);
+            return vector;
+        }, mappingFile);
+    }
 
     /**
      * 结合两个 Vector 信息进行合并，但是合并过程不可以将引用切换掉，简单说要更改 target 中的数据才可以，
@@ -139,34 +163,6 @@ public class R2Vector implements Serializable {
     public void put(final String field, final String fieldJson) {
         this.vField.setMapping(field, fieldJson);
     }
-
-    public static R2Vector of(final String mappingFile) {
-        if (StrUtil.isEmpty(mappingFile)) {
-            throw new _501NotSupportException("[ R2MO ] 映射文件路径不能为空！");
-        }
-        if (Objects.isNull(STORE)) {
-            throw new _404NotFoundException("[ R2MO ] 无法找到存储实现，此操作依赖存储实现！");
-        }
-        return CC_VECTOR.pick(() -> {
-            /* 先从当前目录加载，然后从 ClassPath 加载 */
-            final String filename = STORE.pHome(mappingFile);
-            JObject data = STORE.inYaml(filename);
-            if (Objects.isNull(data)) {
-                log.info("[ R2MO ] 尝试从 ClassPath 中加载映射文件：{}", mappingFile);
-                final URL url = Thread.currentThread().getContextClassLoader().getResource(filename);
-                data = STORE.inYaml(url);
-            }
-            final JObject mapping = SPI.V_UTIL.valueJObject(data, "mapping");
-            final R2Vector vector = SPI.V_UTIL.deserializeJson(data, R2Vector.class);
-            final ConcurrentMap<String, String> mapData = new ConcurrentHashMap<>();
-            mapping.toMap().forEach((field, fieldJ) -> mapData.put(field, (String) fieldJ));
-            vector.mapping(mapData);
-            return vector;
-        }, mappingFile);
-    }
-
-    private static final Cc<String, R2Vector> CC_VECTOR = Cc.open();
-    private static final HStore STORE = SPI.V_STORE;
 
     /**
      * {@link Class} 定义中的字段 -> 输出 Json 对象中的属性

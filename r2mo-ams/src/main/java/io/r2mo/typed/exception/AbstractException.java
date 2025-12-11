@@ -58,7 +58,11 @@ public abstract class AbstractException extends RuntimeException {
             this.messageContent = localization.formatFail(messageCode, messageArgs);
             // 确保异常码与 getCode() 返回值一致
             final String infoKey = "I" + Math.abs(messageCode);
-            this.messageDisplay = localization.formatInfo(infoKey, messageArgs);
+            final String infoAfter = localization.formatInfo(infoKey, messageArgs);
+            if (!infoKey.equals(infoAfter)) {
+                // FIX: 这种模式比较同属，二者不相等等价于没有找到 infoKey 对应的异常信息
+                this.messageDisplay = localization.formatInfo(infoKey, messageArgs);
+            }
         } else {
             // ✅ 模板模式（如 FAIL_ORDER_NOT_FOUND, "Order {} not found"）
             this.messageContent = localization.formatInfo(messageKey, messageArgs);

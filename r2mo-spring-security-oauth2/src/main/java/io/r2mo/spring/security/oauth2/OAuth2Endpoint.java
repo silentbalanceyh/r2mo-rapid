@@ -63,12 +63,6 @@ package io.r2mo.spring.security.oauth2;
  */
 public final class OAuth2Endpoint {
 
-    private static final String PREFIX = "/oauth2";
-
-    // ============================
-    // Discovery & Metadata (无前缀)
-    // ============================
-
     /**
      * OIDC Discovery 端点：{@code /.well-known/openid-configuration}
      * <p>
@@ -77,16 +71,24 @@ public final class OAuth2Endpoint {
      */
     public static final String OIDC_DISCOVERY = "/.well-known/openid-configuration";
 
+    // ============================
+    // Discovery & Metadata (无前缀)
+    // ============================
     /**
      * OAuth 2.0 授权服务器元数据端点：{@code /.well-known/oauth-authorization-server}
      * <p>
      * 遵循 RFC 8414，提供通用 OAuth2 能力描述，适用于非 OIDC 场景。
      */
     public static final String OAUTH_SERVER_METADATA = "/.well-known/oauth-authorization-server";
+    private static final String PREFIX = "/oauth2";
 
     // ============================
     // Core Endpoints (带前缀)
     // ============================
+
+    private OAuth2Endpoint() {
+        throw new UnsupportedOperationException("Utility class");
+    }
 
     /**
      * 授权端点：{@code /oauth2/authorize}
@@ -147,9 +149,5 @@ public final class OAuth2Endpoint {
      */
     public static String DEVICE_AUTHORIZATION() {
         return PREFIX + "/device_authorization";
-    }
-
-    private OAuth2Endpoint() {
-        throw new UnsupportedOperationException("Utility class");
     }
 }

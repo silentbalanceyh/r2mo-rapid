@@ -9,5 +9,7 @@ public interface ForLocale {
 
     String formatI18n(String messageKey, Object... messageArgs);
 
+    String formatI18n(String filename, String messageKey, Object... messageArgs);
+
     String formatFail(int code, Object... messageArgs);
 }

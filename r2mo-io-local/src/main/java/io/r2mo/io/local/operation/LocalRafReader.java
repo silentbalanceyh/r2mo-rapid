@@ -43,18 +43,18 @@ class LocalRafReader {
         try {
             // 2. 计算校验和
             final InputStream checksumStream = FileRangeInputStream.getInputStream(
-                    filePath, fileRange.getStart(), fileRange.getEnd());
+                filePath, fileRange.getStart(), fileRange.getEnd());
             final String checksum = ChecksumUtil.calculateChecksum(
-                    checksumStream, ChecksumUtil.HashAlgorithm.SHA256);
+                checksumStream, ChecksumUtil.HashAlgorithm.SHA256);
             checksumStream.close(); // 及时关闭流
 
             // 3. 创建实际数据流
             final InputStream dataStream = FileRangeInputStream.getInputStream(
-                    filePath, fileRange.getStart(), fileRange.getEnd());
+                filePath, fileRange.getStart(), fileRange.getEnd());
 
             return new Binary(dataStream)
-                    .checksum(checksum)
-                    .length(fileRange.getLength());
+                .checksum(checksum)
+                .length(fileRange.getLength());
         } catch (final IOException e) {
             System.err.println("下载分片失败：" + e.getMessage());
         }

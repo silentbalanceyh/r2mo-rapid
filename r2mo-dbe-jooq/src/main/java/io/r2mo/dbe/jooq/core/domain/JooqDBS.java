@@ -40,6 +40,11 @@ public class JooqDBS implements DBS {
         this.dataSource = datasource;
     }
 
+    public static DBS getOrCreate(final Database database) {
+        final String cacheKey = database.getUrl();
+        return CC_DBS.pick(() -> new JooqDBS(database), cacheKey);
+    }
+
     private CPFactory lookupCPFactory(final Database database) {
         // 查找唯一的 DBCP 名称
         final String found = database.findNameOfDBCP();
@@ -51,11 +56,6 @@ public class JooqDBS implements DBS {
             }
             return factory;
         }, found);
-    }
-
-    public static DBS getOrCreate(final Database database) {
-        final String cacheKey = database.getUrl();
-        return CC_DBS.pick(() -> new JooqDBS(database), cacheKey);
     }
 
     @Override

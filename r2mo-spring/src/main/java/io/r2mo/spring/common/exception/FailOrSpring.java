@@ -80,6 +80,11 @@ public class FailOrSpring implements FailOr {
             return new _401UnauthorizedException(e.getMessage());
         }
 
+        // ❌️ Spring Security 自定义异常，通常是认证过程中的异常
+        if (ex instanceof final SpringAuthenticationException e) {
+            log.error("[ R2MO ] (S) 请求地址 '{}'，自定义认证失败", request.getRequestURI(), e);
+            return e.toFailure();
+        }
         // org.springframework.security.core.AuthenticationException
         // ❌️ Spring Security 认证异常，通常是认证失败
         if (ex instanceof final org.springframework.security.core.AuthenticationException e) {

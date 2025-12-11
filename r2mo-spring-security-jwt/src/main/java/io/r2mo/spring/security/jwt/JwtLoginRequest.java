@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.jwt;
 
-import io.r2mo.jaas.enums.TypeLogin;
 import io.r2mo.spring.security.basic.BasicLoginRequest;
+import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,5 +1,6 @@
 package io.r2mo.typed.webflow;
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.r2mo.typed.exception.AbstractException;
 import io.r2mo.typed.exception.WebException;
@@ -18,6 +19,7 @@ class RFailed implements Serializable {
     private int code;
 
     private String message;
+    private String info;
 
     @JsonIgnore
     private AbstractException error;
@@ -35,6 +37,11 @@ class RFailed implements Serializable {
         this.status = exWeb.getStatus();
         this.code = exWeb.getCode();
         this.message = exWeb.getMessage();
+        // Fix info 字段的呈现问题
+        final String display = exWeb.getMessageDisplay();
+        if (StrUtil.isNotEmpty(display)) {
+            this.info = display;
+        }
         this.error = exWeb;
     }
 }

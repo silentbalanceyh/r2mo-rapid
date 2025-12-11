@@ -16,11 +16,11 @@ import java.util.Set;
 @Component
 @Slf4j
 public class WebPriorityRequestMapping extends RequestMappingHandlerMapping {
+    private static final Set<Integer> DUPLICATED_REG = new HashSet<>();
+
     public WebPriorityRequestMapping() {
         this.setOrder(0);
     }
-
-    private static final Set<Integer> DUPLICATED_REG = new HashSet<>();
 
     @Override
     protected void registerHandlerMethod(@NonNull final Object handler,
@@ -34,7 +34,7 @@ public class WebPriorityRequestMapping extends RequestMappingHandlerMapping {
                 final HandlerMethod selectedHandler = this.selectHandlerMethod(existingHandler, newHandler, method);
 
                 if (selectedHandler != existingHandler) {
-                    if(!DUPLICATED_REG.contains(mapping.hashCode())){
+                    if (!DUPLICATED_REG.contains(mapping.hashCode())) {
                         log.info("[ R2MO ] 映射冲突解决: {} 旧方法 {}.{} (优先级:{}) -> 新方法 {}.{} (优先级:{})",
                             mapping,
                             existingHandler.getMethod().getDeclaringClass().getSimpleName(),
@@ -100,6 +100,7 @@ public class WebPriorityRequestMapping extends RequestMappingHandlerMapping {
         final PriorityMapping annotation = this.findMethodAnnotation(method);
         return annotation != null ? annotation.value() : 0;
     }
+
     /**
      * 查找方法上的 PriorityMapping 注解，包括接口方法上的注解
      */

@@ -20,16 +20,15 @@ import java.util.concurrent.ConcurrentMap;
  * @author lang : 2025-10-21
  */
 class DBEAggr<QR, T, EXECUTOR> extends DBEConfiguration {
-    private final EXECUTOR executor;
     protected final Class<T> entityCls;
     // 操作专用函数
     protected final OpAggr opAggr;
     protected final OpDb<T> opDb;
     protected final QrOne<T> qrOne;
     protected final QrMany<T> qrMany;
-
     protected final OpVary<T, QR> opVary;
     protected final QrAnalyzer<QR> qrAnalyzer;
+    private final EXECUTOR executor;
 
     protected DBEAggr(final Class<T> entityCls, final EXECUTOR executor) {
         this.entityCls = entityCls;

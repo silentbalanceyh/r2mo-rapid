@@ -4,6 +4,8 @@ import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.jaas.session.UserAt;
 import org.springframework.security.core.AuthenticationException;
 
+import java.time.Duration;
+
 /**
  * @author lang : 2025-11-11
  */
@@ -12,10 +14,10 @@ public interface AuthService {
      * 前置处理
      * <pre>
      *     认证方式              前置接口
-     *     sms                  /sms/send
-     *     email                /email/send
+     *     sms                  /auth/sms-send
+     *     email                /auth/email-send
      *     ldap                 无
-     *     wechat               /wechat/qrcode
+     *     wechat               /auth/wechat-qrcode
      *     password             /auth/captcha           开启图片验证码后使用
      * </pre>
      *
@@ -23,7 +25,7 @@ public interface AuthService {
      *
      * @return 是否允许登录
      */
-    default String authorize(final LoginRequest loginRequest) {
+    default String authorize(final LoginRequest loginRequest, final Duration duration) {
         return null;
     }
 
@@ -31,10 +33,10 @@ public interface AuthService {
      * 执行认证并返回登录响应
      * <pre>
      *     认证方式              执行接口
-     *     sms                  /sms/login
-     *     email                /email/login
-     *     ldap                 /ldap/login
-     *     wechat               /wechat/login
+     *     sms                  /auth/sms-login
+     *     email                /auth/email-login
+     *     ldap                 /auth/ldap-login
+     *     wechat               /auth/wechat-login
      *     password             /auth/login
      * </pre>
      */

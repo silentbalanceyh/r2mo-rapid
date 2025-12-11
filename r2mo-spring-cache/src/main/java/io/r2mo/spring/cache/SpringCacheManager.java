@@ -27,28 +27,16 @@ import java.util.concurrent.ConcurrentMap;
  */
 @SuppressWarnings("all")
 public class SpringCacheManager implements CacheManager {
-    private boolean dynamic = true;
     private static final RedissonClient CLIENT = SpringUtil.getBean(RedissonClient.class);
+    Map<String, CacheConfig> configMap = new ConcurrentHashMap<>();
+    ConcurrentMap<String, Cache> instanceMap = new ConcurrentHashMap<>();
+    private boolean dynamic = true;
     @Setter
     private boolean allowNullValues = true;
     @Setter
     private boolean transactionAware = true;
 
-    Map<String, CacheConfig> configMap = new ConcurrentHashMap<>();
-    ConcurrentMap<String, Cache> instanceMap = new ConcurrentHashMap<>();
-
     public SpringCacheManager() {
-    }
-
-    public void setCacheNames(final Collection<String> names) {
-        if (names != null) {
-            for (final String name : names) {
-                this.getCache(name);
-            }
-            this.dynamic = false;
-        } else {
-            this.dynamic = true;
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -124,5 +112,16 @@ public class SpringCacheManager implements CacheManager {
     @Override
     public Collection<String> getCacheNames() {
         return Collections.unmodifiableSet(this.configMap.keySet());
+    }
+
+    public void setCacheNames(final Collection<String> names) {
+        if (names != null) {
+            for (final String name : names) {
+                this.getCache(name);
+            }
+            this.dynamic = false;
+        } else {
+            this.dynamic = true;
+        }
     }
 }

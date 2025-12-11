@@ -17,11 +17,11 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Slf4j
 class JooqField {
-    private R2Vector vector;
     // 这个变量是锁定的，不会改动
     private final ConcurrentMap<String, Field<?>> fieldColumn = new ConcurrentHashMap<>();
     // 这个变量是会变化的，会随着 vector 的变化而追加
     private final ConcurrentMap<String, Class<?>> fieldType = new ConcurrentHashMap<>();
+    private R2Vector vector;
 
     JooqField() {
     }

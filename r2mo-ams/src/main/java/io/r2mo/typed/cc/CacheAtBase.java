@@ -13,12 +13,11 @@ public abstract class CacheAtBase<K, V> implements CacheAt<K, V> {
     private final Class<K> clazzK;
     private final Class<V> clazzV;
     private final String name;
-
-    private String manager;
-    private boolean initialized = false;
     // 子类可访问的基础配置属性
     protected Duration duration;
     protected long size = -1;
+    private String manager;
+    private boolean initialized = false;
 
     protected CacheAtBase(final String name, final Class<K> clazzK, final Class<V> clazzV) {
         this.name = name;

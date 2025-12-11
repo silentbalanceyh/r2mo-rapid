@@ -25,12 +25,10 @@ import java.util.concurrent.TimeUnit;
 public class RedisTokenPool implements TransferTokenPool {
 
     private static final JUtil UT = SPI.V_UTIL;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
     private static final String TOKEN_KEY_PREFIX = "r2mo:transfer:token:";
     private static final String TOKEN_EXPIRE_KEY_PREFIX = "r2mo:transfer:token:expire:";
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public boolean runSave(final TransferToken token, final long expiredAt) {

@@ -21,6 +21,22 @@ public class AsyncDBContext implements DBContext {
     private static final Cc<String, Vertx> CC_VECTOR = Cc.open();
     private static final Cc<String, DSLContext> CC_JOOQ = Cc.open();
 
+    public static Vertx vertxStatic(final DBS dbs) {
+        return CC_VECTOR.get(String.valueOf(dbs.hashCode()));
+    }
+
+    public static String cached(final Class<?> daoCls, final DBS dbs, final R2Vector vector) {
+        if (Objects.isNull(vector)) {
+            return AsyncDBContext.vertxStatic(dbs).hashCode()
+                // Vertx + DBS + DAO
+                + "@" + dbs.hashCode() + "/" + daoCls.getName();
+        } else {
+            return AsyncDBContext.vertxStatic(dbs).hashCode()
+                // Vertx + DBS + DAO + Vector（映射对象）
+                + "@" + dbs.hashCode() + "/" + daoCls.getName() + "#" + vector.hashCode();
+        }
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public <DSL> DSL configure(final DBS dbs, final Vertx vertx) {
@@ -47,21 +63,5 @@ public class AsyncDBContext implements DBContext {
     @Override
     public Vertx vertx(final DBS dbs) {
         return vertxStatic(dbs);
-    }
-
-    public static Vertx vertxStatic(final DBS dbs) {
-        return CC_VECTOR.get(String.valueOf(dbs.hashCode()));
-    }
-
-    public static String cached(final Class<?> daoCls, final DBS dbs, final R2Vector vector) {
-        if (Objects.isNull(vector)) {
-            return AsyncDBContext.vertxStatic(dbs).hashCode()
-                // Vertx + DBS + DAO
-                + "@" + dbs.hashCode() + "/" + daoCls.getName();
-        } else {
-            return AsyncDBContext.vertxStatic(dbs).hashCode()
-                // Vertx + DBS + DAO + Vector（映射对象）
-                + "@" + dbs.hashCode() + "/" + daoCls.getName() + "#" + vector.hashCode();
-        }
     }
 }

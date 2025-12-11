@@ -50,7 +50,6 @@ public class DBRef implements Serializable {
     private final DBNode left;
     private final DBNode right;
     private final Set<Class<?>> registrySet = new HashSet<>();
-    private int counter = 0;
     /**
      * 别名表，用于保存表对应的别名，别名必须唯一且别名是为了可以直接引导到真实名称
      * <pre>
@@ -77,8 +76,6 @@ public class DBRef implements Serializable {
      * 且还有一个特殊逻辑：别名通常无法直接在实体中扫描到，所以在响应方法时，几乎可以使用：⚠️ 无法查找的字段直接用别名返回！！！
      */
     private final ConcurrentMap<String, DBAlias> aliasMap = new ConcurrentHashMap<>();
-
-
     /**
      * 表别名保存，用于存储表名的别名，当出现了 A AS A1 JOIN B AS B1 时，此处的值对应
      * <pre>
@@ -93,7 +90,6 @@ public class DBRef implements Serializable {
      * </pre>
      */
     private final R2Mapping prefixMap = new R2Mapping();
-
     /**
      * 追加一个数据结构用于存储列名 -> 表名的映射关系，这个填充会包含两部分
      * <pre>
@@ -102,13 +98,27 @@ public class DBRef implements Serializable {
      * </pre>
      */
     private final ConcurrentMap<String, String> columnVector = new ConcurrentHashMap<>();
-
-
     /**
      * 此处的 joined 是非全局变量，用于存储当前 DBRef 中已经连接的节点信息，方便后续处理，多表连接的时候之中会限定
      * 对应的连接内容，不允许出现从中全局提取的情况，所以此处的 joined 结构用于存储已经连接的节点信息。
      */
     private final MultiKeyMap<DBNode> joined = new MultiKeyMap<>();
+    /**
+     * 多表 JOIN 的时候，此处的结构如：
+     * <pre>
+     *     T2
+     *        T2 Field 01 = T1 Field 01
+     *        T2 Field 02 = T1 Field 02
+     *     T3
+     *        T3 Field 01 = T1 Field 03
+     *        T3 Field 02 = T1 Field 04
+     * </pre>
+     * 暂时只考虑双表多字段模式
+     */
+    private final ConcurrentMap<String, Set<Kv<String, String>>> kvMap = new ConcurrentHashMap<>();
+    private int counter = 0;
+
+    // -------------------------- （设置）配置当前 DBRef 信息 --------------------------
 
     /**
      * 根据 {@link DBNode} 的 left / right 来构造 tableRef 存储，方便后期快速定位，通过表名直接提取到和表直接
@@ -167,7 +177,10 @@ public class DBRef implements Serializable {
         this.addVector(nodeRight, waitFor);
     }
 
-    // -------------------------- （设置）配置当前 DBRef 信息 --------------------------
+    public static DBRef of(final DBNode nodeLeft, final DBNode nodeRight,
+                           final Kv<String, String> waitFor) {
+        return new DBRef(nodeLeft, nodeRight, waitFor);
+    }
 
     private void addVector(final DBNode joined, final Kv<String, String> waitFor) {
         if (joined == null || waitFor == null) {
@@ -184,12 +197,6 @@ public class DBRef implements Serializable {
              */
             .add(Kv.create(waitFor.value(), waitFor.key()));
     }
-
-    public static DBRef of(final DBNode nodeLeft, final DBNode nodeRight,
-                           final Kv<String, String> waitFor) {
-        return new DBRef(nodeLeft, nodeRight, waitFor);
-    }
-
 
     /**
      * 别名和主要属性名的冲突检查，此处用来检查定义的别名是否和主字段名相同，如果出现相同那么别名会直接抛出异常，这样可以防止用户在定义别名过程中
@@ -239,20 +246,6 @@ public class DBRef implements Serializable {
         this.addVector(thirdOr, waitFor);
         return this;
     }
-
-    /**
-     * 多表 JOIN 的时候，此处的结构如：
-     * <pre>
-     *     T2
-     *        T2 Field 01 = T1 Field 01
-     *        T2 Field 02 = T1 Field 02
-     *     T3
-     *        T3 Field 01 = T1 Field 03
-     *        T3 Field 02 = T1 Field 04
-     * </pre>
-     * 暂时只考虑双表多字段模式
-     */
-    private final ConcurrentMap<String, Set<Kv<String, String>>> kvMap = new ConcurrentHashMap<>();
 
 
     // -------------------------- （检查）检查专用的 API 信息 --------------------------

@@ -36,6 +36,9 @@ public class JooqMeta {
 
     @Setter(AccessLevel.NONE)
     private final Class<?> entityCls;
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)   // 这个变量是锁定的，不会改动
+    private final ConcurrentMap<String, Field<?>> fieldColumn = new ConcurrentHashMap<>();
     /**
      * 正常而言，一旦带有 vector 在访问数据库过程中就不可能被拿掉，所以可以将 {@link R2Vector} 存储在 Meta 中使用，
      * 一般是用于迁移，比如配置 pojoFile -> 旧数据库往新数据库做迁移，使用此映射来实现所有操作，直接加载了此处的
@@ -48,19 +51,49 @@ public class JooqMeta {
      * </pre>
      */
     private R2Vector vector = new R2Vector();
-
-
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private JooqKey key;
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private JooqField field;
+    private Table<?> table;
 
+    private JooqMeta(final Class<?> entityCls) {
+        this.entityCls = entityCls;
+    }
 
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)   // 这个变量是锁定的，不会改动
-    private final ConcurrentMap<String, Field<?>> fieldColumn = new ConcurrentHashMap<>();
+    public static JooqMeta of(final Class<?> entityCls, final Table<?> table) {
+        return CC_META.pick(() -> {
+            final JooqMeta meta = new JooqMeta(entityCls).table(table);
+            log.debug("[ R2MO ] ( Jooq ) 同步 meta 初始化完成：{} / {}, hashCode = {}",
+                entityCls.getName(), table.getName(), meta.hashCode());
+            return meta;
+        }, entityCls);
+    }
+
+    /**
+     * 如果是使用了 r2mo-vertx-jooq，它内部的 JooqMetaAsync 会直接从 VertxDao 中分析出表名，所以在调用 {@link JooqMeta#of(Class, Table)}
+     * 时就直接将表名初始化了，所以才可以从这个方法中根据 实体类直接获取Meta 信息，否则会返回 null。如果只是单纯使用 r2mo-dbe-jooq，则无法通过此方
+     * 法获取 Meta 信息，若要获取必须保证有一个地方可以直接分析实体类构造 {@link Table} 信息然后传入 {@link JooqMeta#of(Class, Table)}方法中
+     * 进行缓存。
+     * <pre>
+     *     {@link Table} 的构造方式
+     *     - 直接通过 {@link Table} 对象中的 getName() 获取
+     *     - 获取已经构造好的对象中的 Table 对象
+     *     - 通过反射的方式获取表名
+     *     - 可结合 JPA 注解获取表名
+     * </pre>
+     * ⚠️ 注意：此方法不会创建新的 Meta 实例，只会返回已经缓存的实例，一定要初始化！初始化！初始化！
+     *
+     * @param entityCls 实体类
+     *
+     * @return Meta 信息
+     */
+    // 此处静态方法，表示已经被缓存，不可以再创建新的 Meta 了
+    public static JooqMeta getOr(final Class<?> entityCls) {
+        return CC_META.getOrDefault(entityCls, null);
+    }
 
     public JooqMeta vector(final R2Vector vector) {
         final R2Vector combined = this.vector.combine(vector);
@@ -69,8 +102,6 @@ public class JooqMeta {
         this.vector = combined;
         return this;
     }
-
-    private Table<?> table;
 
     public JooqMeta table(final Table<?> table) {
         if (Objects.isNull(table)) {
@@ -99,10 +130,6 @@ public class JooqMeta {
         });
         this.vector.mappingColumn(columnMap);
         return this;
-    }
-
-    private JooqMeta(final Class<?> entityCls) {
-        this.entityCls = entityCls;
     }
 
     public TreeSet<String> fieldSet() {
@@ -141,45 +168,13 @@ public class JooqMeta {
         return this.field.fieldColumns();
     }
 
+    // ------------------------------------- 静态方法 -------------------------------------
+
     public Field<?>[] findColumns(final String... fields) {
         return this.field.findColumn(fields);
     }
 
     public Field<?> findColumn(final String fieldOr) {
         return this.field.findColumn(fieldOr);
-    }
-
-    // ------------------------------------- 静态方法 -------------------------------------
-
-    public static JooqMeta of(final Class<?> entityCls, final Table<?> table) {
-        return CC_META.pick(() -> {
-            final JooqMeta meta = new JooqMeta(entityCls).table(table);
-            log.debug("[ R2MO ] ( Jooq ) 同步 meta 初始化完成：{} / {}, hashCode = {}",
-                entityCls.getName(), table.getName(), meta.hashCode());
-            return meta;
-        }, entityCls);
-    }
-
-    /**
-     * 如果是使用了 r2mo-vertx-jooq，它内部的 JooqMetaAsync 会直接从 VertxDao 中分析出表名，所以在调用 {@link JooqMeta#of(Class, Table)}
-     * 时就直接将表名初始化了，所以才可以从这个方法中根据 实体类直接获取Meta 信息，否则会返回 null。如果只是单纯使用 r2mo-dbe-jooq，则无法通过此方
-     * 法获取 Meta 信息，若要获取必须保证有一个地方可以直接分析实体类构造 {@link Table} 信息然后传入 {@link JooqMeta#of(Class, Table)}方法中
-     * 进行缓存。
-     * <pre>
-     *     {@link Table} 的构造方式
-     *     - 直接通过 {@link Table} 对象中的 getName() 获取
-     *     - 获取已经构造好的对象中的 Table 对象
-     *     - 通过反射的方式获取表名
-     *     - 可结合 JPA 注解获取表名
-     * </pre>
-     * ⚠️ 注意：此方法不会创建新的 Meta 实例，只会返回已经缓存的实例，一定要初始化！初始化！初始化！
-     *
-     * @param entityCls 实体类
-     *
-     * @return Meta 信息
-     */
-    // 此处静态方法，表示已经被缓存，不可以再创建新的 Meta 了
-    public static JooqMeta getOr(final Class<?> entityCls) {
-        return CC_META.getOrDefault(entityCls, null);
     }
 }

@@ -5,13 +5,13 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>rachel-momo-0216</artifactId>
-        <version>1.0.16</version>
+        <version>1.0.18</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>r2mo-rapid</artifactId>
     <version>1.0.31</version>
     <properties>
-        <rachel-momo.version>1.0.16</rachel-momo.version>
+        <rachel-momo.version>1.0.18</rachel-momo.version>
         <r2mo.version>1.0.31</r2mo.version>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,22 +81,35 @@
         <module>r2mo-io-local</module>
 
         <!-- 🌷 Database Engine 实现 -->
-        <module>r2mo-dbcp-hikari</module>
         <module>r2mo-dbe</module>
         <module>r2mo-dbe-jooq</module>
         <module>r2mo-dbe-mybatisplus</module>
 
+        <!-- 🌷 集成模块实现 -->
+        <module>r2mo-xync-email</module>
+        <module>r2mo-xync-sms</module>
+        <module>r2mo-xync-weco</module>
+
         <!-- 🌷 Spring 模块专用 -->
         <module>r2mo-spring</module>
         <module>r2mo-spring-cache</module>
+        <module>r2mo-spring-email</module>
+        <module>r2mo-spring-excel</module>
         <module>r2mo-spring-mybatisplus</module>
         <module>r2mo-spring-json</module>
-        <module>r2mo-spring-excel</module>
         <module>r2mo-spring-junit5</module>
+        <module>r2mo-spring-sms</module>
+        <module>r2mo-spring-weco</module>
+
+        <!-- 🌷 Spring Security 扩展 -->
         <module>r2mo-spring-security</module>
+        <module>r2mo-spring-security-email</module>
         <module>r2mo-spring-security-jwt</module>
+        <module>r2mo-spring-security-ldap</module>
         <module>r2mo-spring-security-oauth2</module>
         <module>r2mo-spring-security-oauth2client</module>
+        <module>r2mo-spring-security-sms</module>
+        <module>r2mo-spring-security-weco</module>
 
         <!-- 🌷 Vertx 模块专用 -->
         <module>r2mo-vertx</module>
@@ -106,11 +119,11 @@
         <module>r2mo-vertx-jooq</module>
         <module>r2mo-vertx-junit5</module>
 
-
         <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
         <module>r2mo-boot-spring</module>
         <module>r2mo-boot-spring-default</module><!-- ☘️ Bootstrap 实现层（默认）-->
         <module>r2mo-boot-vertx</module>
+        <module>r2mo-spring-template</module>
     </modules>
     <build>
         <plugins>

@@ -2,11 +2,21 @@ package io.r2mo.base.web.i18n;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 /**
  * 合并同名 ResourceBundle（properties）资源的 Control。
@@ -42,6 +52,24 @@ public class ForLocaleBundle extends ResourceBundle.Control {
     public ForLocaleBundle(final long ttl, final boolean alwaysReload) {
         this.ttl = ttl;
         this.alwaysReload = alwaysReload;
+    }
+
+    /** reload=true 时禁用 URL 缓存，避免读到旧内容 */
+    private static InputStream open(final URL url, final boolean reload) throws IOException {
+        if (!reload) {
+            return url.openStream();
+        }
+        final URLConnection conn = url.openConnection();
+        conn.setUseCaches(false);
+        return conn.getInputStream();
+    }
+
+    /** 将合并后的 Properties 写成 .properties 文本，再由 PropertyResourceBundle 读取 */
+    private static String toPropertiesText(final Properties props) throws IOException {
+        final StringWriter sw = new StringWriter();
+        // 第二个参数是注释（会带时间戳），通常传 null，避免影响缓存一致性
+        props.store(sw, null);
+        return sw.toString();
     }
 
     /** 只处理 properties 资源 */
@@ -107,23 +135,5 @@ public class ForLocaleBundle extends ResourceBundle.Control {
 
         // 包装成 ResourceBundle（用 StringReader 避免额外文件对象）
         return new PropertyResourceBundle(new StringReader(toPropertiesText(merged)));
-    }
-
-    /** reload=true 时禁用 URL 缓存，避免读到旧内容 */
-    private static InputStream open(final URL url, final boolean reload) throws IOException {
-        if (!reload) {
-            return url.openStream();
-        }
-        final URLConnection conn = url.openConnection();
-        conn.setUseCaches(false);
-        return conn.getInputStream();
-    }
-
-    /** 将合并后的 Properties 写成 .properties 文本，再由 PropertyResourceBundle 读取 */
-    private static String toPropertiesText(final Properties props) throws IOException {
-        final StringWriter sw = new StringWriter();
-        // 第二个参数是注释（会带时间戳），通常传 null，避免影响缓存一致性
-        props.store(sw, null);
-        return sw.toString();
     }
 }

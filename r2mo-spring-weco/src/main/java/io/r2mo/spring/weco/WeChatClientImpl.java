@@ -1,0 +1,132 @@
+package io.r2mo.spring.weco;
+
+import io.r2mo.base.exchange.UniAccount;
+import io.r2mo.base.exchange.UniContext;
+import io.r2mo.base.exchange.UniMessage;
+import io.r2mo.base.exchange.UniProvider;
+import io.r2mo.base.exchange.UniResponse;
+import io.r2mo.base.util.R2MO;
+import io.r2mo.spi.SPI;
+import io.r2mo.spring.weco.config.WeCoConfig;
+import io.r2mo.typed.cc.Cc;
+import io.r2mo.typed.json.JObject;
+import io.r2mo.xync.weco.WeCoActionType;
+import io.r2mo.xync.weco.WeCoConstant;
+import io.r2mo.xync.weco.wechat.WeArgsCallback;
+import io.r2mo.xync.weco.wechat.WeArgsSignature;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+
+/**
+ * 微信公众号业务客户端实现
+ *
+ * @author lang : 2025-12-09
+ */
+@Service
+public class WeChatClientImpl implements WeChatClient {
+
+    // 缓存 Provider 实例，避免重复 SPI 查找
+    private static final Cc<String, UniProvider> CC_PROVIDER = Cc.openThread();
+
+    @Autowired
+    private WeCoConfig config;
+
+    @Override
+    public JObject authUrl(final String redirectUri, final String state) {
+        // 1. 准备参数 (无需 Payload)
+        final JObject params = SPI.J();
+
+        // 2. 设置头部指令
+        // 告诉 Provider 执行 "获取认证URL" 操作，并传递必要参数
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoActionType.WX_AUTH_URL.name(),
+            WeCoConstant.HEADER_REDIRECT_URI, redirectUri,
+            WeCoConstant.HEADER_STATE, state
+        );
+
+        return this.doExchangeMp(params, headers);
+    }
+
+    @Override
+    public JObject login(final String code) {
+        // 1. 准备参数 (Payload 为 code)
+        final JObject params = SPI.J()
+            .put("code", code);
+
+        // 2. 设置头部指令 (执行登录)
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoActionType.WX_LOGIN_BY.name()
+        );
+
+        return this.doExchangeMp(params, headers);
+    }
+
+    @Override
+    public JObject qrCode() {
+        final JObject params = SPI.J();
+
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoActionType.APP_AUTH_QR.name(),
+            "expireSeconds", String.valueOf(this.config.getWechatMp().getExpireSeconds())
+        );
+
+        return this.doExchangeMp(params, headers);
+    }
+
+    @Override
+    public JObject checkStatus(final String uuid) {
+        // Payload 约定为 UUID (对应 WeCoActionStatus 的 request.payload())
+        // WeCoBuilder 会将 "code" 或 "content" 作为 Payload
+        final JObject params = SPI.J()
+            .put("code", uuid);
+
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoActionType.APP_STATUS.name(),
+            "expireSeconds", String.valueOf(this.config.getWechatMp().getExpireSeconds())
+        );
+
+        return this.doExchangeMp(params, headers);
+    }
+
+    @Override
+    public boolean checkEcho(final WeArgsSignature params) {
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoActionType.APP_PRE.name()
+        );
+        final JObject checked = this.doExchangeMp(params.build(), headers);
+        return R2MO.valueT(checked, "success");
+    }
+
+    @Override
+    public JObject extractUser(final WeArgsCallback parameter) {
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoActionType.LOGGED_USER.name(),
+            "expireSeconds", String.valueOf(this.config.getWechatMp().getExpireSeconds())
+        );
+        // content -> parameter
+        return this.doExchangeMp(parameter.message(), headers);
+    }
+
+    /**
+     * 核心交换逻辑
+     */
+    private JObject doExchangeMp(final JObject params, final Map<String, Object> headers) {
+        // 1. 获取转换器
+        final UniProvider.Wait<WeCoConfig.WeChatMp> wait = UniProvider.waitFor(WeChatMPWaitSpring::new);
+        final WeCoConfig.WeChatMp wechatConfig = this.config.getWechatMp();
+
+        // 2. 转换为标准对象 (Account, Context, Message)
+        final UniAccount account = wait.account(params, wechatConfig);
+        final UniContext context = wait.context(params, wechatConfig);
+        final UniMessage<String> message = wait.message(params, headers, wechatConfig);
+
+        // 3. 获取底层 Provider (SPI ID: UNI_WECHAT)
+        final UniProvider provider = CC_PROVIDER.pick(() -> SPI.findOne(UniProvider.class, "UNI_WECHAT"));
+
+        // 4. 执行并返回
+        final UniResponse response = provider.exchange(account, message, context);
+        return (JObject) response.content();
+    }
+}

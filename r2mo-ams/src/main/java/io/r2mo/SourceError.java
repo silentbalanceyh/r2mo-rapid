@@ -36,6 +36,21 @@ public class SourceError {
         printExist(AbstractException.class, code, scanPackages);
     }
 
+    @SuppressWarnings("all")
+    public static void printPath(final Class<?> errorCls, final String field) {
+        try {
+            // 检查 JVM 到底加载了哪个 JAR 包里的 ERR 类
+            final Class<?> errClass = Class.forName(errorCls.getName());
+            final java.security.CodeSource source = errClass.getProtectionDomain().getCodeSource();
+            System.err.println(">>>>>> [DEBUG] ERR 类加载自: " + source.getLocation());
+
+            // 检查能不能反射读到字段
+            System.err.println(">>>>>> [DEBUG] 尝试获取字段: " + errClass.getField(field));
+        } catch (final Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 检查指定错误码（如 -20000 或 20000）是否已定义，并打印其完整行信息（若存在）
      *

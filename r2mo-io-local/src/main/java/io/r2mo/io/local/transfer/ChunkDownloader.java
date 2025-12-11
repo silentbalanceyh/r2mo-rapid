@@ -40,7 +40,7 @@ public class ChunkDownloader {
     private List<StoreChunk> getSort(final List<StoreChunk> chunks) {
         // 按索引排序分片
         return chunks.stream()
-                .sorted(Comparator.comparing(StoreChunk::getIndex)).toList();
+            .sorted(Comparator.comparing(StoreChunk::getIndex)).toList();
     }
 
     /**
@@ -108,13 +108,13 @@ public class ChunkDownloader {
         try {
             // 并行下载所有分片
             final List<CompletableFuture<Void>> downloadFutures = sortedChunks.stream()
-                    .map(chunk -> CompletableFuture.runAsync(() -> {
-                        try {
-                            this.downloadSingleChunk(token, chunk, tempDir);
-                        } catch (final Exception e) {
-                            throw new RuntimeException("分片下载失败: " + chunk.getId(), e);
-                        }
-                    }, this.executorService)).toList();
+                .map(chunk -> CompletableFuture.runAsync(() -> {
+                    try {
+                        this.downloadSingleChunk(token, chunk, tempDir);
+                    } catch (final Exception e) {
+                        throw new RuntimeException("分片下载失败: " + chunk.getId(), e);
+                    }
+                }, this.executorService)).toList();
 
             // 等待所有分片下载完成
             CompletableFuture.allOf(downloadFutures.toArray(new CompletableFuture[0])).get();
@@ -160,7 +160,7 @@ public class ChunkDownloader {
         }
     }
 
-    
+
     private TransferRequest createChunkRequest(final String token) {
         final TransferRequest request = new TransferRequest();
         request.setNodeId(UUID.randomUUID());
@@ -173,14 +173,14 @@ public class ChunkDownloader {
         try {
             if (Files.exists(tempDir)) {
                 Files.walk(tempDir)
-                        .sorted((a, b) -> b.compareTo(a)) // 反向排序，先删除文件再删除目录
-                        .forEach(path -> {
-                            try {
-                                Files.deleteIfExists(path);
-                            } catch (final IOException e) {
-                                log.warn("删除临时文件失败: {}", path, e);
-                            }
-                        });
+                    .sorted((a, b) -> b.compareTo(a)) // 反向排序，先删除文件再删除目录
+                    .forEach(path -> {
+                        try {
+                            Files.deleteIfExists(path);
+                        } catch (final IOException e) {
+                            log.warn("删除临时文件失败: {}", path, e);
+                        }
+                    });
             }
         } catch (final IOException e) {
             log.warn("清理临时文件失败: {}", tempDir, e);
