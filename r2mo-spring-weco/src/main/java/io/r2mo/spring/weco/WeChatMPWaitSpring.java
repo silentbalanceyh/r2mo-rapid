@@ -4,6 +4,7 @@ import io.r2mo.base.exchange.UniAccount;
 import io.r2mo.base.exchange.UniContext;
 import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniProvider;
+import io.r2mo.spring.weco.config.WeCoConfig;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.xync.weco.wechat.WeChatAccount;
@@ -23,14 +24,14 @@ import java.util.Objects;
  * @author lang : 2025-12-09
  */
 @Slf4j
-public class WeChatWaitSpring implements UniProvider.Wait<WeCoConfig.WeChat> {
+public class WeChatMPWaitSpring implements UniProvider.Wait<WeCoConfig.WeChatMp> {
 
     // 缓存账号和上下文，避免重复构建
     private static final Cc<String, UniAccount> CC_ACCOUNT = Cc.open();
     private static final Cc<String, UniContext> CC_CONTEXT = Cc.open();
 
     @Override
-    public UniAccount account(final JObject params, final WeCoConfig.WeChat config) {
+    public UniAccount account(final JObject params, final WeCoConfig.WeChatMp config) {
         Objects.requireNonNull(config, "WeChat Config 不能为空");
         final WeChatCredential credential = config.credential();
 
@@ -45,7 +46,7 @@ public class WeChatWaitSpring implements UniProvider.Wait<WeCoConfig.WeChat> {
     }
 
     @Override
-    public UniContext context(final JObject params, final WeCoConfig.WeChat config) {
+    public UniContext context(final JObject params, final WeCoConfig.WeChatMp config) {
         Objects.requireNonNull(config, "WeChat Config 不能为空");
 
         // 基于配置哈希缓存上下文
@@ -55,23 +56,23 @@ public class WeChatWaitSpring implements UniProvider.Wait<WeCoConfig.WeChat> {
             // 1. 注入代理 (如果配置存在)
             if (config.getProxy() != null) {
                 ctx.setProxy(config.getProxy());
+                log.info("[ R2MO ] 构造 WeChat 上下文, Proxy: {}", (config.getProxy() != null));
             }
 
             // 2. 可以在此处扩展超时等其他配置
             ctx.setToken(config.getToken());
-            log.info("[ R2MO ] 构造 WeChat 上下文, Proxy: {}", (config.getProxy() != null));
             return ctx;
         }, String.valueOf(config.hashCode()));
     }
 
     @Override
-    public UniContext contextClient(final JObject params, final WeCoConfig.WeChat config) {
+    public UniContext contextClient(final JObject params, final WeCoConfig.WeChatMp config) {
         // 微信发送与接收环境通常一致
         return this.context(params, config);
     }
 
     @Override
-    public UniMessage<String> message(final JObject params, final Map<String, Object> headers, final WeCoConfig.WeChat config) {
+    public UniMessage<String> message(final JObject params, final Map<String, Object> headers, final WeCoConfig.WeChatMp config) {
         return WeCoBuilder.message(params, headers);
     }
 }

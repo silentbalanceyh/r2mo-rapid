@@ -102,7 +102,7 @@ public class AuthUserCache implements UserCache {
     public void authorize(final Kv<String, String> generated, final CaptchaArgs configuration) {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         cache.put(generated.key(), generated.value());
-        log.info("[ R2MO ] 生成验证码：id = {} / code = {}", generated.key(), generated.value());
+        log.info("[ R2MO ] 验证码/会话缓存：id = {} / code = {}", generated.key(), generated.value());
     }
 
     @Override

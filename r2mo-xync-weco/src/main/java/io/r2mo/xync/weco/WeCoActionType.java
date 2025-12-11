@@ -48,7 +48,9 @@ public enum WeCoActionType {
     // 枚举属性定义
     // ==========================================
 
-    APP_PRE("配置接口检查");
+    APP_PRE("配置接口检查"),
+
+    LOGGED_USER("获取用户信息");
 
     @Getter
     private final String description;

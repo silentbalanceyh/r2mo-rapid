@@ -4,6 +4,7 @@ import io.r2mo.base.exchange.UniAccount;
 import io.r2mo.base.exchange.UniContext;
 import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniProvider;
+import io.r2mo.spring.weco.config.WeCoConfig;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.xync.weco.wecom.WeComAccount;
@@ -23,14 +24,14 @@ import java.util.Objects;
  * @author lang : 2025-12-09
  */
 @Slf4j
-public class WeComWaitSpring implements UniProvider.Wait<WeCoConfig.WeCom> {
+public class WeComWaitSpring implements UniProvider.Wait<WeCoConfig.WeComCp> {
 
     // 缓存账号和上下文
     private static final Cc<String, UniAccount> CC_ACCOUNT = Cc.open();
     private static final Cc<String, UniContext> CC_CONTEXT = Cc.open();
 
     @Override
-    public UniAccount account(final JObject params, final WeCoConfig.WeCom config) {
+    public UniAccount account(final JObject params, final WeCoConfig.WeComCp config) {
         Objects.requireNonNull(config, "WeCom Config 不能为空");
         final WeComCredential credential = config.credential();
 
@@ -45,7 +46,7 @@ public class WeComWaitSpring implements UniProvider.Wait<WeCoConfig.WeCom> {
     }
 
     @Override
-    public UniContext context(final JObject params, final WeCoConfig.WeCom config) {
+    public UniContext context(final JObject params, final WeCoConfig.WeComCp config) {
         Objects.requireNonNull(config, "WeCom Config 不能为空");
 
         return CC_CONTEXT.pick(() -> {
@@ -67,12 +68,12 @@ public class WeComWaitSpring implements UniProvider.Wait<WeCoConfig.WeCom> {
     }
 
     @Override
-    public UniContext contextClient(final JObject params, final WeCoConfig.WeCom config) {
+    public UniContext contextClient(final JObject params, final WeCoConfig.WeComCp config) {
         return this.context(params, config);
     }
 
     @Override
-    public UniMessage<String> message(final JObject params, final Map<String, Object> headers, final WeCoConfig.WeCom config) {
+    public UniMessage<String> message(final JObject params, final Map<String, Object> headers, final WeCoConfig.WeComCp config) {
         return WeCoBuilder.message(params, headers);
     }
 }

@@ -6,6 +6,7 @@ import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniProvider;
 import io.r2mo.base.exchange.UniResponse;
 import io.r2mo.spi.SPI;
+import io.r2mo.spring.weco.config.WeCoConfig;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.xync.weco.WeCoActionType;
@@ -60,7 +61,7 @@ public class WeComClientImpl implements WeComClient {
 
         final Map<String, Object> headers = Map.of(
             "action", WeCoActionType.APP_AUTH_QR.name(),
-            "expireSeconds", String.valueOf(this.config.getWecom().getExpireSeconds()),
+            "expireSeconds", String.valueOf(this.config.getWecomCp().getExpireSeconds()),
             WeCoConstant.HEADER_REDIRECT_URI, redirectUri
         );
 
@@ -82,8 +83,8 @@ public class WeComClientImpl implements WeComClient {
 
     private JObject doExchange(final JObject params, final Map<String, Object> headers) {
         // 1. 获取企微转换器
-        final UniProvider.Wait<WeCoConfig.WeCom> wait = UniProvider.waitFor(WeComWaitSpring::new);
-        final WeCoConfig.WeCom wecomConfig = this.config.getWecom();
+        final UniProvider.Wait<WeCoConfig.WeComCp> wait = UniProvider.waitFor(WeComWaitSpring::new);
+        final WeCoConfig.WeComCp wecomConfig = this.config.getWecomCp();
 
         // 2. 转换标准对象
         final UniAccount account = wait.account(params, wecomConfig);

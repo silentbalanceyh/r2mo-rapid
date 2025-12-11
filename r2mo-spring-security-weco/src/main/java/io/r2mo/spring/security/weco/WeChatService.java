@@ -1,6 +1,8 @@
 package io.r2mo.spring.security.weco;
 
 import io.r2mo.typed.json.JObject;
+import io.r2mo.xync.weco.wechat.WeArgsCallback;
+import io.r2mo.xync.weco.wechat.WeArgsSignature;
 
 /**
  * 微信公众号 (WeChat Official Account) 业务服务
@@ -35,7 +37,7 @@ public interface WeChatService {
      *
      * @return 填充了 OpenID 的完整请求对象
      */
-    WeChatLoginRequest validate(WeChatLoginRequest request);
+    WeChatReqPreLogin validate(WeChatReqPreLogin request);
 
     // ==========================================
     // 模式二：扫码登录 (PC端/非微信环境使用)
@@ -49,7 +51,7 @@ public interface WeChatService {
     JObject getQrCode();
 
     /**
-     * 检查扫码状态
+     * 检查扫码状态（前端轮询检查）
      *
      * @param uuid 扫码会话 ID
      *
@@ -57,5 +59,18 @@ public interface WeChatService {
      */
     JObject checkStatus(String uuid);
 
-    boolean checkEcho(JObject params);
+    /**
+     * 微信配置过程中的回调检查（现阶段只有公众号需要此功能）
+     *
+     * @param params 回调参数
+     *
+     * @return 是否验证通过
+     */
+    boolean checkEcho(WeArgsSignature params);
+
+
+    // ==========================================
+    // 根据参数提取用户数据
+    // ==========================================
+    JObject extract(String uuid, WeArgsCallback parameter);
 }

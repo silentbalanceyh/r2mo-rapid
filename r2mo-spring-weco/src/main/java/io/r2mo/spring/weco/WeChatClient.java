@@ -1,6 +1,8 @@
 package io.r2mo.spring.weco;
 
 import io.r2mo.typed.json.JObject;
+import io.r2mo.xync.weco.wechat.WeArgsCallback;
+import io.r2mo.xync.weco.wechat.WeArgsSignature;
 
 /**
  * 微信公众号 (WeChat) 业务客户端
@@ -61,5 +63,18 @@ public interface WeChatClient {
      *
      * @return 响应信息
      */
-    boolean checkEcho(JObject params);
+    boolean checkEcho(WeArgsSignature params);
+
+    /**
+     * 返回用户信息，主要返回
+     * <pre>
+     *     - unionId
+     *     - openId
+     * </pre>
+     *
+     * @param callback 回调参数
+     *
+     * @return 用户信息
+     */
+    JObject extractUser(WeArgsCallback callback);
 }

@@ -7,10 +7,13 @@ import io.r2mo.base.exchange.UniProvider;
 import io.r2mo.base.exchange.UniResponse;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.spi.SPI;
+import io.r2mo.spring.weco.config.WeCoConfig;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.xync.weco.WeCoActionType;
 import io.r2mo.xync.weco.WeCoConstant;
+import io.r2mo.xync.weco.wechat.WeArgsCallback;
+import io.r2mo.xync.weco.wechat.WeArgsSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +46,7 @@ public class WeChatClientImpl implements WeChatClient {
             WeCoConstant.HEADER_STATE, state
         );
 
-        return this.doExchange(params, headers);
+        return this.doExchangeMp(params, headers);
     }
 
     @Override
@@ -57,7 +60,7 @@ public class WeChatClientImpl implements WeChatClient {
             "action", WeCoActionType.WX_LOGIN_BY.name()
         );
 
-        return this.doExchange(params, headers);
+        return this.doExchangeMp(params, headers);
     }
 
     @Override
@@ -66,10 +69,10 @@ public class WeChatClientImpl implements WeChatClient {
 
         final Map<String, Object> headers = Map.of(
             "action", WeCoActionType.APP_AUTH_QR.name(),
-            "expireSeconds", String.valueOf(this.config.getWechat().getExpireSeconds())
+            "expireSeconds", String.valueOf(this.config.getWechatMp().getExpireSeconds())
         );
 
-        return this.doExchange(params, headers);
+        return this.doExchangeMp(params, headers);
     }
 
     @Override
@@ -81,28 +84,38 @@ public class WeChatClientImpl implements WeChatClient {
 
         final Map<String, Object> headers = Map.of(
             "action", WeCoActionType.APP_STATUS.name(),
-            "expireSeconds", String.valueOf(this.config.getWechat().getExpireSeconds())
+            "expireSeconds", String.valueOf(this.config.getWechatMp().getExpireSeconds())
         );
 
-        return this.doExchange(params, headers);
+        return this.doExchangeMp(params, headers);
     }
 
     @Override
-    public boolean checkEcho(final JObject params) {
+    public boolean checkEcho(final WeArgsSignature params) {
         final Map<String, Object> headers = Map.of(
             "action", WeCoActionType.APP_PRE.name()
         );
-        final JObject checked = this.doExchange(params, headers);
+        final JObject checked = this.doExchangeMp(params.build(), headers);
         return R2MO.valueT(checked, "success");
+    }
+
+    @Override
+    public JObject extractUser(final WeArgsCallback parameter) {
+        final Map<String, Object> headers = Map.of(
+            "action", WeCoActionType.LOGGED_USER.name(),
+            "expireSeconds", String.valueOf(this.config.getWechatMp().getExpireSeconds())
+        );
+        // content -> parameter
+        return this.doExchangeMp(parameter.message(), headers);
     }
 
     /**
      * 核心交换逻辑
      */
-    private JObject doExchange(final JObject params, final Map<String, Object> headers) {
+    private JObject doExchangeMp(final JObject params, final Map<String, Object> headers) {
         // 1. 获取转换器
-        final UniProvider.Wait<WeCoConfig.WeChat> wait = UniProvider.waitFor(WeChatWaitSpring::new);
-        final WeCoConfig.WeChat wechatConfig = this.config.getWechat();
+        final UniProvider.Wait<WeCoConfig.WeChatMp> wait = UniProvider.waitFor(WeChatMPWaitSpring::new);
+        final WeCoConfig.WeChatMp wechatConfig = this.config.getWechatMp();
 
         // 2. 转换为标准对象 (Account, Context, Message)
         final UniAccount account = wait.account(params, wechatConfig);

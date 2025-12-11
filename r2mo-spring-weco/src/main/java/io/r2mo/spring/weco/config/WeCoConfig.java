@@ -1,9 +1,11 @@
-package io.r2mo.spring.weco;
+package io.r2mo.spring.weco.config;
 
 import io.r2mo.base.exchange.NormProxy;
 import io.r2mo.xync.weco.wechat.WeChatCredential;
 import io.r2mo.xync.weco.wecom.WeComCredential;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -58,52 +60,76 @@ public class WeCoConfig implements Serializable {
     /**
      * 微信公众号配置域
      */
-    private WeChat wechat;
+    private WeChatMp wechatMp;
+
+    /**
+     * 微信开放平台配置域
+     */
+    private WeChatOpen wechatOpen;
 
     /**
      * 企业微信配置域
      */
-    private WeCom wecom;
+    private WeComCp wecomCp;
 
 
     // --- 内部静态配置类 ---
 
+    /**
+     * 微信公众号 (WeChat MP) 配置
+     */
     @Data
-    public static class WeChat implements Serializable {
-        private String appId;
-        private String secret;
+    @EqualsAndHashCode(callSuper = true)
+    public static class WeChatMp extends WeCoApp {
+        /* 回调验证的 Token */
         private String token;
+        /* 回调加密 Key（可选）*/
         private String aesKey;
+        /* 二维码过期时间 */
         private Integer expireSeconds = 300;
-
-        /**
-         * 独立代理 (优先级高于全局 proxy)
-         */
-        private NormProxy proxy;
 
         /**
          * 快捷转换为底层凭证对象
          */
         public WeChatCredential credential() {
             return new WeChatCredential()
-                .appId(this.appId)
-                .secret(this.secret)
+                .appId(this.getAppId())
+                .secret(this.getSecret())
                 .token(this.token)
                 .aesKey(this.aesKey);
         }
     }
 
+    /**
+     * 微信开放平台 (WeChat Open Platform) 配置
+     */
     @Data
-    public static class WeCom implements Serializable {
-        private String corpId;
-        private String secret;
-        private Integer agentId;
-        private Integer expireSeconds = 300;
+    @EqualsAndHashCode(callSuper = true)
+    public static class WeChatOpen extends WeCoApp {
+        /** 网站应用回调地址 **/
+        private String redirectUri;
 
-        /**
-         * 独立代理 (优先级高于全局 proxy)
-         */
-        private NormProxy proxy;
+        public WeChatCredential credential() {
+            return new WeChatCredential()
+                .appId(this.getAppId())
+                .secret(this.getSecret());
+        }
+    }
+
+    /**
+     * 企微登录 (WeCom) 配置
+     */
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    @Slf4j
+    public static class WeComCp extends WeCoApp implements Serializable {
+        /** 企业ID */
+        private String corpId;
+        /** 应用ID */
+        private Integer agentId;
+        private String token;
+        private String aesKey;
+        private Integer expireSeconds = 300;
 
         /**
          * 快捷转换为底层凭证对象
@@ -111,8 +137,22 @@ public class WeCoConfig implements Serializable {
         public WeComCredential credential() {
             return new WeComCredential()
                 .corpId(this.corpId)
-                .secret(this.secret)
-                .agentId(this.agentId);
+                .secret(this.getSecret())
+                .agentId(this.agentId)
+                .token(this.token)
+                .aesKey(this.aesKey);
+        }
+
+        @Override
+        public String getAppId() {
+            log.warn("[ R2MO ] 企微配置中的 getAppId() 方法已被废弃，请使用 corpId 字段代替。");
+            return this.corpId;
+        }
+
+        @Override
+        public void setAppId(final String appId) {
+            log.warn("[ R2MO ] 企微配置中的 setAppId() 方法已被废弃，请使用 corpId 字段代替。");
+            this.corpId = appId;
         }
     }
 }

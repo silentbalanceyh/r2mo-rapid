@@ -43,6 +43,10 @@ public class AuthServiceManager implements AuthService {
     public UserAt login(final LoginRequest loginRequest) throws AuthenticationException {
         final TypeLogin type = loginRequest.type();
         final ServiceUserAt service = this.manager.userProvider(type);
+        if (Objects.isNull(service)) {
+            log.error("[ R2MO ] 未找到匹配的用户提供者，登录类型：{}", type);
+            return null;
+        }
 
         final String identifier = loginRequest.getId();
         final UserAt user = service.loadLogged(loginRequest);

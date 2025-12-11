@@ -119,8 +119,8 @@ public class WeCoUtil {
             // 状态：成功 (缓存中存储的就是 OpenID)
             result.put("status", WeCoStatus.SUCCESS.name());
             result.put("isSuccess", true);
-            // 缓存中的值就是 OpenID，返回给上层 Service
-            result.put("openId", status);
+            // 缓存中的值就是 Token，返回给上层 Service
+            result.put("token", status);
         }
         return result;
     }

@@ -31,4 +31,15 @@ public class WeComCredential implements UniCredential {
      * 发送消息时必须指定是哪个应用发的
      */
     private Integer agentId;
+
+
+    /**
+     * (可选) 消息加解密密钥，仅在处理回调时需要
+     */
+    private String aesKey;
+
+    /**
+     * (可选) 令牌，仅在处理回调时需要
+     */
+    private String token;
 }

@@ -3,8 +3,8 @@ package io.r2mo.spring.security.weco;
 import io.r2mo.function.Fn;
 import io.r2mo.spring.security.weco.exception._80552Exception501WeComDisabled;
 import io.r2mo.spring.security.weco.exception._80553Exception401WeComAuthFailure;
-import io.r2mo.spring.weco.WeCoConfig;
 import io.r2mo.spring.weco.WeComClient;
+import io.r2mo.spring.weco.config.WeCoConfig;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +75,6 @@ public class WeComServiceImpl implements WeComService {
 
     private void checkEnabled() {
         // 参照 WeChat 实现，此处配置缺失抛出 401 AuthFailure 类型异常
-        Fn.jvmKo(Objects.isNull(this.config.getWecom()), _80552Exception501WeComDisabled.class);
+        Fn.jvmKo(Objects.isNull(this.config.getWecomCp()), _80552Exception501WeComDisabled.class);
     }
 }
