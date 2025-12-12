@@ -481,10 +481,22 @@ class DBExJson<T> extends DBExFuture<T> {
     }
 
     public Map<String, List<T>> findGroupBy(final JsonObject criteria, final String field) {
+        // FIX-DBE: 必须先做Pojo映射转换,否则在后续流程无法分组
         final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
-        return this.findGroupBy(this.wrapTree(mappedCriteria), field);
+        return this.findGroupBy(this.wrapTree(mappedCriteria), this.toPojoField(field));
     }
+    private String toPojoField(String fieldName) {
+        // 构造一个临时的 JsonObject 来利用现有的 mapCriteria 机制
+        JsonObject tempCriteria = new JsonObject().put(fieldName, true);
+        JsonObject mappedCriteria = this.mapped().mapCriteria(tempCriteria);
 
+        // 使用更清晰的方式获取映射后的字段名
+        if (!mappedCriteria.isEmpty()) {
+            return mappedCriteria.getMap().keySet().iterator().next();
+        }
+        // fallback 返回原始字段名（防御性编程）
+        return fieldName;
+    }
     public Map<String, JsonArray> findGroupByJ(final JsonObject criteria, final String field) {
         final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
         return this.mapResult(this.findGroupBy(this.wrapTree(mappedCriteria), field), this.mapped()::many);

@@ -44,11 +44,12 @@ class AsyncVaryJooq<T> extends AsyncDBEAction<T> implements AsyncVary<T, Conditi
     }
 
     @Override
+    @SuppressWarnings("all")
     public Future<List<T>> findManyAsync(final Condition condition) {
         if (Objects.isNull(condition)) {
             return Future.succeededFuture(new ArrayList<>());
         }
-        return this.findManyAsync(condition);
+        return (Future<List<T>>) this.executor().findManyByCondition(condition);
     }
 
     @Override
@@ -58,11 +59,12 @@ class AsyncVaryJooq<T> extends AsyncDBEAction<T> implements AsyncVary<T, Conditi
     }
 
     @Override
+    @SuppressWarnings("all")
     public Future<T> findOneAsync(final Condition condition) {
         if (Objects.isNull(condition)) {
             return Future.succeededFuture();
         }
-        return this.findOneAsync(condition);
+        return (Future<T>)this.executor().findOneByCondition(condition);
     }
 
     @Override
