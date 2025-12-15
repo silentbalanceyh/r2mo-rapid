@@ -71,17 +71,6 @@ public class WeCoUtil {
     public static JObject replyQr(final String uuid,
                                   final String url,
                                   final int expireSeconds) {
-        // 2. 存储初始状态到 SPI
-        final String sessionKey = WeCoSession.keyOf(uuid);
-        final Duration storeDuration = Duration.ofSeconds(expireSeconds);
-
-        // 调用通过 SPI 机制获取的 WeCoSession 实例
-        WeCoSession.of().save(
-            sessionKey,
-            WeCoStatus.WAITING.name(),
-            storeDuration
-        );
-
         // 3. 封装结果返回给上层 Service
         final Map<String, Object> result = new HashMap<>();
         result.put(WeCoConstant.PARAM_UUID, uuid);

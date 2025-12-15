@@ -2,7 +2,9 @@ package io.r2mo.xync.weco.wecom;
 
 import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniResponse;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.exception.web._400BadRequestException;
+import io.r2mo.typed.json.JObject;
 import io.r2mo.xync.weco.WeCoAction;
 import me.chanjar.weixin.cp.api.WxCpService;
 import me.chanjar.weixin.cp.bean.WxCpOauth2UserInfo;
@@ -51,11 +53,13 @@ class WeComActionLogin extends WeComAction implements WeCoAction<String> {
         // 2. 如果是企业内部成员 (userId不为空)，获取详细信息
         if (userId != null) {
             final var userDetail = this.service().getUserService().getById(userId);
-            return UniResponse.success(userDetail);
+            final JObject loggedJ = SPI.J();
+            loggedJ.put("userId", userDetail.getUserId());
+            return UniResponse.success(loggedJ);
         }
 
         // 3. 如果是外部联系人 (仅 openId)，则只能返回基础 OAuth2 信息 (或者视需求进一步获取外部联系人详情)
         // 目前策略：返回 OAuth2UserInfo，由上层处理
-        return UniResponse.success(oauth2UserInfo);
+        return UniResponse.success(SPI.J());
     }
 }

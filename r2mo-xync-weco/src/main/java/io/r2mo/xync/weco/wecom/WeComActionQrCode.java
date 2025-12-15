@@ -10,15 +10,13 @@ import io.r2mo.xync.weco.WeCoConstant;
 import io.r2mo.xync.weco.WeCoUtil;
 import me.chanjar.weixin.cp.api.WxCpService;
 
-import java.util.UUID;
-
 /**
  * 动作：获取带参二维码 (APP_AUTH_QR)
  * <p>依赖 WxCpService 进行 API 调用，依赖 WeCoSession SPI 存储初始状态。</p>
  *
  * @author lang : 2025-12-10
  */
-class WeComActionQrCode extends WeComAction implements WeCoAction<Void> {
+class WeComActionQrCode extends WeComAction implements WeCoAction<String> {
 
     /**
      * 构造函数：仅注入 WxCpService（WeCoSession 通过 SPI 自动获取）
@@ -51,7 +49,7 @@ class WeComActionQrCode extends WeComAction implements WeCoAction<Void> {
      * @throws Exception 企业微信API调用失败或参数缺失。
      */
     @Override
-    public UniResponse execute(final UniMessage<Void> request) throws Exception {
+    public UniResponse execute(final UniMessage<String> request) throws Exception {
         // 读取 expireSeconds
         final int expireSeconds = WeCoUtil.inputExpired(request);
 
@@ -60,14 +58,15 @@ class WeComActionQrCode extends WeComAction implements WeCoAction<Void> {
             throw new _400BadRequestException("[R2MO] Header 缺少 'redirectUri' 参数，该参数为必填项。");
         }
 
-        final String uuid = UUID.randomUUID().toString().replace("-", "");
+        final String state = request.payload();
 
         // 1. 构造企业微信扫码登录 URL (SSO)
         // 注意：企微没有类似公众号的“带参二维码Ticket”接口， standard practice is using the SSO QR Connect URL.
         // 前端可以使用这个 URL 在 iframe 中展示二维码，或者直接跳转。
-        final String qrUrl = this.service().buildQrConnectUrl(redirectUri, uuid);
+        final String qrUrl = this.service().buildQrConnectUrl(redirectUri, state);
 
-        final JObject response = WeCoUtil.replyQr(uuid, qrUrl, expireSeconds);
+        // 2. 内部缓存步骤已经提取到微信上，所以此处可以和微信统一处理
+        final JObject response = WeCoUtil.replyQr(state, qrUrl, expireSeconds);
         return UniResponse.success(response);
     }
 }

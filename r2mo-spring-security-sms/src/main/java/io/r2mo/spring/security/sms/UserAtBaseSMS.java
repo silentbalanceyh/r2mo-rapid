@@ -9,7 +9,7 @@ import io.r2mo.typed.enums.TypeLogin;
 /**
  * @author lang : 2025-12-08
  */
-public abstract class SmsServiceUserAtBase extends ServiceUserAtBase {
+public abstract class UserAtBaseSMS extends ServiceUserAtBase {
 
     @Override
     public TypeLogin loginType() {

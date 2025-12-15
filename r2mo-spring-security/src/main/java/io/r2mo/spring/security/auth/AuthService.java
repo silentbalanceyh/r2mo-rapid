@@ -17,7 +17,7 @@ public interface AuthService {
      *     sms                  /auth/sms-send
      *     email                /auth/email-send
      *     ldap                 无
-     *     wechat               /auth/wechat-qrcode
+     *     wecom                /auth/wecom-qrcode
      *     password             /auth/captcha           开启图片验证码后使用
      * </pre>
      *
@@ -36,7 +36,7 @@ public interface AuthService {
      *     sms                  /auth/sms-login
      *     email                /auth/email-login
      *     ldap                 /auth/ldap-login
-     *     wechat               /auth/wechat-login
+     *     wecom                /auth/wecom-login
      *     password             /auth/login
      * </pre>
      */

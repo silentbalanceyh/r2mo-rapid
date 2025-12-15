@@ -23,15 +23,15 @@ class WeComActionAuthUrl extends WeComAction implements WeCoAction<Void> {
     /**
      * 执行获取企业微信 OAuth2 授权跳转 URL 的命令。
      * <pre>
-     * 输入格式 ({@link UniMessage})
-     * Header:
-     * - redirectUri: String. 授权成功后，企业微信回调的完整地址。**必需**。
-     * - state: String. 业务自定义状态参数，原样返回。**必需**。
-     * Payload:
-     * null (Void)
-     * 输出格式 ({@link UniResponse})
-     * Payload:
-     * String. 构造完成的企业微信授权跳转 URL (<a href="https://open.work.weixin.qq.com/wwopen/sso/qrConnect...">...</a>)
+     *      输入格式 ({@link UniMessage})
+     *      Header:
+     *          - redirectUri: String. 授权成功后，企业微信回调的完整地址。**必需**。
+     *          - state: String. 业务自定义状态参数，原样返回。**必需**。
+     *      Payload:
+     *          null (Void)
+     *      输出格式 ({@link UniResponse})
+     *      Payload:
+     *          String. 构造完成的企业微信授权跳转 URL (<a href="https://open.work.weixin.qq.com/wwopen/sso/qrConnect...">...</a>)
      * </pre>
      *
      * @param request 封装了回调地址和状态参数的 UniMessage 请求。

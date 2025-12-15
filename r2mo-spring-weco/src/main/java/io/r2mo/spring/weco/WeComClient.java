@@ -34,11 +34,9 @@ public interface WeComClient {
     /**
      * 获取扫码登录二维码 (SSO URL)
      *
-     * @param redirectUri   回调地址 (必需)
-     *
      * @return 包含 qrUrl, uuid 等信息的响应对象
      */
-    JObject qrCode(String redirectUri);
+    JObject qrCode(String state);
 
     /**
      * 检查扫码状态
