@@ -20,6 +20,7 @@ import java.util.Optional;
 class AbstractDbJooq<T> extends AbstractDbOperation<Condition, T, DSLContext> {
     protected final JooqMeta meta;
     protected final JooqObject setter;
+    private static final String PREFIX = "[ R2MO ] ( Jooq )";
 
     protected AbstractDbJooq(final Class<T> entityCls, final DSLContext context) {
         super(entityCls, context);
@@ -32,7 +33,7 @@ class AbstractDbJooq<T> extends AbstractDbOperation<Condition, T, DSLContext> {
         final SelectConditionStep<?> selectStep = this.executor().selectFrom(this.meta.table())
             .where(condition);
         final T queried = (T) ((ResultQuery) selectStep).fetchOneInto(this.meta.entityCls());
-        this.log().info("[ R2MO ] ( Jooq ) 查询单条数据，条件 / {} ", condition);
+        this.log().debug("{} <-- {} 查询单条数据，条件 / {} ", PREFIX, this.meta.tableName(), condition);
         return Optional.ofNullable(queried);
     }
 
@@ -41,7 +42,7 @@ class AbstractDbJooq<T> extends AbstractDbOperation<Condition, T, DSLContext> {
         final SelectConditionStep<?> selectStep = this.executor().selectFrom(this.meta.table())
             .where(condition);
         final List<T> list = (List<T>) ((ResultQuery) selectStep).fetchInto(this.meta.entityCls());
-        this.log().info("[ R2MO ] ( Jooq ) 查询多条数据，条件 / {}, 结果数量：{}", condition, list.size());
+        this.log().debug("{} <-- {} 查询多条数据，条件 / {}, 结果数量：{}", PREFIX, this.meta.tableName(), condition, list.size());
         return list;
     }
 

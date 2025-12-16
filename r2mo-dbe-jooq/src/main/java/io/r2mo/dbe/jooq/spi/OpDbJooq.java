@@ -79,7 +79,7 @@ class OpDbJooq<T> extends AbstractDbJooq<T> implements OpDb<T> {
         final int rows = this.executor().deleteFrom(this.meta.table())
             .where(condition)
             .execute();
-        log.info("[ R2MO ] ( Jooq ) 删除数据，影响行数 / {}", rows);
+        this.logInfo("{} --> 删除数据，影响行数：`{}`", this.meta.tableName(), rows);
         return remove;
     }
 
@@ -89,7 +89,7 @@ class OpDbJooq<T> extends AbstractDbJooq<T> implements OpDb<T> {
         final int rows = this.executor().deleteFrom(this.meta.table())
             .where(condition)
             .execute();
-        log.info("[ R2MO ] ( Jooq ) 批量删除数据，影响行数 / {}", rows);
+        this.logInfo("{} --> 批量删除数据，影响行数：`{}`", this.meta.tableName(), rows);
         return removes;
     }
 
@@ -103,7 +103,7 @@ class OpDbJooq<T> extends AbstractDbJooq<T> implements OpDb<T> {
             .onDuplicateKeyUpdate()
             .set(record);
         final int rows = insertStep.execute();
-        log.info("[ R2MO ] ( Jooq ) 保存数据，影响行数 / {}", rows);
+        this.logInfo("{} --> 保存数据，影响行数：`{}`", this.meta.tableName(), rows);
         return entity;
     }
 
@@ -123,7 +123,7 @@ class OpDbJooq<T> extends AbstractDbJooq<T> implements OpDb<T> {
 
 
         final int rows = processed.size();
-        log.info("[ R2MO ] ( Jooq ) 批量保存数据，影响行数 / {}", rows);
+        this.logInfo("{} --> 批量保存数据，影响行数：`{}`", this.meta.tableName(), rows);
         return processed;
     }
 
@@ -133,7 +133,7 @@ class OpDbJooq<T> extends AbstractDbJooq<T> implements OpDb<T> {
             .insertInto(this.meta.table())
             .set(this.setter.createRecord(entity));
         final int rows = insertStep.execute();
-        log.info("[ R2MO ] ( Jooq ) 插入数据，影响行数 / {}", rows);
+        this.logInfo("{} --> 插入数据，影响行数：`{}`", this.meta.tableName(), rows);
         return entity;
     }
 
@@ -148,7 +148,7 @@ class OpDbJooq<T> extends AbstractDbJooq<T> implements OpDb<T> {
             return new ArrayList<>();
         }
         final int rows = insertValuesStepN.execute();
-        log.info("[ R2MO ] ( Jooq ) 批量插入数据，影响行数 / {}", rows);
+        this.logInfo("{} --> 批量插入数据，影响行数：`{}`", this.meta.tableName(), rows);
         return entities;
     }
 
@@ -156,7 +156,7 @@ class OpDbJooq<T> extends AbstractDbJooq<T> implements OpDb<T> {
     @SuppressWarnings("all")
     public T update(final T entity) {
         final int rows = this.updateStep(entity).execute();
-        log.info("[ R2MO ] ( Jooq ) 更新数据，影响行数 / {}", rows);
+        this.logInfo("{} --> 更新数据，影响行数：`{}`", this.meta.tableName(), rows);
         return entity;
     }
 
@@ -165,8 +165,12 @@ class OpDbJooq<T> extends AbstractDbJooq<T> implements OpDb<T> {
         entities.stream().map(this::updateStep).forEach(batchOps::add);
         final int[] rows = this.executor().batch(batchOps).execute();
         final long updated = Arrays.stream(rows).filter(value -> 1 == value).count();
-        log.info("[ R2MO ] ( Jooq ) 批量更新数据，影响行数 / {}/{}", updated, rows.length);
+        this.logInfo("{} --> 批量更新数据，影响行数：`{}/{}`", this.meta.tableName(), updated, rows.length);
         return entities;
+    }
+
+    private void logInfo(final String message, final Object... args) {
+        log.info("[ R2MO ] ( Jooq ) " + message, args);
     }
 
     @SuppressWarnings("all")

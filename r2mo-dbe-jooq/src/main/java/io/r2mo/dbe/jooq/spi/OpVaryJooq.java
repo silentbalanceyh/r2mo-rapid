@@ -53,7 +53,7 @@ class OpVaryJooq<T> extends AbstractDbJooq<T> implements OpVary<T, Condition> {
             return false;
         }
         final int rows = this.executor().delete(this.meta.table()).where(condition).execute();
-        log.info("[ R2MO ] ( Jooq ) 条件删除 {}，影响行数 / {}", condition, rows);
+        this.logInfo(" --> {} 删除数据，条件：{}，影响行数 / {}", this.meta.tableName(), condition, rows);
         return rows > 0;
     }
 
@@ -62,8 +62,13 @@ class OpVaryJooq<T> extends AbstractDbJooq<T> implements OpVary<T, Condition> {
     public List<T> findAll() {
         final SelectWhereStep<?> selectStep = this.executor().selectFrom(this.meta.table());
         final List<T> list = ((ResultQuery) selectStep).fetchInto(this.meta.entityCls());
-        log.info("[ R2MO ] ( Jooq ) 读取数据: {}", list.size());
+        this.logInfo(" <-- {} 读取数据：{}", this.meta.tableName(), list.size());
         return list;
+    }
+
+
+    private void logInfo(final String message, final Object... args) {
+        log.info("[ R2MO ] ( Jooq ) " + message, args);
     }
 
     @Override
