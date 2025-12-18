@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
   <artifactId>r2mo-spring-security-ldap</artifactId>
-  <version>1.0.35</version>
+  <version>1.0.36</version>
   <name>R2MO::Spring::Security::LDAP</name>
   <description>R2MO Rapid Framework for Delivery</description>
   <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-spring-security-ldap</url>
@@ -28,7 +28,7 @@
   <scm>
     <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-spring-security-ldap</connection>
     <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-spring-security-ldap</developerConnection>
-    <tag>v1.0.35</tag>
+    <tag>v1.0.36</tag>
     <url>https://www.zerows.io/r2mo-spring-security-ldap</url>
   </scm>
   <distributionManagement>
@@ -47,13 +47,13 @@
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-spring</artifactId>
-      <version>1.0.35</version>
+      <version>1.0.36</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-spring-security</artifactId>
-      <version>1.0.35</version>
+      <version>1.0.36</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
