@@ -5,13 +5,13 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>rachel-momo-0216</artifactId>
-        <version>1.0.19</version>
+        <version>1.0.20</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>r2mo-rapid</artifactId>
     <version>1.0.35</version>
     <properties>
-        <rachel-momo.version>1.0.19</rachel-momo.version>
+        <rachel-momo.version>1.0.20</rachel-momo.version>
         <r2mo.version>1.0.35</r2mo.version>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,7 +20,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
     </properties>
-    <name>R2MO::🧬 - ${r2mo.version} / 🧪 - Rachel Momo ${rachel-momo.version}</name>
+    <name>(POM) 📚️ - 🧬 - R2MO::${r2mo.version} / 🧪 - Rachel Momo ${rachel-momo.version}</name>
     <!-- License -->
     <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
     <description>
