@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
   <artifactId>r2mo-vertx-jooq</artifactId>
-  <version>1.0.36</version>
+  <version>1.0.37</version>
   <name>R2MO::Vertx::Jooq</name>
   <description>参考在线项目：
         -- vertx-jooq: 这个项目已经两年多没有更新，为了保证整体兼容性，重新编译
@@ -38,7 +38,7 @@
   <scm>
     <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-vertx-jooq</connection>
     <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-vertx-jooq</developerConnection>
-    <tag>v1.0.36</tag>
+    <tag>v1.0.37</tag>
     <url>https://www.zerows.io/r2mo-vertx-jooq</url>
   </scm>
   <distributionManagement>
@@ -57,7 +57,7 @@
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-vertx-jooq-jdbc</artifactId>
-      <version>1.0.36</version>
+      <version>1.0.37</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
