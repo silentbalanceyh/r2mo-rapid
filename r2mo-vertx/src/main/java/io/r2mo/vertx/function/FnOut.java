@@ -105,4 +105,15 @@ final class FnOut {
             return supplier.get();
         };
     }
+
+    @SuppressWarnings("all")
+    static <T> Function<Throwable, Future<T>> recoverFn(final Supplier<T> supplier) {
+        return error -> {
+            if (Objects.nonNull(error)) {
+                log.error("[ R2MO ] Recover 异常输出", error);
+                error.printStackTrace();
+            }
+            return Future.failedFuture(error);
+        };
+    }
 }
