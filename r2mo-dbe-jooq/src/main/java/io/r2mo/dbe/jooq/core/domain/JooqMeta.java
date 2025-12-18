@@ -72,6 +72,10 @@ public class JooqMeta {
         }, entityCls);
     }
 
+    public String tableName() {
+        return this.table.getName();
+    }
+
     /**
      * 如果是使用了 r2mo-vertx-jooq，它内部的 JooqMetaAsync 会直接从 VertxDao 中分析出表名，所以在调用 {@link JooqMeta#of(Class, Table)}
      * 时就直接将表名初始化了，所以才可以从这个方法中根据 实体类直接获取Meta 信息，否则会返回 null。如果只是单纯使用 r2mo-dbe-jooq，则无法通过此方

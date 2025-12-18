@@ -160,11 +160,7 @@ public class HStoreLocal extends HStoreLocalMeta {
 
     @Override
     public URL toURL(final String filename) {
-        if (null == filename || filename.isBlank()) {
-            return null;
-        }
-        final Path path = Path.of(filename);
-        return this.toURL(path);
+        return HStoreURL.toURL(filename, this.getClass());
     }
 
     @Override

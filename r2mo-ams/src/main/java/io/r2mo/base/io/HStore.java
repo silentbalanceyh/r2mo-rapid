@@ -102,7 +102,14 @@ public interface HStore extends HStoreMeta, Serializable {
     /**
      * 核心方法，从一个 filename 读取 URL，此路径作为读取数据和写入数据的核心桥梁方法，基本上所有的读取和写入都基于 URL 来完成，只要将
      * 一个 filename 转换为 URL，就可以实现针对它的所有读取，返回结果都统一使用 {@link InputStream} 来完成，这种模式下可以直接支持
-     * 网络文件读取以及压缩文件读取，这样的方式就可以在实现上做到非常灵活并且统一做底层处理。
+     * 网络文件读取以及压缩文件读取，这样的方式就可以在实现上做到非常灵活并且统一做底层处理。此处新版的增强
+     * <pre>
+     *     1. 如果是本地类型 -> Local，开启多级加载策略（Chain of Responsibility）
+     *     2. 多级优先级如下：
+     *        - 文件系统：FileSystem：尝试作为普通文件路径加载，原来的逻辑追加存在性校验
+     *        - 类路径：ClassPath：尝试从当前上下文或类的 ClassLoader 加载，包括 JAR 包内的资源
+     *        - Zip/Jar协议：Zip/Jar Protocol：尝试使用 Zip 或 Jar 协议加载，适用于压缩包内资源读取
+     * </pre>
      *
      * @param filename 文件名
      *

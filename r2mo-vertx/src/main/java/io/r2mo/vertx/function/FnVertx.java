@@ -121,6 +121,10 @@ public class FnVertx {
         return FnOut.otherwiseFn(supplier);
     }
 
+    public static <T> Function<Throwable, Future<T>> recoverFn(final Supplier<T> supplier) {
+        return FnOut.recoverFn(supplier);
+    }
+
     /**
      * ✅ 并行检查器 - ALL模式
      *

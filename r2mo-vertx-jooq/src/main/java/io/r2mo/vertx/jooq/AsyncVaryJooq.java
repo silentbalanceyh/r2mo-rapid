@@ -7,6 +7,7 @@ import io.r2mo.vertx.dbe.AsyncDb;
 import io.r2mo.vertx.dbe.AsyncVary;
 import io.r2mo.vertx.jooq.classic.VertxDAO;
 import io.vertx.core.Future;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ import java.util.Objects;
 /**
  * @author lang : 2025-10-19
  */
+@Slf4j
 class AsyncVaryJooq<T> extends AsyncDBEAction<T> implements AsyncVary<T, Condition> {
     private final AsyncDb<T> db;
 
@@ -40,7 +42,13 @@ class AsyncVaryJooq<T> extends AsyncDBEAction<T> implements AsyncVary<T, Conditi
         if (Objects.isNull(condition)) {
             return Future.succeededFuture(false);
         }
-        return (Future<Boolean>) this.executor().deleteByCondition(condition);
+        // class java.lang.Integer cannot be cast to class java.lang.Boolean (java.lang.Integer and java.lang.Boolean are in module java.base of loader 'bootstrap')
+        final Future<Integer> rows = (Future<Integer>) this.executor().deleteByCondition(condition);
+        return rows.compose(result -> {
+            log.info("[ R2MO ] ( Jooq ) 删除记录数: {}", result);
+            return Future.succeededFuture(Boolean.TRUE);
+        });
+        // return (Future<Boolean>) this.executor().deleteByCondition(condition);
     }
 
     @Override
@@ -64,7 +72,7 @@ class AsyncVaryJooq<T> extends AsyncDBEAction<T> implements AsyncVary<T, Conditi
         if (Objects.isNull(condition)) {
             return Future.succeededFuture();
         }
-        return (Future<T>)this.executor().findOneByCondition(condition);
+        return (Future<T>) this.executor().findOneByCondition(condition);
     }
 
     @Override

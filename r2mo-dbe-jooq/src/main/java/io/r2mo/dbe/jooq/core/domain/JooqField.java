@@ -52,7 +52,8 @@ class JooqField {
     Field<?> findColumn(final String fieldOr) {
         final String columnName = this.nameOfColumn(fieldOr);
         if (Objects.isNull(columnName)) {
-            throw new _501NotSupportException("[ R2MO ] 无法找到对应的 Column 名称: 输入字段 = " + fieldOr);
+            final Class<?> type = this.vector.getType();
+            throw new _501NotSupportException("[ R2MO ] 无法找到对应的 Column 名称: 输入字段 = " + fieldOr + ", 绑定实体 = " + type.getName());
         }
         log.debug("[ R2MO ] 寻找 JOOQ Column: 输入字段 = {}, 目标 Column = {}", fieldOr, columnName);
         Field<?> found;

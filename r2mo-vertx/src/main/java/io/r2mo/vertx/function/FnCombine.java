@@ -26,7 +26,7 @@ class FnCombine {
             finished.list().stream().filter(Objects::nonNull)
                 .map(item -> (T) item).forEach(result::add);
             return Future.succeededFuture(result);
-        }).otherwise(FnOut.otherwiseFn(ArrayList::new));
+        }).recover(FnOut.recoverFn(ArrayList::new));
     }
 
     static <T> Future<Set<T>> combineT(final Set<Future<T>> futures) {
@@ -36,7 +36,7 @@ class FnCombine {
             finished.list().stream().filter(Objects::nonNull)
                 .map(item -> (T) item).forEach(result::add);
             return Future.succeededFuture(result);
-        }).otherwise(FnOut.otherwiseFn(HashSet::new));
+        }).recover(FnOut.recoverFn(HashSet::new));
     }
 
 
