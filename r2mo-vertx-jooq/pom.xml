@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>r2mo-rapid</artifactId>
-        <version>1.0.39</version>
+        <version>1.0.40</version>
     </parent>
 
     <artifactId>r2mo-vertx-jooq</artifactId>
