@@ -103,8 +103,39 @@ public class FnVertx {
         return FnOut.failOut(exceptionCls, args);
     }
 
-    public static JsonObject adapt(final WebException error) {
-        return FnAdaptor.adapt(error);
+    /**
+     * 📦 基于 WebException 快速生成错误信息的 JsonObject，用于错误响应的统一格式化。
+     * 功能描述：将 WebException 转换为包含错误详情的 JsonObject，便于前端解析和展示。
+     * <pre>
+     *  行为约定（由 {@code FnAdaptor.failJson} 保证）：
+     *      - 包含 HTTP 状态码、状态原因、错误消息和错误码
+     *      - 当异常包含业务信息时，会额外提供 info 字段
+     * </pre>
+     * 输出格式：
+     * <pre>
+     * {
+     *   "reason": "Bad Request",          // HTTP 原始原因
+     *   "status": 400,                    // HTTP 状态码
+     *   "message": "错误消息内容",        // 系统异常消息
+     *   "code": "ERR_CODE",              // 系统错误码
+     *   "info": { ... }                  // 可选的业务数据信息
+     * }
+     * </pre>
+     *
+     * 使用示例：
+     * <pre>
+     *      final WebException error = new _400BadRequestException("E_USER_INVALID", "用户信息无效");
+     *      final JsonObject errorJson = FnVertx.failJson(error);
+     *      // 📤 输出：{"reason":"Bad Request", "status":400, "message":"用户信息无效", "code":"E_USER_INVALID"}
+     * </pre>
+     *
+     * @param error 🚨 WebException 异常实例，包含错误详情
+     *
+     * @return 🎯 包含错误信息的 JsonObject，格式统一便于前端处理
+     * @see FnAdaptor#failJson(WebException)
+     */
+    public static JsonObject failJson(final WebException error) {
+        return FnAdaptor.failJson(error);
     }
 
     // ---------------------------- otherwiseFn 方法专用函数，用于输出
