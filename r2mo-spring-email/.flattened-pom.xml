@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
   <artifactId>r2mo-spring-email</artifactId>
-  <version>1.0.41</version>
+  <version>1.0.42</version>
   <name>R2MO::Spring::Email</name>
   <description>R2MO Rapid Framework for Delivery</description>
   <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-spring-email</url>
@@ -28,7 +28,7 @@
   <scm>
     <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-spring-email</connection>
     <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-spring-email</developerConnection>
-    <tag>v1.0.41</tag>
+    <tag>v1.0.42</tag>
     <url>https://www.zerows.io/r2mo-spring-email</url>
   </scm>
   <distributionManagement>
@@ -47,19 +47,19 @@
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-spring</artifactId>
-      <version>1.0.41</version>
+      <version>1.0.42</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-spring-template</artifactId>
-      <version>1.0.41</version>
+      <version>1.0.42</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-xync-email</artifactId>
-      <version>1.0.41</version>
+      <version>1.0.42</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

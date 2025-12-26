@@ -95,7 +95,15 @@ public class JooqObject {
         }
         final Field<?> field = this.meta.findColumn(primaryKey);
         final Object ifSet = SourceReflect.value(entity, primaryKey);
-        if (Objects.nonNull(ifSet)) {
+
+        
+        /*
+         * FIX-DBE：主键自动填充，此处旧版的逻辑有问题，正常模式下应该是当主键为空时才进行填充
+         * 1. 如果主键类型是 String，则生成 UUID 字符串
+         * 2. 如果主键类型是 UUID，则生成 UUID 对象
+         * 这种场景主要在于已经提供了主键值的情况下，不应该覆盖原有值，典型如 Excel 导入流程
+         **/
+        if (Objects.isNull(ifSet)) {
             if (field.getType() == String.class) {
                 SourceReflect.value(entity, primaryKey, UUID.randomUUID().toString());
             } else if (field.getType() == UUID.class) {
