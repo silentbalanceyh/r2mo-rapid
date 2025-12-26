@@ -8,11 +8,11 @@
         <version>1.0.40</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>1.0.41</version>
+    <version>1.0.42</version>
     <artifactId>r2mo-rapid</artifactId>
     <properties>
         <rachel-momo.version>1.0.40</rachel-momo.version>
-        <r2mo.version>1.0.41</r2mo.version>
+        <r2mo.version>1.0.42</r2mo.version>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
