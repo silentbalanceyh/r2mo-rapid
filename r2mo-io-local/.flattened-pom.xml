@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
   <artifactId>r2mo-io-local</artifactId>
-  <version>1.0.43</version>
+  <version>1.0.44</version>
   <name>R2MO::IO::Local</name>
   <description>R2MO Rapid Framework for Delivery</description>
   <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-io-local</url>
@@ -28,7 +28,7 @@
   <scm>
     <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-io-local</connection>
     <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-io-local</developerConnection>
-    <tag>v1.0.43</tag>
+    <tag>v1.0.44</tag>
     <url>https://www.zerows.io/r2mo-io-local</url>
   </scm>
   <distributionManagement>
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>io.zerows</groupId>
       <artifactId>r2mo-io</artifactId>
-      <version>1.0.43</version>
+      <version>1.0.44</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
