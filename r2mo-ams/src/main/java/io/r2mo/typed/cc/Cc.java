@@ -59,4 +59,8 @@ public interface Cc<K, V> {
     void forEach(BiConsumer<K, V> consumer);
 
     int size();
+
+    <J> J mom();
+
+    boolean momThread();
 }

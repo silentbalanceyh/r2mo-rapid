@@ -1,5 +1,7 @@
 package io.r2mo.typed.cc;
 
+import io.r2mo.typed.json.JObject;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -95,5 +97,16 @@ class CcSingle<K, V> implements Cc<K, V> {
     @Override
     public int size() {
         return this.store.size();
+    }
+
+    @Override
+    public <J> J mom() {
+        final JObject memory = CcUtil.mom(this.store);
+        return memory.data();
+    }
+
+    @Override
+    public boolean momThread() {
+        return false;
     }
 }

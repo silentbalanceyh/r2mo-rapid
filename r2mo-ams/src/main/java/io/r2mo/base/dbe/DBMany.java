@@ -5,6 +5,7 @@ import io.r2mo.spi.SPI;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -28,6 +29,10 @@ public class DBMany {
             INSTANCE = new DBMany();
         }
         return INSTANCE;
+    }
+
+    public Set<String> keySet() {
+        return this.ds.keySet();
     }
 
     /**
