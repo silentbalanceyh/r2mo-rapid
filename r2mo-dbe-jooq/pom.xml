@@ -14,10 +14,6 @@
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>
-            <artifactId>r2mo-ams</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zerows</groupId>
             <artifactId>r2mo-dbe</artifactId>
         </dependency>
         <!-- JooQ -->

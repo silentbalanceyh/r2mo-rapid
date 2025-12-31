@@ -15,10 +15,6 @@
     <dependencies>
         <dependency>
             <groupId>io.zerows</groupId>
-            <artifactId>r2mo-spring</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring-security</artifactId>
         </dependency>
         <!-- LDAP -->

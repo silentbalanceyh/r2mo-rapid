@@ -34,5 +34,4 @@
             <artifactId>mybatis-plus-jsqlparser</artifactId>
         </dependency>
     </dependencies>
-
 </project>

@@ -16,9 +16,5 @@
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.zerows</groupId>
-            <artifactId>r2mo-ams</artifactId>
-        </dependency>
     </dependencies>
 </project>

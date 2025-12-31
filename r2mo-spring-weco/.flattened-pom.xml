@@ -46,12 +46,6 @@
   <dependencies>
     <dependency>
       <groupId>io.zerows</groupId>
-      <artifactId>r2mo-spring</artifactId>
-      <version>1.0.44</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.zerows</groupId>
       <artifactId>r2mo-xync-weco</artifactId>
       <version>1.0.44</version>
       <scope>compile</scope>
