@@ -59,6 +59,18 @@
 ## 整体架构
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': { 'fontSize': '13px', 'fontFamily': 'arial' },
+  'flowchart': { 
+    'diagramPadding': 10, 
+    'nodeSpacing': 30, 
+    'rankSpacing': 40, 
+    'curve': 'basis', 
+    'htmlLabels': true,
+    'useMaxWidth': true
+  }
+} }%%
 graph LR
     %% =========================================================================
     %% [全局样式配置]
