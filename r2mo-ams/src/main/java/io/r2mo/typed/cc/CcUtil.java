@@ -136,16 +136,33 @@ class CcUtil {
         return keyOf;
     }
 
+    // ==================================================================================
+    // 【核心修改】 使用 synchronized + 双重检查锁 (DCL)
+    // 解决了并发重复初始化问题，且支持递归调用
+    // ==================================================================================
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     static <K, V> V pool(final ConcurrentMap<K, V> pool, final K key, final Supplier<V> poolFn) {
         Objects.requireNonNull(pool, "[ R2MO ] pool 参数不可为空！");
         Objects.requireNonNull(key, "[ R2MO ] key 参数不可为空！");
         Objects.requireNonNull(poolFn, "[ R2MO ] poolFn 参数不可为空！");
 
+        // 1. 第一重检查：无锁读取，保证初始化后的高性能
         V value = pool.get(key);
-        if (Objects.isNull(value)) {
-            value = poolFn.get();
-            if (Objects.nonNull(value)) {
-                pool.put(key, value);
+
+        if (value == null) {
+            // 2. 加锁：锁住当前的 Map 容器
+            // synchronized 是可重入锁，如果 poolFn 内部递归调用了本方法，
+            // 只要是同一个线程，就可以再次获得锁，从而避免了 computeIfAbsent 的 Recursive update 异常
+            synchronized (pool) {
+                // 3. 第二重检查：防止并发间隙中被其他线程初始化
+                value = pool.get(key);
+                if (value == null) {
+                    // 4. 执行初始化 (SPI 查找、反射等耗时操作)
+                    value = poolFn.get();
+                    if (value != null) {
+                        pool.put(key, value);
+                    }
+                }
             }
         }
         return value;
