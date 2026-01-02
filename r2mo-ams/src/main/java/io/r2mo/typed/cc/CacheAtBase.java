@@ -82,7 +82,7 @@ public abstract class CacheAtBase<K, V> implements CacheAt<K, V> {
             + "S=" + size
             + "D=" + duration.hashCode();
         this.initialized = this.build();
-        log.info("[ R2MO ] --> 缓存：{}({}) / 超时：{}", this.name, size, duration.toString());
+        log.info("[ R2MO ] --> 缓存：{}({}) / 超时：{}", this.name, size, duration);
     }
 
     // 初始化专用方法
