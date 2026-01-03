@@ -17,11 +17,7 @@ import org.jooq.Operator;
 import org.jooq.OrderField;
 import org.jooq.impl.DSL;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -42,7 +38,6 @@ class JooqHelper {
      *
      * @param projection 列过滤
      * @param ref        关联引用
-     *
      * @return
      */
     static Field<?>[] findColumn(final QProjection projection, final DBRef ref) {
@@ -54,15 +49,15 @@ class JooqHelper {
         projection.item().forEach(each -> {
             final List<Kv<String, String>> columns = ref.seekKvList(each);
             columns.stream()
-                .filter(column -> {
-                    if (!added.contains(column.key() + "." + column.value())) {
-                        added.add(column.key() + "." + column.value());
-                        return true;
-                    }
-                    return false;
-                })
-                .map(column -> DSL.field(column.key() + "." + column.value()))
-                .forEach(fields::add);
+                    .filter(column -> {
+                        if (!added.contains(column.key() + "." + column.value())) {
+                            added.add(column.key() + "." + column.value());
+                            return true;
+                        }
+                        return false;
+                    })
+                    .map(column -> DSL.field(column.key() + "." + column.value()))
+                    .forEach(fields::add);
         });
         return fields.toArray(new Field[0]);
     }
@@ -128,7 +123,7 @@ class JooqHelper {
         final Condition condition;
         final boolean isTree = filters.isNested();
         if (!filters.isEmpty()) {
-            log.debug("[ ZERO ] 模式选择：{}", isTree ? "树型结构" : "线性结构");
+            log.debug("[ R2MO ] 模式选择：{}", isTree ? "树型结构" : "线性结构");
         }
 
 

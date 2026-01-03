@@ -6,12 +6,7 @@ import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -30,6 +25,7 @@ class ProviderOfFactory {
     private static final Cc<String, FactoryWeb> CCT_WEB_FACTORY = Cc.openThread();
 
     private static final ConcurrentMap<Class<?>, Class<?>> META_CLASS = new ConcurrentHashMap<>();
+    private static final Set<Class<?>> ONCE_LOGGER = new ConcurrentHashSet<>();
 
     public static FactoryIo forIo() {
         return CCT_IO_FACTORY.pick(() -> findOneInternal(FactoryIo.class));
@@ -51,14 +47,11 @@ class ProviderOfFactory {
         return META_CLASS;
     }
 
-    private static final Set<Class<?>> ONCE_LOGGER = new ConcurrentHashSet<>();
-
     /**
      * 根据优先级查找最高优先级的 SPI 实现
      *
      * @param clazz SPI 接口类型
      * @param <T>   SPI 接口类型
-     *
      * @return 最高优先级的实现类实例
      */
     static <T> T findOneOf(final Class<T> clazz) {
@@ -85,9 +78,9 @@ class ProviderOfFactory {
             // 打印一次
             final SPID spid = implClass.getDeclaredAnnotation(SPID.class);
             log.info("[ R2MO ] SPI 实现类按优先级查找: interface = {} / 优先级最高实例 = {} / 优先级 = {}",
-                clazz.getName(),
-                implClass.getName(),
-                Objects.isNull(spid) ? null : spid.priority());
+                    clazz.getName(),
+                    implClass.getName(),
+                    Objects.isNull(spid) ? null : spid.priority());
             ONCE_LOGGER.add(implClass);
         }
 
@@ -119,12 +112,12 @@ class ProviderOfFactory {
             }).findAny().orElse(null);
             if (Objects.isNull(found)) {
                 log.info("[ R2MO ] SPI 实现类按名称查找: interface = {} / name = {} / null",
-                    clazz.getName(), name);
+                        clazz.getName(), name);
             } else {
                 final Class<?> implClass = found.getClass();
                 if (!ONCE_LOGGER.contains(implClass)) {
                     log.info("[ R2MO ] SPI 实现类按名称查找: interface = {} / name = {} / {}",
-                        clazz.getName(), name, implClass.getName());
+                            clazz.getName(), name, implClass.getName());
                     ONCE_LOGGER.add(implClass);
                 }
             }
@@ -193,8 +186,8 @@ class ProviderOfFactory {
 
     static <T> T findOverwrite(final List<T> found, final Class<T> clazzCls) {
         if (2 < found.size()) {
-            log.error("[ ZERO ] 此方法要求 SPI 只能有一个或两个实现类。");
-            throw new IllegalArgumentException("[ ZERO ] SPI 查找数量有误：" + clazzCls + " / " + found.size());
+            log.error("[ R2MO ] 此方法要求 SPI 只能有一个或两个实现类。");
+            throw new IllegalArgumentException("[ R2MO ] SPI 查找数量有误：" + clazzCls + " / " + found.size());
         }
         // 只找到唯一的一个实现
         if (1 == found.size()) {
@@ -205,8 +198,8 @@ class ProviderOfFactory {
          * 下的实现类，通常作为默认实现存在，这个是整个 R2MO 和 ZERO 既定的法则
          */
         return found.stream()
-            .filter(it -> !it.getClass().getPackageName().startsWith("io.zerows"))
-            .findFirst().orElse(null);
+                .filter(it -> !it.getClass().getPackageName().startsWith("io.zerows"))
+                .findFirst().orElse(null);
     }
 
     private static <T> T findOneInternal(final Class<T> clazz) {

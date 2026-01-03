@@ -28,12 +28,12 @@ public class AsyncDBContext implements DBContext {
     public static String cached(final Class<?> daoCls, final DBS dbs, final R2Vector vector) {
         if (Objects.isNull(vector)) {
             return AsyncDBContext.vertxStatic(dbs).hashCode()
-                // Vertx + DBS + DAO
-                + "@" + dbs.hashCode() + "/" + daoCls.getName();
+                    // Vertx + DBS + DAO
+                    + "@" + dbs.hashCode() + "/" + daoCls.getName();
         } else {
             return AsyncDBContext.vertxStatic(dbs).hashCode()
-                // Vertx + DBS + DAO + Vector（映射对象）
-                + "@" + dbs.hashCode() + "/" + daoCls.getName() + "#" + vector.hashCode();
+                    // Vertx + DBS + DAO + Vector（映射对象）
+                    + "@" + dbs.hashCode() + "/" + daoCls.getName() + "#" + vector.hashCode();
         }
     }
 
@@ -57,7 +57,7 @@ public class AsyncDBContext implements DBContext {
         if (database instanceof final JooqDatabase jooqDatabase) {
             return (DSL) jooqDatabase.getContext();
         }
-        throw new _501NotSupportException("[ ZERO ] context 操作仅支持 JooqDatabase 类型！");
+        throw new _501NotSupportException("[ R2MO ] context 操作仅支持 JooqDatabase 类型！");
     }
 
     @Override

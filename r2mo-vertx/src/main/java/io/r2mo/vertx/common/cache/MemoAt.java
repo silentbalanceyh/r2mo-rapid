@@ -5,6 +5,7 @@ import io.r2mo.typed.common.Kv;
 import io.r2mo.vertx.function.FnVertx;
 import io.vertx.core.Future;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -27,6 +28,12 @@ public interface MemoAt<K, V> {
 
     Future<Kv<K, V>> remove(K key);
 
+    default Future<Boolean> remove(final Set<K> keys) {
+        final Set<Future<Kv<K, V>>> futures = new HashSet<>();
+        keys.forEach(key -> futures.add(this.remove(key)));
+        return FnVertx.combineB(futures);
+    }
+
     Future<V> find(K key);
 
     default Future<ConcurrentMap<K, V>> find(final Set<K> keys) {
@@ -38,4 +45,6 @@ public interface MemoAt<K, V> {
     Future<Boolean> clear();
 
     Future<Set<K>> keySet();
+
+    Future<Integer> size();
 }
