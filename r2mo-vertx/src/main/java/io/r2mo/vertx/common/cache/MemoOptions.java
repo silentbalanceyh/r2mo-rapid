@@ -1,5 +1,7 @@
 package io.r2mo.vertx.common.cache;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.vertx.core.json.JsonObject;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -19,7 +21,8 @@ import java.util.Objects;
 public class MemoOptions<K, V> implements Serializable {
     /**
      * 此处的 type 一般为缓存的类型标识，其中类型标识会根据不同的 caller 来决定，caller 典型如{@link MemoAt} 的实现类，每个实现类都会
-     * 对应不同的缓存类型，如 EhCache、Caffeine、Redis 等，所以有了 type 字段来区分不同的缓存实现，就可以完整保证缓存的基础唯一性。
+     * 对应不同的缓存类型，如 EhCache、Caffeine、Redis 等，所以有了 type 字段来区分不同的缓存实现，就可以完整保证缓存的基础唯一性。关于
+     * caller 在不同场景之下的使用。
      */
     @Setter(AccessLevel.NONE)
     private final Class<?> caller;
@@ -28,6 +31,8 @@ public class MemoOptions<K, V> implements Serializable {
     private Class<V> classV;
     private Duration duration = Duration.ofNanos(0);        // 超时时间
     private int size = 0;                                   // 最大缓存数量，0 表示不限制
+    @JsonIgnore
+    private JsonObject extension = new JsonObject();        // 扩展参数
 
     public MemoOptions(final Class<?> caller) {
         Objects.requireNonNull(caller, "[ R2MO ] MemoOptions 构造时，caller 不可为空！");
@@ -77,10 +82,10 @@ public class MemoOptions<K, V> implements Serializable {
 
         // 2. 处理调用者和缓存名称 (防止 name 为空)
         final String callerName = this.caller.getName();
-        final String cacheName = this.name == null ? "DEFAULT" : this.name;
+        final String name = Objects.isNull(this.name) ? "R2MO_CACHE_DEFAULT" : this.name;
 
         // 4. 组装指纹
         // 格式示例: io.myapp.UserService://user_cache@java.lang.String=io.myapp.User/S=1000/D=60000
-        return callerName + "://" + cacheName + "@" + kType + "=" + vType;
+        return callerName + "://" + name + "@" + kType + "=" + vType;
     }
 }
