@@ -51,6 +51,12 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>io.zerows</groupId>
+      <artifactId>r2mo-jaas</artifactId>
+      <version>1.0.44</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
       <version>5.0.6</version>

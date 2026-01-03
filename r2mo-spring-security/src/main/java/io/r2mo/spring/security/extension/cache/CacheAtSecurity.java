@@ -1,6 +1,8 @@
-package io.r2mo.jaas.session;
+package io.r2mo.spring.security.extension.cache;
 
 import io.r2mo.jaas.auth.CaptchaArgs;
+import io.r2mo.jaas.session.UserAt;
+import io.r2mo.jaas.session.UserContext;
 import io.r2mo.typed.cc.CacheAt;
 
 import java.util.UUID;
@@ -8,7 +10,7 @@ import java.util.UUID;
 /**
  * @author lang : 2025-11-12
  */
-public interface UserAtCache {
+public interface CacheAtSecurity {
 
     CacheAt<UUID, UserAt> userAt();
 
