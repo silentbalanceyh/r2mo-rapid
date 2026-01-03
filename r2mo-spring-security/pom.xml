@@ -20,11 +20,6 @@
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-jaas</artifactId>
         </dependency>
-        <!-- EhCache -->
-        <dependency>
-            <groupId>org.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-        </dependency>
         <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
