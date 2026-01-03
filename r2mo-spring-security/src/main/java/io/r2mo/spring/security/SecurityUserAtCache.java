@@ -1,9 +1,10 @@
-package io.r2mo.spring.security.extension.cache;
+package io.r2mo.spring.security;
 
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.base.util.R2MO;
 import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.session.UserAt;
+import io.r2mo.jaas.session.UserAtCache;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserContext;
 import io.r2mo.spring.security.config.ConfigSecurity;
@@ -24,14 +25,14 @@ import java.util.UUID;
  * @author lang : 2025-12-02
  */
 @SuppressWarnings("unchecked")
-public abstract class CacheAtSecurityBase implements CacheAtSecurity {
+public abstract class SecurityUserAtCache implements UserAtCache {
 
     protected static final Cc<String, CacheAt<?, ?>> CC_CACHE = Cc.open();
     protected final ConfigSecurity security;
     protected final long size;
     protected final Duration duration;
 
-    public CacheAtSecurityBase() {
+    public SecurityUserAtCache() {
         this.security = SpringUtil.getBean(ConfigSecurity.class);
         Objects.requireNonNull(this.security, "[ R2MO ] 配置项未正确初始化！");
         this.size = this.security.getLimit().getSession();
@@ -49,7 +50,6 @@ public abstract class CacheAtSecurityBase implements CacheAtSecurity {
      * 验证码的设置一定是在传入之前就创建好了，确保设置过程中的唯一性，主要包含
      *
      * @param configuration 验证码配置
-     *
      * @return 验证码缓存
      */
     @Override

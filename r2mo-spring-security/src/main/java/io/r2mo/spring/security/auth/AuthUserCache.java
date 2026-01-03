@@ -3,10 +3,10 @@ package io.r2mo.spring.security.auth;
 import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;
+import io.r2mo.jaas.session.UserAtCache;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserContext;
 import io.r2mo.spi.SPI;
-import io.r2mo.spring.security.extension.cache.CacheAtSecurity;
 import io.r2mo.spring.security.extension.cache.EhcacheCacheAtSecurity;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.CacheAt;
@@ -34,11 +34,11 @@ import java.util.UUID;
 @Slf4j
 @SPID
 public class AuthUserCache implements UserCache {
-    private static final Cc<String, CacheAtSecurity> CC_FACTORY = Cc.openThread();
+    private static final Cc<String, UserAtCache> CC_FACTORY = Cc.openThread();
 
-    private CacheAtSecurity factory() {
+    private UserAtCache factory() {
         return CC_FACTORY.pick(() -> {
-            final CacheAtSecurity found = SPI.findOneOf(CacheAtSecurity.class);
+            final UserAtCache found = SPI.findOneOf(UserAtCache.class);
             if (Objects.isNull(found)) {
                 log.error("[ R2MO ] 未配置缓存工厂：{}，请检查相关配置！", found);
             }
