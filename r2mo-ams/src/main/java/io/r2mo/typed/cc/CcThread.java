@@ -1,5 +1,7 @@
 package io.r2mo.typed.cc;
 
+import io.r2mo.typed.json.JArray;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -99,5 +101,16 @@ class CcThread<V> implements Cc<String, V> {
     @Override
     public int size() {
         return this.keySet().size();
+    }
+
+    @Override
+    public <J> J mom() {
+        final JArray memory = CcUtil.momThread(this.store);
+        return memory.data();
+    }
+
+    @Override
+    public boolean momThread() {
+        return true;
     }
 }

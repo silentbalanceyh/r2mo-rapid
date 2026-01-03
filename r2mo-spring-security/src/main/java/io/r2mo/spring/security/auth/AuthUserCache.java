@@ -7,7 +7,6 @@ import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserContext;
 import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.extension.cache.CacheAtSecurity;
-import io.r2mo.spring.security.extension.cache.EhcacheCacheAtSecurity;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.CacheAt;
 import io.r2mo.typed.cc.Cc;
@@ -24,7 +23,7 @@ import java.util.UUID;
  * <pre>
  *     1. 直接定制优先级更高的 {@link UserCache} 实现类
  *        - 这种模式自定义化的程度更高
- *     2. 直接定义类继承 {@link EhcacheCacheAtSecurity} 并重写缓存实现方案
+ *     2. 直接定义类继承 {@see EhcacheCacheAtSecurity} 并重写缓存实现方案
  *        - 这种模式更方便，直接更改底层缓存实现即可
  *        - 记得此处一定要继承！！！
  * </pre>

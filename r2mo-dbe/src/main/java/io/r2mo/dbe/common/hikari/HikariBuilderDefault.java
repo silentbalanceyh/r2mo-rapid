@@ -9,9 +9,8 @@ import io.r2mo.typed.json.JObject;
 import java.util.Objects;
 
 /**
- * 默认 Hikari 配置构建器（去掉静态初始化/静态导入）
- * - 默认值保持与旧版一致
- * - ext 为空直接返回，不额外覆盖 Hikari 默认
+ * 默认 Hikari 配置构建器
+ * 修复：移除硬编码的 2048 连接数，改为根据 CPU 核心数动态计算
  */
 class HikariBuilderDefault implements HikariBuilder {
 
@@ -26,28 +25,37 @@ class HikariBuilderDefault implements HikariBuilder {
         config.setPassword(database.getPasswordDecrypted());
         final String driverCls = database.getDriverClassName();
         if (driverCls != null && !driverCls.isBlank()) {
-            config.setDriverClassName(driverCls); // 避免 "no suitable driver"
+            config.setDriverClassName(driverCls);
         }
 
         /* ===== Hikari 扩展，不存在就直接返回 ===== */
         final JObject ext = database.getExtension(HikariName.HIKARI_SPID);
         if (ext == null) {
+            // 即便没有扩展配置，也建议设置一个合理的默认 PoolSize，防止 Hikari 使用其内部默认值（通常是 10）
+            // 但为了安全起见，这里也可以应用动态计算逻辑
+            config.setMaximumPoolSize(this.calculateReasonablePoolSize());
             return;
         }
 
-        // —— 行为与规模（旧版默认值保持不变）——
+        // —— 行为与规模 ——
         config.setAutoCommit(ext.getBool(HikariOpts.OPT_AUTO_COMMIT, true));
         config.setConnectionTimeout(ext.getLong(HikariOpts.OPT_CONNECTION_TIMEOUT, 300_000L));
-        // idleTimeout has been set but has no effect because the pool is operating as a fixed size pool.
-        // config.setIdleTimeout(ext.getLong(HikariOpts.OPT_IDLE_TIMEOUT, 60_000L));
         config.setMaxLifetime(ext.getLong(HikariOpts.OPT_MAX_LIFETIME, 120_000L));
         config.setKeepaliveTime(ext.getLong(HikariOpts.OPT_KEEPALIVE_TIME, 90_000L));
 
+        // [关键修改]：动态计算默认最大连接数
+        // 如果配置中有值则用配置的，没有则使用 (核心数 * 2 + 1)
+        final int defaultPoolSize = this.calculateReasonablePoolSize();
+
+        config.setMaximumPoolSize(ext.containsKey(HikariOpts.OPT_MAXIMUM_POOL_SIZE)
+            ? ext.getInt(HikariOpts.OPT_MAXIMUM_POOL_SIZE) : defaultPoolSize);
+
+        // 关于 minimumIdle：
+        // 如果未配置，Hikari 默认将其设为与 maximumPoolSize 相等（即固定大小连接池，这是推荐的高性能模式）。
+        // 现在 defaultPoolSize 只有几十个，固定大小完全没问题，不会撑爆数据库。
         if (ext.containsKey(HikariOpts.OPT_MINIMUM_IDLE)) {
             config.setMinimumIdle(ext.getInt(HikariOpts.OPT_MINIMUM_IDLE));
         }
-        config.setMaximumPoolSize(ext.containsKey(HikariOpts.OPT_MAXIMUM_POOL_SIZE)
-            ? ext.getInt(HikariOpts.OPT_MAXIMUM_POOL_SIZE) : 2048);
 
         config.setPoolName(ext.containsKey(HikariOpts.OPT_POOL_NAME)
             ? ext.getString(HikariOpts.OPT_POOL_NAME) : HikariName.HIKARI_POOL_NAME);
@@ -97,7 +105,6 @@ class HikariBuilderDefault implements HikariBuilder {
 
         // 扩展，直接从 data-source-properties 中提取信息
         if (ext.containsKey(HikariName.HIKARI_EXTENSION)) {
-            // 分数据库提取
             this.ofBuilder(database.getType()).initialize(config, database);
         }
     }
@@ -107,5 +114,18 @@ class HikariBuilderDefault implements HikariBuilder {
             return HikariBuilder.CC_BUILDER.pick(HikariBuilderMySQL::new, HikariBuilderMySQL.class.getName());
         }
         throw new _501NotSupportException("[ R2MO ] 等待未来支持：" + databaseType);
+    }
+
+    /**
+     * 根据 CPU 核心数计算合理的连接池大小
+     * 公式：Core * 2 + 1
+     * 例如：4核机器 -> 9 个连接；8核机器 -> 17 个连接
+     */
+    private int calculateReasonablePoolSize() {
+        final int cores = Runtime.getRuntime().availableProcessors();
+        final int calculated = cores * 2 + 1;
+        // 兜底策略：防止单核机器计算出太小的值，或者防止某些巨型服务器计算出过大的值
+        // 这里的 32 只是一个保守的建议值，通常单实例很少需要超过 50 个连接
+        return Math.min(calculated, 32);
     }
 }

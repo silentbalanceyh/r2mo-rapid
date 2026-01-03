@@ -49,7 +49,6 @@ public abstract class CacheAtSecurityBase implements CacheAtSecurity {
      * 验证码的设置一定是在传入之前就创建好了，确保设置过程中的唯一性，主要包含
      *
      * @param configuration 验证码配置
-     *
      * @return 验证码缓存
      */
     @Override

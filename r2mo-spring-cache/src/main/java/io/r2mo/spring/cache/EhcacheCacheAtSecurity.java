@@ -1,5 +1,6 @@
-package io.r2mo.spring.security.extension.cache;
+package io.r2mo.spring.cache;
 
+import io.r2mo.spring.security.extension.cache.CacheAtSecurityBase;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.CacheAt;
 

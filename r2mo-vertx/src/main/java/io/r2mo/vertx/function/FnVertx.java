@@ -4,6 +4,7 @@ import io.r2mo.function.Fn;
 import io.r2mo.typed.exception.AbstractException;
 import io.r2mo.typed.exception.WebException;
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.util.ArrayList;
@@ -11,7 +12,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -32,6 +35,59 @@ import java.util.function.Supplier;
  * @author lang : 2025-09-26
  */
 public class FnVertx {
+    /**
+     * 哈希表组合函数
+     * <pre><code>
+     * [                                               (
+     *      k=(t)                                          k=t,
+     *      k=(t)         -->      (t)           =         k=t,
+     *      k=(t)                                          k=t,
+     * ]                                               )
+     * </code></pre>
+     * 哈希表专用的组合函数，针对每一个键值提供异步结果，此处的类型必须使用 ConcurrentMap，由于每一个键值对是同时执行
+     * 且相互之间不依赖，在并行环境下，只有 ConcurrentMap 才能保证线程安全。
+     *
+     * @param futureMap ConcurrentMap<K, Future<Tool>> 输入的异步结果，结果内是 ConcurrentMap<K, Future<Tool>>
+     * @param <K>       键类型
+     * @param <T>       值类型
+     *
+     * @return 返回执行过的结果数组 Future<ConcurrentMap<K, Tool>>
+     */
+    public static <K, T> Future<ConcurrentMap<K, T>> combineM(final ConcurrentMap<K, Future<T>> futureMap) {
+        return FnMap.combineM(futureMap);
+    }
+
+    /**
+     * 哈希表压缩函数，二阶转一阶
+     * <pre><code>
+     * [
+     *      ( [k=t,k=t,k=t] )   -->     ...
+     *      ( [k=t] )           -->     ...     --> ( [k=t,k=t,k=t,   k=t,   k=t,k=t] )
+     *      ( [k=t,k=t] )       -->     ...
+     * ]
+     * </code></pre>
+     * 该函数输入有两层容器，第一层是 List，第二层是 ConcurrentMap，两层容器为 2 阶数据结构，所以该输入不能单纯看成
+     * 矩阵，代码逻辑如：
+     * 1. 执行 List 的每一个元素（ Future<ConcurrentMap<String, Tool>> ) 一部操作得到结果 ( ConcurrentMap<String, Tool> ).
+     * 2. 一个最终结果组合成集合 ( List<ConcurrentMap<String, Tool>> ) 通过计算得到最终的 ( ConcurrentMap<String, Tool> ).
+     * 默认版本组合函数直接调用哈希表的 addAll 操作
+     * 3. 最终的结果为：[[k=t],[k=t]] => [k=t, k=t]
+     *
+     * @param futures    List<Future<ConcurrentMap<String, Tool>>> 输入的异步结果，结果内是 ConcurrentMap<String, Tool>
+     * @param combinerOf BiFunction<Tool, Tool, Tool> 组合函数，用于将 ConcurrentMap<String, Tool> 组合成 ConcurrentMap<String, Tool>
+     * @param <T>        输入类型T
+     *
+     * @return Future<Map < String, Tool>> 返回执行过的压缩结果
+     */
+    public static <T> Future<ConcurrentMap<String, T>> compressM(final List<Future<ConcurrentMap<String, T>>> futures,
+                                                                 final BinaryOperator<T> combinerOf) {
+        return FnMap.compressM(futures, combinerOf);
+    }
+
+    public static Future<ConcurrentMap<String, JsonArray>> compressM(final List<Future<ConcurrentMap<String, JsonArray>>> futures) {
+        return FnMap.compressM(futures, JsonArray::addAll);
+    }
+
     /**
      * 🚨 基于异常类型快速生成 Vert.x 的失败 {@link io.vertx.core.Future}，用于"异步短路返回"的统一入口。
      *

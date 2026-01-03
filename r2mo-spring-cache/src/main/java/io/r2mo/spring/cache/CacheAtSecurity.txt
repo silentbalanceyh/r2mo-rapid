@@ -3,4 +3,7 @@
 - 100 / RedisCacheAtSecurity
 - 200 / RedCacheAtSecurity
 - 300 / SpringCacheAtSecurity
-优先级的排序按照此处的数字从高到低进行匹配，数字越大优先级越高，但是默认 SPI 只配置了 EhCacheCacheAtSecurity，如果要启用其他则是自定义配置，优先级具有排他性，所以只有在多个配置时才会生效。
+优先级的排序按照此处的数字从高到低进行匹配，数字越大优先级越高，但是默认 SPI 只配置了 EhCacheCacheAtSecurity，如果要启用其他则是自定义
+配置，优先级具有排他性，所以只有在多个配置时才会生效，所以组件的选择是通过配置本身来决定，Spring 中有个特殊点：
+- 1）如果启用 Redis 之后，可在引入 RedCacheAtSecurity 场景下使用 Redisson 优先替代 Redis 原生客户端。
+- 2）若启用了 Spring 之后，也可以直接将 SpringCacheAtSecurity 作为缓存组件来使用，更高优先级。

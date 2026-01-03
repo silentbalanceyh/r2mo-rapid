@@ -1,5 +1,11 @@
 package io.r2mo.typed.cc;
 
+import io.r2mo.spi.SPI;
+import io.r2mo.typed.json.JArray;
+import io.r2mo.typed.json.JObject;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +18,79 @@ import java.util.function.Supplier;
 class CcUtil {
 
     private static final ConcurrentMap<String, Set<String>> KEY_MAP = new ConcurrentHashMap<>();
+
+    static <K, V> JArray momThread(final ConcurrentMap<String, V> store) {
+        // 1. 准备返回数组
+        final JArray memoryA = SPI.A();
+
+        // [Debug] 先看一眼总数，如果这里打印 0，说明传入的 map 本身就是空的
+        if (store == null || store.isEmpty()) {
+            return memoryA;
+        }
+
+        // 2. 中间聚合容器：Map<盐值, Map<组件类型名, 数量>>
+        // 使用 String 作为类型 Key，避免 Class 对象因代理/加载器不同导致 equals 失败
+        final Map<String, Map<String, Integer>> aggregator = new HashMap<>();
+
+        store.forEach((keyStr, component) -> {
+            try {
+                // [安全检查] 忽略空值
+                if (component == null) {
+                    return;
+                }
+                // [安全检查] 防止 key 不是 String (泛型擦除可能导致 raw type 混入)
+                if (keyStr == null) {
+                    return;
+                }
+
+                // --- A. 解析盐值 ---
+                // 逻辑：截取 @ 之后的内容。如果没有 @，则归类为 "default" 或直接用 key
+                final int idx = keyStr.lastIndexOf('@');
+                final String salt = (idx > -1) ? keyStr.substring(idx + 1) : "default";
+
+                // --- B. 解析类型 ---
+                // 建议：如果不需要包含包名，用 getSimpleName()；如果怕重名，用 getName()
+                // 进阶：如果遇到 CGLIB/Spring 代理类，这里可能需要清理类名 (如 split("$$")[0])
+                final String typeName = component.getClass().getName();
+
+                // --- C. 聚合计数 ---
+                aggregator
+                    .computeIfAbsent(salt, k -> new HashMap<>())
+                    .merge(typeName, 1, Integer::sum);
+
+            } catch (final Exception e) {
+                // [Debug] 打印异常，防止静默失败
+                System.err.println("[R2MO-ERROR] Error processing key: " + keyStr);
+                e.printStackTrace();
+            }
+        });
+
+        // 3. 组装结果
+        // 只要 aggregator 里有数据，这里就一定会有输出
+        aggregator.forEach((salt, typeMap) -> {
+            typeMap.forEach((typeName, size) -> {
+                final JObject memory = SPI.J();
+                memory.put("key", salt);      // 盐值 (您提到的类型标识)
+                memory.put("type", typeName); // 组件类名
+                memory.put("size", size);     // 线程数
+                memory.put("thread", true);
+
+                memoryA.add(memory);
+            });
+        });
+
+        return memoryA;
+    }
+
+    static <K, V> JObject mom(final ConcurrentMap<K, V> store) {
+        final JObject memory = SPI.J();
+        store.forEach((key, component) -> {
+            memory.put("key", key);
+            memory.put("type", component.getClass().getName());
+            memory.put("hash", component.hashCode());
+        });
+        return memory;
+    }
 
     static <V> V poolThread(final ConcurrentMap<String, V> pool, final Supplier<V> poolFn) {
         return poolThread(pool, poolFn, null);
@@ -57,16 +136,33 @@ class CcUtil {
         return keyOf;
     }
 
+    // ==================================================================================
+    // 【核心修改】 使用 synchronized + 双重检查锁 (DCL)
+    // 解决了并发重复初始化问题，且支持递归调用
+    // ==================================================================================
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     static <K, V> V pool(final ConcurrentMap<K, V> pool, final K key, final Supplier<V> poolFn) {
         Objects.requireNonNull(pool, "[ R2MO ] pool 参数不可为空！");
         Objects.requireNonNull(key, "[ R2MO ] key 参数不可为空！");
         Objects.requireNonNull(poolFn, "[ R2MO ] poolFn 参数不可为空！");
 
+        // 1. 第一重检查：无锁读取，保证初始化后的高性能
         V value = pool.get(key);
-        if (Objects.isNull(value)) {
-            value = poolFn.get();
-            if (Objects.nonNull(value)) {
-                pool.put(key, value);
+
+        if (value == null) {
+            // 2. 加锁：锁住当前的 Map 容器
+            // synchronized 是可重入锁，如果 poolFn 内部递归调用了本方法，
+            // 只要是同一个线程，就可以再次获得锁，从而避免了 computeIfAbsent 的 Recursive update 异常
+            synchronized (pool) {
+                // 3. 第二重检查：防止并发间隙中被其他线程初始化
+                value = pool.get(key);
+                if (value == null) {
+                    // 4. 执行初始化 (SPI 查找、反射等耗时操作)
+                    value = poolFn.get();
+                    if (value != null) {
+                        pool.put(key, value);
+                    }
+                }
             }
         }
         return value;

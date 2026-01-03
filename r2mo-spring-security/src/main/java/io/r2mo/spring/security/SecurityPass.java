@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 /**
  * @author lang : 2025-11-11
  */
-public class PasswordEncode {
+public class SecurityPass {
 
     public static void main(final String[] args) {
         final PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();

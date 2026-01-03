@@ -62,7 +62,8 @@ class OpDbJooq<T> extends AbstractDbJooq<T> implements OpDb<T> {
             return new ArrayList<>();
         }
 
-        this.setter.setPrimaryKey(entities, opType);
+        // Fix Issue: 类 class java.util.ArrayList 设置异常，详情: key | io.r2mo.SourceReflect
+        entities.forEach(entity -> this.setter.setPrimaryKey(entity, opType));
 
         return switch (opType) {
             case CREATE -> this.insertBatch(entities);

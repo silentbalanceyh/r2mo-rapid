@@ -1,4 +1,4 @@
-package io.r2mo.spring.security.extension.cache;
+package io.r2mo.spring.cache;
 
 import io.r2mo.typed.cc.CacheAtBase;
 import io.r2mo.typed.cc.Cc;
@@ -38,14 +38,14 @@ class EhcacheCacheAt<K, V> extends CacheAtBase<K, V> {
             final Class<K> clazzK = this.classKey();
             final Class<V> clazzV = this.classValue();
             return CacheManagerBuilder.newCacheManagerBuilder()
-                .withCache(this.name(), CacheConfigurationBuilder
-                    .newCacheConfigurationBuilder(
-                        clazzK, clazzV,
-                        ResourcePoolsBuilder.heap(this.size)
+                    .withCache(this.name(), CacheConfigurationBuilder
+                            .newCacheConfigurationBuilder(
+                                    clazzK, clazzV,
+                                    ResourcePoolsBuilder.heap(this.size)
+                            )
+                            .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(this.duration))
                     )
-                    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(this.duration))
-                )
-                .build(true);
+                    .build(true);
         }, this.manager());
     }
 
