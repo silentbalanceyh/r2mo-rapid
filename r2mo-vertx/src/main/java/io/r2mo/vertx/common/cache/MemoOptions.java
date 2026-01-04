@@ -33,10 +33,17 @@ public class MemoOptions<K, V> implements Serializable {
     private int size = 0;                                   // 最大缓存数量，0 表示不限制
     @JsonIgnore
     private JsonObject extension = new JsonObject();        // 扩展参数
+    @JsonIgnore
+    private Object configuration;
 
     public MemoOptions(final Class<?> caller) {
         Objects.requireNonNull(caller, "[ R2MO ] MemoOptions 构造时，caller 不可为空！");
         this.caller = caller;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <C> C configuration() {
+        return (C) this.configuration;
     }
 
     // ----------------------- 构造具有不同指纹的 MemoOptions ---------------------
