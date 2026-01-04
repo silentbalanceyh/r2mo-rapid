@@ -63,6 +63,7 @@ public class MemoOptions<K, V> implements Serializable {
         next.classK = (Class<K1>) this.classK;
         next.classV = (Class<V1>) this.classV;
         next.size = this.size;
+        next.extension = this.extension;    // 追加 extension 中的配置到环境中
 
         // 2. 处理时间转换 (Seconds -> Duration)
         next.duration = Objects.isNull(expiredAs) ? Duration.ZERO : expiredAs;
