@@ -33,10 +33,17 @@ public class MemoOptions<K, V> implements Serializable {
     private int size = 0;                                   // 最大缓存数量，0 表示不限制
     @JsonIgnore
     private JsonObject extension = new JsonObject();        // 扩展参数
+    @JsonIgnore
+    private Object configuration;
 
     public MemoOptions(final Class<?> caller) {
         Objects.requireNonNull(caller, "[ R2MO ] MemoOptions 构造时，caller 不可为空！");
         this.caller = caller;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <C> C configuration() {
+        return (C) this.configuration;
     }
 
     // ----------------------- 构造具有不同指纹的 MemoOptions ---------------------
@@ -63,6 +70,7 @@ public class MemoOptions<K, V> implements Serializable {
         next.classK = (Class<K1>) this.classK;
         next.classV = (Class<V1>) this.classV;
         next.size = this.size;
+        next.extension = this.extension;    // 追加 extension 中的配置到环境中
 
         // 2. 处理时间转换 (Seconds -> Duration)
         next.duration = Objects.isNull(expiredAs) ? Duration.ZERO : expiredAs;
