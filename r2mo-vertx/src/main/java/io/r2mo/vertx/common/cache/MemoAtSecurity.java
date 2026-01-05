@@ -3,7 +3,6 @@ package io.r2mo.vertx.common.cache;
 import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserContext;
-import io.r2mo.typed.cc.CacheAt;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 
@@ -36,17 +35,17 @@ import io.vertx.core.json.JsonObject;
  * </pre>
  * 由于 {@link java.util.UUID} 在 Vertx 中原生支持不太友好，所以统一改为 {@link String} 作为 Key 类型。
  */
-public interface CacheAtSecurity {
+public interface MemoAtSecurity {
 
-    Future<CacheAt<String, UserAt>> userAt();
+    MemoAt<String, UserAt> userAt();
 
-    Future<CacheAt<String, UserContext>> userContext();
+    MemoAt<String, UserContext> userContext();
 
-    Future<CacheAt<String, String>> userVector();
+    MemoAt<String, String> userVector();
 
-    Future<CacheAt<String, String>> ofToken();
+    MemoAt<String, String> ofToken();
 
-    Future<CacheAt<String, String>> ofRefresh();
+    MemoAt<String, String> ofRefresh();
 
-    Future<CacheAt<String, String>> ofAuthorize(CaptchaArgs configuration);
+    MemoAt<String, String> ofAuthorize(CaptchaArgs configuration);
 }

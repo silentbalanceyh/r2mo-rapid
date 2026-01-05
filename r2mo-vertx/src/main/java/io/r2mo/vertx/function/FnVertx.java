@@ -7,11 +7,7 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -50,7 +46,6 @@ public class FnVertx {
      * @param futureMap ConcurrentMap<K, Future<Tool>> 输入的异步结果，结果内是 ConcurrentMap<K, Future<Tool>>
      * @param <K>       键类型
      * @param <T>       值类型
-     *
      * @return 返回执行过的结果数组 Future<ConcurrentMap<K, Tool>>
      */
     public static <K, T> Future<ConcurrentMap<K, T>> combineM(final ConcurrentMap<K, Future<T>> futureMap) {
@@ -76,7 +71,6 @@ public class FnVertx {
      * @param futures    List<Future<ConcurrentMap<String, Tool>>> 输入的异步结果，结果内是 ConcurrentMap<String, Tool>
      * @param combinerOf BiFunction<Tool, Tool, Tool> 组合函数，用于将 ConcurrentMap<String, Tool> 组合成 ConcurrentMap<String, Tool>
      * @param <T>        输入类型T
-     *
      * @return Future<Map < String, Tool>> 返回执行过的压缩结果
      */
     public static <T> Future<ConcurrentMap<String, T>> compressM(final List<Future<ConcurrentMap<String, T>>> futures,
@@ -150,13 +144,22 @@ public class FnVertx {
      * @param exceptionCls 🚨 异常类（通常为 {@code WebException}/{@code JvmException} 的子类）；其他类型或 {@code null} 将回落成功（值为 {@code null}）
      * @param args         🔧 反射构造该异常实例所需的参数（需匹配某个构造器）
      * @param <T>          💾 成功分支时的返回类型占位（成功时恒为 {@code null}，类型由调用上下文推断）
-     *
      * @return 🎯 若识别为受支持异常 → {@code Future.failedFuture(ex)}；否则 → {@code Future.succeededFuture()}
      * @see FnVertx#failOut(Class, Object...)
      * @see io.vertx.core.Future
      */
     public static <T> Future<T> failOut(final Class<?> exceptionCls, final Object... args) {
         return FnOut.failOut(exceptionCls, args);
+    }
+
+    /**
+     * 🚨 基于已有异常快速生成 Vert.x 的失败 {@link io.vertx.core.Future}，用于"异步短路返回"的统一入口。
+     *
+     * @param ex 🚨 已有的异常实例
+     * @return 🎯 若为受支持异常 → {@code Future.failedFuture(ex)}；否则 → {@code Future.succeededFuture()}
+     */
+    public static WebException failAt(final Throwable ex) {
+        return FnOut.failAt(ex);
     }
 
     /**
@@ -177,7 +180,7 @@ public class FnVertx {
      *   "info": { ... }                  // 可选的业务数据信息
      * }
      * </pre>
-     *
+     * <p>
      * 使用示例：
      * <pre>
      *      final WebException error = new _400BadRequestException("E_USER_INVALID", "用户信息无效");
@@ -186,7 +189,6 @@ public class FnVertx {
      * </pre>
      *
      * @param error 🚨 WebException 异常实例，包含错误详情
-     *
      * @return 🎯 包含错误信息的 JsonObject，格式统一便于前端处理
      * @see FnAdaptor#failJson(WebException)
      */
@@ -201,7 +203,6 @@ public class FnVertx {
      *
      * @param supplier 供应器
      * @param <T>      输出类型
-     *
      * @return {@link Function}
      */
     public static <T> Function<Throwable, T> otherwiseFn(final Supplier<T> supplier) {
@@ -248,7 +249,6 @@ public class FnVertx {
      * @param executors ⚙️ 检查器集合，每个检查器返回 Future<Boolean>
      * @param <T>       💾 响应对象的泛型类型
      * @param <E>       🚨 异常对象的泛型类型，继承自 AbstractException
-     *
      * @return {@link Future}<T> 🌟 异步结果，检查通过时返回原始响应，失败时抛出异常
      */
     public static <T, E extends AbstractException> Future<T> passAll(
@@ -294,7 +294,6 @@ public class FnVertx {
      * @param executors ⚙️ 检查器集合，每个检查器返回 Future<Boolean>
      * @param <T>       💾 响应对象的泛型类型
      * @param <E>       🚨 异常对象的泛型类型，继承自 AbstractException
-     *
      * @return {@link Future}<T> 🌟 异步结果，检查通过时返回原始响应，失败时抛出异常
      */
     public static <T, E extends AbstractException> Future<T> passAny(
@@ -340,7 +339,6 @@ public class FnVertx {
      * @param executors ⚙️ 检查器集合，每个检查器返回 Future<Boolean>
      * @param <T>       💾 响应对象的泛型类型
      * @param <E>       🚨 异常对象的泛型类型，继承自 AbstractException
-     *
      * @return {@link Future}<T> 🌟 异步结果，检查通过时返回原始响应，失败时抛出异常
      */
     public static <T, E extends AbstractException> Future<T> passNone(
@@ -383,7 +381,6 @@ public class FnVertx {
      * @param input     📥 输入数据，传递给所有执行器
      * @param executors ⚙️ 执行器集合，每个执行器处理输入并返回Future<T>
      * @param <T>       💾 输入输出数据的泛型类型
-     *
      * @return {@link Future}<T> 🌟 异步结果，所有任务完成后返回输入数据
      */
     public static <T> Future<T> parallel(final T input, final Set<Function<T, Future<T>>> executors) {
@@ -403,7 +400,6 @@ public class FnVertx {
      * @param input     📥 输入数据，传递给所有执行器
      * @param executors ⚙️ 执行器列表，每个执行器处理输入并返回Future<T>
      * @param <T>       💾 输入输出数据的泛型类型
-     *
      * @return {@link Future}<T> 🌟 异步结果，所有任务完成后返回输入数据
      */
     public static <T> Future<T> parallel(final T input, final List<Function<T, Future<T>>> executors) {
@@ -423,7 +419,6 @@ public class FnVertx {
      * @param input     📥 输入数据，传递给所有执行器
      * @param executors ⚙️ 可变参数执行器，每个执行器处理输入并返回Future<T>
      * @param <T>       💾 输入输出数据的泛型类型
-     *
      * @return {@link Future}<T> 🌟 异步结果，所有任务完成后返回输入数据
      */
     @SafeVarargs
@@ -465,7 +460,6 @@ public class FnVertx {
      * @param input     📥 初始输入数据
      * @param executors ⚙️ 执行器列表，每个执行器接收前一个的输出作为输入
      * @param <T>       💾 输入输出数据的泛型类型
-     *
      * @return {@link Future}<T> 🌟 异步结果，最终任务的输出
      */
     public static <T> Future<T> passion(final T input, final List<Function<T, Future<T>>> executors) {
@@ -485,7 +479,6 @@ public class FnVertx {
      * @param input     📥 初始输入数据
      * @param executors ⚙️ 可变参数执行器，每个执行器接收前一个的输出作为输入
      * @param <T>       💾 输入输出数据的泛型类型
-     *
      * @return {@link Future}<T> 🌟 异步结果，最终任务的输出
      */
     @SafeVarargs
@@ -523,7 +516,6 @@ public class FnVertx {
      * @param <F>        💾 第一个异步结果 F
      * @param <S>        💾 第二个异步结果 S
      * @param <T>        🎯 组合函数的最终执行结果 T
-     *
      * @return Future<T> 🌟 返回执行过的结果
      */
     public static <F, S, T> Future<T> combineT(
@@ -568,7 +560,6 @@ public class FnVertx {
      * @param <F>        💾 第一个异步结果 F
      * @param <S>        💾 第二个异步结果 S
      * @param <T>        🎯 组合函数的最终执行结果 T
-     *
      * @return Future<T> 🌟 返回执行过的结果
      */
     public static <F, S, T> Future<T> combineT(final Supplier<Future<F>> supplierF,
@@ -592,7 +583,6 @@ public class FnVertx {
      * @param <F>        💾 第一个异步结果 F
      * @param <S>        💾 第二个异步结果 S
      * @param <T>        🎯 组合函数的最终执行结果 T
-     *
      * @return Future<T> 🌟 返回执行过的结果
      */
     public static <F, S, T> Future<T> combineT(final Future<F> futureF,
@@ -632,7 +622,6 @@ public class FnVertx {
      * @param combinerOf 🔧 Function<S, Future<T>> 组合函数，输入为 S，输出为 Future<T>
      * @param <I>        💾 输入集合元素类型 I
      * @param <T>        🎯 组合函数的最终执行结果 T
-     *
      * @return Future<List<T>> 🌟 返回执行过的结果数组
      */
     public static <I, T> Future<List<T>> combineT(final Future<List<I>> futureL, final Function<I, Future<T>> combinerOf) {
@@ -665,7 +654,6 @@ public class FnVertx {
      *
      * @param futures List<Future<T>> 📤 输入的异步结果，结果内是 T
      * @param <T>     💾 泛型类型
-     *
      * @return Future<List<T>> 🌟 返回执行过的结果数组
      */
     public static <T> Future<List<T>> combineT(final List<Future<T>> futures) {
@@ -689,7 +677,6 @@ public class FnVertx {
      *
      * @param futures Set<Future<T>> 📤 输入的异步结果，结果内是 T
      * @param <T>     💾 泛型类型
-     *
      * @return Future<Set<T>> 🌟 返回执行过的结果集合
      */
     public static <T> Future<Set<T>> combineT(final Set<Future<T>> futures) {
@@ -725,7 +712,6 @@ public class FnVertx {
      * @param combinerOf 🔧 Function<I, Future<T>> 组合函数，输入为 I，输出为 Future<T>
      * @param <I>        💾 输入类型I
      * @param <T>        🎯 输出类型T
-     *
      * @return Future<List<T>> 🌟 返回执行过的结果数组
      */
     public static <I, T> Future<List<T>> combineT(final List<I> source,
@@ -753,7 +739,6 @@ public class FnVertx {
      * @param combinerOf 🔧 Function<I, Future<T>> 组合函数，输入为 I，输出为 Future<T>
      * @param <I>        💾 输入类型I
      * @param <T>        🎯 输出类型T
-     *
      * @return Future<Set<T>> 🌟 返回执行过的结果集合
      */
     public static <I, T> Future<Set<T>> combineT(final Set<I> source,
@@ -798,7 +783,6 @@ public class FnVertx {
      * @param <F>        💾 第一个异步结果 F
      * @param <S>        💾 第二个异步结果 S
      * @param <T>        🎯 组合函数的最终执行结果 T
-     *
      * @return Future<T> 🌟 返回执行过的结果
      */
     public static <F, S, T> Future<T> combineT(final Supplier<Future<F>> supplierF, final Supplier<Future<S>> supplierS,
@@ -821,7 +805,6 @@ public class FnVertx {
      *
      * @param futures List<Future<T>> 📤 输入的异步结果列表
      * @param <T>     💾 泛型类型
-     *
      * @return Future<Boolean> 🌟 返回执行状态，成功为 true
      */
     public static <T> Future<Boolean> combineB(final List<Future<T>> futures) {
@@ -840,7 +823,6 @@ public class FnVertx {
      *
      * @param futures Set<Future<T>> 📤 输入的异步结果集合
      * @param <T>     💾 泛型类型
-     *
      * @return Future<Boolean> 🌟 返回执行状态，成功为 true
      */
     public static <T> Future<Boolean> combineB(final Set<Future<T>> futures) {
@@ -861,7 +843,6 @@ public class FnVertx {
      * @param generateFun 🔧 生成异步操作的函数
      * @param <I>         💾 输入类型
      * @param <T>         💾 中间类型
-     *
      * @return Future<Boolean> 🌟 返回执行状态，成功为 true
      */
     public static <I, T> Future<Boolean> combineB(final List<I> source, final Function<I, Future<T>> generateFun) {
@@ -884,7 +865,6 @@ public class FnVertx {
      * @param generateFun 🔧 生成异步操作的函数
      * @param <I>         💾 输入类型
      * @param <T>         💾 中间类型
-     *
      * @return Future<Boolean> 🌟 返回执行状态，成功为 true
      */
     public static <I, T> Future<Boolean> combineB(final Set<I> source, final Function<I, Future<T>> generateFun) {

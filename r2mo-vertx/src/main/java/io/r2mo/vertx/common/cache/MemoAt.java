@@ -12,7 +12,8 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * 异步缓存，等同于 {@link CacheAt} 的实现的异步版本，缓存构造时自带初始化参数机制，所以 ttl 这种操作就不用体现在方法中了，
- * 整体参考 {@link io.r2mo.vertx.common.cache} 中的设计说明。
+ * 整体参考 {@link io.r2mo.vertx.common.cache} 中的设计说明，Vertx 中只能使用 MemoAt 来实现缓存功能而不能直接使用
+ * {@link CacheAt}，原因在于 {@link CacheAt} 是同步接口，而 Vertx 框架中所有的操作都应该是异步的。
  *
  * @author lang : 2026-01-01
  */
