@@ -8,6 +8,11 @@ io.r2mo.spring.security.extension.handler.SecurityEntryPoint
 io.r2mo.spring.security.extension.handler.SecurityHandler403Denied
 io.r2mo.spring.security.extension.handler.SecurityHandler401Unauthorized
 io.r2mo.spring.security.auth.AuthServiceManager
+io.r2mo.spring.security.auth.AuthBasicLoginController
+io.r2mo.spring.security.auth.AuthTokenFilter
 io.r2mo.spring.security.extension.captcha.CaptchaServiceImage
 io.r2mo.spring.security.extension.captcha.CaptchaConfiguration
 io.r2mo.spring.security.extension.captcha.CaptchaValidationAspect
+io.r2mo.spring.security.extension.captcha.CaptchaLoginController
+io.r2mo.spring.security.token.AESTokenGenerator
+io.r2mo.spring.security.token.AESTokenRefresher

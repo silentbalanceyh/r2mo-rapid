@@ -2,11 +2,11 @@ package io.r2mo.spring.security.jwt;
 
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.jaas.auth.LoginResponse;
-import io.r2mo.jaas.enums.TypeToken;
 import io.r2mo.jaas.session.UserAt;
+import io.r2mo.jaas.token.TokenBuilderManager;
+import io.r2mo.jaas.token.TokenType;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityJwt;
-import io.r2mo.spring.security.token.TokenBuilderManager;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -35,11 +35,11 @@ public class JwtLoginResponse extends LoginResponse {
 
     @Override
     public String getToken(final UserAt userAt) {
-        return MANAGER.getOrCreate(TypeToken.JWT).build(userAt);
+        return MANAGER.getOrCreate(TokenType.JWT).accessOf(userAt);
     }
 
     @Override
     public String getRefreshToken(final UserAt userAt) {
-        return MANAGER.getOrCreate(TypeToken.JWT_REFRESH).build(userAt);
+        return MANAGER.getOrCreate(TokenType.JWT).refreshOf(userAt);
     }
 }

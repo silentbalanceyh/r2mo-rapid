@@ -33,7 +33,7 @@ public class CaptchaServiceImage implements CaptchaService {
     private final ConfigSecurityCaptcha configCaptcha;
 
     @Override
-    public Map<String, String> generate() {
+    public Map<String, Object> generate() {
         // 1. 生成唯一 key
         final String captchaKey = UUID.randomUUID().toString().replace("-", "");
 
@@ -53,7 +53,7 @@ public class CaptchaServiceImage implements CaptchaService {
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             captcha.write(out);
             final String base64Image = Base64.encode(out.toByteArray());
-            final Map<String, String> result = new HashMap<>();
+            final Map<String, Object> result = new HashMap<>();
             result.put(CaptchaRequest.ID, captchaKey);
             result.put("image", "data:image/png;base64," + base64Image);
             return result;

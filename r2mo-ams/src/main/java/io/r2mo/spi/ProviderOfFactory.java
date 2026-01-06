@@ -78,9 +78,9 @@ class ProviderOfFactory {
             // 打印一次
             final SPID spid = implClass.getDeclaredAnnotation(SPID.class);
             log.info("[ R2MO ] SPI 实现类按优先级查找: interface = {} / 优先级最高实例 = {} / 优先级 = {}",
-                    clazz.getName(),
-                    implClass.getName(),
-                    Objects.isNull(spid) ? null : spid.priority());
+                clazz.getName(),
+                implClass.getName(),
+                Objects.isNull(spid) ? null : spid.priority());
             ONCE_LOGGER.add(implClass);
         }
 
@@ -112,12 +112,12 @@ class ProviderOfFactory {
             }).findAny().orElse(null);
             if (Objects.isNull(found)) {
                 log.info("[ R2MO ] SPI 实现类按名称查找: interface = {} / name = {} / null",
-                        clazz.getName(), name);
+                    clazz.getName(), name);
             } else {
                 final Class<?> implClass = found.getClass();
                 if (!ONCE_LOGGER.contains(implClass)) {
                     log.info("[ R2MO ] SPI 实现类按名称查找: interface = {} / name = {} / {}",
-                            clazz.getName(), name, implClass.getName());
+                        clazz.getName(), name, implClass.getName());
                     ONCE_LOGGER.add(implClass);
                 }
             }
@@ -198,8 +198,8 @@ class ProviderOfFactory {
          * 下的实现类，通常作为默认实现存在，这个是整个 R2MO 和 ZERO 既定的法则
          */
         return found.stream()
-                .filter(it -> !it.getClass().getPackageName().startsWith("io.zerows"))
-                .findFirst().orElse(null);
+            .filter(it -> !it.getClass().getPackageName().startsWith("io.zerows"))
+            .findFirst().orElse(null);
     }
 
     private static <T> T findOneInternal(final Class<T> clazz) {
@@ -211,7 +211,7 @@ class ProviderOfFactory {
             }
             return instance;
         }
-        log.error("[ R2MO ] SPI 实现类未找到: {}", clazz.getName());
+        log.warn("[ R2MO ] SPI 实现类未找到: {}", clazz.getName());
         return null;
     }
 }

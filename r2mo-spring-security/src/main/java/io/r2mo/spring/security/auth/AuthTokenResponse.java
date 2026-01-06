@@ -1,9 +1,9 @@
 package io.r2mo.spring.security.auth;
 
 import io.r2mo.jaas.auth.LoginResponse;
-import io.r2mo.jaas.enums.TypeToken;
 import io.r2mo.jaas.session.UserAt;
-import io.r2mo.spring.security.token.TokenBuilderManager;
+import io.r2mo.jaas.token.TokenBuilderManager;
+import io.r2mo.jaas.token.TokenType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -22,6 +22,6 @@ public class AuthTokenResponse extends LoginResponse {
     @Override
     public String getToken(final UserAt user) {
         // 该方法已被覆盖，不会调用
-        return TokenBuilderManager.of().getOrCreate(TypeToken.JWT).build(user);
+        return TokenBuilderManager.of().getOrCreate(TokenType.JWT).accessOf(user);
     }
 }

@@ -1,5 +1,7 @@
 package io.r2mo.spring.security.config;
 
+import io.r2mo.jaas.token.TokenBuilderManager;
+import io.r2mo.jaas.token.TokenType;
 import io.r2mo.typed.common.Kv;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
  *          logout: /logout
  *          error: /error
  *        limit:
+ *          token-type: JWT             # 默认 Token 类型
  *          session: 8192               # 最大会话数
  *          token: 4096                 # Token 的最大数量，控制 Token / Refresh
  *          timeout: 120                # 会话超时时间，单位分钟
@@ -108,6 +111,26 @@ public class ConfigSecurity implements Serializable {
     public List<Kv<String, HttpMethod>> ignoreUris() {
         // 未配置 ignore-uris 的情况下，直接返回空
         return ignoreUris(this.ignoreUris, null);
+    }
+
+    public TokenType getTokenType() {
+        final TokenType tokenType = this.limit.getTokenType();
+        final TokenBuilderManager tokenMgr = TokenBuilderManager.of();
+        if (tokenMgr.isSupport(tokenType)) {
+            return tokenType;
+        }
+        /*
+         * 只有这种特殊的情况会需要转换，其他情况是不需要转换的
+         * - BASIC / AES 是天生支持（内置）
+         * - 配置了 OPAQUE 必须是开启了 OAuth2 的场景，若没有注册，则回退 JWT
+         * - 配置了 JWT，但没有注册，则回退 AES
+         */
+        if (TokenType.OPAQUE == tokenType) {
+            if (this.isJwt() && tokenMgr.isSupport(TokenType.JWT)) {
+                return TokenType.JWT;
+            }
+        }
+        return TokenType.AES;
     }
 
     // 内置配置：是否开启 Basic 认证

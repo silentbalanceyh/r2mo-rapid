@@ -15,41 +15,38 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 /**
-* <p>
-    * ${className} Controller接口
-    * </p>
-*
-* @author ${author}
-* @since ${date}
-*/
+ * ${className} Controller接口
+ *
+ * @author ${author}
+ * @since ${date}
+ **/
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/${v}/${actor}")
 public class ${className}CrudController${V} extends BaseController<${entityName}, ${className}CommonRequest, ${className}CommonResponse> implements ${className}CrudController {
 
-@Autowired
-private I${className}Service${V} service;
+    @Autowired
+    private I${className}Service${V} service;
 
-@Override
-protected I${className}Service${V} service() {
-return this.service;
-}
+    @Override
+    protected I${className}Service${V} service() {
+        return this.service;
+    }
 
-@Override
-protected ${className}CommonResponse createResponse() {
-return new ${className}CommonResponse();
-}
+    @Override
+    protected ${className}CommonResponse createResponse() {
+        return new ${className}CommonResponse();
+    }
 
-@Override
-protected ${className}CommonRequest createRequest() {
-return new ${className}CommonRequest();
-}
+    @Override
+    protected ${className}CommonRequest createRequest() {
+        return new ${className}CommonRequest();
+    }
 
-// POST /${v}/${actor}
-@Override
-public R
-<${className}CommonResponse> createSingle(final ${className}CommonRequest request) {
-    return super.createSingle(request);
+    // POST /${v}/${actor}
+    @Override
+    public R<${className}CommonResponse> createSingle(final ${className}CommonRequest request) {
+        return super.createSingle(request);
     }
 
     // PUT /${v}/${actor}/{id}
@@ -57,47 +54,41 @@ public R
     public R
     <${className}CommonResponse> updateSingle(final String id, final ${className}CommonRequest request) {
         return super.updateSingle(id, request);
-        }
+    }
 
-        // GET /${v}/${actor}/{id}
-        @Override
-        public R<${entityName}> findSingle(final String id) {
+    // GET /${v}/${actor}/{id}
+    @Override
+    public R<${entityName}> findSingle(final String id) {
         return super.findSingle(id);
-        }
+    }
 
-        // DELETE /${v}/${actor}/{id}
-        @Override
-        public R
-        <Boolean> removeSingle(final String id) {
-            return super.removeSingle(id);
-            }
+    // DELETE /${v}/${actor}/{id}
+    @Override
+    public R<Boolean> removeSingle(final String id) {
+        return super.removeSingle(id);
+    }
 
-            // POST /${v}/${actor}/search
-            @Override
-            public R
-            <Pagination
-            <${entityName}>> findPage(final JObject query) {
-            return super.findPage(query);
-            }
+    // POST /${v}/${actor}/search
+    @Override
+    public R<Pagination<${entityName}>> findPage(final JObject query) {
+        return super.findPage(query);
+    }
 
-            // GET /${v}/${actor}/all
-            @Override
-            public R
-            <List
-            <${entityName}>> findAll() {
-            return super.findAll();
-            }
+    // GET /${v}/${actor}/all
+    @Override
+    public R<List<${entityName}>> findAll() {
+        return super.findAll();
+    }
 
-            // POST /${v}/${actor}/import
-            @Override
-            public R
-            <Boolean> uploadData(final MultipartFile file, final JObject config) {
-                return super.uploadData(file, config);
-                }
+    // POST /${v}/${actor}/import
+    @Override
+    public R<Boolean> uploadData(final MultipartFile file, final JObject config) {
+        return super.uploadData(file, config);
+    }
 
-                // POST /${v}/${actor}/export
-                @Override
-                public void downloadBy(final JObject query) {
-                super.downloadBy(query);
-                }
-                }
+    // POST /${v}/${actor}/export
+    @Override
+    public void downloadBy(final JObject query) {
+        super.downloadBy(query);
+    }
+}

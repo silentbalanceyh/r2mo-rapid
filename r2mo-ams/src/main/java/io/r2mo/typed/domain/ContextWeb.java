@@ -14,10 +14,10 @@ public interface ContextWeb {
     <T> T webSession(boolean isObj);
 
     default HttpServletRequest webRequest() {
-        throw new _501NotSupportException("[ IIAP ] 当前对象不支持 Request 提取！");
+        throw new _501NotSupportException("[ R2MO ] 当前对象不支持 Request 提取！");
     }
 
     default HttpServletResponse webResponse() {
-        throw new _501NotSupportException("[ IIAP ] 当前对象不支持 Response 提取！");
+        throw new _501NotSupportException("[ R2MO ] 当前对象不支持 Response 提取！");
     }
 }

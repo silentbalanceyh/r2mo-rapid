@@ -25,7 +25,7 @@ public abstract class AbstractNormObject implements BaseScope, BaseAudit, Serial
 
     @Override
     public void app(final String appId) {
-        if (StrUtil.isNotEmpty(appId)) {
+        if (StrUtil.isEmpty(appId)) {
             return;
         }
         this.appId = UUID.fromString(appId);
@@ -38,7 +38,7 @@ public abstract class AbstractNormObject implements BaseScope, BaseAudit, Serial
 
     @Override
     public void tenant(final String tenantId) {
-        if (StrUtil.isNotEmpty(tenantId)) {
+        if (StrUtil.isEmpty(tenantId)) {
             return;
         }
         this.tenantId = UUID.fromString(tenantId);

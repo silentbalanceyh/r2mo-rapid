@@ -1,3 +1,2 @@
-io.r2mo.spring.security.jwt.JwtAuthenticateFilter
 io.r2mo.spring.security.jwt.token.JwtTokenGenerator
 io.r2mo.spring.security.jwt.token.JwtTokenRefresher

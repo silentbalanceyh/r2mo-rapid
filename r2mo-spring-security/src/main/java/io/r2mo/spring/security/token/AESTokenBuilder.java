@@ -1,21 +1,17 @@
-package io.r2mo.spring.security.jwt.token;
+package io.r2mo.spring.security.token;
 
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.token.TokenBuilderBase;
 
-/**
- * @author lang : 2025-11-12
- */
-public class JwtTokenBuilder extends TokenBuilderBase {
+public class AESTokenBuilder extends TokenBuilderBase {
+    private final AESTokenGenerator generator;
+    private final AESTokenRefresher refresher;
 
-    private final JwtTokenGenerator generator;
-    private final JwtTokenRefresher refresher;
-
-    public JwtTokenBuilder() {
-        this.generator = SpringUtil.getBean(JwtTokenGenerator.class);
-        this.refresher = SpringUtil.getBean(JwtTokenRefresher.class);
+    public AESTokenBuilder() {
+        this.generator = SpringUtil.getBean(AESTokenGenerator.class);
+        this.refresher = SpringUtil.getBean(AESTokenRefresher.class);
     }
 
     @Override

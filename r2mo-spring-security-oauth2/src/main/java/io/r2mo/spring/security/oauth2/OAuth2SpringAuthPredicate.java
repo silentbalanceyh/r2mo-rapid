@@ -1,13 +1,12 @@
 package io.r2mo.spring.security.oauth2;
 
 import cn.hutool.extra.spring.SpringUtil;
-import io.r2mo.jaas.enums.TypeToken;
+import io.r2mo.jaas.token.TokenBuilderManager;
+import io.r2mo.jaas.token.TokenType;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.extension.SpringAuthenticatorBase;
 import io.r2mo.spring.security.oauth2.config.ConfigOAuth2;
 import io.r2mo.spring.security.oauth2.token.OAuth2TokenBuilder;
-import io.r2mo.spring.security.oauth2.token.OAuth2TokenBuilderRefresh;
-import io.r2mo.spring.security.token.TokenBuilderManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
@@ -33,8 +32,7 @@ public class OAuth2SpringAuthPredicate extends SpringAuthenticatorBase {
     public void configure(final HttpSecurity security, final Object attached) {
 
         // 注册 OAuth2 的 Token 配置（Opaque Token）
-        TokenBuilderManager.of().registry(TypeToken.OPAQUE, OAuth2TokenBuilder::new);
-        TokenBuilderManager.of().registry(TypeToken.OPAQUE_REFRESH, OAuth2TokenBuilderRefresh::new);
+        TokenBuilderManager.of().registry(TokenType.OPAQUE, OAuth2TokenBuilder::new);
 
         try {
 

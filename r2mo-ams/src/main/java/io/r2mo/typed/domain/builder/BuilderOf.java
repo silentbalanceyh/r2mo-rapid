@@ -29,7 +29,6 @@ public interface BuilderOf<T> {
      *
      * @param source 第二实体
      * @param <R>    第二实体类型
-     *
      * @return 实体
      */
     default <R> T create(final R source) {
@@ -44,7 +43,7 @@ public interface BuilderOf<T> {
      * @param <R>    第二实体类型
      */
     default <R> void updateConditional(final T target, final R source) {
-        throw new _501NotSupportException("[ IIAP ] updateConditional 未实现 / " + this.getClass().getName());
+        throw new _501NotSupportException("[ R2MO ] updateConditional 未实现 / " + this.getClass().getName());
     }
 
     /**
@@ -56,6 +55,6 @@ public interface BuilderOf<T> {
     void updateOverwrite(T target, Object source);
 
     default void updateRef(final T target, final Ref ref) {
-        throw new _501NotSupportException("[ IIAP ] updateRef 未实现 / " + this.getClass().getName());
+        throw new _501NotSupportException("[ R2MO ] updateRef 未实现 / " + this.getClass().getName());
     }
 }

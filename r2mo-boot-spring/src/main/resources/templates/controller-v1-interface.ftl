@@ -13,56 +13,52 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 /**
-* <p>
-    * ${className} Controller接口
-    * </p>
-*
-* @author ${author}
-* @since ${date}
-*/
+ * <p>
+ * ${className} Controller接口
+ *
+ * @author ${author}
+ * @since ${date}
+ **/
 @Tag(name = "${entityDisplay}", description = "${entityDisplay}相关API接口")
 public interface ${className}CrudController {
 
-@PostMapping("")
-@Operation(summary = "创建${entityDisplay}", description = "管理端/创建${entityDisplay}")
-R
-<${className}CommonResponse> createSingle(@Valid @RequestBody ${className}CommonRequest request);
+    @PostMapping("")
+    @Operation(summary = "创建${entityDisplay}", description = "管理端/创建${entityDisplay}")
+    R<${className}CommonResponse> createSingle(@Valid @RequestBody ${className}CommonRequest request);
 
 
     @PutMapping("/{id}")
     @Operation(summary = "更新${entityDisplay}", description = "管理端/更新${entityDisplay}")
-    R
-    <${className}CommonResponse> updateSingle(@PathVariable("id") String id,
-        @Valid @RequestBody ${className}CommonRequest request);
+    R<${className}CommonResponse> updateSingle(@PathVariable("id") String id,
+                                               @Valid @RequestBody ${className}CommonRequest request);
 
-        @GetMapping("/{id}")
-        @Operation(summary = "获取${entityDisplay}详情", description = "管理端/获取${entityDisplay}详情")
-        R<${entityName}> findSingle(@PathVariable("id") String id);
+    @GetMapping("/{id}")
+    @Operation(summary = "获取${entityDisplay}详情", description = "管理端/获取${entityDisplay}详情")
+    R<${entityName}> findSingle(@PathVariable("id") String id);
 
-        @DeleteMapping("/{id}")
-        @Operation(summary = "删除${entityDisplay}", description = "管理端/删除${entityDisplay}")
-        R
-        <Boolean> removeSingle(@PathVariable("id") String id);
 
-            @PostMapping("/search")
-            @Operation(summary = "分页查询${entityDisplay}", description = "管理端/分页查询${entityDisplay}")
-            R
-            <Pagination
-            <${entityName}>> findPage(@RequestBody JObject query);
+    @DeleteMapping("/{id}")
+    @Operation(summary = "删除${entityDisplay}", description = "管理端/删除${entityDisplay}")
+    R<Boolean> removeSingle(@PathVariable("id") String id);
 
-            @GetMapping("/all")
-            @Operation(summary = "查询所有${entityDisplay}", description = "管理端/查询所有${entityDisplay}")
-            R
-            <List
-            <${entityName}>> findAll();
 
-            @PostMapping("/import")
-            @Operation(summary = "导入${entityDisplay}", description = "管理端/导入${entityDisplay}")
-            R
-            <Boolean> uploadData(@RequestPart("file") MultipartFile file,
-                @RequestPart("config") JObject config);
+    @PostMapping("/search")
+    @Operation(summary = "分页查询${entityDisplay}", description = "管理端/分页查询${entityDisplay}")
+    R<Pagination<${entityName}>> findPage(@RequestBody JObject query);
 
-                @PostMapping("/export")
-                @Operation(summary = "导出${entityDisplay}", description = "管理端/导出${entityDisplay}")
-                void downloadBy(@RequestBody JObject query);
-                }
+
+    @GetMapping("/all")
+    @Operation(summary = "查询所有${entityDisplay}", description = "管理端/查询所有${entityDisplay}")
+    R<List<${entityName}>> findAll();
+
+
+    @PostMapping("/import")
+    @Operation(summary = "导入${entityDisplay}", description = "管理端/导入${entityDisplay}")
+    R<Boolean> uploadData(@RequestPart("file") MultipartFile file,
+                          @RequestPart("config") JObject config);
+
+
+    @PostMapping("/export")
+    @Operation(summary = "导出${entityDisplay}", description = "管理端/导出${entityDisplay}")
+    void downloadBy(@RequestBody JObject query);
+}

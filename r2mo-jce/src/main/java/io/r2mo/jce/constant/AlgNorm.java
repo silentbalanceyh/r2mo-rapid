@@ -1,4 +1,4 @@
-package io.r2mo.jce.component.secure;
+package io.r2mo.jce.constant;
 
 import java.util.Locale;
 
@@ -17,7 +17,9 @@ public enum AlgNorm {
         this.jcaName = jcaName;
     }
 
-    /** 宽松解析：支持枚举名或 JCA 名称，大小写不敏感 */
+    /**
+     * 宽松解析：支持枚举名或 JCA 名称，大小写不敏感
+     */
     public static AlgNorm from(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("[ R2MO ] 传入名称不可为 null");
@@ -37,7 +39,9 @@ public enum AlgNorm {
         }
     }
 
-    /** 返回对应的 JCA 算法名（如 "RSA"、"Ed25519"） */
+    /**
+     * 返回对应的 JCA 算法名（如 "RSA"、"Ed25519"）
+     */
     public String jcaName() {
         return this.jcaName;
     }

@@ -1,6 +1,5 @@
-package io.r2mo.spring.security.token;
+package io.r2mo.jaas.token;
 
-import io.r2mo.jaas.enums.TypeToken;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._404NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,7 @@ import java.util.function.Supplier;
 @Slf4j
 public class TokenBuilderManager {
 
-    private static final ConcurrentMap<TypeToken, Supplier<TokenBuilder>> CC_SUPPLIER = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<TokenType, Supplier<TokenBuilder>> CC_SUPPLIER = new ConcurrentHashMap<>();
     private static final Cc<String, TokenBuilder> CCT_BUILDER = Cc.openThread();
     private static TokenBuilderManager INSTANCE;
 
@@ -30,12 +29,16 @@ public class TokenBuilderManager {
         return INSTANCE;
     }
 
-    public void registry(final TypeToken token, final Supplier<TokenBuilder> constructorFn) {
+    public void registry(final TokenType token, final Supplier<TokenBuilder> constructorFn) {
         CC_SUPPLIER.putIfAbsent(token, constructorFn);
         log.info("[ R2MO ]     ----> 注册 Token 构建器：tokenType = `{}`", token);
     }
 
-    public TokenBuilder getOrCreate(final TypeToken token) {
+    public boolean isSupport(final TokenType tokenType) {
+        return CC_SUPPLIER.containsKey(tokenType);
+    }
+
+    public TokenBuilder getOrCreate(final TokenType token) {
         final Supplier<TokenBuilder> constructorFn = CC_SUPPLIER.getOrDefault(token, null);
         if (Objects.isNull(constructorFn)) {
             throw new _404NotFoundException("[ R2MO ] 未找到对应的 Token 构建器：tokenType = " + token);
