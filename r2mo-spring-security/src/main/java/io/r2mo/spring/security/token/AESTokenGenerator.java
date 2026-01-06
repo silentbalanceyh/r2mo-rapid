@@ -3,6 +3,7 @@ package io.r2mo.spring.security.token;
 import io.r2mo.jce.common.HED;
 import io.r2mo.jce.constant.LicSym;
 import io.r2mo.spi.SPI;
+import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityBasic;
 import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
@@ -48,19 +49,23 @@ public class AESTokenGenerator {
     // ================== Dependencies ==================
 
     @Autowired
-    private ConfigSecurityBasic config;
+    private ConfigSecurity configSecurity;
+
+    private ConfigSecurityBasic config() {
+        return this.configSecurity.getBasic();
+    }
 
     /**
      * Generate AES Token
      */
     public String tokenGenerate(final String identifier, final Map<String, Object> data) {
         // 1. Check enabled status
-        if (Objects.isNull(this.config) || !this.config.isEnabled()) {
+        if (Objects.isNull(this.config()) || !this.config().isEnabled()) {
             return null;
         }
 
         // 2. Assemble Payload
-        final long expMs = System.currentTimeMillis() + this.config.expiredAesAt().toMillis();
+        final long expMs = System.currentTimeMillis() + this.config().expiredAesAt().toMillis();
         final Map<String, Object> payload = new HashMap<>(4);
         payload.put(NAME_SUBJECT, identifier);
         payload.put(NAME_EXPIRE, expMs);
@@ -75,7 +80,7 @@ public class AESTokenGenerator {
 
             // 4. Derive Key (String -> SecretKey)
             // HED requires a SecretKey object, so we must convert the config string
-            final SecretKey key = this.deriveSecretKey(this.config.getAesSecret());
+            final SecretKey key = this.deriveSecretKey(this.config().getAesSecret());
 
             // 5. HED Encrypt (byte[] -> byte[])
             // Calls HEDBase.encrypt(byte[], SecretKey, AlgLicenseSpec)
@@ -149,7 +154,7 @@ public class AESTokenGenerator {
     // ================== Private Helper Methods ==================
 
     private boolean isValidFormat(final String token) {
-        return !this.config.isEnabled()
+        return !this.config().isEnabled()
             || !StringUtils.hasText(token)
             || !token.startsWith(TOKEN_PREFIX);
     }
@@ -162,7 +167,7 @@ public class AESTokenGenerator {
         final byte[] encryptedBytes = Base64.getUrlDecoder().decode(base64Str);
 
         // 3. Derive Key
-        final SecretKey key = this.deriveSecretKey(this.config.getAesSecret());
+        final SecretKey key = this.deriveSecretKey(this.config().getAesSecret());
 
         // 4. HED Decrypt (byte[] -> byte[])
         // Calls HEDBase.decrypt(byte[], SecretKey, AlgLicenseSpec)

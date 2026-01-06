@@ -2,6 +2,7 @@ package io.r2mo.spring.security.token;
 
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.token.TokenBuilder;
+import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityBasic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,13 @@ import java.util.UUID;
 public class AESTokenRefresher {
 
     @Autowired
-    private ConfigSecurityBasic config; // 注入 AES/Basic 配置
-
+    private ConfigSecurity configSecurity;
     @Autowired
     private AESTokenGenerator tokenGenerator; // 注入 AES Token 生成器
+
+    private ConfigSecurityBasic config() {
+        return this.configSecurity.getBasic();
+    }
 
     /**
      * 生成 Refresh Token 并存储到 UserCache
@@ -38,7 +42,7 @@ public class AESTokenRefresher {
      */
     public String tokenGenerate(final String userId) {
         // 1. 检查配置开关
-        if (Objects.isNull(this.config) || !this.config.isEnabled()) {
+        if (Objects.isNull(this.config()) || !this.config().isEnabled()) {
             return null;
         }
 
@@ -70,7 +74,7 @@ public class AESTokenRefresher {
      */
     public String tokenRefresh(final String refreshToken) {
         // 1. 检查配置与入参
-        if (Objects.isNull(this.config) || !this.config.isEnabled()) {
+        if (Objects.isNull(this.config()) || !this.config().isEnabled()) {
             return null;
         }
 
