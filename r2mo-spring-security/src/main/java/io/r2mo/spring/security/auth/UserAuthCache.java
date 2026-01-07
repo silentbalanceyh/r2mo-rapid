@@ -32,7 +32,7 @@ import java.util.UUID;
  */
 @Slf4j
 @SPID
-public class AuthUserCache implements UserCache {
+public class UserAuthCache implements UserCache {
     private static final Cc<String, CacheAtSecurity> CC_FACTORY = Cc.openThread();
 
     private CacheAtSecurity factory() {

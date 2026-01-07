@@ -2,8 +2,8 @@ package io.r2mo.spring.security.basic;
 
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.jaas.session.UserSession;
-import io.r2mo.spring.security.auth.AuthUserDetail;
-import io.r2mo.spring.security.auth.UserDetailsContext;
+import io.r2mo.spring.security.auth.UserAuthContext;
+import io.r2mo.spring.security.auth.UserAuthDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class BasicAuthenticateProvider implements AuthenticationProvider {
         final String password = authentication.getCredentials().toString();
 
         // -- 关键：设置认证策略到上下文
-        UserDetailsContext.setStrategy(BasicLoginRequest.TYPE);
+        UserAuthContext.setStrategy(BasicLoginRequest.TYPE);
 
         try {
             final UserDetails stored = this.userService.loadUserByUsername(username);
@@ -66,7 +66,7 @@ public class BasicAuthenticateProvider implements AuthenticationProvider {
             // API 登录 (有 Basic 头) -> 跳过缓存
             // 此处成功了才处理缓存信息，追加新逻辑，但凡认证失败就不会去触碰会话数据相关信息
             if (!isBasicAuth) {
-                if (stored instanceof final AuthUserDetail verified) {
+                if (stored instanceof final UserAuthDetails verified) {
                     UserSession.of().userAt(verified.getUser());
                 }
             }
@@ -80,7 +80,7 @@ public class BasicAuthenticateProvider implements AuthenticationProvider {
             );
         } finally {
             // -- 关键：清空认证策略
-            UserDetailsContext.clearStrategy();
+            UserAuthContext.clearStrategy();
         }
     }
 

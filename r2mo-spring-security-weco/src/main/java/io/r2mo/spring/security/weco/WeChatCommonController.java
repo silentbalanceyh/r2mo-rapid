@@ -2,16 +2,12 @@ package io.r2mo.spring.security.weco;
 
 import io.r2mo.base.util.R2MO;
 import io.r2mo.spring.security.auth.AuthService;
-import io.r2mo.spring.security.auth.AuthTokenResponse;
+import io.r2mo.spring.security.auth.TokenDynamicResponse;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 微信公众号 (WeChat) 认证控制器
@@ -52,7 +48,7 @@ public class WeChatCommonController {
      * @param params 请求参数 { "code": "..." }
      */
     @PostMapping("/auth/wechat-login")
-    public AuthTokenResponse login(final JObject params) {
+    public TokenDynamicResponse login(final JObject params) {
         throw new _501NotSupportException("[ R2MO ] /auth/wechat-login 等待开发！");
     }
 

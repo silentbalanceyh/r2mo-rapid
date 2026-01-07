@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import io.r2mo.function.Fn;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.spring.security.auth.AuthService;
-import io.r2mo.spring.security.auth.AuthTokenResponse;
+import io.r2mo.spring.security.auth.TokenDynamicResponse;
 import io.r2mo.spring.security.weco.exception._80552Exception501WeComDisabled;
 import io.r2mo.spring.security.weco.exception._80553Exception401WeComAuthFailure;
 import io.r2mo.spring.security.weco.exception._80554Exception401WeComBlocked;
@@ -92,7 +92,7 @@ public class WeComServiceImpl implements WeComService {
         Fn.jvmKo(Objects.isNull(userAt), _80553Exception401WeComAuthFailure.class);
 
 
-        final AuthTokenResponse response = new AuthTokenResponse(userAt);
+        final TokenDynamicResponse response = new TokenDynamicResponse(userAt);
         final String token = response.getToken();
         Fn.jvmKo(StrUtil.isEmpty(token), _80553Exception401WeComAuthFailure.class);
 

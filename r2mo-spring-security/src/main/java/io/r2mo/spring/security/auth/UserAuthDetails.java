@@ -16,12 +16,12 @@ import java.util.Objects;
 /**
  * @author lang : 2025-11-11
  */
-public class AuthUserDetail implements UserDetails {
+public class UserAuthDetails implements UserDetails {
     @Getter
     private final UserAt user;
     private final List<GrantedAuthority> authorities = new ArrayList<>();
 
-    public AuthUserDetail(final UserAt user) {
+    public UserAuthDetails(final UserAt user) {
         this.user = user;
         final List<MSRole> roles = user.logged().roles();
         roles.forEach(role -> {

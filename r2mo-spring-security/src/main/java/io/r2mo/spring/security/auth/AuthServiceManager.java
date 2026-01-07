@@ -4,6 +4,7 @@ import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
+import io.r2mo.jaas.session.UserSession;
 import io.r2mo.spring.security.exception._80243Exception401UserNotFound;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.enums.TypeLogin;
@@ -54,6 +55,10 @@ public class AuthServiceManager implements AuthService {
             log.error("[ R2MO ] 用户不存在或被禁用，登录标识：{}", identifier);
             throw new _80243Exception401UserNotFound.Unauthorized("用户不存在！", identifier);
         }
+
+
+        // 登录成功，此时才会真正意义去写缓存，此处写入缓存才是对的！
+        UserSession.of().userAt(user);
         return user;
     }
 }

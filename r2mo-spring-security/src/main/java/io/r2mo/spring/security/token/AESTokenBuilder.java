@@ -21,6 +21,14 @@ public class AESTokenBuilder extends TokenBuilderBase {
     }
 
     @Override
+    public String accessOf(final String token) {
+        if (!this.generator.tokenValidate(token)) {
+            return null;
+        }
+        return this.generator.tokenSubject(token);
+    }
+
+    @Override
     public String refreshOf(final UserAt userAt) {
         return this.refresher.tokenGenerate(userAt.id().toString());
     }

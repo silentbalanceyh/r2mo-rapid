@@ -32,6 +32,8 @@ public class OAuth2SpringAuthResource extends SpringAuthenticatorBase {
 
     @Override
     public void configure(final HttpSecurity security, final Object attached) {
+        // security.addFilterBefore(this.filter, BearerTokenAuthenticationFilter.class);
+
         try {
             log.info("[ R2MO ] 资源服务器    / OAuth2 ResourceServer...");
             if (this.oauth2Config.isJwt() || this.oauth2Config.isOidc()) {

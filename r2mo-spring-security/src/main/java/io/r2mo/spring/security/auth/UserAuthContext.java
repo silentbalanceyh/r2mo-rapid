@@ -5,7 +5,7 @@ import io.r2mo.typed.enums.TypeLogin;
 /**
  * @author lang : 2025-11-12
  */
-public class UserDetailsContext {
+public class UserAuthContext {
     private static final ThreadLocal<TypeLogin> STRATEGY = new ThreadLocal<>();
 
     public static TypeLogin getStrategy() {

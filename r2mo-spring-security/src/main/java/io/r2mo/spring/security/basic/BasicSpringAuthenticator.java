@@ -3,7 +3,7 @@ package io.r2mo.spring.security.basic;
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.jaas.token.TokenBuilderManager;
 import io.r2mo.jaas.token.TokenType;
-import io.r2mo.spring.security.auth.AuthTokenFilter;
+import io.r2mo.spring.security.auth.TokenAuthFilter;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityBasic;
 import io.r2mo.spring.security.extension.SpringAuthenticatorBase;
@@ -26,11 +26,11 @@ import java.util.Objects;
  */
 @Slf4j
 public class BasicSpringAuthenticator extends SpringAuthenticatorBase {
-    private final AuthTokenFilter filter;
+    private final TokenAuthFilter filter;
 
     public BasicSpringAuthenticator(final ConfigSecurity configuration) {
         super(configuration);
-        this.filter = SpringUtil.getBean(AuthTokenFilter.class);
+        this.filter = SpringUtil.getBean(TokenAuthFilter.class);
     }
 
     @Override

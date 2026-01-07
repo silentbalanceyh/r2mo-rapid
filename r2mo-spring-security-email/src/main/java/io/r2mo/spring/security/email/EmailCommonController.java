@@ -6,7 +6,7 @@ import io.r2mo.function.Fn;
 import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.spring.security.auth.AuthService;
-import io.r2mo.spring.security.auth.AuthTokenResponse;
+import io.r2mo.spring.security.auth.TokenDynamicResponse;
 import io.r2mo.spring.security.email.exception._80301Exception400EmailRequired;
 import io.r2mo.spring.security.email.exception._80302Exception400EmailFormat;
 import io.r2mo.spring.security.email.exception._80303Exception500EmailSending;
@@ -44,7 +44,6 @@ public class EmailCommonController {
      * </pre>
      *
      * @param params 参数信息
-     *
      * @return 发送结果
      */
     @PostMapping("/auth/email-send")
@@ -71,13 +70,12 @@ public class EmailCommonController {
      * </pre>
      *
      * @param params 参数信息
-     *
      * @return 发送结果
      */
     @PostMapping("/auth/email-login")
-    public AuthTokenResponse login(final JObject params) {
+    public TokenDynamicResponse login(final JObject params) {
         final EmailLoginRequest request = new EmailLoginRequest(params);
         final UserAt userAt = this.authService.login(request);
-        return new AuthTokenResponse(userAt);
+        return new TokenDynamicResponse(userAt);
     }
 }

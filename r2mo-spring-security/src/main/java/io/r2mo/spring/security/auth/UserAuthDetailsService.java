@@ -15,12 +15,12 @@ import java.util.Objects;
  */
 @Service
 @Slf4j
-public class UserDetailsCommon implements UserDetailsService {
+public class UserAuthDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String uniqueId) throws UsernameNotFoundException {
         // -- 关键：从上下文获取策略
-        TypeLogin type = UserDetailsContext.getStrategy();
+        TypeLogin type = UserAuthContext.getStrategy();
         if (Objects.isNull(type)) {
             // -- 默认直接走账号密码
             type = TypeLogin.PASSWORD;
@@ -29,6 +29,6 @@ public class UserDetailsCommon implements UserDetailsService {
         final ServiceUserAt userProvider = ServiceFactory.of().userProvider(type);
         // -- 根据 标识符加载用户信息
         final UserAt userAt = userProvider.loadLogged(uniqueId);
-        return new AuthUserDetail(userAt);
+        return new UserAuthDetails(userAt);
     }
 }
