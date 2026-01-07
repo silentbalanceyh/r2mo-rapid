@@ -3,6 +3,7 @@ package io.r2mo.spring.security.weco;
 import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.weco.exception._80553Exception401WeComAuthFailure;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.typed.webflow.R;
 import io.r2mo.xync.weco.wecom.WeComIdentify;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class WeComCommonController {
 
+    private static final String COOKIE_NAME = "R2MO_WECOM_COOKIE";
     @Autowired
     private WeComService weComService;
 
-    private static final String COOKIE_NAME = "R2MO_WECOM_COOKIE";
-
     @GetMapping("/auth/wecom-init")
-    public JObject init(@RequestParam("targetUrl") final String targetUrl, final HttpServletResponse response) {
+    public R<JObject> init(@RequestParam("targetUrl") final String targetUrl, final HttpServletResponse response) {
         /*
          * 返回结果
          * - state
@@ -35,7 +35,7 @@ public class WeComCommonController {
         final WeComIdentify identify = this.weComService.initialize(targetUrl);
         final JObject responseJ = identify.response();
         log.info("[ R2MO ] 状态信息：{}", responseJ.encode());
-        return responseJ;
+        return R.ok(responseJ);
     }
 
     /**
@@ -75,7 +75,7 @@ public class WeComCommonController {
      * <p>GET /auth/wecom-qrcode</p>
      */
     @GetMapping("/auth/wecom-qrcode")
-    public JObject getQrCode(@RequestParam("state") final String state) {
-        return this.weComService.getQrCode(state);
+    public R<JObject> getQrCode(@RequestParam("state") final String state) {
+        return R.ok(this.weComService.getQrCode(state));
     }
 }

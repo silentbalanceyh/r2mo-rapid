@@ -7,6 +7,7 @@ import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.spring.security.auth.AuthService;
 import io.r2mo.spring.security.auth.TokenDynamicResponse;
+import io.r2mo.spring.security.extension.captcha.CaptchaOn;
 import io.r2mo.spring.security.sms.exception._80381Exception400MobileRequired;
 import io.r2mo.spring.security.sms.exception._80382Exception400MobileFormat;
 import io.r2mo.spring.security.sms.exception._80383Exception500MobileSending;
@@ -48,6 +49,7 @@ public class SmsCommonController {
      * @return 发送结果
      */
     @PostMapping("/auth/sms-send")
+    @CaptchaOn
     public R<Boolean> send(@RequestBody final JObject params) {
         final String mobile = R2MO.valueT(params, LoginID.MOBILE);
         // 必须输入手机号
