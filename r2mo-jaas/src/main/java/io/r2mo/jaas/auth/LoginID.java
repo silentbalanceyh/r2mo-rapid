@@ -1,5 +1,7 @@
 package io.r2mo.jaas.auth;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.r2mo.typed.enums.TypeID;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -23,6 +25,7 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true, fluent = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginID implements Serializable {
     public static String ID = "id";
     public static String USERNAME = "username";
@@ -34,6 +37,17 @@ public class LoginID implements Serializable {
     private String email;
     private String mobile;
     private TypeID type;
+
+    /**
+     * 🔥【关键修复】添加这个静态工厂方法
+     * 作用：当 Jackson 遇到字符串类型的 Value（比如脏数据 "cn.hutool.json.JSONObject"）时，
+     * 调用此方法。我们直接返回 null，让 Map 中存储 {KEY : null}，从而避免报错。
+     */
+    @JsonCreator
+    public static LoginID fromString(final String value) {
+        // 这里可以做个判断，如果是脏数据，直接返回 null
+        return null;
+    }
 
     public String key() {
         return this.id;

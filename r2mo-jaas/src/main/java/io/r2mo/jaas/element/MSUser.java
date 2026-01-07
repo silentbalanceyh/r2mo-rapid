@@ -2,6 +2,9 @@ package io.r2mo.jaas.element;
 
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.session.UserClaim;
 import io.r2mo.spi.SPI;
@@ -9,21 +12,11 @@ import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import io.r2mo.typed.enums.TypeID;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -38,7 +31,10 @@ public class MSUser extends AbstractNormObject implements Serializable {
     private static final Cc<String, UserClaim> CCT_TOKEN = Cc.openThread();
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private final ConcurrentMap<TypeID, LoginID> idMap = new ConcurrentHashMap<>();
+    @JsonProperty("idMap")
+    @JsonSerialize(keyUsing = TypeID.Serializer.class)
+    @JsonDeserialize(keyUsing = TypeID.Deserializer.class)
+    private final Map<TypeID, LoginID> idMap = new HashMap<>();
     @Schema(description = "账号名")
     private String username;
     @Schema(description = "密码")
@@ -55,9 +51,11 @@ public class MSUser extends AbstractNormObject implements Serializable {
     private String mobile;
     @Schema(description = "角色")
     @Accessors(chain = true, fluent = true)
+    @JsonIgnore
     private List<MSRole> roles = new ArrayList<>();
     @Schema(description = "用户组")
     @Accessors(chain = true, fluent = true)
+    @JsonIgnore
     private List<MSGroup> groups = new ArrayList<>();
     @JsonIgnore
     @Accessors(chain = true, fluent = true)
