@@ -11,6 +11,7 @@ import io.r2mo.spring.security.sms.exception._80381Exception400MobileRequired;
 import io.r2mo.spring.security.sms.exception._80382Exception400MobileFormat;
 import io.r2mo.spring.security.sms.exception._80383Exception500MobileSending;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.typed.webflow.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +48,7 @@ public class SmsCommonController {
      * @return 发送结果
      */
     @PostMapping("/auth/sms-send")
-    public Boolean send(@RequestBody final JObject params) {
+    public R<Boolean> send(@RequestBody final JObject params) {
         final String mobile = R2MO.valueT(params, LoginID.MOBILE);
         // 必须输入手机号
         Fn.jvmKo(StrUtil.isEmpty(mobile), _80381Exception400MobileRequired.class);
@@ -58,7 +59,7 @@ public class SmsCommonController {
         // 发送过程失败
         Fn.jvmKo(!sent, _80383Exception500MobileSending.class, mobile);
         // 验证处理过程
-        return true;
+        return R.ok(Boolean.TRUE);
     }
 
     /**
@@ -73,9 +74,9 @@ public class SmsCommonController {
      * @return 发送结果
      */
     @PostMapping("/auth/sms-login")
-    public TokenDynamicResponse login(final JObject params) {
+    public R<TokenDynamicResponse> login(final JObject params) {
         final SmsLoginRequest request = new SmsLoginRequest(params);
         final UserAt userAt = this.authService.login(request);
-        return new TokenDynamicResponse(userAt);
+        return R.ok(new TokenDynamicResponse(userAt));
     }
 }
