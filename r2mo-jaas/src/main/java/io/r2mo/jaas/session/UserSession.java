@@ -61,15 +61,13 @@ public class UserSession {
         return context;
     }
 
-    public UserAt userAt(final MSUser user) {
+    public UserAt userAtEphemeral(final MSUser user) {
         // 构造
         final UserAtLogged userAt = new UserAtLogged(user.getId());
         userAt.logged(user);
 
-        // 添加
-        this.cache.login(userAt);
-        
-        log.info("[ R2MO ] 登录账号：{}", user.getUsername());
+        // 切换到 debug 模式
+        log.debug("[ R2MO ] 账号 = {} / ID = {}", user.getUsername(), user.getId());
         return userAt;
     }
 

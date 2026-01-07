@@ -6,11 +6,7 @@ import io.r2mo.spring.security.basic.BasicSpringAuthenticator;
 import io.r2mo.spring.security.extension.RequestUri;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
 import io.r2mo.spring.security.extension.handler.SecurityHandler;
-import io.r2mo.spring.security.extension.valve.RequestValve;
-import io.r2mo.spring.security.extension.valve.RequestValveAuth;
-import io.r2mo.spring.security.extension.valve.RequestValveIgnore;
-import io.r2mo.spring.security.extension.valve.RequestValveStatic;
-import io.r2mo.spring.security.extension.valve.RequestValveSwagger;
+import io.r2mo.spring.security.extension.valve.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,6 +17,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -250,5 +247,28 @@ public class SecurityWebConfiguration {
             source.registerCorsConfiguration(path, configuration);
         }
         return source;
+    }
+
+    /**
+     * 配置全局 WebSecurity (防火墙)
+     * 遍历所有需要配置忽略规则的 Valve
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> {
+            // 1. 执行静态资源 Valve 的防火墙配置
+            final RequestValve valveStatic = RequestValve.of(RequestValveStatic::new);
+            valveStatic.configure(web, this.config);
+
+            // 2. 如果 Swagger 也有静态资源需要忽略，也可以这样调用
+            // final RequestValve valveSwagger = RequestValve.of(RequestValveSwagger::new);
+            // valveSwagger.configure(web, this.config);
+
+            // 3. 如果未来有 SPI 扩展，也可以在这里遍历 SPI
+            final List<RequestValve> spiValves = SPI.findMany(RequestValve.class);
+            for (final RequestValve valve : spiValves) {
+                valve.configure(web, this.config);
+            }
+        };
     }
 }

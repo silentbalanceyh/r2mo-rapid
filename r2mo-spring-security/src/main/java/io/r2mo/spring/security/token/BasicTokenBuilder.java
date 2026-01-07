@@ -1,8 +1,8 @@
-package io.r2mo.spring.security.basic;
+package io.r2mo.spring.security.token;
 
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;
-import io.r2mo.spring.security.token.TokenBuilder;
+import io.r2mo.jaas.token.TokenBuilder;
 
 import java.util.Base64;
 
@@ -12,7 +12,7 @@ import java.util.Base64;
 public class BasicTokenBuilder implements TokenBuilder {
 
     @Override
-    public String build(final UserAt userAt) {
+    public String accessOf(final UserAt userAt) {
         final MSUser user = userAt.logged();
         final String token = user.getUsername() + ":" + user.getPassword();
         return Base64.getEncoder().encodeToString(token.getBytes());

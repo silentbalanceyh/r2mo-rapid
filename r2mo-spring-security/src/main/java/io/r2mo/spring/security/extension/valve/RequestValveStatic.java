@@ -14,7 +14,14 @@ public class RequestValveStatic implements RequestValve {
     public void execute(final AuthorizeHttpRequestsConfigurer<?>.AuthorizationManagerRequestMatcherRegistry registry,
                         final ConfigSecurity config, final Object attached) {
         log.info("[ R2MO ] 固定规则处理。");
+        // 1. 获取动态配置的登录路径 (例如 "/login")
+        final String loginUrl = config.getUri().getLogin();
+
         registry.requestMatchers(
+            // Fix Issue: Exceeded maxRedirects. Probably stuck in a redirect loop http://localhost:9002/login
+            // 🔥🔥🔥【核心修复】在这里放行登录页 🔥🔥🔥
+            AntPathRequestMatcher.antMatcher(loginUrl),
+
             AntPathRequestMatcher.antMatcher("/webjars/**"),        // 静态资源
             AntPathRequestMatcher.antMatcher("/css/**"),            // 静态资源 CSS
             AntPathRequestMatcher.antMatcher("/js/**"),             // 静态资源 JS

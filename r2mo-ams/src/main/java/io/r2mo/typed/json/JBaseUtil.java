@@ -1,16 +1,9 @@
 package io.r2mo.typed.json;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -22,17 +15,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.r2mo.base.dbe.Database;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Ref;
-import io.r2mo.typed.json.jackson.BigNumberSerializer;
-import io.r2mo.typed.json.jackson.DatabaseDeserializer;
-import io.r2mo.typed.json.jackson.DatabaseSerializer;
-import io.r2mo.typed.json.jackson.JArrayDeserializer;
-import io.r2mo.typed.json.jackson.JArraySerializer;
-import io.r2mo.typed.json.jackson.JObjectDeserializer;
-import io.r2mo.typed.json.jackson.JObjectSerializer;
-import io.r2mo.typed.json.jackson.MultiLocalDateTimeDeserializer;
-import io.r2mo.typed.json.jackson.RefDeserializer;
-import io.r2mo.typed.json.jackson.RefSerializer;
-import io.r2mo.typed.json.jackson.StringDateDeserializer;
+import io.r2mo.typed.json.jackson.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -59,7 +42,7 @@ class JBaseUtil {
      * 3) 「最小约束 & 最稳定行为」：不依赖历史遗留的 Bean 命名规则，避免莫名其妙的大小写变化。🧘
      * 4) 「可逐点特例化」：遇到个别字段需要“固定别名/兼容历史 key”时，用注解就能精准覆盖。🧩
      * </pre>
-     *
+     * <p>
      * -----------------------------------------------------------------
      * 【配置选择 & 理由】🛠️
      * <pre>
@@ -89,7 +72,7 @@ class JBaseUtil {
      *    - 需要绝对锁死某个字段名：在字段上加 {@link JsonProperty @JsonProperty} 即可。🔒
      *    - 覆盖策略/推断，序列化与反序列化同时生效，是最可靠的“强约束”手段。💯
      * </pre>
-     *
+     * <p>
      * -----------------------------------------------------------------
      * 【这样做的好处】🌟
      * <pre>
@@ -102,7 +85,7 @@ class JBaseUtil {
      * 4) 跨团队/多语言/多模块更友好：大家遵守“字段名即协议名”的简单规则即可。🤗
      * 5) 安全性提升：大小写敏感避免“看似相同但并非同字段”的混淆（zCreateBy vs zcreateBy）。🛡️
      * </pre>
-     *
+     * <p>
      * -----------------------------------------------------------------
      * 【与其它常见配置的关系】🔗
      * <pre>
@@ -116,7 +99,7 @@ class JBaseUtil {
      *   * 如需统一入口做兼容，优先用 {@link JsonAlias @JsonAlias} 或
      *     {@link DeserializationProblemHandler}，而非直接改 key 大小写。💡
      * </pre>
-     *
+     * <p>
      * -----------------------------------------------------------------
      * 【典型行为举例】📖
      * <pre>
@@ -131,7 +114,7 @@ class JBaseUtil {
      * - 另加：{@link JsonAlias @JsonAlias}({"zcreateBy","ZCreateBy"})
      *         → 反序列化接受别名，但序列化仍输出 "zCreateBy"。🔁
      * </pre>
-     *
+     * <p>
      * -----------------------------------------------------------------
      * 【实现细节所涉类】🧠
      * <pre>
@@ -146,7 +129,7 @@ class JBaseUtil {
      * - 注解：{@link JsonProperty} / {@link JsonAlias}
      * - 问题处理器：{@link DeserializationProblemHandler}
      * </pre>
-     *
+     * <p>
      * -----------------------------------------------------------------
      * 【结论】🧷
      * 这组配置建立了“字段名即协议名，大小写敏感”的清晰边界，在不牺牲兼容性的前提下提供极高的确定性。🧱
@@ -194,6 +177,9 @@ class JBaseUtil {
         // Big Decimal
         // 配置项：使用 BigDecimal 替代 float/double
         MAPPER.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true);
+
+        MAPPER.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         final List<Module> modules = jacksonModules();
         MAPPER.registerModules(modules.toArray(new Module[0]));

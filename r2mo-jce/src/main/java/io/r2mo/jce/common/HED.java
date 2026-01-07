@@ -1,9 +1,9 @@
 package io.r2mo.jce.common;
 
-import io.r2mo.jce.component.secure.AlgNorm;
 import io.r2mo.jce.component.secure.ED;
 import io.r2mo.jce.constant.AlgHash;
 import io.r2mo.jce.constant.AlgLicense;
+import io.r2mo.jce.constant.AlgNorm;
 
 import java.security.KeyPair;
 
@@ -177,7 +177,6 @@ public final class HED extends HEDBase {
      * <p><b>推荐度：</b>🟩 强推荐（当前主流的安全哈希算法）。</p>
      *
      * @param data 输入字符串
-     *
      * @return 64 位十六进制字符串表示的 SHA-256 哈希
      */
     public static String encryptSHA256(final String data) {
@@ -200,7 +199,6 @@ public final class HED extends HEDBase {
      * <p><b>推荐度：</b>🟩 强推荐（高性能安全应用场景）。</p>
      *
      * @param data 输入字符串
-     *
      * @return 十六进制字符串表示的 BLAKE2b 哈希
      */
     public static String encryptBLAKE2B(final String data) {
@@ -224,7 +222,6 @@ public final class HED extends HEDBase {
      * <p><b>推荐度：</b>🟩 强推荐（企业级通用方案）。</p>
      *
      * @param data 输入密码
-     *
      * @return PBKDF2 编码串（包含盐与迭代参数）
      */
     public static String encryptPBKDF2(final String data) {
@@ -247,7 +244,6 @@ public final class HED extends HEDBase {
      * <p><b>推荐度：</b>🟩 强推荐（Web 系统首选密码存储算法）。</p>
      *
      * @param data 输入密码
-     *
      * @return bcrypt 编码串（包含盐和 cost 参数）
      */
     public static String encryptBCRYPT(final String data) {
@@ -270,7 +266,6 @@ public final class HED extends HEDBase {
      * <p><b>推荐度：</b>🟩 强推荐（新系统的首选默认方案）。</p>
      *
      * @param data 输入密码
-     *
      * @return Argon2 编码串（包含盐与参数信息）
      */
     public static String encryptARGON2(final String data) {

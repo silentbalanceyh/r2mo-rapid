@@ -1,15 +1,20 @@
 package io.r2mo.spring.security.basic;
 
-import io.r2mo.jaas.enums.TypeToken;
+import cn.hutool.extra.spring.SpringUtil;
+import io.r2mo.jaas.token.TokenBuilderManager;
+import io.r2mo.jaas.token.TokenType;
+import io.r2mo.spring.security.auth.AuthTokenFilter;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityBasic;
 import io.r2mo.spring.security.extension.SpringAuthenticatorBase;
 import io.r2mo.spring.security.extension.handler.SecurityEntryPoint;
 import io.r2mo.spring.security.extension.handler.SecurityHandler;
-import io.r2mo.spring.security.token.TokenBuilderManager;
+import io.r2mo.spring.security.token.AESTokenBuilder;
+import io.r2mo.spring.security.token.BasicTokenBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Objects;
 
@@ -21,13 +26,19 @@ import java.util.Objects;
  */
 @Slf4j
 public class BasicSpringAuthenticator extends SpringAuthenticatorBase {
+    private final AuthTokenFilter filter;
 
     public BasicSpringAuthenticator(final ConfigSecurity configuration) {
         super(configuration);
+        this.filter = SpringUtil.getBean(AuthTokenFilter.class);
     }
 
     @Override
     public void configure(final HttpSecurity security, final Object attached) {
+        // 替换原始 JWT 部分
+        security.addFilterBefore(this.filter, UsernamePasswordAuthenticationFilter.class);
+
+
         // 检查 Basic 是否存在或启用（双重检查）
         if (!this.config().isBasic()) {
             log.warn("[ R2MO ] Basic 认证未启用，跳过 Basic 认证配置");
@@ -54,7 +65,8 @@ public class BasicSpringAuthenticator extends SpringAuthenticatorBase {
         }
 
         // 注册 Basic 的 Token 配置
-        TokenBuilderManager.of().registry(TypeToken.BASIC, BasicTokenBuilder::new);
+        TokenBuilderManager.of().registry(TokenType.BASIC, BasicTokenBuilder::new);
+        TokenBuilderManager.of().registry(TokenType.AES, AESTokenBuilder::new);
 
         try {
             security

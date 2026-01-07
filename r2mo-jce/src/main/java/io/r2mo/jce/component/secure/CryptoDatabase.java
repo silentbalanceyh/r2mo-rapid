@@ -2,6 +2,7 @@ package io.r2mo.jce.component.secure;
 
 import io.r2mo.base.secure.EDCrypto;
 import io.r2mo.base.secure.EDPair;
+import io.r2mo.jce.constant.AlgNorm;
 import io.r2mo.typed.annotation.SPID;
 
 /**

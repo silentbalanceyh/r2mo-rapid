@@ -50,6 +50,12 @@
       <version>1.0.45</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>io.zerows</groupId>
+      <artifactId>r2mo-jce</artifactId>
+      <version>1.0.45</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

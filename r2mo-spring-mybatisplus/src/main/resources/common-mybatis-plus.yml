@@ -1,4 +1,3 @@
-# 内置配置 不允许修改 如需修改请在 nacos 上写相同配置覆盖
 # MyBatisPlus配置
 # https://baomidou.com/config/
 mybatis-plus:

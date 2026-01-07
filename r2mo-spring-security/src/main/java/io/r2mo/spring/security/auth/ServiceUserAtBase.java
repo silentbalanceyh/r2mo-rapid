@@ -3,14 +3,13 @@ package io.r2mo.spring.security.auth;
 import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.jaas.auth.CaptchaArgs;
 import io.r2mo.jaas.auth.LoginRequest;
-import io.r2mo.jaas.element.MSEmployee;
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserSession;
+import io.r2mo.spring.security.basic.BasicAuthenticateProvider;
 import io.r2mo.spring.security.exception._80204Exception401PasswordNotMatch;
 import io.r2mo.spring.security.exception._80244Exception401LoginTypeWrong;
-import io.r2mo.spring.security.exception._80250Exception401Unauthorized;
 import io.r2mo.typed.enums.TypeLogin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,7 +45,7 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
         }
         // 此处不加载员工数据，员工数据的选择交给 UserContext 来处理
         final String identifier = request.getId();
-        log.info("[ R2MO ] 登录加载：identifier = {} / provider = {}", identifier, this.getClass().getName());
+        log.info("[ R2MO ] 登录加载：id = `{}` / provider = `{}`", identifier, this.getClass().getName());
         final UserAt userAt = this.findUser(request.getId());
         final boolean isMatch = this.isMatched(request, userAt);
         if (!isMatch) {
@@ -62,7 +61,6 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
      *
      * @param request 登录请求
      * @param userAt  用户密码
-     *
      * @return 是否匹配
      */
     public boolean isMatched(final LoginRequest request, final UserAt userAt) {
@@ -81,32 +79,26 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
 
     public abstract UserAt findUser(String id);
 
-
-    protected UserAt ofUserAt(final MSUser user) {
-        return UserSession.of().userAt(user);
+    protected UserAt userAtEphemeral(final MSUser user) {
+        return UserSession.of().userAtEphemeral(user);
     }
 
-    protected UserAt ofUserAt(final MSUser user, final MSEmployee employee) {
-        return UserSession.of().userAt(this.ofUserAt(user), employee);
-    }
-
+    /**
+     * 转移位置参考 {@link BasicAuthenticateProvider} 中的 58 行
+     *
+     * @param identifier 账号标识
+     * @return 用户信息
+     */
     @Override
     public UserAt loadLogged(final String identifier) {
         // 缓存中加载账号数据
         final UserAt cached = UserSession.of().find(identifier);
-        if (Objects.nonNull(cached)) {
+        // 追加账号的 isOk 判断，保证有内容
+        if (Objects.nonNull(cached) && cached.isOk()) {
             return cached;
         }
         log.info("[ R2MO ] 验证加载：identifier = {} / provider = {}", identifier, this.getClass().getName());
-        final UserAt userAt = this.findUser(identifier);
-        // 查找内容写缓存
-        try {
-            UserSession.of().userAt(userAt);
-            return userAt;
-        } catch (final Throwable ex) {
-            // 包装后抛出，才能触发 Handler
-            throw new _80250Exception401Unauthorized.Unauthorized(ex.getMessage(), identifier);
-        }
+        return this.findUser(identifier);
     }
 
     /**
@@ -115,7 +107,6 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
      * @param request  登录请求
      * @param userAt   存储的用户记录
      * @param duration 配置提取的时间（会影响 UserCache）
-     *
      * @return 是否匹配
      */
     protected boolean isMatched(final LoginRequest request, final UserAt userAt,

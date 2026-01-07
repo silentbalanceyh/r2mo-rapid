@@ -36,7 +36,10 @@ public class SpringResponseAdvice implements ResponseBodyAdvice<R<?>> {
         if (Objects.nonNull(body) && Objects.nonNull(body.getData())) {
             final HttpStatus status = body.getStatus();
             response.setStatusCode(status);
-            log.info("[ R2MO ] 响应代码：{}", status.value());
+            if (HttpStatus.OK != status) {
+                // 不等于 OK 的响应代码才需要日志
+                log.info("[ R2MO ] 响应代码：{}", status.value());
+            }
         }
         return body;
     }

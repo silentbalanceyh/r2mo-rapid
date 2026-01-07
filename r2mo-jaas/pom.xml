@@ -16,5 +16,9 @@
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-ams</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-jce</artifactId>
+        </dependency>
     </dependencies>
 </project>

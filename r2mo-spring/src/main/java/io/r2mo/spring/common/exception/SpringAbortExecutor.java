@@ -46,6 +46,8 @@ public class SpringAbortExecutor {
             mapper.writeValue(response.getOutputStream(), result);
         } catch (final IOException e) {
             log.error("[ R2MO ] handleFailure 处理 / IO 异常", e);
+        } catch (final Throwable jvmEx) {
+            log.error(jvmEx.getMessage(), jvmEx);
         }
     }
 

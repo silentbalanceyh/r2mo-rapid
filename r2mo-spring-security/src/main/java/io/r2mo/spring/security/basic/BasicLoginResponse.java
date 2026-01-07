@@ -2,9 +2,9 @@ package io.r2mo.spring.security.basic;
 
 import io.r2mo.jaas.auth.LoginResponse;
 import io.r2mo.jaas.element.MSUser;
-import io.r2mo.jaas.enums.TypeToken;
 import io.r2mo.jaas.session.UserAt;
-import io.r2mo.spring.security.token.TokenBuilderManager;
+import io.r2mo.jaas.token.TokenBuilderManager;
+import io.r2mo.jaas.token.TokenType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -24,7 +24,7 @@ public class BasicLoginResponse extends LoginResponse {
 
     @Override
     public String getToken(final UserAt user) {
-        // 该方法已被覆盖，不会调用
-        return TokenBuilderManager.of().getOrCreate(TypeToken.BASIC).build(user);
+        // 该方法已被覆盖，不会调用父类方法
+        return TokenBuilderManager.of().getOrCreate(TokenType.AES).accessOf(user);
     }
 }

@@ -39,7 +39,7 @@ interface ERR {
 有了上述定义后，两个异常的写法一模一样，参数为动态参数。
 
 ```java
-package com.formaltech.apps.takeout.exception;
+package io.r2mo.spring.apps.takeout.exception;
 
 import io.r2mo.spring.common.exception.SpringException;
 
@@ -83,8 +83,8 @@ I10005=对不起，您的键 {} 在扩展配置 {} 中缺失，请联系管理�
 
 ```json
 {
-    "code": -11203,
-    "message": "Stack 系统信息",
-    "info": "用户 test 不存在"
+  "code": -11203,
+  "message": "Stack 系统信息",
+  "info": "用户 test 不存在"
 }
 ```

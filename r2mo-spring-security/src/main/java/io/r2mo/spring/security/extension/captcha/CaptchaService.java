@@ -14,14 +14,13 @@ public interface CaptchaService {
      *
      * @return { "captchaKey": "唯一标识", "image": "data:image/png;base64,..." }
      */
-    Map<String, String> generate();
+    Map<String, Object> generate();
 
     /**
      * 验证用户输入
      *
      * @param captchaKey 用户提交的验证码标识
      * @param userInput  用户输入的验证码（不区分大小写）
-     *
      * @return true 表示验证通过
      */
     boolean validate(String captchaKey, String userInput);
