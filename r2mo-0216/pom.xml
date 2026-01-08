@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.zerows</groupId>
+        <artifactId>rachel-momo-0216</artifactId>
+        <version>1.0.47</version>
+    </parent>
+    <artifactId>r2mo-0216</artifactId>
+    <packaging>pom</packaging>
+    <name>R2MO::BOM (POM)</name>
+    <dependencyManagement>
+        <dependencies>
+            <!-- ============================================================== -->
+            <!-- 💠 抽象定义层 (Abstract Specifications)                          -->
+            <!-- ============================================================== -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-ams</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-jce</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-jaas</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-dbe</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-io</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+
+            <!-- ============================================================== -->
+            <!-- 🧱 核心实现层 (Core Implementation)                              -->
+            <!-- ============================================================== -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-typed-hutool</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-typed-vertx</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-io-local</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-dbe-jooq</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-dbe-mybatisplus</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+
+            <!-- ============================================================== -->
+            <!-- 🌱 Spring 生态 (Spring Ecosystem)                              -->
+            <!-- ============================================================== -->
+            <!-- Boot -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-boot-spring</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-boot-spring-default</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <!-- Core -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <!-- Extensions -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-cache</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-email</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-excel</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-json</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-junit5</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-mybatisplus</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-sms</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-weco</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-template</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+
+            <!-- ============================================================== -->
+            <!-- 🛡️ Spring Security 生态 (Spring Security Ecosystem)            -->
+            <!-- ============================================================== -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security-email</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security-jwt</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security-ldap</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security-oauth2</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security-oauth2client</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security-sms</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security-weco</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+
+            <!-- ============================================================== -->
+            <!-- 🚀 Vert.x 生态 (Vert.x Ecosystem)                              -->
+            <!-- ============================================================== -->
+            <!-- Boot -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-boot-vertx</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <!-- Core -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-vertx</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <!-- Jooq Integration -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-vertx-jooq</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-vertx-jooq-shared</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-vertx-jooq-jdbc</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-vertx-jooq-generate</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <!-- Test -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-vertx-junit5</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+
+            <!-- ============================================================== -->
+            <!-- 🔗 第三方集成 (Third-party Integration)                            -->
+            <!-- ============================================================== -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-xync-email</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-xync-sms</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-xync-weco</artifactId>
+                <version>${r2mo.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
+
