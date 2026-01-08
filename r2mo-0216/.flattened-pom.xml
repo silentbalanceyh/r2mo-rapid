@@ -3,11 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.zerows</groupId>
-  <artifactId>r2mo-typed-vertx</artifactId>
-  <version>1.0.47</version>
-  <name>R2MO::Typed::Vertx</name>
+  <artifactId>r2mo-0216</artifactId>
+  <version>1.0.46</version>
+  <packaging>pom</packaging>
+  <name>R2MO::BOM (POM)</name>
   <description>R2MO Rapid Framework for Delivery</description>
-  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-typed-vertx</url>
+  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-0216</url>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -26,10 +27,10 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-typed-vertx</connection>
-    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-typed-vertx</developerConnection>
-    <tag>v1.0.47</tag>
-    <url>https://www.zerows.io/r2mo-typed-vertx</url>
+    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-0216</connection>
+    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-0216</developerConnection>
+    <tag>v1.0.46</tag>
+    <url>https://www.zerows.io/r2mo-0216</url>
   </scm>
   <distributionManagement>
     <repository>
@@ -43,20 +44,6 @@
       <url>https://central.sonatype.com</url>
     </snapshotRepository>
   </distributionManagement>
-  <dependencies>
-    <dependency>
-      <groupId>io.zerows</groupId>
-      <artifactId>r2mo-ams</artifactId>
-      <version>1.0.47</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-core</artifactId>
-      <version>5.0.6</version>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
   <build>
     <plugins>
       <plugin>
