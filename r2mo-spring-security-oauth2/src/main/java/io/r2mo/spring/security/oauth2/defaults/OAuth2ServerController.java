@@ -1,11 +1,9 @@
 package io.r2mo.spring.security.oauth2.defaults;
 
-import io.r2mo.typed.json.JObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Objects;
@@ -15,7 +13,7 @@ import java.util.Objects;
  */
 @Controller
 @Slf4j
-public class OAuth2CommonController {
+public class OAuth2ServerController {
 
     /**
      * 登录页跳转处理
@@ -36,25 +34,5 @@ public class OAuth2CommonController {
         //    - 如果 SPI 存在，使用 SPI 指定的名称
         //    - 否则使用默认名称 "login"
         return (Objects.nonNull(found)) ? found.loginPage(error) : "login";
-    }
-
-    /**
-     * 客户端默认回调
-     *
-     * @param registrationId 客户端注册 ID
-     * @param code           授权码
-     * @param state          状态参数   xxx_VC_{VERIFIER_CODE}
-     * @param error          错误信息
-     *
-     * @return 处理结果
-     */
-    @GetMapping("/oauth2/authorized/{registrationId}")
-    public JObject handleCallback(@PathVariable("registrationId") final String registrationId,
-                                  @RequestParam(name = "code", required = false) final String code,
-                                  @RequestParam(name = "state", required = false) final String state,
-                                  @RequestParam(name = "error", required = false) final String error) {
-        // 这里可以处理授权回调逻辑
-        log.info("[ R2MO ] OAuth2 授权回调：{}", registrationId);
-        return OAuth2Page.of().handleToken(registrationId, code, state, error);
     }
 }
