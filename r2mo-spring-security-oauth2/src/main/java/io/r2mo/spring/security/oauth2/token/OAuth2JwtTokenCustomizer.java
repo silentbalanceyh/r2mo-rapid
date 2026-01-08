@@ -2,7 +2,7 @@ package io.r2mo.spring.security.oauth2.token;
 
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;
-import io.r2mo.spring.security.auth.AuthUserDetail;
+import io.r2mo.spring.security.auth.UserAuthDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +33,7 @@ public class OAuth2JwtTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodi
         final Object principal = authentication.getPrincipal();
 
         // 从 AuthUserDetail 中提取 UserAt 信息
-        if (principal instanceof final AuthUserDetail userDetail) {
+        if (principal instanceof final UserAuthDetails userDetail) {
             final UserAt userAt = userDetail.getUser();
 
             if (userAt != null && userAt.logged() != null) {

@@ -18,10 +18,10 @@ import java.util.Objects;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class AuthTokenResponse extends LoginResponse {
+public class TokenDynamicResponse extends LoginResponse {
     private static ConfigSecurity CONFIG;
 
-    public AuthTokenResponse(final UserAt userAt) {
+    public TokenDynamicResponse(final UserAt userAt) {
         super(userAt);
     }
 

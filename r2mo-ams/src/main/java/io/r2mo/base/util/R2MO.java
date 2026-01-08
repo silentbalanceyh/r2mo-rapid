@@ -54,7 +54,6 @@ public class R2MO extends _UtilNum {
      * 扩展参数模式，isBoolean 可检查 Object 类型，去空
      *
      * @param input 输入对象
-     *
      * @return 是否合法Boolean值
      */
     public static boolean isBoolean(final Object input) {
@@ -62,11 +61,11 @@ public class R2MO extends _UtilNum {
             && isBoolean(input.toString().trim().intern());
     }
 
+
     /**
      * （默认非宽松模式）检查传入字符串是否合法Boolean值
      *
      * @param literal 字符串
-     *
      * @return 是否合法Boolean值
      */
     public static boolean isBoolean(final String literal) {
@@ -80,7 +79,6 @@ public class R2MO extends _UtilNum {
      *
      * @param literal 字符串
      * @param widely  是否宽松模式
-     *
      * @return 是否合法Boolean值
      */
     public static boolean isBoolean(final String literal, final boolean widely) {
@@ -91,7 +89,6 @@ public class R2MO extends _UtilNum {
      * 是否是合法 Java 标识符
      *
      * @param name 名称
-     *
      * @return 是否合法
      */
     public static boolean isNamedJava(final String name) {
@@ -106,7 +103,6 @@ public class R2MO extends _UtilNum {
      * 简单验证电子邮件地址格式
      *
      * @param email 待验证的字符串
-     *
      * @return 如果字符串符合基本电子邮件格式，则返回 true；否则返回 false。
      */
     public static boolean isEmail(final String email) {
@@ -117,10 +113,19 @@ public class R2MO extends _UtilNum {
      * 验证中国大陆手机号码格式
      *
      * @param mobile 待验证的字符串
-     *
      * @return 如果字符串符合中国大陆手机号码格式，则返回 true；否则返回 false。
      */
     public static boolean isMobile(final String mobile) {
         return UTIs.isMobile(mobile);
+    }
+
+    /**
+     * 扩展参数模式，isInvalid 可检查是否非法字符串，广域检查
+     *
+     * @param literal 字符串
+     * @return 是否非法字符串
+     */
+    public static boolean isInvalid(final String literal) {
+        return UTIs.isInvalid(literal);
     }
 }

@@ -1,7 +1,7 @@
 package io.r2mo.spring.security.config;
 
 import io.r2mo.spi.SPI;
-import io.r2mo.spring.security.auth.UserDetailsCommon;
+import io.r2mo.spring.security.auth.UserAuthDetailsService;
 import io.r2mo.spring.security.basic.BasicSpringAuthenticator;
 import io.r2mo.spring.security.extension.RequestUri;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
@@ -229,7 +229,7 @@ public class SecurityWebConfiguration {
     // 用户服务管理器
     @Bean
     public UserDetailsService userService() {
-        return new UserDetailsCommon();
+        return new UserAuthDetailsService();
     }
 
     // ✅ 新增：基于 config 动态构建 CorsConfigurationSource 的 Bean

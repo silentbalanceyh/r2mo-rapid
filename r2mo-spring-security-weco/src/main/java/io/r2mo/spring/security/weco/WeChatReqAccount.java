@@ -7,6 +7,8 @@ import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Objects;
+
 /**
  * @author lang : 2025-12-11
  */
@@ -30,6 +32,13 @@ public class WeChatReqAccount extends LoginRequest {
     public WeChatReqAccount(final JObject request) {
         this.unionId = R2MO.valueT(request, "unionId");
         this.openId = R2MO.valueT(request, "openId");
+        if (Objects.isNull(this.unionId)) {
+            // Union Id 优先
+            this.setId(this.openId);
+        } else {
+            // Open Id 次之
+            this.setId(this.unionId);
+        }
     }
 
     public void setUnionId(final String unionId) {

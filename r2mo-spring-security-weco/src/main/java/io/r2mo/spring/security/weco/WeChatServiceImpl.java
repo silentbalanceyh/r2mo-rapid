@@ -4,7 +4,7 @@ import io.r2mo.function.Fn;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.auth.AuthService;
-import io.r2mo.spring.security.auth.AuthTokenResponse;
+import io.r2mo.spring.security.auth.TokenDynamicResponse;
 import io.r2mo.spring.security.weco.exception._80502Exception501WeChatDisabled;
 import io.r2mo.spring.security.weco.exception._80503Exception401WeChatAuthFailure;
 import io.r2mo.spring.weco.WeChatClient;
@@ -97,7 +97,7 @@ public class WeChatServiceImpl implements WeChatService {
 
             // 登录执行，
             final UserAt userAt = this.authService.login(request);
-            final AuthTokenResponse response = new AuthTokenResponse(userAt);
+            final TokenDynamicResponse response = new TokenDynamicResponse(userAt);
 
 
             // 更新 token 保证 WeCoSession 中的 /wechat-status 能检查到最新的 Token

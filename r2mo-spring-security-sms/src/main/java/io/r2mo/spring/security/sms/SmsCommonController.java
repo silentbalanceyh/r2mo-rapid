@@ -6,11 +6,13 @@ import io.r2mo.function.Fn;
 import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.spring.security.auth.AuthService;
-import io.r2mo.spring.security.auth.AuthTokenResponse;
+import io.r2mo.spring.security.auth.TokenDynamicResponse;
+import io.r2mo.spring.security.extension.captcha.CaptchaOn;
 import io.r2mo.spring.security.sms.exception._80381Exception400MobileRequired;
 import io.r2mo.spring.security.sms.exception._80382Exception400MobileFormat;
 import io.r2mo.spring.security.sms.exception._80383Exception500MobileSending;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.typed.webflow.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,11 +46,11 @@ public class SmsCommonController {
      * </pre>
      *
      * @param params 参数信息
-     *
      * @return 发送结果
      */
     @PostMapping("/auth/sms-send")
-    public Boolean send(@RequestBody final JObject params) {
+    @CaptchaOn
+    public R<Boolean> send(@RequestBody final JObject params) {
         final String mobile = R2MO.valueT(params, LoginID.MOBILE);
         // 必须输入手机号
         Fn.jvmKo(StrUtil.isEmpty(mobile), _80381Exception400MobileRequired.class);
@@ -59,7 +61,7 @@ public class SmsCommonController {
         // 发送过程失败
         Fn.jvmKo(!sent, _80383Exception500MobileSending.class, mobile);
         // 验证处理过程
-        return true;
+        return R.ok(Boolean.TRUE);
     }
 
     /**
@@ -71,13 +73,12 @@ public class SmsCommonController {
      * </pre>
      *
      * @param params 参数信息
-     *
      * @return 发送结果
      */
     @PostMapping("/auth/sms-login")
-    public AuthTokenResponse login(final JObject params) {
+    public R<TokenDynamicResponse> login(final JObject params) {
         final SmsLoginRequest request = new SmsLoginRequest(params);
         final UserAt userAt = this.authService.login(request);
-        return new AuthTokenResponse(userAt);
+        return R.ok(new TokenDynamicResponse(userAt));
     }
 }

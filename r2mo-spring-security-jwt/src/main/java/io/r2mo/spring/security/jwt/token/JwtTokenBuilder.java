@@ -19,6 +19,14 @@ public class JwtTokenBuilder extends TokenBuilderBase {
     }
 
     @Override
+    public String accessOf(final String token) {
+        if (!this.generator.tokenValidate(token)) {
+            return null;
+        }
+        return this.generator.tokenSubject(token);
+    }
+
+    @Override
     public String accessOf(final UserAt userAt) {
         final MSUser logged = this.ensureAuthorized(userAt);
         return this.generator.tokenGenerate(userAt.id().toString(), logged.token());
