@@ -5,3 +5,5 @@ io.r2mo.spring.security.oauth2.config.ConfigOAuth2SpringClient
 io.r2mo.spring.security.oauth2.OAuth2SpringAuthorizationServer
 io.r2mo.spring.security.oauth2.OAuth2RegisteredClientConfiguration
 io.r2mo.spring.security.oauth2.OAuth2RegisteredClientInitializer
+io.r2mo.spring.security.oauth2.defaults.OAuth2ServerController
+io.r2mo.spring.security.oauth2.defaults.OAuth2ClientController
