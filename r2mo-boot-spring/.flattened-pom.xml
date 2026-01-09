@@ -16,30 +16,30 @@
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-dbe</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.48</version>
         </dependency>
         <!-- IO -->
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-io</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.48</version>
         </dependency>
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.48</version>
         </dependency>
         <!-- JCE -->
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-jce</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.48</version>
         </dependency>
         <!-- JAAS -->
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-jaas</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.48</version>
         </dependency>
         <!--
         MySQL 部分的处理流程 /
@@ -86,6 +86,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-jetty</artifactId>
+                <version>${spring-boot.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>jakarta.servlet</groupId>

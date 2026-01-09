@@ -15,7 +15,7 @@
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-vertx-jooq-shared</artifactId>
-            <version>${project.version}</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 </project>

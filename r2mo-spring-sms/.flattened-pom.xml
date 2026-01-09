@@ -19,7 +19,7 @@
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-xync-sms</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.48</version>
         </dependency>
     </dependencies>
 </project>

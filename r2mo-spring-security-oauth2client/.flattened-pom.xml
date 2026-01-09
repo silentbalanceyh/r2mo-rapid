@@ -15,7 +15,7 @@
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring-security-oauth2</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.48</version>
         </dependency>
         <!-- Spring Client 启用 -->
         <dependency>

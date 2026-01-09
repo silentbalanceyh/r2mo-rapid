@@ -15,12 +15,12 @@
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring-template</artifactId>
-            <version>${project.version}</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-xync-email</artifactId>
-            <version>${project.version}</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 </project>

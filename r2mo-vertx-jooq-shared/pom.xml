@@ -19,7 +19,7 @@
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-dbe-jooq</artifactId>
-            <version>${project.version}</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 </project>
