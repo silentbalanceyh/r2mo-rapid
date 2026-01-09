@@ -5,12 +5,13 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>rachel-momo-0216</artifactId>
-        <version>1.0.47</version>
+        <version>1.0.48</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>1.0.47</version>
+    <version>${revision}</version>
     <artifactId>r2mo-rapid</artifactId>
     <properties>
+        <revision>1.0.48</revision>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -18,7 +19,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
     </properties>
-    <name>(POM) 📚️ - 🧬 - R2MO::${r2mo.version} / 🧪 - Rachel Momo ${rachel-momo.version}</name>
+    <name>(POM) 📚️ - 🧬 - R2MO::${revision}</name>
     <!-- License -->
     <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
     <description>
@@ -149,8 +150,8 @@
                 <artifactId>flatten-maven-plugin</artifactId>
                 <version>1.7.3</version>
                 <configuration>
-                    <flattenMode>oss</flattenMode>
                     <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
                 </configuration>
                 <executions>
                     <execution>
@@ -236,33 +237,33 @@
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-boot-spring</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-boot-spring-default</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-spring</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-spring-security</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-boot-vertx</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-vertx</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
 
@@ -277,27 +278,27 @@
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-ams</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-dbe</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-jce</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-jaas</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-io</artifactId>
-                <version>${r2mo.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <!--
             具体实现模块在环境中不做统一管理，由各自模块自行声明依赖版本

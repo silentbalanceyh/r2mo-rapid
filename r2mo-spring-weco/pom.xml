@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>r2mo-rapid</artifactId>
-        <version>1.0.47</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>r2mo-spring-weco</artifactId>
@@ -15,12 +15,12 @@
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-xync-weco</artifactId>
-            <version>${r2mo.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring-cache</artifactId>
-            <version>${r2mo.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

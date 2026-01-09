@@ -1,88 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>io.zerows</groupId>
-  <artifactId>r2mo-boot-vertx</artifactId>
-  <version>1.0.47</version>
-  <name>R2MO::Boot::Vertx</name>
-  <description>R2MO Rapid Framework for Delivery</description>
-  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-boot-vertx</url>
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>https://opensource.org/licenses/MIT</url>
-      <comments>The project itself is licensed under MIT License.</comments>
-    </license>
-  </licenses>
-  <developers>
-    <developer>
-      <name>lang.yu</name>
-      <email>silentbalanceyh@126.com</email>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>+8</timezone>
-    </developer>
-  </developers>
-  <scm>
-    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-boot-vertx</connection>
-    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-boot-vertx</developerConnection>
-    <tag>v1.0.47</tag>
-    <url>https://www.zerows.io/r2mo-boot-vertx</url>
-  </scm>
-  <distributionManagement>
-    <repository>
-      <id>oss</id>
-      <name>Maven Central Staging Repository</name>
-      <url>https://central.sonatype.com</url>
-    </repository>
-    <snapshotRepository>
-      <id>oss</id>
-      <name>Maven Central Snapshots Repository</name>
-      <url>https://central.sonatype.com</url>
-    </snapshotRepository>
-  </distributionManagement>
-  <dependencies>
-    <dependency>
-      <groupId>io.zerows</groupId>
-      <artifactId>r2mo-dbe</artifactId>
-      <version>1.0.47</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.zerows</groupId>
-      <artifactId>r2mo-io</artifactId>
-      <version>1.0.47</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.zerows</groupId>
-      <artifactId>r2mo-vertx</artifactId>
-      <version>1.0.47</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.zerows</groupId>
-      <artifactId>r2mo-jce</artifactId>
-      <version>1.0.47</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.zerows</groupId>
-      <artifactId>r2mo-jaas</artifactId>
-      <version>1.0.47</version>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.sonatype.central</groupId>
-        <artifactId>central-publishing-maven-plugin</artifactId>
-        <version>0.9.0</version>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.zerows</groupId>
+        <artifactId>r2mo-rapid</artifactId>
+        <version>1.0.48</version>
+    </parent>
+
+    <artifactId>r2mo-boot-vertx</artifactId>
+    <name>R2MO::Boot::Vertx</name>
+    <dependencies>
+        <!-- DBE -->
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-dbe</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- IO -->
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-io</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-vertx</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- JCE -->
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-jce</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- JAAS -->
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-jaas</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>

@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>io.zerows</groupId>
-  <artifactId>r2mo-vertx-jooq</artifactId>
-  <version>1.0.47</version>
-  <name>R2MO::Vertx::Jooq</name>
-  <description>参考在线项目：
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.zerows</groupId>
+        <artifactId>r2mo-rapid</artifactId>
+        <version>1.0.48</version>
+    </parent>
+
+    <artifactId>r2mo-vertx-jooq</artifactId>
+    <name>R2MO::Vertx::Jooq</name>
+    <description>
+        参考在线项目：
         -- vertx-jooq: 这个项目已经两年多没有更新，为了保证整体兼容性，重新编译
         |-- 项目地址：https://github.com/jklingsporn/vertx-jooq.git
         |-- 内嵌项目 /
@@ -16,59 +22,43 @@
         -- / r2mo-vertx-jooq-jdbc
         -- / r2mo-vertx-jooq-reactive（后续考虑，暂时不计划）
         2. 单独开启一个项目：r2mo-vertx-jooq-generate 用于代码生成
-        3. 移除 rx 模式和 mutiny 模式的支持</description>
-  <url>https://gitee.com/silentbalanceyh/r2mo-rapid/r2mo-vertx-jooq</url>
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>https://opensource.org/licenses/MIT</url>
-      <comments>The project itself is licensed under MIT License.</comments>
-    </license>
-  </licenses>
-  <developers>
-    <developer>
-      <name>lang.yu</name>
-      <email>silentbalanceyh@126.com</email>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>+8</timezone>
-    </developer>
-  </developers>
-  <scm>
-    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git/r2mo-vertx-jooq</connection>
-    <developerConnection>scm:git:https://gitee.com/silentbalanceyh/r2mo-vertx-jooq</developerConnection>
-    <tag>v1.0.47</tag>
-    <url>https://www.zerows.io/r2mo-vertx-jooq</url>
-  </scm>
-  <distributionManagement>
-    <repository>
-      <id>oss</id>
-      <name>Maven Central Staging Repository</name>
-      <url>https://central.sonatype.com</url>
-    </repository>
-    <snapshotRepository>
-      <id>oss</id>
-      <name>Maven Central Snapshots Repository</name>
-      <url>https://central.sonatype.com</url>
-    </snapshotRepository>
-  </distributionManagement>
-  <dependencies>
-    <dependency>
-      <groupId>io.zerows</groupId>
-      <artifactId>r2mo-vertx-jooq-jdbc</artifactId>
-      <version>1.0.47</version>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.sonatype.central</groupId>
-        <artifactId>central-publishing-maven-plugin</artifactId>
-        <version>0.9.0</version>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
+        3. 移除 rx 模式和 mutiny 模式的支持
+    </description>
+    <dependencies>
+        <!--
+          它们之间的依赖关系
+            - r2mo-vertx-jooq
+              |== r2mo-vertx-jooq-jdbc         =  原来的 -classic-jdbc
+                  |== r2mo-vertx-jooq-shared   =  原来的 -shared / -classic
+                        |== r2mo-vertx
+                        |== r2mo-dbe-jooq
+            - r2mo-vertx-jooq-generate         =  原来的 -generate
+              |== r2mo-vertx-jooq-jdbc
+                  |== r2mo-vertx-jooq-shared
+                        |== r2mo-vertx
+                        |== r2mo-dbe-jooq
+            1. 代码生成项目可独立于 r2mo-vertx-jooq 之外单独使用
+            2. 消费端 / 真实访问过程中只要引入 r2mo-vertx-jooq 即可
+        -->
+        <dependency>
+            <groupId>io.zerows</groupId>
+            <artifactId>r2mo-vertx-jooq-jdbc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <release>21</release>
+                    <compilerArgs>
+                        <arg>-Xlint:-options</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

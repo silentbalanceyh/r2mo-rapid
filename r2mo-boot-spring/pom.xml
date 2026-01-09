@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>r2mo-rapid</artifactId>
-        <version>1.0.47</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>r2mo-boot-spring</artifactId>
@@ -16,30 +16,30 @@
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-dbe</artifactId>
-            <version>${r2mo.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <!-- IO -->
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-io</artifactId>
-            <version>${r2mo.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring</artifactId>
-            <version>${r2mo.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <!-- JCE -->
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-jce</artifactId>
-            <version>${r2mo.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <!-- JAAS -->
         <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-jaas</artifactId>
-            <version>${r2mo.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <!--
         MySQL 部分的处理流程 /

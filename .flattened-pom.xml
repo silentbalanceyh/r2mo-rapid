@@ -1,57 +1,331 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>io.zerows</groupId>
-  <artifactId>r2mo-rapid</artifactId>
-  <version>1.0.47</version>
-  <packaging>pom</packaging>
-  <name>(POM) 📚️ - 🧬 - R2MO::1.0.47 / 🧪 - Rachel Momo 1.0.47</name>
-  <description>R2MO Rapid Framework for Delivery</description>
-  <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>https://opensource.org/licenses/MIT</url>
-      <comments>The project itself is licensed under MIT License.</comments>
-    </license>
-  </licenses>
-  <developers>
-    <developer>
-      <name>lang.yu</name>
-      <email>silentbalanceyh@126.com</email>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>+8</timezone>
-    </developer>
-  </developers>
-  <scm>
-    <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git</connection>
-    <developerConnection>scm:git:https://gitee.com/silentbalanceyh</developerConnection>
-    <tag>v1.0.47</tag>
-    <url>https://www.zerows.io</url>
-  </scm>
-  <distributionManagement>
-    <repository>
-      <id>oss</id>
-      <name>Maven Central Staging Repository</name>
-      <url>https://central.sonatype.com</url>
-    </repository>
-    <snapshotRepository>
-      <id>oss</id>
-      <name>Maven Central Snapshots Repository</name>
-      <url>https://central.sonatype.com</url>
-    </snapshotRepository>
-  </distributionManagement>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.sonatype.central</groupId>
-        <artifactId>central-publishing-maven-plugin</artifactId>
-        <version>0.9.0</version>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>io.zerows</groupId>
+        <artifactId>rachel-momo-0216</artifactId>
+        <version>1.0.48</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <version>1.0.48</version>
+    <artifactId>r2mo-rapid</artifactId>
+    <properties>
+        <revision>1.0.48</revision>
+        <!-- 项目版本依旧需要设置 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
+    </properties>
+    <name>(POM) 📚️ - 🧬 - R2MO::1.0.48</name>
+    <!-- License -->
+    <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
+    <description>
+        R2MO Rapid Framework for Delivery
+    </description>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <comments>The project itself is licensed under MIT License.</comments>
+        </license>
+    </licenses>
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <name>lang.yu</name>
+            <email>silentbalanceyh@126.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+    <!-- Scm Connection -->
+    <scm>
+        <connection>scm:git:https://gitee.com/silentbalanceyh/r2mo-rapid.git</connection>
+        <developerConnection>scm:git:https://gitee.com/silentbalanceyh</developerConnection>
+        <url>https://www.zerows.io</url>
+        <tag>v${project.version}</tag>
+    </scm>
+    <!-- Distribution -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>oss</id>
+            <name>Maven Central Snapshots Repository</name>
+            <url>https://central.sonatype.com</url>
+        </snapshotRepository>
+        <repository>
+            <id>oss</id>
+            <name>Maven Central Staging Repository</name>
+            <url>https://central.sonatype.com</url>
+        </repository>
+    </distributionManagement>
+    <modules>
+        <module>r2mo-ams</module>
+        <module>r2mo-0216</module>
+
+        <!-- 🌷 加密解密核心 -->
+        <module>r2mo-jce</module>
+        <!-- 🌷 认证授权核心 -->
+        <module>r2mo-jaas</module>
+
+        <!-- 🌷 数据类型实现 -->
+        <module>r2mo-typed-hutool</module>
+        <module>r2mo-typed-vertx</module>
+
+        <!-- 🌷 IO 详细实现 -->
+        <module>r2mo-io</module>
+        <module>r2mo-io-local</module>
+
+        <!-- 🌷 Database Engine 实现 -->
+        <module>r2mo-dbe</module>
+        <module>r2mo-dbe-jooq</module>
+        <module>r2mo-dbe-mybatisplus</module>
+
+        <!-- 🌷 集成模块实现 -->
+        <module>r2mo-xync-email</module>
+        <module>r2mo-xync-sms</module>
+        <module>r2mo-xync-weco</module>
+
+        <!-- 🌷 Spring 模块专用 -->
+        <module>r2mo-spring</module>
+        <module>r2mo-spring-cache</module>
+        <module>r2mo-spring-email</module>
+        <module>r2mo-spring-excel</module>
+        <module>r2mo-spring-mybatisplus</module>
+        <module>r2mo-spring-json</module>
+        <module>r2mo-spring-junit5</module>
+        <module>r2mo-spring-sms</module>
+        <module>r2mo-spring-weco</module>
+
+        <!-- 🌷 Spring Security 扩展 -->
+        <module>r2mo-spring-security</module>
+        <module>r2mo-spring-security-email</module>
+        <module>r2mo-spring-security-jwt</module>
+        <module>r2mo-spring-security-ldap</module>
+        <module>r2mo-spring-security-oauth2</module>
+        <module>r2mo-spring-security-oauth2client</module>
+        <module>r2mo-spring-security-sms</module>
+        <module>r2mo-spring-security-weco</module>
+
+        <!-- 🌷 Vertx 模块专用 -->
+        <module>r2mo-vertx</module>
+        <module>r2mo-vertx-jooq-shared</module>
+        <module>r2mo-vertx-jooq-jdbc</module><!-- 经典版的实现，近似于 Provider 架构-->
+        <module>r2mo-vertx-jooq-generate</module>
+        <module>r2mo-vertx-jooq</module>
+        <module>r2mo-vertx-junit5</module>
+
+        <!-- ☘️ Bootstrap 启动依赖处理 / 无实现，只有抽象层，即使有实现走 SPI 模式-->
+        <module>r2mo-boot-spring</module>
+        <module>r2mo-boot-spring-default</module><!-- ☘️ Bootstrap 实现层（默认）-->
+        <module>r2mo-boot-vertx</module>
+        <module>r2mo-spring-template</module>
+    </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
+                    <failOnError>false</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.7.3</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten-clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>${java.version}</release>
+                    <compilerArgs>
+                        <arg>-Xlint:-options</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <!-- Source -->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <passphraseServerId>oss</passphraseServerId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>oss</publishingServerId>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencyManagement>
+        <dependencies>
+            <!--
+            双容器启动层
+            - Spring
+              - 启动层 -> r2mo-boot-spring
+                         r2mo-boot-spring-default（默认实现）
+              - 核心层 -> r2mo-spring
+                      -> r2mo-spring-security 扩展
+            - Vertx
+              - 启动层 -> r2mo-boot-vertx（带实现）
+              - 核心层 -> r2mo-vertx
+            -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-boot-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-boot-spring-default</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spring-security</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-boot-vertx</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-vertx</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <!--
+            统一抽象接口
+            - r2mo-ams      / Agreed Metadata Specification
+            - r2mo-dbe      / Database Engine
+            - r2mo-jce      / JCE Encryption Decryption
+            - r2mo-jaas     / Java Authentication Authorization
+            - r2mo-io       / Input Output
+            -->
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-ams</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-dbe</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-jce</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-jaas</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-io</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!--
+            具体实现模块在环境中不做统一管理，由各自模块自行声明依赖版本
+            - r2mo-dbe-mybatisplus
+            - r2mo-dbe-jooq
+            - r2mo-typed-hutool
+            - r2mo-typed-vertx
+            - r2mo-io-local
+            - r2mo-spring-cache
+            - r2mo-spring-excel
+            - r2mo-spring-json
+            - r2mo-spring-junit5
+            - r2mo-spring-mybatisplus
+            - r2mo-spring-security
+            - r2mo-spring-security-jwt
+            - r2mo-spring-security-oauth2
+            - r2mo-spring-security-oauth2client
+            -->
+            <!--
+            以下部分也不做统一管理，可自己选择版本
+            - r2mo-vertx-jooq
+            - r2mo-vertx-jooq-jdbc
+            - r2mo-vertx-jooq-generate
+            - r2mo-vertx-jooq-shared
+            - r2mo-vertx-junit5
+            -->
+        </dependencies>
+    </dependencyManagement>
+    <packaging>pom</packaging>
 </project>
