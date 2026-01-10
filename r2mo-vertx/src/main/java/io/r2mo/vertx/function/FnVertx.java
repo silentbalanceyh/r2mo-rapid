@@ -33,15 +33,52 @@ public class FnVertx {
     // C - combineA
     // -------------------------------------------------------------------------
 
+    /**
+     * 一维组合编排函数，其执行流程
+     * <pre><code>
+     * [
+     *                                                        combinerOf
+     *                                                        j + j1  =>  j2
+     *                   generateOf
+     *      j       -->     fx      -->    ( j1 )     -->         fx      -->
+     *      j       -->     fx      -->    ( j1 )     -->         fx      -->         ( [j2, j2, j2] )
+     *      j       -->     fx      -->    ( j1 )     -->         fx      -->
+     * ]
+     * </code></pre>
+     * <pre>
+     *      1. 处理单个异步结果
+     *      2. 迭代JsonArray并提取 element 类型位 JsonObject 的结果集
+     *      3. 针对每个JsonObject 元素执行 generateOf 函数，生成 Future<JsonObject> 结果
+     *      4. 将得到的所有结果执行亮亮组合，并且使用拉平操作，得到的最终使用组合后的结果生成一个新的 JsonObject
+     *      -- combinerOf的参数 (j, j1)
+     *      ----- 第一参数 j  是原始的输入元素，即 generateOf 函数中的输入
+     *      ----- 第二参数 j1 是生成函数的输出，即 generateOf 函数的执行结果（异步结果）
+     *      5. 最终返回组合后的结果，JsonArray 中的每个元素都是 JsonObject
+     * </pre>
+     * 组合函数在此处实际是针对输入和输出的组合，输入和输出在此函数中的类型是一致的，此处都是 JsonObject
+     * - 输入：迭代 JsonArray 中生成的每个 JsonObject 元素
+     * - 输出：针对 JsonObject 执行过 generateOf 函数后的结果
+     * - 默认情况下不满足条件的（element instanceof JsonObject) 的元素不会执行 generateOf 函数，会直接被过滤掉
+     *
+     * @param source     Future<JsonArray> 输入的异步结果，结果内是 JsonArray
+     * @param generateOf 元素生成函数，针对JsonArray中的每一个 JsonObject 函数执行 generateOf
+     * @param combinerOf 组合函数，生成函数结果位 Future<JsonObject>，将所有异步结果执行两两合并
+     * @return 返回执行过的结果数组 Future<JsonArray>
+     */
+    public static Future<JsonArray> combineA(
+        final Future<JsonArray> source,
+        final Function<JsonObject, Future<JsonObject>> generateOf, final BinaryOperator<JsonObject> combinerOf) {
+        return FnJArray.combineA(source, generateOf, combinerOf);
+    }
 
     /**
      * 一维组合编排函数，其执行流程
      * <pre><code>
      * [
-     * generateOf
-     * j       -->     fx      -->    ( j1 )
-     * j       -->     fx      -->    ( j1 )    -->     ( [j1,j1,j1] )
-     * j       -->     fx      -->    ( j1 )
+     *                  generateOf
+     *      j       -->     fx      -->    ( j1 )
+     *      j       -->     fx      -->    ( j1 )    -->     ( [j1,j1,j1] )
+     *      j       -->     fx      -->    ( j1 )
      * ]
      * </code></pre>
      * <p>
@@ -63,47 +100,9 @@ public class FnVertx {
      * 一维组合编排函数，其执行流程
      * <pre><code>
      * [
-     *                                                       combinerOf
-     *                                                       j + j1  =>  j2
-     *                   generateOf
-     *      j       -->     fx      -->    ( j1 )     -->         fx      -->
-     *      j       -->     fx      -->    ( j1 )     -->         fx      -->         ( [j2, j2, j2] )
-     *      j       -->     fx      -->    ( j1 )     -->         fx      -->
-     * ]
-     * </code></pre>
-     * <p>
-     * 1. 处理单个异步结果
-     * 2. 迭代JsonArray并提取 element 类型位 JsonObject 的结果集
-     * 3. 针对每个JsonObject 元素执行 generateOf 函数，生成 Future<JsonObject> 结果
-     * 4. 将得到的所有结果执行亮亮组合，并且使用拉平操作，得到的最终使用组合后的结果生成一个新的 JsonObject
-     * -- combinerOf的参数 (j, j1)
-     * ----- 第一参数 j  是原始的输入元素，即 generateOf 函数中的输入
-     * ----- 第二参数 j1 是生成函数的输出，即 generateOf 函数的执行结果（异步结果）
-     * 5. 最终返回组合后的结果，JsonArray 中的每个元素都是 JsonObject
-     * <p>
-     * 组合函数在此处实际是针对输入和输出的组合，输入和输出在此函数中的类型是一致的，此处都是 JsonObject
-     * - 输入：迭代 JsonArray 中生成的每个 JsonObject 元素
-     * - 输出：针对 JsonObject 执行过 generateOf 函数后的结果
-     * - 默认情况下不满足条件的（element instanceof JsonObject) 的元素不会执行 generateOf 函数，会直接被过滤掉
-     *
-     * @param source     Future<JsonArray> 输入的异步结果，结果内是 JsonArray
-     * @param generateOf 元素生成函数，针对JsonArray中的每一个 JsonObject 函数执行 generateOf
-     * @param combinerOf 组合函数，生成函数结果位 Future<JsonObject>，将所有异步结果执行两两合并
-     * @return 返回执行过的结果数组 Future<JsonArray>
-     */
-    public static Future<JsonArray> combineA(
-        final Future<JsonArray> source,
-        final Function<JsonObject, Future<JsonObject>> generateOf, final BinaryOperator<JsonObject> combinerOf) {
-        return FnJArray.combineA(source, generateOf, combinerOf);
-    }
-
-    /**
-     * 一维组合编排函数，其执行流程
-     * <pre><code>
-     * [
-     * ( j )
-     * ( j )         -->      ( [j, j, j] )
-     * ( j )
+     *      ( j )
+     *      ( j )         -->      ( [j, j, j] )
+     *      ( j )
      * ]
      * </code></pre>
      * <p>
