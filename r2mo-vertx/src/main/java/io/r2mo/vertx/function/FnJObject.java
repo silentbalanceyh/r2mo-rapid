@@ -23,9 +23,9 @@ class FnJObject {
             if (Objects.nonNull(finished) && Objects.nonNull(finished.list())) {
                 final List<JsonObject> secondary = finished.list();
                 // Zipper Operation, the base list is first
-                final int size = finished.list().size();
+                final int size = secondary.size();
                 for (int index = 0; index < size; index++) {
-                    final JsonObject item = (JsonObject) finished.list().get(index);
+                    final JsonObject item = secondary.get(index);
                     operatorFun[index].accept(first, item);
                 }
             }

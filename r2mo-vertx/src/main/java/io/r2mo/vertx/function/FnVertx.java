@@ -65,9 +65,9 @@ public class FnVertx {
      * @param combinerOf 组合函数，生成函数结果位 Future<JsonObject>，将所有异步结果执行两两合并
      * @return 返回执行过的结果数组 Future<JsonArray>
      */
-    public static Future<JsonArray> combineA(
-        final Future<JsonArray> source,
-        final Function<JsonObject, Future<JsonObject>> generateOf, final BinaryOperator<JsonObject> combinerOf) {
+    public static Future<JsonArray> combineA(final Future<JsonArray> source,
+                                             final Function<JsonObject, Future<JsonObject>> generateOf,
+                                             final BinaryOperator<JsonObject> combinerOf) {
         return FnJArray.combineA(source, generateOf, combinerOf);
     }
 
@@ -259,9 +259,9 @@ public class FnVertx {
      * @param <A>     [A] 逻辑函数的输出类型[A]，执行函数 jarray  -> Future[A]
      * @return 返回自包含的 Future<JsonObject> 对象
      */
-    public static <J, A> Future<JsonObject> combineJ(
-        final JsonObject input, final String field,
-        final Function<JsonObject, Future<J>> itemFnJ, final Function<JsonArray, Future<A>> itemFnA) {
+    public static <J, A> Future<JsonObject> combineJ(final JsonObject input, final String field,
+                                                     final Function<JsonObject, Future<J>> itemFnJ,
+                                                     final Function<JsonArray, Future<A>> itemFnA) {
         return FnJObject.combineJ(input, field, itemFnJ, itemFnA);
     }
 
@@ -296,10 +296,9 @@ public class FnVertx {
      * @return Future<JsonObject> 返回执行过的结果
      */
     @SafeVarargs
-    public static Future<JsonObject> combineJ(
-        final Future<JsonObject> source, final Function<JsonObject, List<Future<?>>> generateFun,
-        final BiConsumer<JsonObject, JsonObject>... operatorFun
-    ) {
+    public static Future<JsonObject> combineJ(final Future<JsonObject> source,
+                                              final Function<JsonObject, List<Future<?>>> generateFun,
+                                              final BiConsumer<JsonObject, JsonObject>... operatorFun) {
         return FnJObject.combineJ(source, generateFun, operatorFun);
     }
 
@@ -484,9 +483,8 @@ public class FnVertx {
      * @param <T>        🎯 组合函数的最终执行结果 T
      * @return Future<T> 🌟 返回执行过的结果
      */
-    public static <F, S, T> Future<T> combineT(
-        final Future<F> futureF, final Future<S> futureS,
-        final BiFunction<F, S, Future<T>> combinerOf) {
+    public static <F, S, T> Future<T> combineT(final Future<F> futureF, final Future<S> futureS,
+                                               final BiFunction<F, S, Future<T>> combinerOf) {
         return FnCombine.combineT(() -> futureF, () -> futureS, combinerOf);
     }
 
@@ -507,8 +505,7 @@ public class FnVertx {
      * @param <T>        🎯 组合函数的最终执行结果 T
      * @return Future<T> 🌟 返回执行过的结果
      */
-    public static <F, S, T> Future<T> combineT(final Future<F> futureF,
-                                               final Function<F, Future<S>> functionS,
+    public static <F, S, T> Future<T> combineT(final Future<F> futureF, final Function<F, Future<S>> functionS,
                                                final BiFunction<F, S, Future<T>> combinerOf) {
         return FnCombine.combineT(() -> futureF, functionS, combinerOf);
     }
@@ -546,7 +543,8 @@ public class FnVertx {
      * @param <T>        🎯 组合函数的最终执行结果 T
      * @return Future<List<T>> 🌟 返回执行过的结果数组
      */
-    public static <I, T> Future<List<T>> combineT(final Future<List<I>> futureL, final Function<I, Future<T>> combinerOf) {
+    public static <I, T> Future<List<T>> combineT(final Future<List<I>> futureL,
+                                                  final Function<I, Future<T>> combinerOf) {
         return futureL.compose(source -> combineT(source, combinerOf));
     }
 
@@ -588,8 +586,7 @@ public class FnVertx {
      * @param <T>        🎯 组合函数的最终执行结果 T
      * @return Future<T> 🌟 返回执行过的结果
      */
-    public static <F, S, T> Future<T> combineT(final Supplier<Future<F>> supplierF,
-                                               final Function<F, Future<S>> functionS,
+    public static <F, S, T> Future<T> combineT(final Supplier<Future<F>> supplierF, final Function<F, Future<S>> functionS,
                                                final BiFunction<F, S, Future<T>> combinerOf) {
         return FnCombine.combineT(supplierF, functionS, combinerOf);
     }
@@ -684,7 +681,8 @@ public class FnVertx {
     // C - compressM
     // -------------------------------------------------------------------------
 
-    public static Future<ConcurrentMap<String, JsonArray>> compressM(final List<Future<ConcurrentMap<String, JsonArray>>> futures) {
+    public static Future<ConcurrentMap<String, JsonArray>> compressM(
+        final List<Future<ConcurrentMap<String, JsonArray>>> futures) {
         return FnMap.compressM(futures, JsonArray::addAll);
     }
 
@@ -709,8 +707,8 @@ public class FnVertx {
      * @param <T>        输入类型T
      * @return Future<Map < String, Tool>> 返回执行过的压缩结果
      */
-    public static <T> Future<ConcurrentMap<String, T>> compressM(final List<Future<ConcurrentMap<String, T>>> futures,
-                                                                 final BinaryOperator<T> combinerOf) {
+    public static <T> Future<ConcurrentMap<String, T>> compressM(
+        final List<Future<ConcurrentMap<String, T>>> futures, final BinaryOperator<T> combinerOf) {
         return FnMap.compressM(futures, combinerOf);
     }
 
