@@ -2,9 +2,12 @@ package io.r2mo.base.util;
 
 import io.r2mo.typed.common.Compared;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -31,7 +34,6 @@ class _UtilArray {
      * @param newList 新列表（可为 null）
      * @param field   参与比较的字段名（作为键）
      * @param <T>     元素类型
-     *
      * @return Compared 结果，含 C/U/D 三个队列
      */
     public static <T> Compared<T> elementDiff(
@@ -53,7 +55,6 @@ class _UtilArray {
      * @param list2 新列表
      * @param field 键字段名
      * @param <T>   元素类型
-     *
      * @return 合并后的新列表
      */
     public static <T> List<T> elementCombine(
@@ -68,7 +69,6 @@ class _UtilArray {
      * @param list2 列表2
      * @param field 键字段名
      * @param <T>   元素类型
-     *
      * @return 交集列表（保持 list1 的出现顺序）
      */
     public static <T> List<T> elementIntersection(
@@ -83,7 +83,6 @@ class _UtilArray {
      * @param list2 列表2
      * @param field 键字段名
      * @param <T>   元素类型
-     *
      * @return 去重后的并集列表（稳定顺序：list1 后接 list2 的去重结果）
      */
     public static <T> List<T> elementUnion(
@@ -98,7 +97,6 @@ class _UtilArray {
      * @param target 目标列表
      * @param field  键字段名
      * @param <T>    元素类型
-     *
      * @return 仅存在于 source 而不在 target 的元素列表
      */
     public static <T> List<T> elementSubtract(
@@ -112,7 +110,6 @@ class _UtilArray {
      * @param list  待分组列表
      * @param field 作为分组键的字段名
      * @param <T>   元素类型
-     *
      * @return Map：键为字段值，值为该键下的元素列表（保持原顺序）
      */
     public static <T> Map<Object, List<T>> elementGroupBy(
@@ -132,7 +129,6 @@ class _UtilArray {
      * @param field 字段名
      * @param value 目标值（可为 null）
      * @param <T>   元素类型
-     *
      * @return 第一个匹配的元素；未找到返回 null
      */
     public static <T> T elementFirst(
@@ -151,7 +147,6 @@ class _UtilArray {
      * @param field 字段名
      * @param value 目标值（可为 null）
      * @param <T>   元素类型
-     *
      * @return 所有匹配元素列表（可能为空列表，保持原顺序）
      */
     public static <T> List<T> elementMany(
@@ -168,7 +163,6 @@ class _UtilArray {
      * @param field 字段名（其值应实现 Comparable）
      * @param asc   true 升序；false 降序
      * @param <T>   元素类型
-     *
      * @return 排序后的同一列表引用
      */
     public static <T> List<T> elementSortBy(
@@ -187,7 +181,6 @@ class _UtilArray {
      * @param <K>     键类型
      * @param <V>     值类型
      * @param <E>     列表元素类型
-     *
      * @return ConcurrentMap 映射结果
      */
     public static <K, V, E> ConcurrentMap<K, V> elementMap(
@@ -204,11 +197,109 @@ class _UtilArray {
      * @param keyFn 键选择器（不可返回 null）
      * @param <K>   键类型
      * @param <V>   值类型（与列表元素类型一致）
-     *
      * @return ConcurrentMap 映射结果
      */
     public static <K, V> ConcurrentMap<K, V> elementMap(
         final List<V> list, final Function<V, K> keyFn) {
         return UTList.elementMap(list, keyFn, item -> item);
     }
+
+    /**
+     * 拉平操作，针对第一集合 List<E> 和第二集合 List<S> 执行 zipFn 的拉平函数处理
+     * 拉平后最终返回一个新的 List<T> 集合
+     *
+     * <pre><code>
+     *     [ F, F, F, F, F ] + [ S, S, S, S, S ] -> [ T, T, T, T, T ]
+     * </code></pre>
+     * <p>
+     * 尺寸以第一个集合的尺寸为基础，类似左连接的方式进行拉平
+     *
+     * @param first  第一集合
+     * @param second 第二集合
+     * @param zipFn  拉平函数
+     * @param <F>    第一集合元素类型
+     * @param <S>    第二集合元素类型
+     * @param <T>    拉平后的元素类型
+     * @return 拉平后的集合
+     */
+    public static <F, S, T> List<T> elementZip(final List<F> first, final List<S> second, final BiFunction<F, S, T> zipFn) {
+        return UTZip.zip(first, second, zipFn);
+    }
+
+    /**
+     * 拉平操作，针对第一集合 List<E> 和第二集合 List<S> 执行拉平处理，拉平之后形成一个
+     * 哈希表，key 为第一集合元素，findRunning 为第二集合元素
+     *
+     * @param keys   key 集合
+     * @param values findRunning 集合
+     * @param <F>    key 类型
+     * @param <T>    findRunning 类型
+     * @return 拉平后的哈希表
+     */
+    public static <F, T> ConcurrentMap<F, T> elementZip(final List<F> keys, final List<T> values) {
+        return UTZip.zip(keys, values);
+    }
+
+    /**
+     * （重载）拉平操作，针对一个列表中的元素执行双属性的拉平
+     * 最终拉平之后生成一个哈希表，key 为第一个属性，findRunning 为第二个属性
+     *
+     * @param collection 待拉平的集合
+     * @param keyFn      key 生成函数
+     * @param valueFn    findRunning 生成函数
+     * @param <K>        key 类型
+     * @param <V>        findRunning 类型
+     * @param <E>        待拉平集合元素类型
+     * @return 拉平后的哈希表
+     */
+    public static <K, V, E> ConcurrentMap<K, V> elementZip(final E[] collection,
+                                                           final Function<E, K> keyFn, final Function<E, V> valueFn) {
+        return UTZip.zip(Arrays.asList(collection), keyFn, valueFn);
+    }
+
+    /**
+     * 双哈希表的拉平操作，针对两个哈希表执行拉平叠加
+     *
+     * <pre><code>
+     *     Map1: key = findRunning
+     *     Map2: findRunning = element
+     *     最终计算结果
+     *     Map3: key = element
+     * </code></pre>
+     *
+     * @param source 源哈希表
+     * @param target 目标哈希表
+     * @param <K>    源哈希表 key 类型
+     * @param <T>    源哈希表 findRunning 类型
+     * @param <V>    目标哈希表 findRunning 类型
+     * @return 拉平后的哈希表
+     */
+    public static <K, T, V> ConcurrentMap<K, V> elementZip(final ConcurrentMap<K, T> source,
+                                                           final ConcurrentMap<T, V> target) {
+        return UTZip.zip(source, target);
+    }
+
+    /**
+     * 集合和哈希表的拉平操作，只提取集合中包含的元素
+     *
+     * <pre><code>
+     *     Set1: key1, key2
+     *     Map2: key1 =
+     *           key2 =
+     *           key3 =
+     *     最终计算结果
+     *     Map3: key1 =
+     *           key2 =
+     * </code></pre>
+     *
+     * @param from 集合
+     * @param to   哈希表
+     * @param <K>  key 类型
+     * @param <V>  findRunning 类型
+     * @return 拉平后的哈希表
+     */
+    public static <K, V> ConcurrentMap<K, V> elementZip(final Set<K> from, final ConcurrentMap<K, V> to) {
+        return UTZip.zip(from, to);
+    }
+
 }

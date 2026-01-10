@@ -8,7 +8,7 @@ import io.r2mo.typed.exception.WebException;
  */
 public class _404NotFoundException extends WebException {
     public _404NotFoundException(final String messageContent) {
-        super(SPI.V_STATUS.V400(), messageContent);
+        super(SPI.V_STATUS.V404(), messageContent);
     }
 
     @Override
