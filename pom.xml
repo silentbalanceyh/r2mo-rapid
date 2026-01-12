@@ -5,13 +5,13 @@
     <parent>
         <groupId>io.zerows</groupId>
         <artifactId>rachel-momo-0216</artifactId>
-        <version>1.0.48</version>
+        <version>1.0.49</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <version>${revision}</version>
     <artifactId>r2mo-rapid</artifactId>
     <properties>
-        <revision>1.0.48</revision>
+        <revision>1.0.49</revision>
         <!-- 项目版本依旧需要设置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

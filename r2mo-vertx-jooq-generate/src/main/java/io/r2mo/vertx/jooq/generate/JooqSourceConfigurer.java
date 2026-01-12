@@ -8,13 +8,7 @@ import org.jooq.meta.duckdb.DuckDBDatabase;
 import org.jooq.meta.firebird.FirebirdDatabase;
 import org.jooq.meta.h2.H2Database;
 import org.jooq.meta.hsqldb.HSQLDBDatabase;
-import org.jooq.meta.jaxb.Configuration;
-import org.jooq.meta.jaxb.Generate;
-import org.jooq.meta.jaxb.Generator;
-import org.jooq.meta.jaxb.Jdbc;
-import org.jooq.meta.jaxb.Property;
-import org.jooq.meta.jaxb.Strategy;
-import org.jooq.meta.jaxb.Target;
+import org.jooq.meta.jaxb.*;
 import org.jooq.meta.mariadb.MariaDBDatabase;
 import org.jooq.meta.mysql.MySQLDatabase;
 import org.jooq.meta.postgres.PostgresDatabase;
@@ -113,7 +107,9 @@ public class JooqSourceConfigurer {
                 .withDatabase(new org.jooq.meta.jaxb.Database()
                     .withName(databaseClass)
                     .withInputSchema(database.getInstance())
+                    .withOutputSchema("ZDB")
                     .withIncludes(inputConfiguration.databaseIncludes())
+                    .withExcludes(inputConfiguration.databaseExcludes())
                     .withUnsignedTypes(false)
                     .withSyntheticPrimaryKeys("public\\..*\\.id") // 为所有 public schema 中的 id 字段生成假主键
                     .withOverridePrimaryKeys("override_primmary_key") // 假主键名称

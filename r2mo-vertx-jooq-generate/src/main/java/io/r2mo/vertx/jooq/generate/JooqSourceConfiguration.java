@@ -69,6 +69,8 @@ public class JooqSourceConfiguration {
      */
     private String databaseIncludes;
 
+    private String databaseExcludes;
+
 
     /*
      * 对应 Jooq 配置

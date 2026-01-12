@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Data
 public class MetaSource implements Serializable {
     private String includes;
+    private String excludes;
     private String directory;
 
     @JsonSerialize(using = ClassSerializer.class)
@@ -24,13 +25,16 @@ public class MetaSource implements Serializable {
     @JsonDeserialize(using = ClassDeserializer.class)
     private Class<?> classGenerator;
 
-    /** 把 other 合并进当前实例，右侧不为 null 则覆盖；返回新对象 */
+    /**
+     * 把 other 合并进当前实例，右侧不为 null 则覆盖；返回新对象
+     */
     public MetaSource merge(final MetaSource other) {
         if (other == null) {
             return this;
         }
         final MetaSource m = new MetaSource();
         m.includes = other.includes != null ? other.includes : this.includes;
+        m.excludes = other.excludes != null ? other.excludes : this.excludes;
         m.directory = other.directory != null ? other.directory : this.directory;
         m.classStrategy = other.classStrategy != null ? other.classStrategy : this.classStrategy;
         m.classGenerator = other.classGenerator != null ? other.classGenerator : this.classGenerator;
