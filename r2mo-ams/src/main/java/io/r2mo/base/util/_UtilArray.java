@@ -228,12 +228,12 @@ class _UtilArray {
 
     /**
      * 拉平操作，针对第一集合 List<E> 和第二集合 List<S> 执行拉平处理，拉平之后形成一个
-     * 哈希表，key 为第一集合元素，findRunning 为第二集合元素
+     * 哈希表，key 为第一集合元素，value 为第二集合元素
      *
      * @param keys   key 集合
-     * @param values findRunning 集合
+     * @param values value 集合
      * @param <F>    key 类型
-     * @param <T>    findRunning 类型
+     * @param <T>    value 类型
      * @return 拉平后的哈希表
      */
     public static <F, T> ConcurrentMap<F, T> elementZip(final List<F> keys, final List<T> values) {
@@ -242,13 +242,13 @@ class _UtilArray {
 
     /**
      * （重载）拉平操作，针对一个列表中的元素执行双属性的拉平
-     * 最终拉平之后生成一个哈希表，key 为第一个属性，findRunning 为第二个属性
+     * 最终拉平之后生成一个哈希表，key 为第一个属性，value 为第二个属性
      *
      * @param collection 待拉平的集合
      * @param keyFn      key 生成函数
-     * @param valueFn    findRunning 生成函数
+     * @param valueFn    value 生成函数
      * @param <K>        key 类型
-     * @param <V>        findRunning 类型
+     * @param <V>        value 类型
      * @param <E>        待拉平集合元素类型
      * @return 拉平后的哈希表
      */
@@ -261,8 +261,8 @@ class _UtilArray {
      * 双哈希表的拉平操作，针对两个哈希表执行拉平叠加
      *
      * <pre><code>
-     *     Map1: key = findRunning
-     *     Map2: findRunning = element
+     *     Map1: key = value
+     *     Map2: value = element
      *     最终计算结果
      *     Map3: key = element
      * </code></pre>
@@ -270,8 +270,8 @@ class _UtilArray {
      * @param source 源哈希表
      * @param target 目标哈希表
      * @param <K>    源哈希表 key 类型
-     * @param <T>    源哈希表 findRunning 类型
-     * @param <V>    目标哈希表 findRunning 类型
+     * @param <T>    源哈希表 value 类型
+     * @param <V>    目标哈希表 value 类型
      * @return 拉平后的哈希表
      */
     public static <K, T, V> ConcurrentMap<K, V> elementZip(final ConcurrentMap<K, T> source,
@@ -295,7 +295,7 @@ class _UtilArray {
      * @param from 集合
      * @param to   哈希表
      * @param <K>  key 类型
-     * @param <V>  findRunning 类型
+     * @param <V>  value 类型
      * @return 拉平后的哈希表
      */
     public static <K, V> ConcurrentMap<K, V> elementZip(final Set<K> from, final ConcurrentMap<K, V> to) {
