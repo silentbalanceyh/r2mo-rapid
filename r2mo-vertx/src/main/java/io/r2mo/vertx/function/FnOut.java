@@ -61,7 +61,8 @@ final class FnOut {
      */
     static WebException failAt(final Throwable ex) {
         // 1. 始终打印原始异常堆栈，确保不丢失任何上下文
-        log.error("[ R2MO ] 异常捕获: {}", ex.getMessage(), ex);
+        Objects.requireNonNull(ex);
+        // log.error("[ R2MO ] 异常捕获: {}", ex.getMessage(), ex);
 
         // 2. 定义搜索指针和候选项
         Throwable current = ex;
