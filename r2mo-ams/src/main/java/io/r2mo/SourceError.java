@@ -4,14 +4,7 @@ import io.r2mo.base.web.i18n.ForLocaleReport;
 import io.r2mo.typed.exception.AbstractException;
 import org.reflections.Reflections;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,7 +51,6 @@ public class SourceError {
      * @param code         错误码编号（支持负数或正数，内部取绝对值）
      * @param scanPackages 要扫描的包（可变参数）
      */
-    @SuppressWarnings("unchecked")
     public static void printExist(final Class<?> rootClass, final int code, final String... scanPackages) {
         if (rootClass == null) {
             System.out.println("[ R2MO ] 根类不能为 null。");
@@ -71,14 +63,7 @@ public class SourceError {
         final Map<String, String> errorMessages = ForLocaleReport.getMapError();
         final Map<String, String> infoMessages = ForLocaleReport.getMapInfo();
 
-        final Set<Class<?>> allSubTypes = new HashSet<>();
-        final List<String> packagesToScan = determinePackagesToScan(rootClass, scanPackages);
-
-        for (final String pkg : packagesToScan) {
-            final Reflections reflections = pkg.isEmpty() ? new Reflections() : new Reflections(pkg);
-            final Set<Class<?>> subTypesInPkg = (Set<Class<?>>) reflections.getSubTypesOf(rootClass);
-            allSubTypes.addAll(subTypesInPkg);
-        }
+        final Set<Class<?>> allSubTypes = scan(rootClass, determinePackagesToScan(rootClass, scanPackages));
 
         final Set<Class<?>> allClasses = new HashSet<>(allSubTypes);
         allClasses.add(rootClass);
@@ -125,21 +110,13 @@ public class SourceError {
     /**
      * 打印符合 _NNNNN 前缀规则的异常清单，并关联 ERROR/INFO 国际化消息
      */
-    @SuppressWarnings("unchecked")
     public static void printList(final Class<?> rootClass, final String... scanPackages) {
         if (rootClass == null) {
             System.out.println("[ R2MO ] 根类不能为 null。");
             return;
         }
 
-        final Set<Class<?>> allSubTypes = new HashSet<>();
-        final List<String> packagesToScan = determinePackagesToScan(rootClass, scanPackages);
-
-        for (final String pkg : packagesToScan) {
-            final Reflections reflections = pkg.isEmpty() ? new Reflections() : new Reflections(pkg);
-            final Set<Class<?>> subTypesInPkg = (Set<Class<?>>) reflections.getSubTypesOf(rootClass);
-            allSubTypes.addAll(subTypesInPkg);
-        }
+        final Set<Class<?>> allSubTypes = scan(rootClass, determinePackagesToScan(rootClass, scanPackages));
 
         final Set<Class<?>> allClasses = new HashSet<>(allSubTypes);
         allClasses.add(rootClass);
@@ -201,21 +178,13 @@ public class SourceError {
     /**
      * 打印异常继承树
      */
-    @SuppressWarnings("unchecked")
     public static void printTree(final Class<?> rootClass, final String... scanPackages) {
         if (rootClass == null) {
             System.out.println("[ R2MO ] 根类不能为 null。");
             return;
         }
 
-        final Set<Class<?>> allSubTypes = new HashSet<>();
-        final List<String> packagesToScan = determinePackagesToScan(rootClass, scanPackages);
-
-        for (final String pkg : packagesToScan) {
-            final Reflections reflections = pkg.isEmpty() ? new Reflections() : new Reflections(pkg);
-            final Set<Class<?>> subTypesInPkg = (Set<Class<?>>) reflections.getSubTypesOf(rootClass);
-            allSubTypes.addAll(subTypesInPkg);
-        }
+        final Set<Class<?>> allSubTypes = scan(rootClass, determinePackagesToScan(rootClass, scanPackages));
 
         final Set<Class<?>> allClasses = new HashSet<>(allSubTypes);
         allClasses.add(rootClass);
@@ -286,5 +255,22 @@ public class SourceError {
             final String newPrefix = prefix + (isLast ? "    " : "│   ");
             printTree(child, tree, newPrefix, isLastChild);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Set<Class<?>> scan(final Class<?> rootClass, final List<String> packagesToScan) {
+        final Set<Class<?>> allSubTypes = new HashSet<>();
+        final boolean scanAll = packagesToScan.stream()
+            .anyMatch(pkg -> pkg == null || pkg.trim().isEmpty());
+
+        if (scanAll) {
+            allSubTypes.addAll(new Reflections().getSubTypesOf(rootClass));
+        } else {
+            if (!packagesToScan.isEmpty()) {
+                final Reflections reflections = new Reflections(packagesToScan.toArray(new Object[0]));
+                allSubTypes.addAll(reflections.getSubTypesOf(rootClass));
+            }
+        }
+        return allSubTypes;
     }
 }
