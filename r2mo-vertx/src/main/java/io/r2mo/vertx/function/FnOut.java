@@ -155,6 +155,10 @@ final class FnOut {
                 log.error("[ R2MO ] Otherwise 异常输出", error);
                 error.printStackTrace();
             }
+            // 追加 null 检查，防止 supplier 为 null 导致 NPE
+            if (Objects.isNull(supplier)) {
+                return null;
+            }
             return supplier.get();
         };
     }
