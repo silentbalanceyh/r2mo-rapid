@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
  *     username：email地址
  *     password：密码
  *     字段详情
- *     id: 用户id标识
+ *     uid: 用户id标识
  *     email：用户的邮箱 mail
  *     username: uid
  * </pre>
