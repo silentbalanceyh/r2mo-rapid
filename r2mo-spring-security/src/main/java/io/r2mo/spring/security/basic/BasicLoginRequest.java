@@ -1,5 +1,6 @@
 package io.r2mo.spring.security.basic;
 
+import cn.hutool.core.util.StrUtil;
 import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.spring.security.exception._80240Exception400UsernameRequired;
@@ -9,8 +10,6 @@ import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.Objects;
 
 /**
  * 基础请求，主要负责
@@ -65,10 +64,10 @@ public class BasicLoginRequest extends LoginRequest {
 
     // 特殊认证流程，必须保证 username 和 password 都不为空
     public void requestValidated() {
-        if (Objects.isNull(this.username)) {
+        if (StrUtil.isEmpty(this.username)) {
             throw new _80240Exception400UsernameRequired(LoginID.USERNAME);
         }
-        if (Objects.isNull(this.password)) {
+        if (StrUtil.isEmpty(this.password)) {
             throw new _80241Exception400PasswordRequired("password");
         }
     }
