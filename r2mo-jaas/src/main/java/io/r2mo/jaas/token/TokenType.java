@@ -1,137 +1,87 @@
 package io.r2mo.jaas.token;
 
+import java.util.regex.Pattern;
+
 /**
  * <pre>
- * 🟢 Token 类型嗅探器
+ * 🟢 Token 类型嗅探器 (增强版)
  *
  * 1. 🌐 全局说明
- *    用于在网关层 (`UnifiedAuthenticationHandler`) 快速识别 HTTP 请求头中的 Token 类型。
- *    作为分流策略的核心依据，决定后续将请求路由给哪个具体的认证组件处理。
+ * 用于在网关层 (`UnifiedAuthenticationHandler`) 快速识别 HTTP 请求头中的 Token 类型。
+ * 采用 "特征优先 + 正则匹配" 的混合策略，大幅提高识别准确率。
  *
- * 2. 🎯 核心功能
- *    - 格式识别：基于 HTTP Authorization 头的前缀（Basic/Bearer/DPoP）。
- *    - 深度嗅探：对于 Bearer 类型的 Token，进一步根据 payload 特征（如前缀、点号数量）区分 JWT、AES 或 Opaque。
- *
- * 3. 🧩 支持类型
- *    - JWT: 标准 JSON Web Token。
- *    - AES: 自定义对称加密令牌。
- *    - BASIC: HTTP 基础认证。
- *    - OPAQUE: 不透明令牌（如 OAuth2 引用令牌）。
- *    - DPOP: 应用层证明令牌。
+ * 2. 🎯 核心策略 (Sniffing Strategy)
+ * - P0 (最高优先级): 显式前缀匹配 (如 "r2a_", "Basic ").
+ * - P1 (高优先级): JWT 魔术头匹配 ("eyJ").
+ * - P2 (中优先级): JWT 结构正则匹配 (Base64Url + Dot 分隔).
+ * - P3 (兜底): 默认为 AES/Opaque.
  * </pre>
  *
  * @author lang : 2025-11-12
  */
 public enum TokenType {
-    /**
-     * <pre>
-     * 🛡️ JSON Web Token (JWT)
-     * - Header: Bearer
-     * - Format: xxxx.yyyy.zzzz (Base64Url, 2 dots)
-     * - Usage: 无状态自包含认证。
-     * </pre>
-     */
     JWT,
-
-    /**
-     * <pre>
-     * 🛡️ AES Symmetric Encryption Token
-     * - Header: Bearer
-     * - Format: r2a_xxxx... (Hex/Base64, no structure)
-     * - Usage: 系统内部轻量级加密令牌。
-     * </pre>
-     */
     AES,
-
-    /**
-     * <pre>
-     * 🛡️ HTTP Basic Authentication
-     * - Header: Basic
-     * - Format: base64(username:password)
-     * - Usage: 简单的用户名密码认证。
-     * </pre>
-     */
     BASIC,
-
-    /**
-     * <pre>
-     * 🛡️ Opaque Token (Transparent/Reference)
-     * - Header: Bearer
-     * - Format: Random string (no structure)
-     * - Usage: OAuth2 引用令牌，需查库验证。
-     * </pre>
-     */
     OPAQUE,
-
-    /**
-     * <pre>
-     * 🛡️ Demonstration of Proof-of-Possession (DPoP)
-     * - Header: DPoP / Bearer
-     * - Usage: 增强安全性的令牌绑定机制。
-     * </pre>
-     */
     DPOP;
 
+    // ================== 常量定义 ==================
+
     /**
-     * AES Token 的特定前缀标识，用于快速区分 JWT 与 AES。
+     * AES Token 的特定前缀 (最高权重)
      */
     public static final String TOKEN_PREFIX_AES = "r2a_";
 
     /**
-     * 静态常量：Basic 前缀
+     * JWT 的魔术头 (Base64Url 编码的 '{"' )
      */
+    private static final String MAGIC_JWT = "eyJ";
+
     private static final String PREFIX_BASIC = "Basic ";
-    /**
-     * 静态常量：Bearer 前缀
-     */
     private static final String PREFIX_BEARER = "Bearer ";
-    /**
-     * 静态常量：DPoP 前缀
-     */
     private static final String PREFIX_DPOP = "DPoP ";
 
     /**
-     * <pre>
-     * 🟢 静态工厂：Token 类型解析
-     *
-     * 1. 🌐 使用场景
-     *    接收原始的 HTTP Authorization Header 值，自动推断其 Token 类型。
-     *
-     * 2. 🧬 识别逻辑 (Pipeline)
-     *    - Step 1: 预处理 (Trim & Null Check)。
-     *    - Step 2: 匹配 `Basic` 前缀 -> {@link #BASIC}。
-     *    - Step 3: 匹配 `DPoP` 前缀 -> {@link #DPOP}。
-     *    - Step 4: 匹配 `Bearer` 前缀 -> 进入深度嗅探 {@link #sniffBearerType(String)}。
-     *
-     * 3. ⚖️ 判决依据
-     *    区分 JWT 和 AES/Opaque 是难点，主要依赖 payload 的特征（. 的数量或特定前缀）。
-     * </pre>
-     *
-     * @param authorization HTTP Authorization Header 的完整值 (e.g., "Bearer eyJhbGci...")
-     * @return 识别出的 {@link TokenType}；若格式无法识别或输入无效则返回 null
+     * JWT 增强正则检查
+     * 规则：
+     * 1. 由 Base64Url 字符组成 (A-Z, a-z, 0-9, -, _)
+     * 2. 通过点号 (.) 分隔
+     * 3. 至少有 2 部分 (Header.Payload)，通常 3 部分，JWE 可能 5 部分
+     * * Regex 解释:
+     * ^              : 开始
+     * [\\w-]+        : 第一部分 (Header)
+     * \\.            : 点分隔
+     * [\\w-]+        : 第二部分 (Payload)
+     * (?:\\.[\\w-]*)?: 可选的第三部分 (Signature，可能为空)
+     * (?:\\.[\\w-]+)*: 兼容 JWE 等更多部分
+     * $              : 结束
+     */
+    private static final Pattern PATTERN_JWT = Pattern.compile("^[\\w-]+\\.[\\w-]+(?:\\.[\\w-]*)*(?:\\.[\\w-]+)*$");
+
+    // ================== 公开方法 ==================
+
+    /**
+     * 根据 HTTP Authorization 头判断 Token 类型
      */
     public static TokenType fromString(final String authorization) {
         if (authorization == null || authorization.isEmpty()) {
             return null;
         }
 
-        // 1. 预处理：去除首尾空格 (防呆设计)
         final String raw = authorization.trim();
 
-        // 2. 判断 Basic Auth
-        // 格式: Basic <base64>
+        // 1. Basic Auth
         if (isPrefix(raw, PREFIX_BASIC)) {
             return BASIC;
         }
 
-        // 3. 判断 DPoP
-        // 格式: DPoP <token>
+        // 2. DPoP
         if (isPrefix(raw, PREFIX_DPOP)) {
             return DPOP;
         }
 
-        // 4. 判断 Bearer 体系 (JWT / AES / OPAQUE)
-        // 格式: Bearer <token>
+        // 3. Bearer 体系 (核心分流)
         if (isPrefix(raw, PREFIX_BEARER)) {
             final String tokenPart = raw.substring(PREFIX_BEARER.length()).trim();
             if (tokenPart.isEmpty()) {
@@ -140,70 +90,56 @@ public enum TokenType {
             return sniffBearerType(tokenPart);
         }
 
-        // 5. 未知格式
         return null;
     }
 
-    /**
-     * <pre>
-     * 🟢 内部工具：前缀匹配
-     *
-     * 忽略大小写地检查字符串前缀，以兼容非标准的客户端实现
-     * (例如部分客户端可能发 "bearer " 小写)。
-     * </pre>
-     *
-     * @param content 待检查的内容
-     * @param prefix  预期的前缀
-     * @return true 如果 content 以 prefix 开头 (无视大小写)
-     */
+    // ================== 私有核心逻辑 ==================
+
     private static boolean isPrefix(final String content, final String prefix) {
         return content.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 
     /**
-     * <pre>
-     * 🟢 内部工具：Bearer 载荷深度嗅探
-     *
-     * 用于区分Bearer后面的字符串具体是哪种 Token。
-     *
-     * 1. 🕵️‍♂️ 嗅探策略
-     *    - 优先检查 AES 前缀 ({@link #TOKEN_PREFIX_AES}) -> {@link #AES}。
-     *    - 检查 JWT 结构特征 (必须包含 2 个点号 `.`) -> {@link #JWT}。
-     *    - 否则兜底为 {@link #AES} (视作不透明字符串或自定义加密串)。
-     *
-     * 2. ⚠️ 注意事项
-     *    - 兜底策略选择 AES 是基于 Zero 系统假设。
-     *    - 如果引入了 Opaque Token (Redis 存储)，此处可能需要调整返回 {@link #OPAQUE}。
-     * </pre>
-     *
-     * @param token 去除 Bearer 前缀后的纯 Token 字符串
-     * @return 最可能的 TokenType
+     * 🟢 深度嗅探 Bearer 载荷
      */
     private static TokenType sniffBearerType(final String token) {
-        // 🟢 优先判断 AES (基于特定前缀)
-        // 你的 TokenAESGenerator 定义了 "r2a_" 前缀
+        // Step 1: ⚡ 绝对特征匹配 (AES 前缀)
+        // 如果以 "r2a_" 开头，100% 是 AES，无需后续检查
         if (token.startsWith(TOKEN_PREFIX_AES)) {
             return AES;
         }
 
-        // 🟢 判断 JWT (标准：Header.Payload.Signature，共 2 个点)
-        int dotCount = 0;
-        for (int i = 0; i < token.length(); i++) {
-            if (token.charAt(i) == '.') {
-                dotCount++;
-                if (dotCount > 2) { // 超过2个点肯定不是标准 JWT
-                    break;
-                }
-            }
-        }
-        if (dotCount == 2) {
+        // Step 2: ⚡ JWT 魔术头匹配 (快速通道)
+        // 99.9% 的 JWT Header 都是 {"alg":... 开头
+        // Base64Url 编码后必然以 "eyJ" 开头
+        if (token.startsWith(MAGIC_JWT)) {
             return JWT;
         }
 
-        // 🟢 剩下的归类为 OPAQUE (或者默认为 AES，取决于你的业务约定)
-        // 考虑到你的 Gateway 逻辑中 Bearer 分流给了 AES，这里如果无法识别为 JWT 且无 AES 前缀，
-        // 可以返回 OPAQUE 或 null。
-        // *如果你的 AES Token 有旧版本没有 r2a_ 前缀，可以在这里做兼容逻辑*
-        return AES; // 或者 OPAQUE
+        // Step 3: 🔍 JWT 结构正则校验 (兼容通道)
+        // 处理那些不以 "eyJ" 开头（极少见，如压缩 Header）但符合 JWT 结构的 Token
+        // 或者处理你提供的这种 "缺少签名部分" 的 Token
+        if (isJwtStructure(token)) {
+            return JWT;
+        }
+
+        // Step 4: 🏳️ 兜底策略
+        // 既没有 AES 前缀，也不像 JWT，那它只能是 AES (自定义加密串) 或 Opaque
+        return AES;
+    }
+
+    /**
+     * 检查是否符合 JWT 的字符集和结构
+     * 能够识别：
+     * - a.b.c (标准 JWT)
+     * - a.b   (无签名 JWT / 截断 JWT) -> 你的例子符合这个
+     * - a.b.c.d.e (JWE)
+     */
+    private static boolean isJwtStructure(final String token) {
+        // 性能优化：先简单判断是否有点号，没有点号肯定不是 JWT，避免正则开销
+        if (token.indexOf('.') == -1) {
+            return false;
+        }
+        return PATTERN_JWT.matcher(token).matches();
     }
 }
