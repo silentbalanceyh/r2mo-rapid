@@ -3,6 +3,7 @@ package io.r2mo.jaas.token;
 import cn.hutool.core.util.StrUtil;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.session.UserCache;
+import io.r2mo.typed.common.Kv;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -58,6 +59,10 @@ public interface TokenBuilder {
      * @return 用户ID
      */
     default String accessOf(final String token) {
+        return null;
+    }
+
+    default Kv<String, TokenType> accessOfType(final String token) {
         return null;
     }
 
