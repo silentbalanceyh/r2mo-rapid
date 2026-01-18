@@ -31,7 +31,7 @@ class UTDisplay {
     /**
      * 将时间转换为人性化显示 (年 月 天 时 分 秒)
      */
-    static String uiDate(final int integer, final TimeUnit unit) {
+    static String uiDate(final long integer, final TimeUnit unit) {
         if (integer < 0) {
             throw new IllegalArgumentException("[ R2MO ] Duration 值不可以为负数！");
         }
