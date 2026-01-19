@@ -1,4 +1,4 @@
-package io.r2mo.spring.weco;
+package io.r2mo.xync.weco;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author lang : 2025-12-09
  */
-class WeCoBuilder {
+public class WeCoBuilder {
     /**
      * 格式说明
      * <pre>
@@ -25,11 +25,10 @@ class WeCoBuilder {
      *
      * @param params  参数
      * @param headers 头部信息
-     *
      * @return 统一消息对象
      */
     @SuppressWarnings("unchecked")
-    static <T> UniMessage<T> message(final JObject params, final Map<String, Object> headers) {
+    public static <T> UniMessage<T> message(final JObject params, final Map<String, Object> headers) {
         // 1. 构造消息标识
         String id = R2MO.valueT(params, "id");
         if (StrUtil.isEmpty(id)) {
