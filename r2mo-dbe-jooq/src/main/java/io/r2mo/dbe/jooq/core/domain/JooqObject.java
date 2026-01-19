@@ -4,12 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import io.r2mo.SourceReflect;
 import io.r2mo.base.dbe.constant.OpType;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Field;
+import org.jooq.*;
 import org.jooq.Record;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 
 import java.io.Serializable;
@@ -83,6 +79,10 @@ public class JooqObject {
         return condition;
     }
 
+    public <T> void setPrimaryKey(final List<T> entities, final OpType type) {
+        entities.forEach(entity -> this.setPrimaryKey(entity, type));
+    }
+
     public <T> void setPrimaryKey(final T entity, final OpType type) {
         if (OpType.CREATE != type) {
             return;
@@ -96,7 +96,7 @@ public class JooqObject {
         final Field<?> field = this.meta.findColumn(primaryKey);
         final Object ifSet = SourceReflect.value(entity, primaryKey);
 
-        
+
         /*
          * FIX-DBE：主键自动填充，此处旧版的逻辑有问题，正常模式下应该是当主键为空时才进行填充
          * 1. 如果主键类型是 String，则生成 UUID 字符串
