@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>显示Base64编码的验证码图片</title>
+</head>
+<body>
+<h1>显示Base64编码的验证码图片</h1>
+<!-- 图片展示区域 -->
+<div>
+    <img alt="验证码图片" id="captchaImg">
+</div>
+<!-- 刷新按钮 -->
+<button onclick="loadCaptcha()">刷新验证码</button>
+
+<script>
+    // 加载验证码函数
+    function loadCaptcha() {
+        // 发起AJAX请求获取验证码数据
+        fetch('http://localhost:9002/auth/captcha')
+            .then(response => response.json())
+            .then(response => {
+                const data = response.data;
+                // 设置图片源为Base64字符串
+                document.getElementById('captchaImg').src = data.image;
+                // 如果需要存储或使用captchaKey，可以在这里进行处理
+                console.log("Captcha Key:", data.captchaKey);
+            })
+            .catch(error => console.error('Error fetching captcha:', error));
+    }
+
+    // 页面加载时自动加载一次验证码
+    window.onload = function () {
+        loadCaptcha();
+    }
+</script>
+</body>
+</html>

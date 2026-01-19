@@ -4,14 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import io.r2mo.SourceReflect;
 import io.r2mo.typed.common.Compared;
+import io.r2mo.typed.common.Kv;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
@@ -24,6 +19,11 @@ import java.util.stream.Collectors;
  * @since 2025-09-24
  */
 class UTList {
+    // 定义主键候选项
+    private static final List<String> CANDIDATE_PKS = Arrays.asList(
+        "id", "key", "pkId",
+        "uuid", "uid", "pk", "entityId", "ID"
+    );
 
     static <T> List<T> elementCombine(final List<T> oldList,
                                       final List<T> newList,
@@ -72,7 +72,6 @@ class UTList {
      * @param newList 新列表
      * @param field   用于比较的字段名
      * @param <T>     实体类型
-     *
      * @return 包含新增、更新和删除元素的 Compared
      */
     static <T> Compared<T> elementDiff(final List<T> oldList,
@@ -106,6 +105,12 @@ class UTList {
             if (!oldMap.containsKey(key)) {
                 compared.queueC().add(newEntity);
             } else {
+                // FIX：比对批量删除过程中主键丢失的问题
+                final Object oldEntity = oldMap.get(key);
+                final Kv<String, Object> valuePk = valuePrimaryKey(oldEntity);
+                if (Objects.nonNull(valuePk)) {
+                    SourceReflect.value(newEntity, valuePk.key(), valuePk.value());
+                }
                 compared.queueU().add(newEntity);
                 oldMap.remove(key); // 被匹配过的，从 oldMap 移除
             }
@@ -117,7 +122,22 @@ class UTList {
         return compared;
     }
 
-    /** 根据指定字段构建 Map */
+    private static Kv<String, Object> valuePrimaryKey(final Object entity) {
+        Objects.requireNonNull(entity);
+        return CANDIDATE_PKS.stream()
+            // 核心修改：在这里同时保留 field(名) 和 value(值)
+            .map(field -> Kv.create(field, SourceReflect.value(entity, field)))
+            // 过滤掉 value 为空的项
+            .filter(kv -> Objects.nonNull(kv.value()))
+            // 找到第一个
+            .findFirst()
+            // 如果没找到，返回 null (或者 Kv.create())
+            .orElse(null);
+    }
+
+    /**
+     * 根据指定字段构建 Map
+     */
     private static <K, V> Map<K, V> elementMap(final List<V> list, final String field) {
         final Map<K, V> map = new HashMap<>();
         for (final V item : list) {
@@ -213,7 +233,6 @@ class UTList {
      * @param entityCls 实体类 Class 对象
      * @param <K>       分组键类型（需与 field 对应值的实际类型一致）
      * @param <T>       实体类型
-     *
      * @return Map，key 为分组键，value 为该分组下的实体列表
      */
     @SuppressWarnings("unchecked")
