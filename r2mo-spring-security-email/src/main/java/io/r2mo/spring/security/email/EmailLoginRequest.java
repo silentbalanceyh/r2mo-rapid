@@ -1,5 +1,6 @@
 package io.r2mo.spring.security.email;
 
+import cn.hutool.core.util.StrUtil;
 import io.r2mo.jaas.auth.LoginID;
 import io.r2mo.jaas.auth.LoginRequest;
 import io.r2mo.spring.security.email.exception._80301Exception400EmailRequired;
@@ -8,8 +9,6 @@ import io.r2mo.typed.enums.TypeLogin;
 import io.r2mo.typed.json.JObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.Objects;
 
 /**
  * Email请求
@@ -55,10 +54,10 @@ public class EmailLoginRequest extends LoginRequest {
     }
 
     public void requestValidated() {
-        if (Objects.isNull(this.email)) {
+        if (StrUtil.isEmpty(this.email)) {
             throw new _80301Exception400EmailRequired();
         }
-        if (Objects.isNull(this.captcha)) {
+        if (StrUtil.isEmpty(this.captcha)) {
             throw new _80241Exception400PasswordRequired("captcha");
         }
     }

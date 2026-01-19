@@ -91,7 +91,6 @@ public class MemoOptions<K, V> implements Serializable {
         // 2. 处理调用者和缓存名称 (防止 name 为空)
         final String callerName = this.caller.getName();
         final String name = Objects.isNull(this.name) ? "R2MO_CACHE_DEFAULT" : this.name;
-
         // 4. 组装指纹
         // 格式示例: io.myapp.UserService://user_cache@java.lang.String=io.myapp.User/S=1000/D=60000
         return callerName + "://" + name + "@" + kType + "=" + vType;

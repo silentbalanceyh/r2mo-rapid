@@ -74,6 +74,6 @@ public class WeComWaitSpring implements UniProvider.Wait<WeCoConfig.WeComCp> {
 
     @Override
     public UniMessage<String> message(final JObject params, final Map<String, Object> headers, final WeCoConfig.WeComCp config) {
-        return WeCoBuilder.message(params, headers);
+        return io.r2mo.xync.weco.WeCoBuilder.message(params, headers);
     }
 }

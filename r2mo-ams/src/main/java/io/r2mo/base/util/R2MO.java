@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  */
 public class R2MO extends _UtilNum {
 
-    public static String uiDate(final int value, final TimeUnit unit) {
+    public static String uiDate(final long value, final TimeUnit unit) {
         return UTDisplay.uiDate(value, unit);
     }
 
