@@ -4,6 +4,15 @@
 
 > For [Rachel Momo](https://www.weibo.com/maoxiaotong0216)
 
+![R2MO](docs/images/logo.jpeg)
+
+## 引导
+
+- 文档：<https://www.yuque.com/jiezizhu/r2mo>
+- 示例：<https://gitee.com/zero-ws/zero-rachel-momo>
+
+---
+
 ## 介绍
 
 此库用于统一 `spring-cloud / spring-boot` 提供相对标准化的无业务脚手架，可快速开发和实施相关项目。
@@ -144,19 +153,3 @@ ai app -n app-zero
     </dependency>
 </dependencies>
 ```
-
----
-
-### 引导文档
-
-> Spring 部分
-
-- [1.快速开始](docs/01-Environment.md)
-- [2.Domain/Entity 书写](docs/02-Domain.md)
-- [3.MyBatis-Plus / 代码生成](docs/03-Generator.md)
-- [4.异常定义](docs/04-Exception.md)
-- [5.查询引擎 DBE](docs/05-DBE.md)
-
-Service/Controller 部分的编程代码可直接参考生成代码，也可自己编写！
-
----
