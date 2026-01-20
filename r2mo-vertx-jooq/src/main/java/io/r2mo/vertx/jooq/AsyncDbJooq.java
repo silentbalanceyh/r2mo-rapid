@@ -28,8 +28,11 @@ class AsyncDbJooq<T> extends AsyncDBEAction<T> implements AsyncDb<T> {
 
         this.setter.setPrimaryKey(entity, opType);
         return switch (opType) {
-            case CREATE -> (Future<T>) this.executor().insert(entity);
-            case UPDATE -> (Future<T>) this.executor().update(entity);
+            // Fix: java.lang.Integer cannot be cast to class xxxx
+            case CREATE -> ((Future<Integer>) this.executor().insert(entity))
+                .map(row -> entity);
+            case UPDATE -> ((Future<T>) this.executor().update(entity))
+                .map(row -> entity);
             case REMOVE -> Future.succeededFuture(this.dbe.remove(entity));
             case SAVE -> Future.succeededFuture(this.dbe.save(entity));
         };

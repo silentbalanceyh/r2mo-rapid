@@ -6,11 +6,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,7 +24,6 @@ public class OAuth2AccessTokenHelper {
      * 从 JWT 中提取主体标识
      *
      * @param jwt JWT 对象
-     *
      * @return 主体标识
      */
     public static String extractPrincipalFromJwt(final Jwt jwt) {
@@ -43,7 +38,6 @@ public class OAuth2AccessTokenHelper {
      * 从 Opaque Token 中提取主体标识
      *
      * @param principal OAuth2AuthenticatedPrincipal 对象
-     *
      * @return 主体标识
      */
     public static String extractPrincipalFromOpaque(final OAuth2AuthenticatedPrincipal principal) {
@@ -59,7 +53,6 @@ public class OAuth2AccessTokenHelper {
      * 将权限范围转换为 SimpleGrantedAuthority 列表
      *
      * @param scopes 权限范围集合
-     *
      * @return SimpleGrantedAuthority 列表
      */
     public static List<SimpleGrantedAuthority> toAuthorities(final Set<String> scopes) {
@@ -73,7 +66,6 @@ public class OAuth2AccessTokenHelper {
      * 从声明中提取权限范围
      *
      * @param claim 声明对象
-     *
      * @return 权限范围集合
      */
     @SuppressWarnings("unused")
@@ -104,7 +96,6 @@ public class OAuth2AccessTokenHelper {
      * 将对象转换为字符串
      *
      * @param obj 对象
-     *
      * @return 字符串表示
      */
     public static String asString(final Object obj) {
@@ -115,7 +106,6 @@ public class OAuth2AccessTokenHelper {
      * 获取第一个非空字符串
      *
      * @param values 字符串数组
-     *
      * @return 第一个非空字符串，如果都为空则返回 null
      */
     public static String firstNonBlank(final String... values) {

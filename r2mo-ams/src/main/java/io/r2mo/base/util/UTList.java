@@ -21,8 +21,7 @@ import java.util.stream.Collectors;
 class UTList {
     // 定义主键候选项
     private static final List<String> CANDIDATE_PKS = Arrays.asList(
-        "id", "key", "pkId",
-        "uuid", "uid", "pk", "entityId", "ID"
+        "id", "key", "pkId", "uid", "pk", "ID" // 此处不考虑 uuid
     );
 
     static <T> List<T> elementCombine(final List<T> oldList,

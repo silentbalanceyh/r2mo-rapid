@@ -62,13 +62,13 @@ public interface TokenBuilder {
         return null;
     }
 
-    default Kv<String, TokenType> accessOfType(final String token) {
-        return null;
-    }
-
     String accessOf(UserAt userAt);
 
     default String refreshOf(final UserAt userAt) {
         throw new UnsupportedOperationException("[ R2MO ] 不支持的 Token 刷新操作");
+    }
+
+    default Kv<String, TokenType> tokenOf(final String token) {
+        return null;
     }
 }
