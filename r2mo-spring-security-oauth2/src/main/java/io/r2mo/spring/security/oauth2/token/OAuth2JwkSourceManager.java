@@ -11,18 +11,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.io.InputStream;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
 /**
  * JWK 密钥源管理器
- *
+ * <p>
  * 支持：
  * 1. 自动生成 RSA 密钥对（内存模式）
  * 2. 从 KeyStore 加载密钥对（文件模式）
