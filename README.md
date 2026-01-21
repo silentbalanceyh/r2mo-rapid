@@ -9,6 +9,7 @@
 ## 引导
 
 - 文档：<https://www.yuque.com/jiezizhu/r2mo>
+    - [>> 快速开始](https://www.yuque.com/jiezizhu/r2mo/pqsn1kv6a6s5otc8)
 - 示例：<https://gitee.com/zero-ws/zero-rachel-momo>
 
 ---
