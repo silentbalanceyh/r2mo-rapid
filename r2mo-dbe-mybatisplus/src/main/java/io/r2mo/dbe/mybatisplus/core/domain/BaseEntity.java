@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.r2mo.dbe.common.constant.SchemaExampleValue;
 import io.r2mo.dbe.mybatisplus.core.typehandler.TypedJObjectHandler;
 import io.r2mo.dbe.mybatisplus.core.typehandler.TypedUUIDHandler;
@@ -24,11 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Entity基类
@@ -42,14 +37,17 @@ import java.util.UUID;
  *     - updatedAt  / 更新时间
  *     - updatedBy  / 更新人
  *
- *     - enabled    / 是否启用
+ *     - active     / 是否启用
  *     - language   / 语言
  *     - version    / 版本
  *     - metadata   / 元配置
  *
- *     - appId / 所属应用
- *     - tenantId / 所属租户
+ *     - sigma      / 统一标识（双技术栈统一字段）
+ *     - appId      / 所属应用
+ *     - tenantId   / 所属租户
  * </pre>
+ * 此处追加设计 sigma，一方面是为了 Vert.x / Spring 中可以统一，另外一方面可以保证 AI 在解析过程中不会乱来，标准化
+ * 模式下更容易处理，针对此种操作追加新的Git仓库进行模型的基础标准化。
  */
 @Schema(description = "实体基类", discriminatorProperty = "className")
 @Data
@@ -66,19 +64,25 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
      * 由于此处使用了 @TableId 会导致 @TableField 失效，所以无法直接使用 TypedUUIDHandler，加上此处类型是 java.util.UUID，
      * 而 Mybatis-Plus 默认只支持 Long/String 类型的主键自定义生成策略，所以只能使用 IdType.INPUT
      */
-    @TableId(value = "id", type = IdType.INPUT)
+    @TableId(value = "ID", type = IdType.INPUT)
     private UUID id;
 
-    /** 编码 */
+    /**
+     * 编码
+     */
     @Schema(description = "编码", example = SchemaExampleValue.DEFAULT_CODE)
     private String code;
 
-    /** 创建者 */
+    /**
+     * 创建者
+     */
     @Schema(description = "创建者", example = SchemaExampleValue.DEFAULT_UUID)
     @TableField(fill = FieldFill.INSERT)
     private UUID createdBy;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     @Schema(description = "创建时间", example = SchemaExampleValue.DEFAULT_TIME)
     @TableField(fill = FieldFill.INSERT)
     @DateTimeFormat(
@@ -86,12 +90,16 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
     )
     private LocalDateTime createdAt;
 
-    /** 更新者 */
+    /**
+     * 更新者
+     */
     @Schema(description = "更新者", example = SchemaExampleValue.DEFAULT_UUID)
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private UUID updatedBy;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     @Schema(description = "更新时间", example = SchemaExampleValue.DEFAULT_TIME)
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @DateTimeFormat(
@@ -99,15 +107,23 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
     )
     private LocalDateTime updatedAt;
 
+    /**
+     * 双技术栈统一模式
+     */
     @Schema(description = "是否启用", example = SchemaExampleValue.DEFAULT_BOOL)
-    @TableField(value = "is_enabled")
-    private boolean enabled = true;
+    private boolean active = true;
 
     @Schema(description = "语言", example = SchemaExampleValue.DEFAULT_LANGUAGE)
     private String language = "zh-CN";
 
     @Schema(description = "版本号", example = SchemaExampleValue.DEFAULT_VERSION)
     private String version = "1.0.0";
+
+    /**
+     * 双技术栈统一
+     */
+    @Schema(description = "统一标识")
+    private String sigma;
 
     @Schema(description = "所属租户", example = SchemaExampleValue.DEFAULT_UUID)
     @TableField(typeHandler = TypedUUIDHandler.class)
@@ -119,11 +135,12 @@ public class BaseEntity implements BaseScope, BaseAudit, Serializable {
 
     @Schema(description = "辅助元配置", example = SchemaExampleValue.DEFAULT_METADATA)
     @TableField(jdbcType = JdbcType.CLOB, typeHandler = TypedJObjectHandler.class)
-    @JsonProperty("cMetadata")
-    private JObject cMetadata;
+    private JObject metadata;
     // ---------------- 和表无关
 
-    /** 扩展属性（不在数据库中） */
+    /**
+     * 扩展属性（不在数据库中）
+     */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @TableField(exist = false)
     @JsonIgnore
