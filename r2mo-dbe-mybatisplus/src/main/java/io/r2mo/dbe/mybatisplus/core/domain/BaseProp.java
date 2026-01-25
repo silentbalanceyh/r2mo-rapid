@@ -38,9 +38,9 @@ public class BaseProp {
             return;
         }
         baseEntity.setVersion("1.0.0");
-        baseEntity.setEnabled(Boolean.TRUE);
+        baseEntity.setActive(Boolean.TRUE);
         baseEntity.setLanguage("zh-CN");
-        baseEntity.setCMetadata(SPI.J());
+        baseEntity.setMetadata(SPI.J());
     }
 
     public static void setScope(final BaseEntity baseEntity,
@@ -209,7 +209,7 @@ public class BaseProp {
         }
         target.setLanguage(source.getLanguage());
         target.setVersion(source.getVersion());
-        target.setEnabled(source.isEnabled());
+        target.setActive(source.isActive());
 
         copyAudit(target, source);
 

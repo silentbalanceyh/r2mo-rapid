@@ -26,7 +26,7 @@ public abstract class AbstractBuilderOf<T extends BaseEntity> extends AbstractBu
     protected <R extends BaseEntity> void updateShared(final T target, final R source) {
         BaseProp.copyFull(target, source);
         BaseProp.setCode(target);
-        target.setCMetadata(SPI.J());
+        target.setMetadata(SPI.J());
         target.setId(UUID.randomUUID());
     }
 }
