@@ -12,6 +12,7 @@ import io.r2mo.typed.common.Pagination;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JArray;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.vertx.common.mapping.Poly;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
@@ -76,7 +77,18 @@ class DBExBase<T> {
     protected JsonObject mapPage(final Pagination<T> page) {
         final JsonObject response = new JsonObject();
         response.put("count", page.getCount());
-        response.put("list", R2MO.<T, JsonArray>serializeA(page.getList()));
+
+        // 使用 Poly 进行字段映射
+        final List<T> list = page.getList();
+        final JsonArray listA;
+        if (this.metadata.metaVector().hasMapping()) {
+            // 实体映射：Entity -> JsonObject (基于屏蔽和映射规则)
+            listA = Poly.<T>ofDB(this.metadata.metaEntity(), this.metadata.metaVector()).mapMany(list);
+        } else {
+            // 后备方案：标准序列化
+            listA = R2MO.<T, JsonArray>serializeA(list);
+        }
+        response.put("list", listA);
         return response;
     }
 
