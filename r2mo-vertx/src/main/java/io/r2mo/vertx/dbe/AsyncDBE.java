@@ -87,15 +87,15 @@ public abstract class AsyncDBE<QR, T, METADATA> extends AsyncDBEAggr<QR, T, META
 
     // ======================= findGroupBy (Async, Java 侧分组) =======================
     public <K> Future<Map<K, List<T>>> findGroupByAsync(final String groupBy) {
-        return this.findAllAsync().map(list -> R2MO.elementGroupBy(list, groupBy, this.entityCls));
+        return this.findAllAsync().map(list -> R2MO.elementGroupBy(groupBy,list, this.entityCls));
     }
 
     public <K> Future<Map<K, List<T>>> findGroupByAsync(final QTree criteria, final String groupBy) {
-        return this.findManyAsync(criteria).map(list -> R2MO.elementGroupBy(list, groupBy, this.entityCls));
+        return this.findManyAsync(criteria).map(list -> R2MO.elementGroupBy(groupBy,list, this.entityCls));
     }
 
     public <K> Future<Map<K, List<T>>> findGroupByAsync(final Map<String, Object> map, final String groupBy) {
-        return this.findManyAsync(map).map(list -> R2MO.elementGroupBy(list, groupBy, this.entityCls));
+        return this.findManyAsync(map).map(list -> R2MO.elementGroupBy(groupBy,list, this.entityCls));
     }
 
     public <K> Future<Map<K, List<T>>> findGroupByAsync(final JObject criteriaJ, final String groupBy) {
@@ -103,7 +103,7 @@ public abstract class AsyncDBE<QR, T, METADATA> extends AsyncDBEAggr<QR, T, META
     }
 
     public <K> Future<Map<K, List<T>>> findGroupByAsync(final String field, final Object value, final String groupBy) {
-        return this.findManyAsync(field, value).map(list -> R2MO.elementGroupBy(list, groupBy, this.entityCls));
+        return this.findManyAsync(field, value).map(list -> R2MO.elementGroupBy(groupBy,list, this.entityCls));
     }
 
     // ======================= findManyBy / findManyIn (Async) =======================
