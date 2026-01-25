@@ -180,27 +180,11 @@ public class QValue implements QLeaf {
     }
 
     private <T> T toDateInternal(final Function<Instant, T> convertFn) {
+
         if (Objects.isNull(this.value)) {
             return null;
         }
-        final Date normalized;
-        if (this.value instanceof Date) {
-            normalized = (Date) this.value;
-        } else if (this.value instanceof LocalDateTime) {
-            normalized = R2MO.parse((LocalDateTime) this.value);
-        } else if (this.value instanceof LocalDate) {
-            normalized = R2MO.parse((LocalDate) this.value);
-        } else if (this.value instanceof LocalTime) {
-            normalized = R2MO.parse((LocalTime) this.value);
-        } else if (this.value instanceof Instant) {
-            normalized = Date.from((Instant) this.value);
-        } else {
-            normalized = R2MO.parse(this.value.toString());
-        }
-
-        if (Objects.isNull(normalized)) {
-            return null;
-        }
+        final Date normalized = R2MO.parseFull(this.value.toString());
         return convertFn.apply(normalized.toInstant());
     }
 }
