@@ -390,23 +390,23 @@ class DBExCommon<T> extends DBExBase<T> {
 
     // ==================== findGroupBy 方法 ====================
     public <K> Map<K, List<T>> findGroupBy(final String groupBy) {
-        return this.dbe.findGroupBy(groupBy);
+        return this.dbe.findGroupBy(this.metadata().metaVector().mapBy(groupBy));
     }
 
     public <K> Map<K, List<T>> findGroupBy(final QTree criteria, final String groupBy) {
-        return this.dbe.findGroupBy(criteria, groupBy);
+        return this.dbe.findGroupBy(criteria, this.metadata().metaVector().mapBy(groupBy));
     }
 
     public <K> Map<K, List<T>> findGroupBy(final Map<String, Object> map, final String groupBy) {
-        return this.dbe.findGroupBy(map, groupBy);
+        return this.dbe.findGroupBy(map, this.metadata().metaVector().mapBy(groupBy));
     }
 
     public <K> Map<K, List<T>> findGroupBy(final JObject criteriaJ, final String groupBy) {
-        return this.dbe.findGroupBy(criteriaJ, groupBy);
+        return this.dbe.findGroupBy(criteriaJ, this.metadata().metaVector().mapBy(groupBy));
     }
 
     public <K> Map<K, List<T>> findGroupBy(final String field, final Object value, final String groupBy) {
-        return this.dbe.findGroupBy(field, value, groupBy);
+        return this.dbe.findGroupBy(field, value, this.metadata().metaVector().mapBy(groupBy));
     }
 
     // ==================== findMap 方法 ====================
