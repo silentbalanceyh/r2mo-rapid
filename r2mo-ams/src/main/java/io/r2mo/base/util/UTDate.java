@@ -35,6 +35,7 @@ final class UTDate {
             this.add(Iso.OFFSET_DATE);
             this.add(Iso.LOCAL_DATE);
             this.add(Iso.WEEK_DATE);
+            this.add(Iso.LOOSE_DATE); // Support yyyy-M-d
         }
     };
     private static final List<DateTimeFormatter> DATETIMES = new ArrayList<>() {
@@ -42,6 +43,7 @@ final class UTDate {
             this.add(Iso.DATE_TIME);
             this.add(Iso.INSTANT);
             this.add(Iso.RFC1123_DATE_TIME);
+            this.add(Iso.CST_INSTANT); // Support Date.toString()
             this.add(Iso.COMMON);
             this.add(Iso.READBALE);
             this.add(Iso.OFFSET_DATE_TIME);
@@ -611,6 +613,16 @@ final class UTDate {
          * 1:00:00
          */
         DateTimeFormatter TIME_FIX = DateTimeFormatter.ofPattern("H:mm:ss");
+
+        /**
+         * EEE MMM dd HH:mm:ss 'CST' yyyy
+         */
+        DateTimeFormatter CST_INSTANT = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss 'CST' yyyy", Locale.US);
+
+        /**
+         * yyyy-M-d
+         */
+        DateTimeFormatter LOOSE_DATE = DateTimeFormatter.ofPattern("yyyy-M-d", Locale.US);
 
     }
 
