@@ -28,7 +28,7 @@ class ClauseInstant extends ClauseString {
                 .apply(field, waitFor);
         } else {
             // mark = null
-            return ClauseFun.DATE_MAP.get(qValue.op().name())
+            return ClauseFun.DATE_MAP.get(qValue.op().value())
                 .apply(field, waitFor);
         }
     }
