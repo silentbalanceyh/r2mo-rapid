@@ -8,9 +8,12 @@
 
 ## 引导
 
-- 文档：<https://www.yuque.com/jiezizhu/r2mo>
+- 教程：<https://www.yuque.com/jiezizhu/r2mo>
     - [>> 快速开始](https://www.yuque.com/jiezizhu/r2mo/pqsn1kv6a6s5otc8)
+- 教程地图：<https://kumu.io/LangYu1017/zero>
 - 示例：<https://gitee.com/zero-ws/zero-rachel-momo>
+
+![R2MO-Rapid](docs/images/r2mo-rapid.png)
 
 ---
 
@@ -73,19 +76,6 @@
 ---
 
 ## 参考文档
-
-### 工程初始化
-
-最新版：![npm version](https://img.shields.io/npm/v/zero-ai.svg)
-
-```bash
-# 安装自动化工具
-npm install -g zero-ai
-# 初始化 Spring 项目脚手架
-ai spring -n app-demo
-# 初始化 Zero 项目脚手架（开发中）
-ai app -n app-zero
-```
 
 ### 使用方式
 

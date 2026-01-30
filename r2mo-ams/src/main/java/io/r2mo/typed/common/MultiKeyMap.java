@@ -43,6 +43,10 @@ public class MultiKeyMap<T> {
         this.vector.clear();
     }
 
+    public ConcurrentMap<String, T> asMap() {
+        return this.storedMap;
+    }
+
     public T get(final String key) {
         return this.storedMap.get(key);
     }
