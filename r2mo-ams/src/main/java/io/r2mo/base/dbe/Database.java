@@ -59,9 +59,6 @@ public class Database implements Serializable, JElement {
     private String driverClassName = "com.mysql.cj.jdbc.Driver";
 
     @JsonIgnore
-    private EDCrypto crypto;
-
-    @JsonIgnore
     @Accessors(fluent = true, chain = true)
     private String name;
 
