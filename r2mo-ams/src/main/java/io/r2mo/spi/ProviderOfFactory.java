@@ -6,7 +6,12 @@ import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -90,7 +95,7 @@ class ProviderOfFactory {
     static <T> T findOne(final Class<T> clazz, final String name) {
         final List<T> instances = findMany(clazz);
         if (instances.isEmpty()) {
-            log.warn("[ R2MO ] SPI 实现类未找到（按名称）: {}", clazz.getName());
+            log.warn("[ R2MO ] SPI 实现类未找到（按名称）: {} / name = `{}`", clazz.getName(), name);
             return null;
         }
         if (StrUtil.isBlank(name)) {
