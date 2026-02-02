@@ -34,11 +34,17 @@ public abstract class AbstractNormObject implements BaseScope, BaseAudit, Serial
 
     @SuppressWarnings("unchecked")
     public <T extends AbstractNormObject> T extension(final String name, final Object value) {
+        if (StrUtil.isEmpty(name) || Objects.isNull(value)) {
+            return (T) this;
+        }
         this.extension.put(name, value);
         return (T) this;
     }
 
     public Object extension(final String name) {
+        if (StrUtil.isEmpty(name)) {
+            return null;
+        }
         return this.extension.get(name);
     }
 

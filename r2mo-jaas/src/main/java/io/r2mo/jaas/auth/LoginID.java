@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -56,11 +57,17 @@ public class LoginID implements Serializable {
     }
 
     public LoginID attribute(final String name, final Object value) {
+        if (Objects.isNull(value) || Objects.isNull(name)) {
+            return this;
+        }
         this.attribute.put(name, value);
         return this;
     }
 
     public Object attribute(final String name) {
+        if (Objects.isNull(name)) {
+            return null;
+        }
         return this.attribute.get(name);
     }
 
