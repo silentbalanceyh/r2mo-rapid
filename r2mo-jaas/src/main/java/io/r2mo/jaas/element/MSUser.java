@@ -12,13 +12,22 @@ import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.domain.extension.AbstractNormObject;
 import io.r2mo.typed.enums.TypeID;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -57,18 +66,6 @@ public class MSUser extends AbstractNormObject implements Serializable {
     @Accessors(chain = true, fluent = true)
     @JsonIgnore
     private List<MSGroup> groups = new ArrayList<>();
-    @JsonIgnore
-    @Accessors(chain = true, fluent = true)
-    private ConcurrentMap<String, Object> extension = new ConcurrentHashMap<>();
-
-    public MSUser extension(final String name, final Object value) {
-        this.extension.put(name, value);
-        return this;
-    }
-
-    public Object extension(final String name) {
-        return this.extension.get(name);
-    }
 
     // 子类类型相关信息
     public Class<?> getType() {
@@ -79,6 +76,14 @@ public class MSUser extends AbstractNormObject implements Serializable {
         // 获取
         final LoginID loginId = this.idMap.getOrDefault(typeID, null);
         return Objects.nonNull(loginId) ? loginId.key() : null;
+    }
+
+    public MSUser id(final TypeID typeId, final LoginID loginId) {
+        if (Objects.isNull(typeId) || Objects.isNull(loginId)) {
+            return this;
+        }
+        this.idMap.put(typeId, loginId);
+        return this;
     }
 
     public Set<String> ids() {

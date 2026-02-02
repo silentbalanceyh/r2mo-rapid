@@ -1,12 +1,15 @@
 package io.r2mo.jaas.auth;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.r2mo.typed.enums.TypeID;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * 登录 ID 的矩阵类型的标识符
@@ -37,6 +40,9 @@ public class LoginID implements Serializable {
     private String email;
     private String mobile;
     private TypeID type;
+    @JsonIgnore
+    @Accessors(chain = true, fluent = true)
+    private ConcurrentMap<String, Object> attribute = new ConcurrentHashMap<>();
 
     /**
      * 🔥【关键修复】添加这个静态工厂方法
@@ -47,6 +53,15 @@ public class LoginID implements Serializable {
     public static LoginID fromString(final String value) {
         // 这里可以做个判断，如果是脏数据，直接返回 null
         return null;
+    }
+
+    public LoginID attribute(final String name, final Object value) {
+        this.attribute.put(name, value);
+        return this;
+    }
+
+    public Object attribute(final String name) {
+        return this.attribute.get(name);
     }
 
     public String key() {

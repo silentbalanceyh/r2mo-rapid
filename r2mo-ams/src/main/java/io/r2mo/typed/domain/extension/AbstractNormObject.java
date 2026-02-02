@@ -1,14 +1,18 @@
 package io.r2mo.typed.domain.extension;
 
 import cn.hutool.core.util.StrUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.r2mo.typed.domain.BaseAudit;
 import io.r2mo.typed.domain.BaseScope;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author lang : 2025-09-15
@@ -22,6 +26,21 @@ public abstract class AbstractNormObject implements BaseScope, BaseAudit, Serial
     private UUID createdBy;                 // 创建人
     private LocalDateTime updatedAt;        // 更新时间
     private UUID updatedBy;                 // 更新人
+    // ----------------- extension
+
+    @JsonIgnore
+    @Accessors(chain = true, fluent = true)
+    private ConcurrentMap<String, Object> extension = new ConcurrentHashMap<>();
+
+    @SuppressWarnings("unchecked")
+    public <T extends AbstractNormObject> T extension(final String name, final Object value) {
+        this.extension.put(name, value);
+        return (T) this;
+    }
+
+    public Object extension(final String name) {
+        return this.extension.get(name);
+    }
 
     @Override
     public void app(final String appId) {
