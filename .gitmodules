@@ -1,3 +1,6 @@
 [submodule "r2momo/r2mo-rapid-test"]
 	path = r2momo/r2mo-rapid-test
 	url = git@gitee.com:silentbalanceyh/r2mo-rapid-test.git
+[submodule "r2mo-spec"]
+	path = r2mo-spec
+	url = https://gitee.com/silentbalanceyh/r2mo-spec.git
