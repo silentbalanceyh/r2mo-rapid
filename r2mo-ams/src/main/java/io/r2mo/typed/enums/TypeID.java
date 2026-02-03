@@ -17,6 +17,7 @@ public enum TypeID {
     // 已完成的部分
     WECHAT,     // 微信
     WECOM,      // 企微
+    LDAP,       // LDAP
     // ----------- 待开发
     ALIPAY,     // 支付宝
     TAOBAO,     // 淘宝

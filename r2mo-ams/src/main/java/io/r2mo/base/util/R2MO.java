@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  *
  * @author lang : 2025-09-20
  */
-public class R2MO extends _UtilNum {
+public class R2MO extends _UtilProp {
 
     public static String uiDate(final long value, final TimeUnit unit) {
         return UTDisplay.uiDate(value, unit);

@@ -66,6 +66,7 @@
     <modules>
         <module>r2mo-ams</module>
         <module>r2mo-0216</module>
+        <module>r2mo-spec</module>
 
         <!-- 🌷 加密解密核心 -->
         <module>r2mo-jce</module>
