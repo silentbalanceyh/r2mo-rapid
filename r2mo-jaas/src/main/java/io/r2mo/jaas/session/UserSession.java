@@ -62,6 +62,9 @@ public class UserSession {
     }
 
     public UserAt userAtEphemeral(final MSUser user) {
+        if (Objects.isNull(user)) {
+            return null;
+        }
         // 构造
         final UserAtLogged userAt = new UserAtLogged(user.getId());
         userAt.logged(user);
