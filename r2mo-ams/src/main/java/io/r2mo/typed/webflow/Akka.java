@@ -8,11 +8,11 @@ import io.r2mo.typed.exception.web._501NotSupportException;
  * @param <T>
  */
 public interface Akka<T> {
-    default T v() {
+    default T get() {
         throw new _501NotSupportException("[ R2MO ] 异步流程不支持同步 Sync 调用！");
     }
 
-    default <V> V a() {
+    default <V> V compose() {
         throw new _501NotSupportException("[ R2MO ] 同步流程不支持异步 Async 调用！");
     }
 }

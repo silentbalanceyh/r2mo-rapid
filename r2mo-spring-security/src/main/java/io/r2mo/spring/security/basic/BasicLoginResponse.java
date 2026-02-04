@@ -26,6 +26,6 @@ public class BasicLoginResponse extends LoginResponse {
     public String getToken(final UserAt user) {
         // 该方法已被覆盖，不会调用父类方法
         return TokenBuilderManager.of().getOrCreate(TokenType.AES)
-            .accessOf(user).v();
+            .accessOf(user).get();
     }
 }

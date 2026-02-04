@@ -35,11 +35,11 @@ public class JwtLoginResponse extends LoginResponse {
 
     @Override
     public String getToken(final UserAt userAt) {
-        return MANAGER.getOrCreate(TokenType.JWT).accessOf(userAt).v();
+        return MANAGER.getOrCreate(TokenType.JWT).accessOf(userAt).get();
     }
 
     @Override
     public String getRefreshToken(final UserAt userAt) {
-        return MANAGER.getOrCreate(TokenType.JWT).refreshOf(userAt).v();
+        return MANAGER.getOrCreate(TokenType.JWT).refreshOf(userAt).get();
     }
 }

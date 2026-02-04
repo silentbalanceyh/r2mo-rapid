@@ -21,7 +21,7 @@ public class AkkaOf<T> implements Akka<T> {
     }
 
     @Override
-    public T v() {
+    public T get() {
         return this.reference;
     }
 }

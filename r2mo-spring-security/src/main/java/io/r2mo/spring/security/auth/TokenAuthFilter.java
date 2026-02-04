@@ -88,7 +88,7 @@ public class TokenAuthFilter extends OncePerRequestFilter {
          * TokenFilter 中的 JWT 的解析对 OAuth2 而言也生效，二者共享 Token 解析，但实际后续流程不一样
          */
         final TokenBuilder builder = MANAGER.getOrCreate(tokenType);
-        final String userIdStr = builder.accessOf(token).v();
+        final String userIdStr = builder.accessOf(token).get();
         if (!StringUtils.hasText(userIdStr)) {
             log.error("[ R2MO ] Token 有效但未能提取到用户 ID，type = {} / token = {}",
                 tokenType, token);
@@ -115,7 +115,7 @@ public class TokenAuthFilter extends OncePerRequestFilter {
         }
 
         // 从 UserCache 获取 UserAt
-        final UserAt userAt = this.userCache.find(userId).v();
+        final UserAt userAt = this.userCache.find(userId).get();
         // 如果 UserAt 不存在，直接放行
         if (userAt == null || !userAt.isOk()) {
             // 🔸 可选：记录日志，Token 有效但用户信息不存在

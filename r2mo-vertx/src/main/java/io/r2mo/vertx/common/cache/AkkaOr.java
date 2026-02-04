@@ -31,7 +31,7 @@ public class AkkaOr<T> implements Akka<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <V> V a() {
+    public <V> V compose() {
         return (V) this.reference;
     }
 

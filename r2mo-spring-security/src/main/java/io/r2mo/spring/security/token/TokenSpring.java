@@ -22,7 +22,7 @@ public abstract class TokenSpring {
         if (Objects.isNull(userWait)) {
             return AkkaOf.of((String) null);
         }
-        final UUID userId = userWait.v();
+        final UUID userId = userWait.get();
         if (Objects.isNull(userId)) {
             // Token 不存在或过期
             return AkkaOf.of((String) null);

@@ -79,7 +79,7 @@ public class AESTokenRefresher {
 
         return TokenSpring.refreshOf(refreshToken,
             (loginId) -> this.tokenGenerator.tokenGenerate(loginId, null)
-        ).v();
+        ).get();
     }
 
     /**
