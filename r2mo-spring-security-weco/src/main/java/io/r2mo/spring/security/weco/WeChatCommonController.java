@@ -1,14 +1,29 @@
 package io.r2mo.spring.security.weco;
 
 import io.r2mo.base.util.R2MO;
+import io.r2mo.openapi.components.schemas.WeChatQrResponse;
+import io.r2mo.openapi.components.schemas.WeChatStatusRequest;
+import io.r2mo.openapi.components.schemas.WeChatStatusResponse;
+import io.r2mo.openapi.operations.DescAuth;
+import io.r2mo.openapi.operations.DescMeta;
 import io.r2mo.spring.security.auth.AuthService;
 import io.r2mo.spring.security.auth.TokenDynamicResponse;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.webflow.R;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 微信公众号 (WeChat) 认证控制器
@@ -17,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @Slf4j
+@Tag(name = DescAuth.group)
 public class WeChatCommonController {
 
     @Autowired
@@ -35,6 +51,19 @@ public class WeChatCommonController {
      * <p>GET /auth/wechat-qrcode</p>
      */
     @GetMapping("/auth/wechat-qrcode")
+    @Operation(
+        summary = DescAuth._auth_wechat_qrcode_summary, description = DescAuth._auth_wechat_qrcode_desc,
+        responses = {
+            @ApiResponse(
+                responseCode = DescMeta.response_code_200,
+                description = DescMeta.response_ok_json,
+                content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(name = "data", implementation = WeChatQrResponse.class)
+                )
+            )
+        }
+    )
     public R<JObject> getQrCode() {
         return R.ok(this.weChatService.getQrCode());
     }
@@ -46,6 +75,26 @@ public class WeChatCommonController {
      * @param params 请求参数 { "uuid": "..." }
      */
     @PostMapping("/auth/wechat-status")
+    @Operation(
+        summary = DescAuth._auth_wechat_status_summary, description = DescAuth._auth_wechat_status_desc,
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true, description = DescMeta.request_post,
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = @Schema(implementation = WeChatStatusRequest.class)
+            )
+        ),
+        responses = {
+            @ApiResponse(
+                responseCode = DescMeta.response_code_200,
+                description = DescMeta.response_ok_json,
+                content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(name = "data", implementation = WeChatStatusResponse.class)
+                )
+            )
+        }
+    )
     public R<JObject> checkStatus(@RequestBody final JObject params) {
         final String uuid = R2MO.valueT(params, "uuid");
         return R.ok(this.weChatService.checkStatus(uuid));

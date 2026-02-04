@@ -1,11 +1,23 @@
 package io.r2mo.spring.security.weco;
 
+import io.r2mo.openapi.components.schemas.WeComInitResponse;
+import io.r2mo.openapi.components.schemas.WeComQrResponse;
+import io.r2mo.openapi.operations.DescAuth;
+import io.r2mo.openapi.operations.DescMeta;
 import io.r2mo.spi.SPI;
 import io.r2mo.spring.security.weco.exception._80553Exception401WeComAuthFailure;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.webflow.R;
 import io.r2mo.xync.weco.wecom.WeComIdentify;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +31,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Slf4j
+@Tag(
+    name = DescAuth.group,
+    description = DescAuth.description
+)
 public class WeComCommonController {
 
     private static final String COOKIE_NAME = "R2MO_WECOM_COOKIE";
@@ -26,6 +42,29 @@ public class WeComCommonController {
     private WeComService weComService;
 
     @GetMapping("/auth/wecom-init")
+    @Operation(
+        summary = DescAuth._auth_wecom_init_summary,
+        description = DescAuth._auth_wecom_init_desc,
+        parameters = {
+            @Parameter(
+                name = "targetUrl",
+                description = DescAuth.P.targetUrl,
+                in = ParameterIn.QUERY,
+                example = "https://console.r2mo.io"
+            )
+        },
+        responses = {
+            @ApiResponse(
+                responseCode = DescMeta.response_code_200,
+                description = DescMeta.response_ok_json,
+                content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    // 关联之前定义的 Response 结构
+                    schema = @Schema(name = "data", implementation = WeComInitResponse.class)
+                )
+            )
+        }
+    )
     public R<JObject> init(@RequestParam("targetUrl") final String targetUrl, final HttpServletResponse response) {
         /*
          * 返回结果
@@ -43,6 +82,41 @@ public class WeComCommonController {
      * <p>POST /auth/wecom-login</p>
      */
     @GetMapping("/auth/wecom-login")
+    @Operation(
+        summary = DescAuth._auth_wecom_login_summary,
+        description = DescAuth._auth_wecom_login_desc,
+        parameters = {
+            @Parameter(
+                name = "code",
+                description = DescAuth.P.code,
+                in = ParameterIn.QUERY,
+                required = true,
+                example = "ww_auth_code_123456"
+            ),
+            @Parameter(
+                name = "state",
+                description = DescAuth.P.state,
+                in = ParameterIn.QUERY,
+                required = true,
+                example = "e1eea04ed597465c833418d4cdc9373b"
+            )
+        },
+        responses = {
+            @ApiResponse(
+                // ✅ 重点：标注为 302 重定向
+                responseCode = DescMeta.response_code_302,
+                description = DescAuth.P.targetUrl,
+                content = @Content(
+                    // 这里的 String 是重定向的目标 URL，通常表现为纯文本或 HTML
+                    mediaType = MediaType.TEXT_HTML,
+                    schema = @Schema(
+                        type = "string",
+                        example = "https://console.r2mo.io/dashboard?token=eyJhbGciOiJIUz..."
+                    )
+                )
+            )
+        }
+    )
     public void login(@RequestParam("code") final String code,  // 2. 参数直接从 URL 里的 code 取
                       @RequestParam("state") final String state,
                       final HttpServletResponse response // 3. 引入 Response 对象用于重定向
@@ -75,6 +149,30 @@ public class WeComCommonController {
      * <p>GET /auth/wecom-qrcode</p>
      */
     @GetMapping("/auth/wecom-qrcode")
+    @Operation(
+        summary = DescAuth._auth_wecom_qrcode_summary,
+        description = DescAuth._auth_wecom_qrcode_desc,
+        parameters = {
+            @Parameter(
+                name = "state",
+                description = DescAuth.P.state,
+                in = ParameterIn.QUERY,
+                required = true,
+                example = "e1eea04ed597465c833418d4cdc9373b"
+            )
+        },
+        responses = {
+            @ApiResponse(
+                responseCode = DescMeta.response_code_200,
+                description = DescMeta.response_ok_json,
+                content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    // 关联之前定义的 Response 结构
+                    schema = @Schema(name = "data", implementation = WeComQrResponse.class)
+                )
+            )
+        }
+    )
     public R<JObject> getQrCode(@RequestParam("state") final String state) {
         return R.ok(this.weComService.getQrCode(state));
     }
