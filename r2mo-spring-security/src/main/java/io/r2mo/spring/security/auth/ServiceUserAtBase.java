@@ -92,7 +92,7 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
     @Override
     public UserAt loadLogged(final String identifier) {
         // 缓存中加载账号数据
-        final UserAt cached = UserSession.of().find(identifier);
+        final UserAt cached = UserSession.of().find(identifier).v();
         // 追加账号的 isOk 判断，保证有内容
         if (Objects.nonNull(cached) && cached.isOk()) {
             return cached;
@@ -113,7 +113,7 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
                                 final Duration duration) {
         final CaptchaArgs captchaArgs = CaptchaArgs.of(this.loginType(), duration);
         final String id = request.getId();
-        final String codeStored = UserCache.of().authorize(id, captchaArgs);
+        final String codeStored = UserCache.of().authorize(id, captchaArgs).v();
         if (Objects.isNull(codeStored)) {
             return false;
         }

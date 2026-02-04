@@ -30,6 +30,6 @@ public class WeCoSessionSpring implements WeCoSession {
     @Override
     public String get(final String cacheKey, final Duration expiredAt) {
         final CaptchaArgs captchaArgs = CaptchaArgs.of(TypeLogin.ID_WECHAT, expiredAt);
-        return UserCache.of().authorize(cacheKey, captchaArgs);
+        return UserCache.of().authorize(cacheKey, captchaArgs).v();
     }
 }

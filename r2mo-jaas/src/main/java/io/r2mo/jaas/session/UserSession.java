@@ -3,6 +3,7 @@ package io.r2mo.jaas.session;
 import io.r2mo.jaas.element.MSEmployee;
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.typed.exception.web._401UnauthorizedException;
+import io.r2mo.typed.webflow.Akka;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -49,16 +50,13 @@ public class UserSession {
         return INSTANCE;
     }
 
-    public UserContext context(final MSUser user, final List<MSEmployee> employee) {
+    public Akka<UserContext> context(final MSUser user, final List<MSEmployee> employee) {
         // 构造
         final UserContextImpl context = new UserContextImpl(user.getId());
         context.logged(user).employee(employee);
 
-        // 添加
-        this.cache.login(context);
-
         log.info("[ R2MO ] 初始化账号上下文：{} / id = {}", user.getUsername(), user.getId());
-        return context;
+        return this.cache.login(context);
     }
 
     public UserAt userAtEphemeral(final MSUser user) {
@@ -74,41 +72,32 @@ public class UserSession {
         return userAt;
     }
 
-    public UserAt userAt(final UserAt userAt) {
+    public Akka<UserAt> userAt(final UserAt userAt) {
         return this.userAt(userAt, null);
     }
 
-    public UserAt userAt(final UserAt userAt, final MSEmployee employee) {
+    public Akka<UserAt> userAt(final UserAt userAt, final MSEmployee employee) {
         if (!(userAt instanceof final UserAtLogged logged)) {
             throw new _401UnauthorizedException("[ R2MO ] 无效的用户会话信息，无法设置员工信息！");
         }
         logged.employee(employee);
-        // 独占模式（更新）
-        this.cache.login(logged);
+        // 独占模式（更新）;
 
         log.info("[ R2MO ] 切换账号员工工号：{} / 员工工号 = {}", logged.logged().getUsername(),
             Objects.isNull(employee) ? "N/A" : employee.getWorkNumber());
-        return logged;
+        return this.cache.login(logged);
     }
 
-    public void logout(final MSUser user) {
-        this.cache.logout(user.getId());
+    public Akka<Void> logout(final MSUser user) {
         log.info("[ R2MO ] 登出账号：{}", user.getUsername());
+        return this.cache.logout(user.getId());
     }
 
-    public UserAt find(final String idOr) {
+    public Akka<UserAt> find(final String idOr) {
         return this.cache.find(idOr);
     }
 
-    public UserContext context(final String idOr) {
-        final UserAt userAt = this.find(idOr);
-        if (Objects.isNull(userAt)) {
-            return null;
-        }
-        return this.context(userAt.id());
-    }
-
-    public UserContext context(final UUID id) {
+    public Akka<UserContext> context(final UUID id) {
         return this.cache.context(id);
     }
 }

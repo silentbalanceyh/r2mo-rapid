@@ -22,7 +22,7 @@ public class SecurityUser {
             return null;
         }
         final String username = authentication.getName();
-        return UserSession.of().find(username);
+        return UserSession.of().find(username).v();
     }
 
     public static UserContext context() {
@@ -30,7 +30,7 @@ public class SecurityUser {
         if (Objects.isNull(userAt)) {
             return null;
         }
-        return UserSession.of().context(userAt.id());
+        return UserSession.of().context(userAt.id()).v();
     }
 
     public static String id() {

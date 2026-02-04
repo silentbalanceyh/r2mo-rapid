@@ -37,6 +37,6 @@ public class TokenDynamicResponse extends LoginResponse {
     @Override
     public String getToken(final UserAt user) {
         // 该方法已被覆盖，不会调用
-        return TokenBuilderManager.of().getOrCreate(this.determineTokenType()).accessOf(user);
+        return TokenBuilderManager.of().getOrCreate(this.determineTokenType()).accessOf(user).v();
     }
 }

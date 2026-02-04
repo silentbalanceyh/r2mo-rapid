@@ -16,7 +16,7 @@ public abstract class UserAtBaseWeChat extends ServiceUserAtBase {
     }
 
     @Override
-    public boolean isMatched(LoginRequest request, final UserAt userAt) {
+    public boolean isMatched(final LoginRequest request, final UserAt userAt) {
         return true;
     }
 }

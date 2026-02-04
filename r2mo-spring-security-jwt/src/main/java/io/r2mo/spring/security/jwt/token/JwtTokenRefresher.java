@@ -1,9 +1,9 @@
 package io.r2mo.spring.security.jwt.token;
 
 import io.r2mo.jaas.session.UserCache;
-import io.r2mo.jaas.token.TokenBuilder;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityJwt;
+import io.r2mo.spring.security.token.TokenSpring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -62,8 +62,9 @@ public class JwtTokenRefresher {
         if (Objects.isNull(jwt)) {
             return null;
         }
-        return TokenBuilder.withRefresh(refreshToken,
-            (loginId) -> this.tokenGenerator.tokenGenerate(loginId, null));
+        return TokenSpring.refreshOf(refreshToken,
+            (loginId) -> this.tokenGenerator.tokenGenerate(loginId, null)
+        ).v();
     }
 
     /**

@@ -5,6 +5,8 @@ import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.token.TokenBuilderBase;
 import io.r2mo.typed.exception.web._401UnauthorizedException;
+import io.r2mo.typed.webflow.Akka;
+import io.r2mo.typed.webflow.AkkaOf;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
@@ -28,7 +30,7 @@ public class OAuth2TokenBuilder extends TokenBuilderBase {
     }
 
     @Override
-    public String accessOf(final UserAt userAt) {
+    public Akka<String> accessOf(final UserAt userAt) {
 
         // OAuth2 Token 通常由 Authorization Server 在认证流程中生成
         // 这里从 AuthorizationService 中查询已生成的 Token
@@ -43,7 +45,7 @@ public class OAuth2TokenBuilder extends TokenBuilderBase {
             );
 
             if (authorization != null && authorization.getAccessToken() != null) {
-                return authorization.getAccessToken().getToken().getTokenValue();
+                return AkkaOf.of(authorization.getAccessToken().getToken().getTokenValue());
             }
 
             log.warn("[ R2MO ] 未找到用户 {} 的 OAuth2 Token", principal);
@@ -56,7 +58,7 @@ public class OAuth2TokenBuilder extends TokenBuilderBase {
     }
 
     @Override
-    public String refreshOf(final UserAt userAt) {
+    public Akka<String> refreshOf(final UserAt userAt) {
         final String principal = this.ensureAuthorized(userAt, MSUser::getUsername);
 
         try {
@@ -67,7 +69,7 @@ public class OAuth2TokenBuilder extends TokenBuilderBase {
             );
 
             if (authorization != null && authorization.getRefreshToken() != null) {
-                return authorization.getRefreshToken().getToken().getTokenValue();
+                return AkkaOf.of(authorization.getRefreshToken().getToken().getTokenValue());
             }
 
             log.warn("[ R2MO ] 未找到用户 {} 的 Refresh Token", principal);

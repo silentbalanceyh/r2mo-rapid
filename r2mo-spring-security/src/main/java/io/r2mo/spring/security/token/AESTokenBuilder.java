@@ -4,6 +4,8 @@ import cn.hutool.extra.spring.SpringUtil;
 import io.r2mo.jaas.element.MSUser;
 import io.r2mo.jaas.session.UserAt;
 import io.r2mo.jaas.token.TokenBuilderBase;
+import io.r2mo.typed.webflow.Akka;
+import io.r2mo.typed.webflow.AkkaOf;
 
 public class AESTokenBuilder extends TokenBuilderBase {
     private final AESTokenGenerator generator;
@@ -15,21 +17,21 @@ public class AESTokenBuilder extends TokenBuilderBase {
     }
 
     @Override
-    public String accessOf(final UserAt userAt) {
+    public Akka<String> accessOf(final UserAt userAt) {
         final MSUser logged = this.ensureAuthorized(userAt);
-        return this.generator.tokenGenerate(userAt.id().toString(), logged.token());
+        return AkkaOf.of(this.generator.tokenGenerate(userAt.id().toString(), logged.token()));
     }
 
     @Override
-    public String accessOf(final String token) {
+    public Akka<String> accessOf(final String token) {
         if (!this.generator.tokenValidate(token)) {
             return null;
         }
-        return this.generator.tokenSubject(token);
+        return AkkaOf.of(this.generator.tokenSubject(token));
     }
 
     @Override
-    public String refreshOf(final UserAt userAt) {
-        return this.refresher.tokenGenerate(userAt.id().toString());
+    public Akka<String> refreshOf(final UserAt userAt) {
+        return AkkaOf.of(this.refresher.tokenGenerate(userAt.id().toString()));
     }
 }

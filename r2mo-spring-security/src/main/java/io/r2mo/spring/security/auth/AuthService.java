@@ -22,7 +22,6 @@ public interface AuthService {
      * </pre>
      *
      * @param loginRequest 登录请求
-     *
      * @return 是否允许登录
      */
     default String authorize(final LoginRequest loginRequest, final Duration duration) {

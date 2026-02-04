@@ -1,7 +1,6 @@
 package io.r2mo.spring.security.token;
 
 import io.r2mo.jaas.session.UserCache;
-import io.r2mo.jaas.token.TokenBuilder;
 import io.r2mo.spring.security.config.ConfigSecurity;
 import io.r2mo.spring.security.config.ConfigSecurityBasic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,8 +77,9 @@ public class AESTokenRefresher {
             return null;
         }
 
-        return TokenBuilder.withRefresh(refreshToken,
-            (loginId) -> this.tokenGenerator.tokenGenerate(loginId, null));
+        return TokenSpring.refreshOf(refreshToken,
+            (loginId) -> this.tokenGenerator.tokenGenerate(loginId, null)
+        ).v();
     }
 
     /**

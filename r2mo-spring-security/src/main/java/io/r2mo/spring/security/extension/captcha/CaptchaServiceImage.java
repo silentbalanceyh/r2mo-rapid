@@ -70,7 +70,7 @@ public class CaptchaServiceImage implements CaptchaService {
         }
 
         // 从缓存中获取并自动移除（一次性使用）
-        final String storedCode = UserCache.of().authorize(captchaId, this.configCaptcha.forArguments());
+        final String storedCode = UserCache.of().authorize(captchaId, this.configCaptcha.forArguments()).v();
         if (storedCode == null) {
             return false;
         }

@@ -11,6 +11,8 @@ import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.CacheAt;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Kv;
+import io.r2mo.typed.webflow.Akka;
+import io.r2mo.typed.webflow.AkkaOf;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -47,15 +49,17 @@ public class UserAuthCache implements UserCache {
 
 
     @Override
-    public void login(final UserContext context) {
+    public Akka<UserContext> login(final UserContext context) {
         this.factory().userContext().put(context.id(), context);
         this.cacheVector(context.logged());
+        return AkkaOf.of(context);
     }
 
     @Override
-    public void login(final UserAt userAt) {
+    public Akka<UserAt> login(final UserAt userAt) {
         this.factory().userAt().put(userAt.id(), userAt);
         this.cacheVector(userAt.logged());
+        return AkkaOf.of(userAt);
     }
 
     private void cacheVector(final MSUser user) {
@@ -64,24 +68,25 @@ public class UserAuthCache implements UserCache {
     }
 
     @Override
-    public void logout(final UUID userId) {
+    public Akka<Void> logout(final UUID userId) {
         this.factory().userAt().remove(userId);
         this.factory().userContext().remove(userId);
         // 登出时可能需要清理相关的 Token 缓存，但这通常依赖 Token 自身的过期
         // 或者需要维护反向映射 (UserId -> TokenSet) 才能高效清理
         // 暂时忽略，依赖 TTL
+        return AkkaOf.of();
     }
 
     @Override
-    public UserContext context(final UUID id) {
+    public Akka<UserContext> context(final UUID id) {
         if (Objects.isNull(id)) {
             return null;
         }
-        return this.factory().userContext().find(id);
+        return AkkaOf.of(this.factory().userContext().find(id));
     }
 
     @Override
-    public UserAt find(final String idOr) {
+    public Akka<UserAt> find(final String idOr) {
         final UUID userId = this.factory().userVector().find(idOr);
         if (Objects.isNull(userId)) {
             return null;
@@ -90,86 +95,90 @@ public class UserAuthCache implements UserCache {
     }
 
     @Override
-    public UserAt find(final UUID id) {
+    public Akka<UserAt> find(final UUID id) {
         if (Objects.isNull(id)) {
             return null;
         }
-        return this.factory().userAt().find(id);
+        return AkkaOf.of(this.factory().userAt().find(id));
     }
 
     @Override
-    public void authorize(final Kv<String, String> generated, final CaptchaArgs configuration) {
+    public Akka<Void> authorize(final Kv<String, String> generated, final CaptchaArgs configuration) {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         cache.put(generated.key(), generated.value());
         log.info("[ R2MO ] 验证码/会话缓存：id = {} / code = {}", generated.key(), generated.value());
+        return AkkaOf.of();
     }
 
     @Override
-    public String authorize(final String consumerId, final CaptchaArgs configuration) {
+    public Akka<String> authorize(final String consumerId, final CaptchaArgs configuration) {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         final String generated = cache.find(consumerId);
         if (Objects.isNull(generated)) {
             return null;
         }
-        return generated;
+        return AkkaOf.of(generated);
     }
 
     @Override
-    public void authorizeKo(final String consumerId, final CaptchaArgs configuration) {
+    public Akka<Void> authorizeKo(final String consumerId, final CaptchaArgs configuration) {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         cache.remove(consumerId);
         log.info("[ R2MO ] 消费验证码：id = {}", consumerId);
+        return AkkaOf.of();
     }
 
     // --- 实现令牌部分专用缓存方法 ---
     @Override
-    public void token(final String token, final UUID userId) {
+    public Akka<Void> token(final String token, final UUID userId) {
         if (Objects.isNull(token) || Objects.isNull(userId)) {
-            return;
+            return AkkaOf.of();
         }
 
         this.factory().ofToken().put(token, userId); // 缓存 Token -> UserId
+        return AkkaOf.of();
     }
 
     @Override
-    public UUID token(final String token) {
+    public Akka<UUID> token(final String token) {
         if (Objects.isNull(token)) {
             return null;
         }
-        return this.factory().ofToken().find(token);
+        return AkkaOf.of(this.factory().ofToken().find(token));
     }
 
     @Override
-    public boolean tokenKo(final String token) {
+    public Akka<Boolean> tokenKo(final String token) {
         if (Objects.isNull(token)) {
-            return false;
+            return AkkaOf.of(false);
         }
         this.factory().ofToken().remove(token);
-        return true;
+        return AkkaOf.of(true);
     }
 
     @Override
-    public void tokenRefresh(final String refreshToken, final UUID userId) {
+    public Akka<Void> tokenRefresh(final String refreshToken, final UUID userId) {
         if (Objects.isNull(refreshToken) || Objects.isNull(userId)) {
-            return;
+            return AkkaOf.of();
         }
         this.factory().ofRefresh().put(refreshToken, userId); // 缓存 Refresh Token -> UserId
+        return AkkaOf.of();
     }
 
     @Override
-    public UUID tokenRefresh(final String refreshToken) {
+    public Akka<UUID> tokenRefresh(final String refreshToken) {
         if (Objects.isNull(refreshToken)) {
             return null;
         }
-        return this.factory().ofRefresh().find(refreshToken); // 获取 Refresh Token 对应的 UserId
+        return AkkaOf.of(this.factory().ofRefresh().find(refreshToken)); // 获取 Refresh Token 对应的 UserId
     }
 
     @Override
-    public boolean tokenRefreshKo(final String refreshToken) {
+    public Akka<Boolean> tokenRefreshKo(final String refreshToken) {
         if (Objects.isNull(refreshToken)) {
-            return false;
+            return AkkaOf.of(false);
         }
-        return this.factory().ofRefresh().remove(refreshToken);
+        return AkkaOf.of(this.factory().ofRefresh().remove(refreshToken));
     }
     // --- 结束令牌部分专用缓存方法 ---
 }
