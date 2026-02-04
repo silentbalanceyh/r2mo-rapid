@@ -94,6 +94,7 @@
         <!-- 🌷 Spring 模块专用 -->
         <module>r2mo-spring</module>
         <module>r2mo-spring-cache</module>
+        <module>r2mo-spring-doc</module>
         <module>r2mo-spring-email</module>
         <module>r2mo-spring-excel</module>
         <module>r2mo-spring-mybatisplus</module>
@@ -101,6 +102,7 @@
         <module>r2mo-spring-junit5</module>
         <module>r2mo-spring-sms</module>
         <module>r2mo-spring-weco</module>
+        <module>r2mo-spring-template</module>
 
         <!-- 🌷 Spring Security 扩展 -->
         <module>r2mo-spring-security</module>
@@ -124,7 +126,6 @@
         <module>r2mo-boot-spring</module>
         <module>r2mo-boot-spring-default</module><!-- ☘️ Bootstrap 实现层（默认）-->
         <module>r2mo-boot-vertx</module>
-        <module>r2mo-spring-template</module>
     </modules>
     <build>
         <plugins>
@@ -275,6 +276,7 @@
             - r2mo-jce      / JCE Encryption Decryption
             - r2mo-jaas     / Java Authentication Authorization
             - r2mo-io       / Input Output
+            - r2mo-spec     / 接口规范合集
             -->
             <dependency>
                 <groupId>io.zerows</groupId>
@@ -299,6 +301,11 @@
             <dependency>
                 <groupId>io.zerows</groupId>
                 <artifactId>r2mo-io</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zerows</groupId>
+                <artifactId>r2mo-spec</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!--

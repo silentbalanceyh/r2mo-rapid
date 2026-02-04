@@ -5,6 +5,7 @@ import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.common.Kv;
 import io.r2mo.typed.exception.web._404NotFoundException;
+import io.r2mo.typed.webflow.Akka;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -58,43 +59,45 @@ public interface UserCache {
     }
 
     // ----- 账号部分专用缓存
-    void login(UserContext context);
+    Akka<UserContext> login(UserContext context);
 
-    void login(UserAt userAt);
+    Akka<UserAt> login(UserAt userAt);
 
-    void logout(UUID userId);
+    Akka<Void> logout(UUID userId);
 
-    UserContext context(UUID id);
+    Akka<UserContext> context(UUID id);
 
-    UserAt find(String idOr);
+    Akka<UserAt> find(String idOr);
 
-    UserAt find(UUID id);
+    Akka<UserAt> find(UUID id);
 
     // ----- 临时验证码（授权码）专用缓存
-    void authorize(Kv<String, String> generated, CaptchaArgs config);
+    Akka<Void> authorize(Kv<String, String> generated, CaptchaArgs config);
 
-    String authorize(String consumerId, CaptchaArgs config);
+    Akka<String> authorize(String consumerId, CaptchaArgs config);
 
-    void authorizeKo(String consumerId, CaptchaArgs config);
+    @SuppressWarnings("UnusedReturnValue")
+    Akka<Void> authorizeKo(String consumerId, CaptchaArgs config);
 
     // ----- 令牌部分专用缓存
     // --- Access Token ---
     // 存储 Access Token -> UserId 映射
-    void token(String token, UUID userId);
+    Akka<Void> token(String token, UUID userId);
 
     // 查找 Access Token 对应的 UserId
-    UUID token(String token);
+    Akka<UUID> token(String token);
 
     @SuppressWarnings("all")
-    boolean tokenKo(String token);
+    Akka<Boolean> tokenKo(String token);
 
     // --- Refresh Token ---
     // 存储 Refresh Token -> UserId 映射
-    void tokenRefresh(String refreshToken, UUID userId);
+    @SuppressWarnings("UnusedReturnValue")
+    Akka<Void> tokenRefresh(String refreshToken, UUID userId);
 
     // 查找 Refresh Token 对应的 UserId
-    UUID tokenRefresh(String refreshToken);
+    Akka<UUID> tokenRefresh(String refreshToken);
 
     @SuppressWarnings("all")
-    boolean tokenRefreshKo(String refreshToken);
+    Akka<Boolean> tokenRefreshKo(String refreshToken);
 }
