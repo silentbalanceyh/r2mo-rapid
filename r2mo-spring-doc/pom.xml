@@ -18,6 +18,10 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.zerows</groupId>
             <artifactId>r2mo-spring-security</artifactId>
         </dependency>
