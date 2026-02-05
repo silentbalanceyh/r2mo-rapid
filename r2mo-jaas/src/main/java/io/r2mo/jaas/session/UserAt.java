@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import io.r2mo.jaas.element.MSEmployee;
 import io.r2mo.jaas.element.MSUser;
@@ -27,6 +29,11 @@ import java.util.UUID;
 /**
  * @author lang : 2025-11-10
  */
+// Fix: Cannot construct instance of `io.r2mo.jaas.session.UserAt`
+// (no Creators, like default constructor, exist): abstract types either need to be mapped to concrete types,
+// have custom deserializer, or contain additional type information
+@JsonSerialize(using = UserAt.Serializer.class)
+@JsonDeserialize(using = UserAt.Deserializer.class)
 public interface UserAt extends Serializable {
 
     String ID_USER = "id";
