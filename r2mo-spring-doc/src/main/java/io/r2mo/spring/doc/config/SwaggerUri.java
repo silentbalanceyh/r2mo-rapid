@@ -12,7 +12,10 @@ public class SwaggerUri implements RequestUri {
             "/swagger-ui.html:GET",
             "/swagger-ui/**:GET",
             "/v3/api-docs:GET",
-            "/v3/api-docs/**:GET"
+            "/v3/api-docs/**:GET",
+            // --- 追加 Knife4j 必需路径 ---
+            "/doc.html:GET",          // Knife4j 入口界面
+            "/webjars/**:GET"         // Knife4j 依赖的静态资源（js/css）
         );
     }
 }

@@ -1,6 +1,7 @@
 package io.r2mo.spring.doc.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import jakarta.annotation.PostConstruct;
 import org.springdoc.core.properties.SpringDocConfigProperties;
@@ -23,9 +24,6 @@ public class SwaggerConfiguration {
         this.springDocProperties = springDocProperties;
     }
 
-    /**
-     * 在初始化时，手动将 vertxdoc 的值覆盖到 SpringDoc 内部配置中
-     */
     @PostConstruct
     public void init() {
         final var ui = this.properties.getSwaggerUi();
@@ -41,17 +39,20 @@ public class SwaggerConfiguration {
         this.swaggerUiProperties.setValidatorUrl(ui.getValidatorUrl());
 
         // 映射开启状态
-        this.springDocProperties.setApiDocs(new SpringDocConfigProperties.ApiDocs());
+        if (this.springDocProperties.getApiDocs() == null) {
+            this.springDocProperties.setApiDocs(new SpringDocConfigProperties.ApiDocs());
+        }
         this.springDocProperties.getApiDocs().setEnabled(this.properties.getApiDocs().isEnabled());
     }
 
     @Bean
     public OpenAPI customOpenAPI() {
         final var openapi = this.properties.getApiDocs();
-        final Info info = new Info();
-        info.title(openapi.getTitle());
-        info.description(openapi.getDescription());
-        info.version(openapi.getVersion());
-        return new OpenAPI().info(info);
+        return new OpenAPI()
+            .info(new Info()
+                .title(openapi.getTitle())
+                .description(openapi.getDescription())
+                .version(openapi.getVersion())
+                .contact(new Contact().name(this.properties.getTeam())));
     }
 }

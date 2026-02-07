@@ -45,7 +45,7 @@ public abstract class AbstractHStore implements HStore {
 
     private String ioYaml(final InputStream in) {
         if (Objects.isNull(in)) {
-            this.log().warn("[ R2MO ] 输入 Stream 为 null，无法解析 Yaml 内容");
+            this.log().debug("[ R2MO ] 输入 Stream 为 null，无法解析 Yaml 内容");
             return null;
         }
         final JsonNode node = Fn.jvmOr(() -> YAML.readTree(in));

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class SpringDocConfiguration {
     private final ApiDocs apiDocs = new ApiDocs();
     private final SwaggerUi swaggerUi = new SwaggerUi();
+    private final String team = "Lang.Yu @ silentbalanceyh@126.com";
 
     @Data
     public static class ApiDocs {
