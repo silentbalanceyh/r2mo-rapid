@@ -1,20 +1,31 @@
 package io.r2mo.vertx.jooq.generate;
 
 import io.r2mo.base.dbe.Database;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.enums.DatabaseType;
+import io.r2mo.vertx.jooq.generate.configuration.TypeOfJooq;
 import org.jooq.meta.clickhouse.ClickHouseDatabase;
 import org.jooq.meta.derby.DerbyDatabase;
 import org.jooq.meta.duckdb.DuckDBDatabase;
 import org.jooq.meta.firebird.FirebirdDatabase;
 import org.jooq.meta.h2.H2Database;
 import org.jooq.meta.hsqldb.HSQLDBDatabase;
-import org.jooq.meta.jaxb.*;
+import org.jooq.meta.jaxb.Configuration;
+import org.jooq.meta.jaxb.ForcedType;
+import org.jooq.meta.jaxb.Generate;
+import org.jooq.meta.jaxb.Generator;
+import org.jooq.meta.jaxb.Jdbc;
+import org.jooq.meta.jaxb.Property;
+import org.jooq.meta.jaxb.Strategy;
+import org.jooq.meta.jaxb.Target;
 import org.jooq.meta.mariadb.MariaDBDatabase;
 import org.jooq.meta.mysql.MySQLDatabase;
 import org.jooq.meta.postgres.PostgresDatabase;
 import org.jooq.meta.sqlite.SQLiteDatabase;
 import org.jooq.meta.trino.TrinoDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -113,6 +124,8 @@ public class JooqSourceConfigurer {
                     .withUnsignedTypes(false)
                     .withSyntheticPrimaryKeys("public\\..*\\.id") // 为所有 public schema 中的 id 字段生成假主键
                     .withOverridePrimaryKeys("override_primmary_key") // 假主键名称
+                    // SPI 机制加载 TypeOfJooq 实现类，获取 ForcedType 配置
+                    .withForcedTypes(this.withForcedTypes())
                 )
                 .withGenerate(new Generate()
                     .withDaos(true)
@@ -130,8 +143,19 @@ public class JooqSourceConfigurer {
                     .withName(Objects.requireNonNull(inputConfiguration.classStrategy(),
                         "[ PLUG ] 代码生成策略类不可为 null.").getName())
                 )
-            )
-            ;
+            );
         // Generator 配置
+    }
+
+    private List<ForcedType> withForcedTypes() {
+        final List<TypeOfJooq> typeOfJooq = SPI.findMany(TypeOfJooq.class);
+        final List<ForcedType> forcedTypes = new ArrayList<>();
+        for (final TypeOfJooq type : typeOfJooq) {
+            final List<ForcedType> types = type.withForcedTypes();
+            if (Objects.nonNull(types)) {
+                forcedTypes.addAll(types);
+            }
+        }
+        return forcedTypes;
     }
 }

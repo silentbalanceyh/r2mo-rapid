@@ -30,5 +30,15 @@
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams</artifactId>
         </dependency>
+        <!--
+        Source: https://mvnrepository.com/artifact/org.jetbrains/annotations
+        Version: 26.0.2-1
+        Jetbrains 相关依赖不纳入 Rachel Momo 范畴
+        -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>26.0.2-1</version>
+        </dependency>
     </dependencies>
 </project>

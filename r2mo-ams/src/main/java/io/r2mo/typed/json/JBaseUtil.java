@@ -1,9 +1,16 @@
 package io.r2mo.typed.json;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -15,7 +22,19 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.r2mo.base.dbe.Database;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Ref;
-import io.r2mo.typed.json.jackson.*;
+import io.r2mo.typed.json.jackson.BigNumberSerializer;
+import io.r2mo.typed.json.jackson.DatabaseDeserializer;
+import io.r2mo.typed.json.jackson.DatabaseSerializer;
+import io.r2mo.typed.json.jackson.JArrayDeserializer;
+import io.r2mo.typed.json.jackson.JArraySerializer;
+import io.r2mo.typed.json.jackson.JObjectDeserializer;
+import io.r2mo.typed.json.jackson.JObjectSerializer;
+import io.r2mo.typed.json.jackson.JacksonRegistry;
+import io.r2mo.typed.json.jackson.MultiLocalDateTimeDeserializer;
+import io.r2mo.typed.json.jackson.RefDeserializer;
+import io.r2mo.typed.json.jackson.RefSerializer;
+import io.r2mo.typed.json.jackson.StringDateDeserializer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -31,6 +50,7 @@ import java.util.UUID;
  *
  * @author lang : 2025-09-07
  */
+@Slf4j
 class JBaseUtil {
     /**
      * Jackson 全局命名与大小写策略说明（为啥要这么配 & 有啥好处） ✨
@@ -221,7 +241,20 @@ class JBaseUtil {
          */
         moduleJson.addSerializer(Database.class, new DatabaseSerializer());
         moduleJson.addDeserializer(Database.class, new DatabaseDeserializer());
+
+        // 提取 JacksonRegistry
+        final List<JacksonRegistry> registryList = SPI.findMany(JacksonRegistry.class);
+        log.info("[ R2MO ] 加载到 {} 个 JacksonRegistry 实现类", registryList.size());
+        final List<Module> afterModules = new ArrayList<>();
+        for (final JacksonRegistry registry : registryList) {
+            // SimpleModule 形式的模块，直接注册
+            registry.afterBootstrap(moduleJson);
+            // 追加的 Module
+            afterModules.addAll(registry.afterModules());
+        }
         modules.add(moduleJson);
+        // After Modules
+        modules.addAll(afterModules);
         return modules;
     }
 
