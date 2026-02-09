@@ -6,7 +6,11 @@ import io.r2mo.spring.security.basic.BasicSpringAuthenticator;
 import io.r2mo.spring.security.extension.RequestUri;
 import io.r2mo.spring.security.extension.SpringAuthenticator;
 import io.r2mo.spring.security.extension.handler.SecurityHandler;
-import io.r2mo.spring.security.extension.valve.*;
+import io.r2mo.spring.security.extension.valve.RequestValve;
+import io.r2mo.spring.security.extension.valve.RequestValveAuth;
+import io.r2mo.spring.security.extension.valve.RequestValveIgnore;
+import io.r2mo.spring.security.extension.valve.RequestValveStatic;
+import io.r2mo.spring.security.extension.valve.RequestValveSwagger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -63,6 +67,8 @@ public class SecurityWebConfiguration {
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
+    // 👇 关键：检测是否存在 OAuth2 的核心类
+    @org.springframework.boot.autoconfigure.condition.ConditionalOnClass(name = "org.springframework.security.oauth2.client.registration.ClientRegistration")
     public SecurityFilterChain filterOfAuthenticate(final HttpSecurity http,
                                                     final HandlerMappingIntrospector introspector) throws Exception {
         // 共享过滤器配置

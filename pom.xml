@@ -19,7 +19,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
     </properties>
-    <name>(POM) 📚️ - 🧬 - R2MO::${revision}</name>
+    <name>(POM) 📚️ - R2MO::${revision} - 🧬</name>
     <!-- License -->
     <url>https://gitee.com/silentbalanceyh/r2mo-rapid</url>
     <description>
