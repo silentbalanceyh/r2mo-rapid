@@ -93,7 +93,16 @@ class JooqField {
             // 无映射模式，直接返回 column 名称
             targetField = this.columnBy(fieldOr);
         }
-        return targetField;
+        if (Objects.nonNull(targetField)) {
+            return targetField;
+        }
+        /*
+         * FIX: 主键处理遗留模式的查找问题，旧版配置中依旧存在
+         */
+        if ("key".equals(fieldOr)) {
+            return this.nameOfColumn("id");
+        }
+        return null;
     }
 
     private String fieldBy(final String field) {
@@ -139,7 +148,6 @@ class JooqField {
      * 此处的 field 一定是 FIELD 字段, 不能是 FIELD_JSON
      *
      * @param field 输入字段
-     *
      * @return 返回对应的 COLUMN 字段
      */
     private String columnBy(final String field) {
