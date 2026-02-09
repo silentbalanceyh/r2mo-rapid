@@ -58,7 +58,7 @@ class LocalWriter {
         }
         final Path path = Paths.get(dir);
         if (Files.exists(path)) {
-            log.info("[ R2MO ] \uD83D\uDDC2\uFE0F @/目录已存在：`{}`", dir);
+            log.info("[ R2MO ] ( SIS ) \t\uD83D\uDDC2\uFE0F 目录已存在：`{}`", dir);
             return true;
         }
         Fn.jvmAt(() -> Files.createDirectories(path));
