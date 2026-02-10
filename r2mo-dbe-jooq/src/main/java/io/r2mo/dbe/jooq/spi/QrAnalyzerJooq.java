@@ -69,7 +69,7 @@ public class QrAnalyzerJooq implements QrAnalyzer<Condition> {
     public Condition where(final QTree tree, final QSorter sorter) {
         // Fix: java.lang.NullPointerException: Cannot invoke "io.r2mo.base.dbe.syntax.QTree.data()" because "tree" is null
         if (Objects.isNull(tree)) {
-            return DSL.falseCondition();
+            return DSL.trueCondition();
         }
         final JObject treeJ = tree.data();
         return JooqHelper.transform(treeJ, this.meta::findColumn);
