@@ -31,16 +31,20 @@ public abstract class TypeOfJooqBase implements TypeOfJooq {
 
     private List<String> regexCombine() {
         final List<String> expression = new ArrayList<>();
-        final Map<String, String> regexMap = this.regexMeta();
-        if (Objects.nonNull(regexMap)) {
-            for (final Map.Entry<String, String> entry : regexMap.entrySet()) {
-                final String column = entry.getKey();
-                final String table = entry.getValue();
-                if (StrUtil.isEmpty(column) || StrUtil.isEmpty(table)) {
-                    continue;
+        final List<Map<String, String>> regexListMap = this.regexMeta();
+        if (Objects.nonNull(regexListMap)) {
+            // List / 迭代
+            regexListMap.forEach(regexMap -> {
+                // Map / 迭代
+                for (final Map.Entry<String, String> entry : regexMap.entrySet()) {
+                    final String column = entry.getKey();
+                    final String table = entry.getValue();
+                    if (StrUtil.isEmpty(column) || StrUtil.isEmpty(table)) {
+                        continue;
+                    }
+                    expression.add(String.format(".*\\.%s\\.%s", table, column));
                 }
-                expression.add(String.format(".*\\.%s\\.%s", table, column));
-            }
+            });
         }
         final List<String> regexField = this.regexField();
         if (Objects.nonNull(regexField)) {
@@ -67,8 +71,8 @@ public abstract class TypeOfJooqBase implements TypeOfJooq {
 
     protected abstract Class<?> withConverter();
 
-    protected Map<String, String> regexMeta() {
-        return Map.of();
+    protected List<Map<String, String>> regexMeta() {
+        return new ArrayList<>();
     }
 
     protected List<String> regexField() {
