@@ -71,6 +71,28 @@ class DBExJson<T> extends DBExFuture<T> {
         return this.findPage(this.wrap(mappedQuery));
     }
 
+    /**
+     * 父类新方法，用于重写 Page 追加 mapped() 组件的新逻辑，用于解决带有 pojo/xxx.yaml 映射文件的场景处理
+     * 正常逻辑下 {@link DBVector} 会在执行过程中做前置和后置的处理，确保输入输出都能正确映射到 JsonObject/JsonArray 上，但 mapPage 比较特殊，
+     * 它在上层会直接返回 {@link List<T>} 的对象，若不重写此方法则无法执行映射逻辑
+     * <pre>
+     *     mapping:
+     *       dbField: jsonField
+     * </pre>
+     * 上述格式中
+     * <pre>
+     *     dbField - 数据库实体字段
+     *     jsonField - 外部接口字段（即 JsonObject 中的字段）
+     * </pre>
+     *
+     * @param pageList 分页列表
+     * @return 映射后的 JsonArray
+     */
+    @Override
+    protected JsonArray mapPage(final List<T> pageList) {
+        return this.mapped().many(pageList);
+    }
+
     public JsonArray findManyJ(final String field, final Object value) {
         return this.mapped().many(this.findMany(field, value));
     }
@@ -483,12 +505,13 @@ class DBExJson<T> extends DBExFuture<T> {
     public Map<String, List<T>> findGroupBy(final JsonObject criteria, final String field) {
         // FIX-DBE: 必须先做Pojo映射转换,否则在后续流程无法分组
         final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
-        return this.findGroupBy(this.toPojoField(field),this.wrapTree(mappedCriteria));
+        return this.findGroupBy(this.wrapTree(mappedCriteria), this.toPojoField(field));
     }
-    private String toPojoField(String fieldName) {
+
+    private String toPojoField(final String fieldName) {
         // 构造一个临时的 JsonObject 来利用现有的 mapCriteria 机制
-        JsonObject tempCriteria = new JsonObject().put(fieldName, true);
-        JsonObject mappedCriteria = this.mapped().mapCriteria(tempCriteria);
+        final JsonObject tempCriteria = new JsonObject().put(fieldName, true);
+        final JsonObject mappedCriteria = this.mapped().mapCriteria(tempCriteria);
 
         // 使用更清晰的方式获取映射后的字段名
         if (!mappedCriteria.isEmpty()) {
@@ -497,18 +520,19 @@ class DBExJson<T> extends DBExFuture<T> {
         // fallback 返回原始字段名（防御性编程）
         return fieldName;
     }
-    public Map<String, JsonArray> findGroupByJ(final String field,final JsonObject criteria) {
+
+    public Map<String, JsonArray> findGroupByJ(final JsonObject criteria, final String field) {
         final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
-        return this.mapResult(this.findGroupBy(field,this.wrapTree(mappedCriteria)), this.mapped()::many);
+        return this.mapResult(this.findGroupBy(this.wrapTree(mappedCriteria), field), this.mapped()::many);
     }
 
-    public Future<Map<String, List<T>>> findGroupByAsync(final String field,final JsonObject criteria) {
+    public Future<Map<String, List<T>>> findGroupByAsync(final JsonObject criteria, final String field) {
         final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
         return this.findGroupByAsync(this.wrapTree(mappedCriteria), field);
     }
 
-    public Future<Map<String, JsonArray>> findGroupByAsyncJ(final String field,final JsonObject criteria) {
-        return this.findGroupByAsync(field,criteria)
+    public Future<Map<String, JsonArray>> findGroupByAsyncJ(final JsonObject criteria, final String field) {
+        return this.findGroupByAsync(criteria, field)
             .compose(list -> this.mapResultAsync(list, this.mapped()::many));
     }
 
