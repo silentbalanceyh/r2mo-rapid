@@ -76,12 +76,16 @@ class DBExBase<T> {
     protected JsonObject mapPage(final Pagination<T> page) {
         final JsonObject response = new JsonObject();
         response.put("count", page.getCount());
-        response.put("list", R2MO.<T, JsonArray>serializeA(page.getList()));
+        response.put("list", this.mapPage(page.getList()));
         return response;
     }
 
     protected Future<JsonObject> mapPageAsync(final Pagination<T> page) {
         return Future.succeededFuture(mapPage(page));
+    }
+
+    protected JsonArray mapPage(final List<T> result) {
+        return R2MO.<T, JsonArray>serializeA(result);
     }
 
     protected JObject wrap(final JsonObject data) {

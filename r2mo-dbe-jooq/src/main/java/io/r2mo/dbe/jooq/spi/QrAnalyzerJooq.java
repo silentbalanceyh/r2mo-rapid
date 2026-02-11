@@ -71,6 +71,9 @@ public class QrAnalyzerJooq implements QrAnalyzer<Condition> {
         if (Objects.isNull(tree)) {
             return DSL.trueCondition();
         }
+        if (!tree.isOk()) {
+            return DSL.trueCondition();
+        }
         final JObject treeJ = tree.data();
         return JooqHelper.transform(treeJ, this.meta::findColumn);
     }
@@ -83,6 +86,9 @@ public class QrAnalyzerJooq implements QrAnalyzer<Condition> {
         }
         final QTree tree = query.criteria();
         if (Objects.isNull(tree)) {
+            return DSL.trueCondition();
+        }
+        if (!tree.isOk()) {
             return DSL.trueCondition();
         }
         return this.where(tree, query.sorter());
