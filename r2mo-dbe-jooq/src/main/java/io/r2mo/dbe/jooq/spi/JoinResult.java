@@ -111,12 +111,19 @@ class JoinResult {
         fieldSet.forEach(field -> {
             // 提取值
             final Object value = record.get(field);
+            // 空值不添加到结果中
+            if (Objects.isNull(value)) {
+                return;
+            }
             final Kv<String, String> kv = this.findAlias(field);
             final String vProperty = found.vProperty(kv.value());
             if (Objects.nonNull(aliasMap) && aliasMap.containsKey(vProperty)) {
                 // 别名填充后，主实体就不会填充属性了，辅助实体就可以填充
                 final String aliasName = aliasMap.get(vProperty);
-                result.put(aliasName, value);
+                // 别名也需要检查是否已存在，避免覆盖
+                if (!result.containsKey(aliasName)) {
+                    result.put(aliasName, value);
+                }
             } else {
                 // 主表属性直接填充
                 if (!result.containsKey(vProperty)) {
@@ -131,7 +138,10 @@ class JoinResult {
         final R2Vector vector = found.vector();
         if (vector.hasMapping()) {
             final String vPropertyOut = vector.mapTo(vProperty);
-            result.put(vPropertyOut, value);
+            // 映射后的字段名也需要检查是否已存在，避免覆盖
+            if (!result.containsKey(vPropertyOut)) {
+                result.put(vPropertyOut, value);
+            }
         } else {
             // 主表字段，直接填
             result.put(vProperty, value);
