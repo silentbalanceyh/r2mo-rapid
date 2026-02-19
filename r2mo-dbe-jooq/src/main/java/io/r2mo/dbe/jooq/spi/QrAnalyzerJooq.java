@@ -15,10 +15,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author lang : 2025-10-19
@@ -60,7 +57,27 @@ public class QrAnalyzerJooq implements QrAnalyzer<Condition> {
     @Override
     public Condition where(final String field, final Object value) {
         final Field<?> column = this.meta.findColumn(field);
-        final QValue qValue = QValue.of(column.getName(), QOp.EQ, value).type(column.getType());
+
+        // 判断 value 是否是集合类型
+        final QOp operator;
+        final Object actualValue;
+
+        if (value instanceof Collection && !((Collection<?>) value).isEmpty()) {
+            // 集合类型，使用 IN 操作符
+            operator = QOp.IN;
+            actualValue = value;  // 保持集合形式
+        } else if (value instanceof Object[] && ((Object[]) value).length > 0) {
+            // 数组类型，转成 List 并使用 IN
+            operator = QOp.IN;
+            actualValue = Arrays.asList((Object[]) value);
+        } else {
+            // 单值类型，使用 EQ
+            operator = QOp.EQ;
+            actualValue = value;
+        }
+
+        final QValue qValue = QValue.of(column.getName(), operator, actualValue)
+                .type(column.getType());
         return Clause.of(qValue).where(column, qValue);
     }
 
