@@ -1,5 +1,6 @@
 package io.r2mo.base.dbe.syntax;
 
+import io.r2mo.base.dbe.constant.QCV;
 import io.r2mo.base.dbe.constant.QOp;
 import io.r2mo.base.util.R2MO;
 import lombok.extern.slf4j.Slf4j;
@@ -58,18 +59,27 @@ public class QValue implements QLeaf {
 
 
             /*
-             * 基本解析：field,op,mark
+             * 基本解析：field,op,mark 或 field,mark（时间格式，默认 op=EQ）
              *  field : 字段名
-             *  op    : 操作符
+             *  op    : 操作符（或 mark 当第二位为 day/month/year/date/datetime/time）
              *  mark  : 标记位
              */
             final String[] split = field.split(",");
             final String f = split[0].trim();
-            final QOp op = QOp.toOp(split[1].trim());
+            final String part1 = split[1].trim();
+            final QOp op;
+            final String markPart;
+            if (split.length == 2 && isTimeMark(part1)) {
+                // field,mark 格式：时间类型，默认 EQ
+                op = QOp.EQ;
+                markPart = part1;
+            } else {
+                op = QOp.toOp(part1);
+                markPart = 2 < split.length ? split[2].trim() : null;
+            }
             final QValue qValue = new QValue(f, op, value);
-            if (2 < split.length) {
-                // 标记位设置
-                qValue.mark(split[2].trim());
+            if (markPart != null) {
+                qValue.mark(markPart);
             }
             return qValue;
         } else {
@@ -85,6 +95,12 @@ public class QValue implements QLeaf {
                 return new QValue(field, QOp.EQ, value);
             }
         }
+    }
+
+    private static boolean isTimeMark(final String part) {
+        return QCV.Mark.DAY.equals(part) || QCV.Mark.MONTH.equals(part)
+            || QCV.Mark.YEAR.equals(part) || QCV.Mark.DATE.equals(part)
+            || QCV.Mark.DATETIME.equals(part) || QCV.Mark.TIME.equals(part);
     }
 
     public static QValue copyOf(final QValue qValue, final Object valueLatest) {
