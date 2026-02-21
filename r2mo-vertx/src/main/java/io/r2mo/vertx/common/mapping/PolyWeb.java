@@ -23,6 +23,9 @@ class PolyWeb extends PolyBase<JsonObject, JsonArray> {
     @Override
     public JsonObject mapOne(final JsonObject serialized) {
         final JsonObject mapped = new JsonObject();
+        if(this.vector.mapBy().isEmpty()){
+            return serialized;
+        }
         this.vector.mapBy((fieldJson, field) -> {
             final Object value = serialized.getValue(fieldJson);
             if (Objects.nonNull(value)) {
