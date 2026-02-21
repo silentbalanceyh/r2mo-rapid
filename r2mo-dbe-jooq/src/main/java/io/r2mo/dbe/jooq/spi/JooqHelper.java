@@ -149,8 +149,8 @@ class JooqHelper {
             final boolean isAnd = Boolean.parseBoolean(data.get("").toString());
             operator = isAnd ? Operator.AND : Operator.OR;
         } else {
-            // 默认使用 AND 连接（修改：原为 OR）
-            operator = Operator.AND;
+            // 默认使用 OR 连接，和 MyBatis-Plus 不同
+            operator = Operator.OR;
         }
         return operator;
     }
@@ -194,10 +194,7 @@ class JooqHelper {
 
 
         // 最终条件连接
-        if (condTree.isEmpty()) {
-            // 修改：空列表保护
-            condition = DSL.trueCondition();
-        } else if (1 == condTree.size()) {
+        if (1 == condTree.size()) {
             condition = condTree.get(0);
         } else {
             condition = (Operator.AND == operator) ? DSL.and(condTree) : DSL.or(condTree);
@@ -211,27 +208,14 @@ class JooqHelper {
         final List<Condition> conditions = new ArrayList<>();
         if (!tree.isEmpty()) {
             for (final String field : tree.fieldNames()) {
-                // 修改：跳过空字符串操作符
-                if ("".equals(field)) {
-                    continue;
-                }
-
                 final Object value = tree.get(field);
                 if (!UT.isJObject(value)) {
                     // 跳过，不处理非 tree 类型子节点
                     continue;
                 }
 
-                try {
-                    // 合法基础语法树解析
-                    final Condition subCondition = transformTree(UT.toJObject(value), columnFn, prefixFn);
-                    // 修改：只添加非 null 的条件
-                    if (Objects.nonNull(subCondition)) {
-                        conditions.add(subCondition);
-                    }
-                } catch (Exception ex) {
-                    log.error("[ R2MO ] 处理嵌套字段 {} 时出错，已跳过: {}", field, ex.getMessage());
-                }
+                // 合法基础语法树解析
+                conditions.add(transformTree(UT.toJObject(value), columnFn, prefixFn));
             }
         }
         return conditions;
@@ -256,13 +240,6 @@ class JooqHelper {
 
             // 函数 columnFn 调用 -> 得到之后绑定类型
             final Field<?> columnField = columnFn.apply(qValue.field());
-
-            // 修改：检查 columnField 是否为 null
-            if (Objects.isNull(columnField)) {
-                log.warn("[ R2MO ] 字段 {} 在表中不存在，无法构建条件", field);
-                return null;
-            }
-
             // <-- type 绑定
             qValue.type(columnField.getType());
 
@@ -300,7 +277,6 @@ class JooqHelper {
         final List<Condition> conditions = new ArrayList<>();
 
         for (final String field : filters.fieldNames()) {
-            // 跳过空字符串操作符
             if ("".equals(field)) {
                 continue;
             }
@@ -308,26 +284,9 @@ class JooqHelper {
             /* 从 JObject 中提取值信息 */
             final Object value = filters.get(field);
 
-            try {
-                final Condition item = transform(field, value, columnFn, prefixFn);
-                // 修改：只添加非 null 的条件
-                if (Objects.nonNull(item)) {
-                    conditions.add(item);
-                } else {
-                    log.warn("[ R2MO ] 字段 {} 无法转换为有效条件，已跳过", field);
-                }
-            } catch (Exception ex) {
-                // 修改：异常保护，单个字段失败不影响整体
-                log.error("[ R2MO ] 处理字段 {} 时出错，已跳过: {}", field, ex.getMessage());
-            }
+            final Condition item = transform(field, value, columnFn, prefixFn);
+            conditions.add(item);
         }
-
-        // 修改：空列表保护，避免生成 WHERE false
-        if (conditions.isEmpty()) {
-            log.warn("[ R2MO ] 条件列表为空，返回 trueCondition");
-            return DSL.trueCondition();
-        }
-
         return (Operator.AND == operator) ? DSL.and(conditions) : DSL.or(conditions);
     }
 }
