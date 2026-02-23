@@ -45,7 +45,6 @@ class WeChatActionQrCode extends WeChatAction implements WeCoAction<Void> {
      * </pre>
      *
      * @param request 封装了过期时长的 UniMessage 请求。
-     *
      * @return 包含二维码链接和 UUID 的 UniResponse。
      * @throws Exception 微信API调用失败或参数缺失。
      */
@@ -60,7 +59,6 @@ class WeChatActionQrCode extends WeChatAction implements WeCoAction<Void> {
         final WxMpQrCodeTicket ticket = this.service().getQrcodeService().qrCodeCreateTmpTicket(uuid, expireSeconds);
         final String qrUrl = this.service().getQrcodeService().qrCodePictureUrl(ticket.getTicket());
 
-        // 2. （微信必须要此步骤）存储初始状态到 SPI
         final String sessionKey = WeCoSession.keyOf(uuid);
         final Duration storeDuration = Duration.ofSeconds(expireSeconds);
         WeCoSession.of().save(

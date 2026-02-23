@@ -9,6 +9,7 @@ import io.r2mo.base.exchange.UniResponse;
 import io.r2mo.typed.annotation.SPID;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._500ServerInternalException;
+import io.r2mo.typed.webflow.Akka;
 import io.r2mo.xync.weco.WeCoAction;
 import io.r2mo.xync.weco.WeCoActionType;
 import io.r2mo.xync.weco.WeCoUtil;
@@ -43,7 +44,7 @@ public class WeChatProvider implements UniProvider {
 
     @Override
     @SuppressWarnings("all")
-    public UniResponse exchange(final UniAccount account, final UniMessage<?> request, final UniContext context) {
+    public Akka<UniResponse> exchangeAsync(final UniAccount account, final UniMessage<?> request, final UniContext context) {
         // 1. 凭证校验 (保持不变)
         if (!(account.credential() instanceof final WeChatCredential cred)) {
             throw new IllegalArgumentException("[ R2MO ] 凭证类型不匹配，需要 WeChatCredential");
@@ -72,7 +73,7 @@ public class WeChatProvider implements UniProvider {
             final WeCoAction actionImpl = WeChatAction.of(actionType, service);
 
             // 执行 Action，并返回结果
-            return actionImpl.execute(request);
+            return actionImpl.executeAsync(request);
 
         } catch (final Throwable ex) {
             log.error("[ R2MO ] WeChat 操作失败，Action: {}，错误: {}", actionType.name(), ex.getMessage(), ex);
