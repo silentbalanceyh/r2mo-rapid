@@ -118,7 +118,7 @@ class _UtilArray {
     }
 
     public static <K, T> Map<K, List<T>> elementGroupBy(
-        final List<T> entities, final String field, final Class<T> entityCls) {
+            final String field,final List<T> entities, final Class<T> entityCls) {
         return UTList.elementGroupBy(entities, field, entityCls);
     }
 

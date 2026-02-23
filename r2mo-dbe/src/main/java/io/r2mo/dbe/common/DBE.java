@@ -101,27 +101,27 @@ public abstract class DBE<QR, T, EXECUTOR> extends DBEAggr<QR, T, EXECUTOR> {
 
     public <K> Map<K, List<T>> findGroupBy(final String groupBy) {
         final List<T> entities = this.findAll();
-        return R2MO.elementGroupBy(entities, groupBy, this.entityCls);
+        return R2MO.elementGroupBy(groupBy,entities, this.entityCls);
     }
     // ---- findGroupBy
 
-    public <K> Map<K, List<T>> findGroupBy(final QTree criteria, final String groupBy) {
+    public <K> Map<K, List<T>> findGroupBy(final String groupBy,final QTree criteria) {
         final List<T> entities = this.findMany(criteria);
-        return R2MO.elementGroupBy(entities, groupBy, this.entityCls);
+        return R2MO.elementGroupBy(groupBy,entities, this.entityCls);
     }
 
-    public <K> Map<K, List<T>> findGroupBy(final Map<String, Object> map, final String groupBy) {
+    public <K> Map<K, List<T>> findGroupBy(final String groupBy,final Map<String, Object> map) {
         final List<T> entities = this.findMany(map);
-        return R2MO.elementGroupBy(entities, groupBy, this.entityCls);
+        return R2MO.elementGroupBy(groupBy,entities, this.entityCls);
     }
 
-    public <K> Map<K, List<T>> findGroupBy(final JObject criteriaJ, final String groupBy) {
-        return this.findGroupBy(QTree.of(criteriaJ), groupBy);
+    public <K> Map<K, List<T>> findGroupBy(final String groupBy,final JObject criteriaJ) {
+        return this.findGroupBy(groupBy,QTree.of(criteriaJ));
     }
 
-    public <K> Map<K, List<T>> findGroupBy(final String field, final Object value, final String groupBy) {
+    public <K> Map<K, List<T>> findGroupBy(final String groupBy,final String field, final Object value) {
         final List<T> entities = this.findMany(field, value);
-        return R2MO.elementGroupBy(entities, groupBy, this.entityCls);
+        return R2MO.elementGroupBy(groupBy,entities, this.entityCls);
     }
 
     // ---- findMap

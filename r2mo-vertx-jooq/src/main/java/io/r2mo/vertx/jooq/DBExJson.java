@@ -502,10 +502,10 @@ class DBExJson<T> extends DBExFuture<T> {
             .compose(list -> this.mapResultAsync(list, this.mapped()::many));
     }
 
-    public Map<String, List<T>> findGroupBy(final JsonObject criteria, final String field) {
+    public Map<String, List<T>> findGroupBy(final String field,final JsonObject criteria) {
         // FIX-DBE: 必须先做Pojo映射转换,否则在后续流程无法分组
         final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
-        return this.findGroupBy(this.wrapTree(mappedCriteria), this.toPojoField(field));
+        return this.findGroupBy(this.toPojoField(field),this.wrapTree(mappedCriteria));
     }
 
     private String toPojoField(final String fieldName) {
@@ -521,18 +521,18 @@ class DBExJson<T> extends DBExFuture<T> {
         return fieldName;
     }
 
-    public Map<String, JsonArray> findGroupByJ(final JsonObject criteria, final String field) {
+    public Map<String, JsonArray> findGroupByJ( final String field,final JsonObject criteria) {
         final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
-        return this.mapResult(this.findGroupBy(this.wrapTree(mappedCriteria), field), this.mapped()::many);
+        return this.mapResult(this.findGroupBy(field,this.wrapTree(mappedCriteria)), this.mapped()::many);
     }
 
-    public Future<Map<String, List<T>>> findGroupByAsync(final JsonObject criteria, final String field) {
+    public Future<Map<String, List<T>>> findGroupByAsync(final String field,final JsonObject criteria) {
         final JsonObject mappedCriteria = this.mapped().mapCriteria(criteria);
         return this.findGroupByAsync(this.wrapTree(mappedCriteria), field);
     }
 
-    public Future<Map<String, JsonArray>> findGroupByAsyncJ(final JsonObject criteria, final String field) {
-        return this.findGroupByAsync(criteria, field)
+    public Future<Map<String, JsonArray>> findGroupByAsyncJ(final String field,final JsonObject criteria) {
+        return this.findGroupByAsync(field,criteria)
             .compose(list -> this.mapResultAsync(list, this.mapped()::many));
     }
 

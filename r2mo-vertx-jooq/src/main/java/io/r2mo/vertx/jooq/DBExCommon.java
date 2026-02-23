@@ -390,23 +390,23 @@ class DBExCommon<T> extends DBExBase<T> {
 
     // ==================== findGroupBy 方法 ====================
     public <K> Map<K, List<T>> findGroupBy(final String groupBy) {
-        return this.dbe.findGroupBy(groupBy);
+        return this.dbe.findGroupBy(this.metadata().metaVector().mapBy(groupBy));
     }
 
-    public <K> Map<K, List<T>> findGroupBy(final QTree criteria, final String groupBy) {
-        return this.dbe.findGroupBy(criteria, groupBy);
+    public <K> Map<K, List<T>> findGroupBy( final String groupBy,final QTree criteria) {
+        return this.dbe.findGroupBy(this.metadata().metaVector().mapBy(groupBy),criteria);
     }
 
-    public <K> Map<K, List<T>> findGroupBy(final Map<String, Object> map, final String groupBy) {
-        return this.dbe.findGroupBy(map, groupBy);
+    public <K> Map<K, List<T>> findGroupBy(final String groupBy,final Map<String, Object> map) {
+        return this.dbe.findGroupBy(this.metadata().metaVector().mapBy(groupBy),map);
     }
 
-    public <K> Map<K, List<T>> findGroupBy(final JObject criteriaJ, final String groupBy) {
-        return this.dbe.findGroupBy(criteriaJ, groupBy);
+    public <K> Map<K, List<T>> findGroupBy(final String groupBy,final JObject criteriaJ) {
+        return this.dbe.findGroupBy(this.metadata().metaVector().mapBy(groupBy),criteriaJ);
     }
 
-    public <K> Map<K, List<T>> findGroupBy(final String field, final Object value, final String groupBy) {
-        return this.dbe.findGroupBy(field, value, groupBy);
+    public <K> Map<K, List<T>> findGroupBy(final String groupBy,final String field, final Object value) {
+        return this.dbe.findGroupBy(this.metadata().metaVector().mapBy(groupBy),field, value);
     }
 
     // ==================== findMap 方法 ====================
