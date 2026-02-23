@@ -107,6 +107,10 @@ public class WeCoUtil {
             // 状态：等待中、过期、或缓存不存在
             result.put("status", WeCoStatus.WAITING.name());
             result.put("isSuccess", false);
+        } else if (WeCoStatus.FAILURE.name().equals(status)) {
+            // 状态：失败响应
+            result.put("status", WeCoStatus.FAILURE.name());
+            result.put("isSuccess", false);
         } else {
             // 状态：成功 (缓存中存储的就是 OpenID)
             result.put("status", WeCoStatus.SUCCESS.name());

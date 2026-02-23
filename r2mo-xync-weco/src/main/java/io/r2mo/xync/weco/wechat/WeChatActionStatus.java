@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 动作：检查扫码状态 (APP_STATUS)
@@ -20,6 +21,8 @@ import java.util.Objects;
  */
 @Slf4j
 class WeChatActionStatus extends WeChatAction implements WeCoAction<String> {
+
+    private static final AtomicBoolean IS_LOG = new AtomicBoolean(Boolean.TRUE);
 
     /**
      * 构造函数：仅注入 WxMpService（Service 在此动作中非必须，但遵循架构保留）
@@ -61,7 +64,9 @@ class WeChatActionStatus extends WeChatAction implements WeCoAction<String> {
         if (Objects.isNull(actionOr)) {
             return WeCoAction.super.executeAsync(request);
         }
-        log.info("[ R2MO ] WeCoAction 行为替换：{}", actionOr.getClass());
+        if (IS_LOG.getAndSet(Boolean.FALSE)) {
+            log.info("[ R2MO ] WeCoAction 行为替换 ( Async + Sync 组合 ）：{}", actionOr.getClass());
+        }
         return actionOr.executeAsync(request);
     }
 
