@@ -2,10 +2,15 @@ package io.r2mo.xync.weco.wechat;
 
 import io.r2mo.base.exchange.UniMessage;
 import io.r2mo.base.exchange.UniResponse;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.typed.webflow.Akka;
 import io.r2mo.xync.weco.WeCoAction;
 import io.r2mo.xync.weco.WeCoUtil;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
+
+import java.util.Objects;
 
 /**
  * 动作：检查扫码状态 (APP_STATUS)
@@ -13,6 +18,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
  *
  * @author lang : 2025-12-10
  */
+@Slf4j
 class WeChatActionStatus extends WeChatAction implements WeCoAction<String> {
 
     /**
@@ -39,7 +45,6 @@ class WeChatActionStatus extends WeChatAction implements WeCoAction<String> {
      * </pre>
      *
      * @param request 封装了会话 UUID 的 UniMessage 请求。
-     *
      * @return 包含当前状态和 OpenID (如果成功) 的 UniResponse。
      */
     @Override
@@ -48,5 +53,21 @@ class WeChatActionStatus extends WeChatAction implements WeCoAction<String> {
         final JObject result = WeCoUtil.replyStatus(request);
 
         return UniResponse.success(result);
+    }
+
+    @Override
+    public Akka<UniResponse> executeAsync(final UniMessage<String> request) {
+        final WeCoAction<String> actionOr = this.findReplaced();
+        if (Objects.isNull(actionOr)) {
+            return WeCoAction.super.executeAsync(request);
+        }
+        log.info("[ R2MO ] WeCoAction 行为替换：{}", actionOr.getClass());
+        return actionOr.executeAsync(request);
+    }
+
+    @SuppressWarnings("unchecked")
+    private WeCoAction<String> findReplaced() {
+        final String cachedKey = WeCoAction.ACTION_CHAT_STATUS + "@" + this.getClass().getName();
+        return (WeCoAction<String>) WeCoAction.CC_ACTION.pick(() -> SPI.findOne(WeCoAction.class, WeCoAction.ACTION_CHAT_STATUS), cachedKey);
     }
 }

@@ -96,7 +96,10 @@ public class WeCoUtil {
         final String sessionKey = WeCoSession.keyOf(uuid);
         final Duration storeDuration = Duration.ofSeconds(expireSeconds);
         final String status = WeCoSession.of().get(sessionKey, storeDuration);
+        return replyStatus(status);
+    }
 
+    public static JObject replyStatus(final String status) {
         final JObject result = SPI.J();
 
         // 2. 判断状态

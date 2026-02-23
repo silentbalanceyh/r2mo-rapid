@@ -4,8 +4,10 @@ import io.r2mo.spi.SPI;
 import io.r2mo.typed.cc.Cc;
 import io.r2mo.typed.exception.web._501NotSupportException;
 import io.r2mo.typed.json.JObject;
+import io.r2mo.typed.webflow.Akka;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -41,7 +43,6 @@ public interface UniProvider {
      * @param account 发送账号 (e.g. 短信签名、发件人邮箱)
      * @param message 消息封装 (含接收人、内容、模版参数)
      * @param context 环境上下文 (Host/Port, 超时配置, 代理等)
-     *
      * @return 上游消息ID (Upstream Message ID) - 用于后续在日志或回调中追踪消息状态
      */
     default String send(final UniAccount account, final UniMessage<?> message, final UniContext context) {
@@ -49,17 +50,32 @@ public interface UniProvider {
     }
 
     /**
-     * 此时不再需要传入期望的返回类型，返回一个通用的 UniResponse 容器。
-     * 由调用方拿到 Response 后，自己决定如何解析 content。
+     * 此时不再需要传入期望的返回类型，返回一个通用的 UniResponse 容器，由调用方拿到 Response 后，自己决定如何解析 content。
+     * 新版本将此接口改成 Akka 容器，提供更大的灵活性，主要用于解决异步和同步流程中的差异问题，现阶段会导致异步模式下的结构问题，异步转同步通常模式
+     * <pre>
+     *     1. 异步 -> 同步
+     *        - 同步主导逻辑
+     *        - 异步直接封装
+     *        这种模式内置行为必须是同步的，不可以支持异步
+     *     2. 同步 -> 异步
+     *        - 异步主导逻辑
+     *        - 同步直接封装
+     *        这种模式内置行为必须是异步的，若内部是同步也可以直接重写同步方法来实现
+     * </pre>
      *
      * @param account 操作账号
      * @param request 请求封装
      * @param context 环境上下文
-     *
      * @return 统一响应容器
      */
-    default UniResponse exchange(final UniAccount account, final UniMessage<?> request, final UniContext context) {
+    default Akka<UniResponse> exchangeAsync(final UniAccount account, final UniMessage<?> request, final UniContext context) {
         throw new _501NotSupportException("[ R2MO ] 当前 Provider 不支持此方法！/ exchange");
+    }
+
+    // 兼容方法，保证同步依旧底层可用
+    default UniResponse exchange(final UniAccount account, final UniMessage<?> request, final UniContext context) {
+        final Akka<UniResponse> response = this.exchangeAsync(account, request, context);
+        return Objects.isNull(response) ? null : response.get();
     }
 
     /**
@@ -81,7 +97,6 @@ public interface UniProvider {
          *
          * @param params 参数
          * @param config 配置
-         *
          * @return 账号
          */
         UniAccount account(JObject params, CONFIG config);
@@ -95,7 +110,6 @@ public interface UniProvider {
          *
          * @param params 参数
          * @param config 配置
-         *
          * @return 上下文
          */
         UniContext context(JObject params, CONFIG config);
@@ -109,7 +123,6 @@ public interface UniProvider {
          *
          * @param params 参数
          * @param config 配置
-         *
          * @return 上下文
          */
         UniContext contextClient(JObject params, CONFIG config);
@@ -120,7 +133,6 @@ public interface UniProvider {
          * @param params 参数信息
          * @param header 头部信息
          * @param config 配置信息
-         *
          * @return 消息对象
          */
         UniMessage<String> message(JObject params, Map<String, Object> header,
