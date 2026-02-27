@@ -93,6 +93,13 @@ class JooqComplex {
         final Pagination<?> pagination = new Pagination<>();
 
         final SelectConditionStep<?> stepQr = this.selectFor(query.criteria());
+        /*
+         * FIX-DBE: 分页数量问题
+         * 注意，此处 stepQr 在后续计算过程中会引起条件本身的修改而导致副作用，这种模式下，会在
+         * stepQr.fetchStream() 的时候追加 SelectLimitStep 和 SelectForUpdateStep，主要是此处不可以包含
+         * Limit 参数，否则会导致 count 结果不正确，最终导致分页结果不正确
+         */
+        final SelectConditionStep<?> countQr = this.selectFor(query.criteria());
 
         final SelectLimitStep<?> stepOrders = this.selectFor(stepQr, query.sorter());
 
@@ -100,7 +107,7 @@ class JooqComplex {
 
         final List<?> totalList = stepFinal.fetchInto(this.meta.entityCls());
         pagination.setList(this.toList(totalList));
-        pagination.setCount(stepQr.fetchStream().count());
+        pagination.setCount(countQr.fetchStream().count());
         return (PAGE) pagination;
     }
 
