@@ -76,7 +76,7 @@ class JooqComplex {
         if (Objects.isNull(pager)) {
             return stepQr;
         }
-
+        
         return stepQr.offset(pager.getStart()).limit(pager.getSize());
     }
 
