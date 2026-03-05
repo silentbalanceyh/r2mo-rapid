@@ -111,7 +111,6 @@ public class DBNode implements Serializable {
      * </pre>
      *
      * @param field 字段名
-     *
      * @return 列名
      */
     public String vColumn(final String field) {
@@ -183,5 +182,11 @@ public class DBNode implements Serializable {
 
     public Class<?> typeOf(final String field) {
         return this.types.get(field);
+    }
+
+    @Override
+    public String toString() {
+        return StrUtil.format("DBNode {{ entity = {}, dao = {}, table = {}, key = {} }}",
+            this.entity, this.dao, this.table, this.key);
     }
 }
