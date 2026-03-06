@@ -67,7 +67,6 @@ final class UTDate {
      * Convert to datetime
      *
      * @param literal the literal that will be
-     *
      * @return null or valid DateTime
      */
     static LocalDateTime toDateTime(final String literal) {
@@ -95,7 +94,6 @@ final class UTDate {
      * Convert to date
      *
      * @param date input java.util.Date
-     *
      * @return parsed LocalDateTime
      */
     static LocalDateTime toDateTime(final Date date) {
@@ -110,7 +108,6 @@ final class UTDate {
      * Convert to date
      *
      * @param literal literal that will be parsed
-     *
      * @return parsed LocalDate
      */
     static LocalDate toDate(final String literal) {
@@ -144,7 +141,6 @@ final class UTDate {
      * Convert to date
      *
      * @param date input Date
-     *
      * @return LocalDate parsed
      */
     static LocalDate toDate(final Date date) {
@@ -161,7 +157,6 @@ final class UTDate {
      * Convert to time
      *
      * @param literal input literal
-     *
      * @return LocalTime parsed
      */
     static LocalTime toTime(final String literal) {
@@ -176,7 +171,6 @@ final class UTDate {
      * Convert to date
      *
      * @param date input Date
-     *
      * @return LocalTime parsed
      */
     static LocalTime toTime(final Date date) {
@@ -231,7 +225,6 @@ final class UTDate {
      * Check whether it's valid
      *
      * @param literal input literal
-     *
      * @return checked result whether it's valid date
      */
     static boolean isValid(final String literal) {
@@ -264,11 +257,12 @@ final class UTDate {
             }
             final int length = target.length();
             final String pattern = Storage.PATTERNS_MAP.get(length);
+
             if (null != pattern) {
                 final DateTimeFormatter formatter = analyzeFormatter(pattern, literal);
                 final Date converted;
                 if (10 == pattern.length()) {
-                    final LocalDate date = parseEach(target, formatter, LocalDate::parse); // LocalDate.parse(ofMain, formatter);
+                    final LocalDate date = parseEach(target, formatter, LocalDate::parse);
                     if (Objects.isNull(date)) {
                         converted = null;
                     } else {
@@ -285,7 +279,6 @@ final class UTDate {
                     }
                 } else {
                     final LocalDateTime datetime = parseEach(target, formatter, LocalDateTime::parse);
-                    // final LocalDateTime datetime = LocalDateTime.parse(ofMain, formatter);
                     if (Objects.isNull(datetime)) {
                         converted = null;
                     } else {
@@ -293,10 +286,15 @@ final class UTDate {
                         converted = parse(datetime, zoneId);
                     }
                 }
-                return converted;
-            } else {
-                return parseFull(literal);
+
+                // 只有解析成功时才返回。如果解析为 null，跳出当前块去执行下方的 parseFull
+                if (converted != null) {
+                    return converted;
+                }
             }
+
+            // 无论是因为没匹配到 pattern，还是匹配到了但解析失败，最终都由 parseFull 兜底处理
+            return parseFull(literal);
         }
     }
 
@@ -312,7 +310,6 @@ final class UTDate {
      * 「Not Recommend」directly for deep parsing
      *
      * @param literal Date/DateTime/Time literal get here.
-     *
      * @return null or valid `java.util.Date` object
      */
     static Date parseFull(final String literal) {
