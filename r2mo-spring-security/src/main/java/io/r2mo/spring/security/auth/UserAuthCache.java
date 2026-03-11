@@ -74,13 +74,13 @@ public class UserAuthCache implements UserCache {
         // 登出时可能需要清理相关的 Token 缓存，但这通常依赖 Token 自身的过期
         // 或者需要维护反向映射 (UserId -> TokenSet) 才能高效清理
         // 暂时忽略，依赖 TTL
-        return AkkaOf.of();
+        return AkkaOf.ofVoid();
     }
 
     @Override
     public Akka<UserContext> context(final UUID id) {
         if (Objects.isNull(id)) {
-            return null;
+            return AkkaOf.of((UserContext) null);
         }
         return AkkaOf.of(this.factory().userContext().find(id));
     }
@@ -89,7 +89,7 @@ public class UserAuthCache implements UserCache {
     public Akka<UserAt> find(final String idOr) {
         final UUID userId = this.factory().userVector().find(idOr);
         if (Objects.isNull(userId)) {
-            return null;
+            return AkkaOf.of();
         }
         return this.find(userId);
     }
@@ -97,7 +97,7 @@ public class UserAuthCache implements UserCache {
     @Override
     public Akka<UserAt> find(final UUID id) {
         if (Objects.isNull(id)) {
-            return null;
+            return AkkaOf.of();
         }
         return AkkaOf.of(this.factory().userAt().find(id));
     }
@@ -107,7 +107,7 @@ public class UserAuthCache implements UserCache {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         cache.put(generated.key(), generated.value());
         log.info("[ R2MO ] 验证码/会话缓存：id = {} / code = {}", generated.key(), generated.value());
-        return AkkaOf.of();
+        return AkkaOf.ofVoid();
     }
 
     @Override
@@ -115,7 +115,7 @@ public class UserAuthCache implements UserCache {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         final String generated = cache.find(consumerId);
         if (Objects.isNull(generated)) {
-            return null;
+            return AkkaOf.of();
         }
         return AkkaOf.of(generated);
     }
@@ -125,24 +125,24 @@ public class UserAuthCache implements UserCache {
         final CacheAt<String, String> cache = this.factory().ofAuthorize(configuration);
         cache.remove(consumerId);
         log.info("[ R2MO ] 消费验证码：id = {}", consumerId);
-        return AkkaOf.of();
+        return AkkaOf.ofVoid();
     }
 
     // --- 实现令牌部分专用缓存方法 ---
     @Override
     public Akka<Void> token(final String token, final UUID userId) {
         if (Objects.isNull(token) || Objects.isNull(userId)) {
-            return AkkaOf.of();
+            return AkkaOf.ofVoid();
         }
 
         this.factory().ofToken().put(token, userId); // 缓存 Token -> UserId
-        return AkkaOf.of();
+        return AkkaOf.ofVoid();
     }
 
     @Override
     public Akka<UUID> token(final String token) {
         if (Objects.isNull(token)) {
-            return null;
+            return AkkaOf.of();
         }
         return AkkaOf.of(this.factory().ofToken().find(token));
     }
@@ -159,16 +159,16 @@ public class UserAuthCache implements UserCache {
     @Override
     public Akka<Void> tokenRefresh(final String refreshToken, final UUID userId) {
         if (Objects.isNull(refreshToken) || Objects.isNull(userId)) {
-            return AkkaOf.of();
+            return AkkaOf.ofVoid();
         }
         this.factory().ofRefresh().put(refreshToken, userId); // 缓存 Refresh Token -> UserId
-        return AkkaOf.of();
+        return AkkaOf.ofVoid();
     }
 
     @Override
     public Akka<UUID> tokenRefresh(final String refreshToken) {
         if (Objects.isNull(refreshToken)) {
-            return null;
+            return AkkaOf.of();
         }
         return AkkaOf.of(this.factory().ofRefresh().find(refreshToken)); // 获取 Refresh Token 对应的 UserId
     }

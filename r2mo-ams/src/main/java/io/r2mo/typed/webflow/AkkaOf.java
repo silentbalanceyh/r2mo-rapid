@@ -12,7 +12,11 @@ public class AkkaOf<T> implements Akka<T> {
         return new AkkaOf<>(reference);
     }
 
-    public static Akka<Void> of() {
+    public static <T> Akka<T> of() {
+        return new AkkaOf<>(null);
+    }
+
+    public static Akka<Void> ofVoid() {
         return new AkkaOf<>(null);
     }
 
