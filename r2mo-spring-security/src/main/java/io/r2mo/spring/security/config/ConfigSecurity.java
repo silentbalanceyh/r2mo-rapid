@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
  * <pre>
  *     application.yml 中的格式如
  *     security:
+ *          # ApiFox 接口测试专用，生产环境请务必禁用
+ *        development:
+ *          header-name: ???
+ *          header-value: ???
  *        uri:
  *          welcome: /welcome
  *          login: /login
@@ -82,6 +86,7 @@ public class ConfigSecurity implements Serializable {
     private ConfigSecurityBasic basic = new ConfigSecurityBasic();  // 默认打开
     private ConfigSecurityScope scope;
     private ConfigSecurityCors cors = new ConfigSecurityCors();
+    private ConfigSecurityDev development;
     // OAuth2 配置（由 r2mo-spring-security-oauth2 模块使用）
     private Object oauth2;  // 避免直接依赖 OAuth2 模块
 

@@ -2,6 +2,7 @@ package io.r2mo.spring.security.extension.captcha;
 
 import io.r2mo.jaas.auth.CaptchaRequest;
 import io.r2mo.spring.security.config.ConfigSecurity;
+import io.r2mo.spring.security.config.ConfigSecurityDev;
 import io.r2mo.spring.security.exception._80222Exception401CaptchaWrong;
 import io.r2mo.spring.security.exception._80242Exception400CaptchaRequired;
 import io.r2mo.typed.exception.web._400BadRequestException;
@@ -18,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * 图形验证码校验切面
@@ -45,6 +47,20 @@ public class CaptchaValidationAspect {
         final HttpServletRequest request = this.getCurrentHttpRequest();
         if (request == null) {
             throw new IllegalStateException("[ R2MO ] 当前上下文非 Web 请求环境");
+        }
+
+        // 追加 development 的特殊验证，Apifox工具开发过程中直接跳过专用
+        final ConfigSecurityDev dev = this.configSecurity.getDevelopment();
+        if (Objects.nonNull(dev)) {
+            final String name = dev.getHeaderName();
+            final String value = dev.getHeaderValue();
+            if (Objects.nonNull(name)) {
+                final String valueInput = request.getHeader(name);
+                if (Objects.nonNull(valueInput) && valueInput.equals(value)) {
+                    // 跳过图片验证码
+                    return;
+                }
+            }
         }
 
         // 仅支持 POST + JSON
