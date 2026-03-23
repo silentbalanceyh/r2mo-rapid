@@ -25,7 +25,7 @@ public class AESTokenBuilder extends TokenBuilderBase {
     @Override
     public Akka<String> accessOf(final String token) {
         if (!this.generator.tokenValidate(token)) {
-            return null;
+            return AkkaOf.of();
         }
         return AkkaOf.of(this.generator.tokenSubject(token));
     }

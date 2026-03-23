@@ -9,6 +9,7 @@ import io.r2mo.jaas.session.UserCache;
 import io.r2mo.jaas.session.UserSession;
 import io.r2mo.spring.security.basic.BasicAuthenticateProvider;
 import io.r2mo.spring.security.exception._80204Exception401PasswordNotMatch;
+import io.r2mo.spring.security.exception._80243Exception401UserNotFound;
 import io.r2mo.spring.security.exception._80244Exception401LoginTypeWrong;
 import io.r2mo.typed.enums.TypeLogin;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,9 @@ public abstract class ServiceUserAtBase implements ServiceUserAt {
         final String identifier = request.getId();
         log.info("[ R2MO ] 登录加载：id = `{}` / provider = `{}`", identifier, this.getClass().getName());
         final UserAt userAt = this.findUser(request.getId());
+        if (Objects.isNull(userAt)) {
+            throw new _80243Exception401UserNotFound.Unauthorized("用户不存在！", identifier);
+        }
         final boolean isMatch = this.isMatched(request, userAt);
         if (!isMatch) {
             throw new _80204Exception401PasswordNotMatch.Unauthorized("密码错误！", identifier);

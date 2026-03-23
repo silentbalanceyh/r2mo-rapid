@@ -14,9 +14,10 @@ public class SecurityPass {
 //        System.out.println(actual.getClass().getName());
 //        final String pwd = "lang1017";
 //        System.out.println(encoder.encode(pwd));
-        final String secret = encoder.encode("r2mo-web-app-secret");
-        System.out.println(secret);
-        System.out.println(encoder.matches("r2mo-web-app-secret", secret));
+        System.out.println(encoder.encode("lang1017"));
+//        final String secret = encoder.encode("r2mo-web-app-secret");
+//        System.out.println(secret);
+//        System.out.println(encoder.matches("r2mo-web-app-secret", secret));
     }
 
     public static String encode(final String pwd) {
