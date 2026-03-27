@@ -1,1 +1,2 @@
 io.r2mo.spring.security.basic.BasicRequestUri
+io.r2mo.spring.security.actuator.ActuatorRequestUri
