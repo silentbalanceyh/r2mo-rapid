@@ -2,6 +2,8 @@
 
 This file gives future maintainers a set of high-hit search entry points so they do not have to blindly crawl a large repository.
 
+Start with [`mxt-r2mo-ai-agent-guide.md`](./mxt-r2mo-ai-agent-guide.md) when the requirement comes from a downstream project and the correct framework family is still unclear.
+
 ## 1. Search by Topic
 
 ### Unified abstraction layer
@@ -185,6 +187,22 @@ Why this order matters:
 2. `r2mo-dbe-mybatisplus` / `r2mo-dbe-jooq`
 3. `r2mo-vertx-jooq`
 4. Search `criteria`, `pager`, `sorter`
+
+### To inspect framework ownership with graph assistance
+
+1. Read [`mxt-r2mo-ai-agent-guide.md`](./mxt-r2mo-ai-agent-guide.md) for the final generalized agent reading protocol.
+2. Read [`code-review-graph-r2mo-analysis.md`](./code-review-graph-r2mo-analysis.md) for the latest graph-backed repository shape.
+3. Read [`mxt-r2mo-mcp-rules.md`](./mxt-r2mo-mcp-rules.md) to map triggers to capability families.
+4. Read [`framework-trigger-matrix.md`](./framework-trigger-matrix.md) when the requirement starts from vague business wording.
+5. Use the root `pom.xml` plus the graph family to narrow to the smallest relevant module set.
+6. Open source files only after the family is narrowed.
+
+### To operate code-review-graph for this repository
+
+1. Prefer the repository wrapper: `bin/mxt-r2mo-graph`.
+2. Read [`code-review-graph-usage.md`](./code-review-graph-usage.md) for build/update/status/visualize/serve guidance.
+3. Use `build` for first-time or large refreshes, `update` for daily incremental refreshes.
+4. Avoid parallel graph commands against the same repo database.
 
 ## 6. Recommended Agent Tooling for Java/Maven Navigation
 

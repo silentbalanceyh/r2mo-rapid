@@ -23,12 +23,17 @@ The README clearly states the core building blocks:
 
 ## 2. What to Read First
 
+- Final AI Agent Entry: [`mxt-r2mo-ai-agent-guide.md`](./mxt-r2mo-ai-agent-guide.md)
 - Framework Overview: [`framework-map.md`](./framework-map.md)
 - Abstraction Escalation Rules: [`abstraction-rules.md`](./abstraction-rules.md)
 - Extension Points Inventory: [`extension-points.md`](./extension-points.md)
 - Spring Layer Map: [`spring-layer-map.md`](./spring-layer-map.md)
 - `spec` Boundary: [`spec-boundary.md`](./spec-boundary.md)
 - Dual-Side Development: [`dual-side-development.md`](./dual-side-development.md)
+- Code Review Graph Analysis: [`code-review-graph-r2mo-analysis.md`](./code-review-graph-r2mo-analysis.md)
+- Code Review Graph Usage: [`code-review-graph-usage.md`](./code-review-graph-usage.md)
+- MXT-R2MO MCP Rules: [`mxt-r2mo-mcp-rules.md`](./mxt-r2mo-mcp-rules.md)
+- Framework Trigger Matrix: [`framework-trigger-matrix.md`](./framework-trigger-matrix.md)
 - Search Hints: [`search-hints.md`](./search-hints.md)
 - Evolution Rules: [`evolution-rules.md`](./evolution-rules.md)
 
@@ -80,11 +85,12 @@ From the root `pom.xml`, four main layers are visible:
 
 ## 5. Recommended Reading Order
 
-1. First read `framework-map.md` to understand the big picture.
-2. Then read `spec-boundary.md` and `spring-layer-map.md` to lock down boundaries.
-3. For requirement decisions, see `abstraction-rules.md`.
-4. For implementation, see `extension-points.md` and `search-hints.md`.
-5. For long-term maintenance after upgrades, see `evolution-rules.md`.
+1. First read `mxt-r2mo-ai-agent-guide.md` as the main entry for downstream AI agents.
+2. Then read `framework-map.md` to understand the big picture.
+3. Read `spec-boundary.md`, `spring-layer-map.md`, and `dual-side-development.md` to lock down ownership and side boundaries.
+4. For requirement decisions, see `abstraction-rules.md` and `framework-trigger-matrix.md`.
+5. For implementation narrowing, see `extension-points.md`, `search-hints.md`, and the graph documents.
+6. For long-term maintenance after upgrades, see `evolution-rules.md`.
 
 ## 6. Fast Path Selection for Agents
 

@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+GRAPH_BIN="${GRAPH_BIN:-code-review-graph}"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  bin/mxt-r2mo-graph build
+  bin/mxt-r2mo-graph update [BASE]
+  bin/mxt-r2mo-graph status
+  bin/mxt-r2mo-graph visualize [MODE] [FORMAT]
+  bin/mxt-r2mo-graph wiki
+  bin/mxt-r2mo-graph serve
+  bin/mxt-r2mo-graph install-codex
+
+Examples:
+  bin/mxt-r2mo-graph build
+  bin/mxt-r2mo-graph update HEAD~3
+  bin/mxt-r2mo-graph visualize community html
+  bin/mxt-r2mo-graph serve
+EOF
+}
+
+require_bin() {
+  if ! command -v "$GRAPH_BIN" >/dev/null 2>&1; then
+    echo "[mxt-r2mo-graph] Missing binary: $GRAPH_BIN" >&2
+    echo "Install hint: python3 -m pip install code-review-graph" >&2
+    exit 1
+  fi
+}
+
+cmd="${1:-}";
+if [[ -z "$cmd" ]]; then
+  usage
+  exit 1
+fi
+shift || true
+
+require_bin
+
+case "$cmd" in
+  build)
+    exec "$GRAPH_BIN" build --repo "$ROOT"
+    ;;
+  update)
+    base="${1:-HEAD~1}"
+    exec "$GRAPH_BIN" update --repo "$ROOT" --base "$base"
+    ;;
+  status)
+    exec "$GRAPH_BIN" status --repo "$ROOT"
+    ;;
+  visualize)
+    mode="${1:-community}"
+    format="${2:-html}"
+    exec "$GRAPH_BIN" visualize --repo "$ROOT" --mode "$mode" --format "$format"
+    ;;
+  wiki)
+    exec "$GRAPH_BIN" wiki --repo "$ROOT"
+    ;;
+  serve)
+    exec "$GRAPH_BIN" serve --repo "$ROOT"
+    ;;
+  install-codex)
+    exec "$GRAPH_BIN" install --repo "$ROOT" --platform codex -y
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    echo "[mxt-r2mo-graph] Unknown command: $cmd" >&2
+    usage
+    exit 2
+    ;;
+esac

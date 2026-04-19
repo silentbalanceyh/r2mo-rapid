@@ -28,3 +28,4 @@ pom.xml.versionsBackup
 rename.bat
 .flattened-pom.xml
 .obsidian/workspace.json
+.code-review-graph/
