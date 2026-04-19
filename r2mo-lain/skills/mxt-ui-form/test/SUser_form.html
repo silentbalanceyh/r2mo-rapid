@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户信息</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Form-specific styles */
+    .form-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .error-message {
+      transition: opacity 0.2s ease;
+    }
+    .form-control-complex {
+      position: relative;
+    }
+    /* Custom form-radio for better visibility */
+    .form-radio {
+      width: 1.25rem;
+      height: 1.25rem;
+      accent-color: #3b82f6;
+    }
+    /* Select dropdown styling */
+    select {
+      background-image: none;
+    }
+    /* Focus ring animation */
+    .focus-ring {
+      transition: ring-color 0.15s ease;
+    }
+    /* Primary color override */
+    .bg-primary-600 { background-color: #3b82f6; }
+    .hover\:bg-primary-700:hover { background-color: #2563eb; }
+    .focus\:ring-primary-500:focus { --tw-ring-color: #3b82f6; }
+    .peer-focus\:ring-primary-300:focus-within { --tw-ring-color: #93c5fd; }
+    .peer-checked\:bg-primary-600:checked { background-color: #3b82f6; }
+    .hover\:border-primary-500:hover { border-color: #3b82f6; }
+    /* Input hover state */
+    input:hover, select:hover, textarea:hover {
+      border-color: #9ca3af;
+    }
+    /* Textarea styling */
+    textarea {
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-8">
+<form class="form-container p-6 bg-white rounded-lg shadow-md" method="POST" action="">
+<h2 class="text-xl font-semibold text-gray-900 mb-6">用户信息</h2>
+<div class="grid grid-cols-2 gap-8">
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        登录账号<span class="text-red-500 ml-1">*</span>
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <input type="text" name="username" id="username" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm" placeholder="登录账号" maxlength="50" required  >
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="username">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        电子邮箱<span class="text-red-500 ml-1">*</span>
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <input type="email" name="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm" placeholder="电子邮箱" required >
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="email">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        登录密码<span class="text-red-500 ml-1">*</span>
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <input type="password" name="password" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm" placeholder="登录密码" required >
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="password">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        真实姓名<span class="text-red-500 ml-1">*</span>
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <input type="text" name="realname" id="realname" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm" placeholder="真实姓名" maxlength="100" required  >
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="realname">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        手机号码
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <input type="text" name="mobile" id="mobile" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm" placeholder="手机号码" maxlength="20"   >
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="mobile">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        性别
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <div class="flex flex-wrap"><label class="inline-flex items-center mr-4">
+                <input type="radio" name="gender" value="male" class="form-radio"  >
+                <span class="ml-2 text-sm">男</span>
+            </label>
+<label class="inline-flex items-center mr-4">
+                <input type="radio" name="gender" value="female" class="form-radio"  >
+                <span class="ml-2 text-sm">女</span>
+            </label></div>
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="gender">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        出生日期
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <input type="date" name="birthDate" id="birthDate" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"  >
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="birthDate">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        所属部门<span class="text-red-500 ml-1">*</span>
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <div class="form-control-complex" data-control="tree" data-name="departmentId">
+            <input type="text" name="departmentId" id="departmentId" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm" placeholder="Click to select from tree..." readonly required >
+            <div class="tree-selector-modal hidden" data-target="departmentId"></div>
+        </div>
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="departmentId">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        账号状态<span class="text-red-500 ml-1">*</span>
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <div class="relative">
+            <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm appearance-none bg-white pr-10 cursor-pointer" required >
+                <option value="active">启用</option>
+<option value="inactive">禁用</option>
+<option value="pending">待审核</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+        </div>
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="status">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        是否启用<span class="text-red-500 ml-1">*</span>
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" name="active" id="active" class="sr-only peer" checked >
+            <div class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+        </label>
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="active">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="relative flex items-center gap-3">
+        <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        用户头像
+    </label>
+        <div class="flex-1 relative min-w-0">
+            <div class="form-control-complex" data-control="image-upload" data-name="avatar">
+            <input type="file" name="avatar" id="avatar" accept="image/*" class="hidden"  >
+            <div class="image-preview w-24 h-24 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center cursor-pointer hover:border-primary-500">
+                <span class="text-gray-400 text-sm">Upload</span>
+            </div>
+        </div>
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="avatar">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+</div>
+<div class="relative flex items-start mt-4">
+        <label class="w-[calc((100%-2.0rem)/8)] text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+        备注信息
+    </label>
+        <div class="flex-1 relative">
+            <textarea name="description" id="description" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm resize-none min-h-[80px]" placeholder="备注信息"   ></textarea>
+            <div class="error-message absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-field="description">
+        <!-- Error message injected here -->
+    </div>
+        </div>
+    </div>
+<div class="form-actions mt-8 flex justify-end gap-4">
+        <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+            Cancel
+        </button>
+        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700">
+            Submit
+        </button>
+    </div>
+</form>
+<script>
+  // Floating error display
+  document.querySelectorAll('input, select, textarea').forEach(input => {
+    input.addEventListener('invalid', (e) => {
+      e.preventDefault();
+      const errorDiv = document.querySelector(`.error-message[data-field="${input.name}"]`);
+      if (errorDiv) {
+        errorDiv.textContent = input.validationMessage;
+        errorDiv.classList.remove('hidden');
+      }
+    });
+    
+    input.addEventListener('input', () => {
+      const errorDiv = document.querySelector(`.error-message[data-field="${input.name}"]`);
+      if (errorDiv) {
+        errorDiv.classList.add('hidden');
+      }
+    });
+  });
+</script>
+</body>
+</html>

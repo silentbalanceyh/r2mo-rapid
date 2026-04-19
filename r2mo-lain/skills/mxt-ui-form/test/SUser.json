@@ -1,0 +1,102 @@
+{
+  "name": "SUser",
+  "table": "S_USER",
+  "fields": [
+    {
+      "name": "username",
+      "type": "VARCHAR",
+      "max_length": 50,
+      "markers": ["REQ", "LEN(3,50)", "PAT(^[a-zA-Z0-9_]+$)"],
+      "comment": "登录账号"
+    },
+    {
+      "name": "email",
+      "type": "VARCHAR",
+      "max_length": 100,
+      "markers": ["REQ", "EML", "UNQ"],
+      "comment": "电子邮箱"
+    },
+    {
+      "name": "password",
+      "type": "VARCHAR",
+      "max_length": 255,
+      "markers": ["REQ", "ENC(BC)", "TYP(PAS)"],
+      "comment": "登录密码"
+    },
+    {
+      "name": "realname",
+      "type": "VARCHAR",
+      "max_length": 100,
+      "markers": ["REQ", "LEN(1,100)"],
+      "comment": "真实姓名",
+      "column_span": 1
+    },
+    {
+      "name": "mobile",
+      "type": "VARCHAR",
+      "max_length": 20,
+      "markers": ["NUL", "TEL(+86)"],
+      "comment": "手机号码",
+      "column_span": 1
+    },
+    {
+      "name": "gender",
+      "type": "VARCHAR",
+      "max_length": 10,
+      "markers": ["TYP(RAD)"],
+      "comment": "性别",
+      "options": [
+        {"value": "male", "label": "男"},
+        {"value": "female", "label": "女"}
+      ],
+      "column_span": 1
+    },
+    {
+      "name": "birthDate",
+      "type": "DATE",
+      "markers": ["NUL", "TYP(DAT)"],
+      "comment": "出生日期",
+      "column_span": 1
+    },
+    {
+      "name": "departmentId",
+      "type": "VARCHAR",
+      "max_length": 36,
+      "markers": ["REQ", "TYP(TRE)", "REL(dept.id)"],
+      "comment": "所属部门"
+    },
+    {
+      "name": "status",
+      "type": "VARCHAR",
+      "max_length": 20,
+      "markers": ["REQ", "DEF(active)", "TYP(SEL)"],
+      "comment": "账号状态",
+      "options": [
+        {"value": "active", "label": "启用"},
+        {"value": "inactive", "label": "禁用"},
+        {"value": "pending", "label": "待审核"}
+      ]
+    },
+    {
+      "name": "active",
+      "type": "BIT",
+      "markers": ["REQ", "DEF(1)", "TYP(SWI)"],
+      "comment": "是否启用",
+      "default": "true"
+    },
+    {
+      "name": "avatar",
+      "type": "VARCHAR",
+      "max_length": 512,
+      "markers": ["NUL", "TYP(IMG)", "URL"],
+      "comment": "用户头像"
+    },
+    {
+      "name": "description",
+      "type": "TEXT",
+      "markers": ["NUL", "LEN(0,500)"],
+      "comment": "备注信息",
+      "column_span": 4
+    }
+  ]
+}

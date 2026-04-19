@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Form Template</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Form-specific customizations */
+    .form-section {
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+    }
+    
+    /* Floating error positioning */
+    .error-message {
+      position: absolute;
+      bottom: -1.25rem;
+      left: 0;
+      font-size: 0.75rem;
+      color: #ef4444;
+    }
+    
+    /* Focus ring enhancement */
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      ring: 2px;
+      ring-color: var(--primary-500, #3b82f6);
+    }
+    
+    /* Required field indicator */
+    .required-mark {
+      color: #ef4444;
+      margin-left: 0.25rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-8">
+  
+  <!-- Form Container -->
+  <div class="max-w-4xl mx-auto">
+    <form class="bg-white rounded-lg shadow-md p-6" method="POST" action="">
+      
+      <!-- Form Title -->
+      <h2 class="text-xl font-semibold text-gray-900 mb-6">Form Title</h2>
+      
+      <!-- Grid Section: 2 columns -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+        
+        <!-- Field 1 -->
+        <div class="relative flex items-center">
+          <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+            Username <span class="required-mark">*</span>
+          </label>
+          <div class="flex-1 relative">
+            <input 
+              type="text" 
+              name="username" 
+              id="username"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+              placeholder="Enter username"
+              required
+              maxlength="50"
+            >
+            <div class="error-message hidden" data-field="username"></div>
+          </div>
+        </div>
+        
+        <!-- Field 2 -->
+        <div class="relative flex items-center">
+          <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+            Email <span class="required-mark">*</span>
+          </label>
+          <div class="flex-1 relative">
+            <input 
+              type="email" 
+              name="email" 
+              id="email"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+              placeholder="Enter email"
+              required
+            >
+            <div class="error-message hidden" data-field="email"></div>
+          </div>
+        </div>
+        
+        <!-- Field 3: Select -->
+        <div class="relative flex items-center">
+          <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+            Status
+          </label>
+          <div class="flex-1 relative">
+            <select 
+              name="status" 
+              id="status"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+            >
+              <option value="">Please select</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="pending">Pending</option>
+            </select>
+            <div class="error-message hidden" data-field="status"></div>
+          </div>
+        </div>
+        
+        <!-- Field 4: Date -->
+        <div class="relative flex items-center">
+          <label class="w-1/4 text-right pr-4 shrink-0 text-sm font-medium text-gray-700">
+            Birth Date
+          </label>
+          <div class="flex-1 relative">
+            <input 
+              type="date" 
+              name="birthDate" 
+              id="birthDate"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+            >
+            <div class="error-message hidden" data-field="birthDate"></div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Full-Width Field -->
+      <div class="relative flex items-start mt-4">
+        <label class="w-[calc((100%-2rem)/8)] text-right pr-4 shrink-0 text-sm font-medium text-gray-700 pt-2">
+          Description
+        </label>
+        <div class="flex-1 relative">
+          <textarea 
+            name="description" 
+            id="description"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+            placeholder="Enter description..."
+          ></textarea>
+          <div class="error-message hidden" data-field="description"></div>
+        </div>
+      </div>
+      
+      <!-- Form Actions -->
+      <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+        <button 
+          type="button" 
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700"
+        >
+          Submit
+        </button>
+      </div>
+      
+    </form>
+  </div>
+  
+  <!-- JavaScript for validation demo -->
+  <script>
+    // Floating error display
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+      input.addEventListener('invalid', (e) => {
+        e.preventDefault();
+        const errorDiv = document.querySelector(`.error-message[data-field="${input.name}"]`);
+        if (errorDiv) {
+          errorDiv.textContent = input.validationMessage;
+          errorDiv.classList.remove('hidden');
+        }
+      });
+      
+      input.addEventListener('input', () => {
+        const errorDiv = document.querySelector(`.error-message[data-field="${input.name}"]`);
+        if (errorDiv) {
+          errorDiv.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>

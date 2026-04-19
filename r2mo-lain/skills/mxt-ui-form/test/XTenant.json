@@ -1,0 +1,113 @@
+{
+  "name": "XTenant",
+  "table": "X_TENANT",
+  "fields": [
+    {
+      "name": "name",
+      "type": "VARCHAR",
+      "max_length": 255,
+      "markers": ["REQ", "LEN(1,255)"],
+      "comment": "租户名称"
+    },
+    {
+      "name": "code",
+      "type": "VARCHAR",
+      "max_length": 36,
+      "markers": ["REQ", "UNQ", "LEN(1,36)"],
+      "comment": "租户编号"
+    },
+    {
+      "name": "alias",
+      "type": "VARCHAR",
+      "max_length": 255,
+      "markers": ["NUL"],
+      "comment": "别名"
+    },
+    {
+      "name": "email",
+      "type": "VARCHAR",
+      "max_length": 255,
+      "markers": ["NUL", "EML"],
+      "comment": "邮箱"
+    },
+    {
+      "name": "phone",
+      "type": "VARCHAR",
+      "max_length": 20,
+      "markers": ["NUL", "TEL(+86)"],
+      "comment": "电话"
+    },
+    {
+      "name": "contact",
+      "type": "VARCHAR",
+      "max_length": 64,
+      "markers": ["NUL"],
+      "comment": "联系人"
+    },
+    {
+      "name": "address",
+      "type": "VARCHAR",
+      "max_length": 512,
+      "markers": ["NUL", "LEN(0,512)"],
+      "comment": "地址",
+      "column_span": 2
+    },
+    {
+      "name": "idType",
+      "type": "VARCHAR",
+      "max_length": 32,
+      "markers": ["NUL", "TYP(SEL)"],
+      "comment": "证件类型",
+      "options": [
+        {"value": "PERSONAL", "label": "个人"},
+        {"value": "COMPANY", "label": "企业"}
+      ]
+    },
+    {
+      "name": "idNumber",
+      "type": "VARCHAR",
+      "max_length": 255,
+      "markers": ["NUL"],
+      "comment": "证件号"
+    },
+    {
+      "name": "bankCard",
+      "type": "VARCHAR",
+      "max_length": 255,
+      "markers": ["NUL"],
+      "comment": "银行账号"
+    },
+    {
+      "name": "bankId",
+      "type": "VARCHAR",
+      "max_length": 36,
+      "markers": ["NUL", "TYP(SEL)"],
+      "comment": "开户行"
+    },
+    {
+      "name": "status",
+      "type": "VARCHAR",
+      "max_length": 255,
+      "markers": ["REQ", "DEF(active)", "TYP(SEL)"],
+      "comment": "状态",
+      "options": [
+        {"value": "active", "label": "正常"},
+        {"value": "inactive", "label": "停用"}
+      ]
+    },
+    {
+      "name": "active",
+      "type": "BIT",
+      "markers": ["REQ", "DEF(1)", "TYP(SWI)"],
+      "comment": "是否启用",
+      "default": "true"
+    },
+    {
+      "name": "description",
+      "type": "TEXT",
+      "markers": ["NUL"],
+      "comment": "简介",
+      "column_span": 3
+    }
+  ]
+}
