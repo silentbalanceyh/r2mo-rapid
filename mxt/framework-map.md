@@ -90,27 +90,6 @@ This layer answers "how abstractions are implemented", not "what the business wa
 - `r2mo-boot-vertx`
   - Vert.x bootstrap layer that directly includes implementation dependencies.
 
-### F. Runtime Configuration Surface
-
-The bootstrap layer is not only a dependency bundle. In practice, it also defines the **runtime configuration surface** that projects consume through application models and environment variables.
-
-This is why environment variables should be treated as architecture-level control points:
-
-- they shape tenant-aware runtime context,
-- they select locale and resource behavior,
-- they choose style or mode variants,
-- they switch application mode and bootstrap behavior,
-- and they determine which shared providers are activated before business code starts.
-
-In other words, the env/application model sits closer to `r2mo-boot-*` and shared abstractions than to project-specific service logic.
-
-Agents should therefore read configuration through this order:
-
-1. runtime env/application model
-2. bootstrap assembly chain
-3. shared abstraction/provider selection
-4. business code
-
 ## 3. Dual-Container Main Lines
 
 ### Spring Line
@@ -179,3 +158,9 @@ If you do not know where to change something, ask three questions first:
 3. Is this **bootstrap assembly**, **abstract definition**, or a **concrete provider**?
 
 Once these three questions are answered, the landing spot is usually clear.
+
+## 7. Companion Document
+
+If the task is primarily about runtime env/application interpretation rather than module topology, read:
+
+- `runtime-configuration-surface.md`

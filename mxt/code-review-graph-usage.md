@@ -160,6 +160,26 @@ Graph results should determine:
 
 Graph results should not override actual source behavior.
 
+### Rule 4 — Prefer the stable MCP graph calls first
+
+During the latest repository re-check on `2026-04-21`, these MCP-level graph calls proved stable:
+
+- architecture overview
+- minimal context
+- graph statistics
+- community listing
+
+Some higher-order MCP calls for hub nodes, bridge nodes, and knowledge gaps returned repository-resolution errors in that same re-check.
+
+Practical fallback order:
+
+1. architecture overview
+2. graph statistics
+3. community listing
+4. direct source confirmation
+
+Use the shell wrapper or direct CLI if advanced graph queries are required and the MCP endpoint is failing.
+
 ## 7. When Agents Should Use This Tooling
 
 Use graph support when:

@@ -42,12 +42,20 @@ Before graph or source inspection, prefer these files:
 
 - `mxt/mxt-r2mo-ai-agent-guide.md`
 - `mxt/README.md`
+- `mxt/mcp-route-code-review-graph.md`
+- `mxt/mcp-route-spring-security.md`
+- `mxt/mcp-route-code-generator.md`
 - `mxt/framework-map.md`
 - `mxt/abstraction-rules.md`
 - `mxt/extension-points.md`
 - `mxt/dual-side-development.md`
 - `mxt/search-hints.md`
 - `mxt/code-review-graph-r2mo-analysis.md`
+
+When the peer-side router already matched a specialized route, also read:
+
+- `mxt/spring-security-mcp-guide.md` for Spring Security questions
+- `mxt/code-generator-usage.md` for generator questions
 
 If the task is specifically license/cryptography-related, also read:
 
@@ -66,6 +74,21 @@ Use graph-guided narrowing before broad source reading when at least one of the 
 5. You suspect the behavior is implemented through helper chains or SPI rather than one obvious entry class.
 
 In those cases, first consult the graph-backed analysis and narrow to a capability family.
+
+## 4.1 MCP Regex Routing
+
+For peer-side routing, prefer the dedicated route files:
+
+- `mxt/mcp-route-code-review-graph.md`
+- `mxt/mcp-route-spring-security.md`
+- `mxt/mcp-route-code-generator.md`
+
+Those route files are intentionally more specific than the generic trigger mapping in this file.
+Use them first for:
+
+- graph-first analysis requests,
+- Spring Security-specific requests,
+- generator-specific requests.
 
 ## 5. When Graph-Guided Reading Is Optional
 

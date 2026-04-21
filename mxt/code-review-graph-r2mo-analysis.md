@@ -43,6 +43,21 @@ Observed raw build summary:
 
 This means the repository is large enough that blind file-by-file crawling is expensive. Agents should use graph-guided narrowing first when the question is about ownership, entry points, hotspots, or likely execution paths.
 
+### 2.1 Fresh MCP re-check on 2026-04-21
+
+Fresh `code-review-graph` MCP queries reconfirmed:
+
+- graph stats: `929 files`, `5281 nodes`, `22980 edges`
+- languages: `bash`, `java`
+- embeddings: `0`
+- architecture overview: `40 communities`, `0 cross-community edges`, `0 warnings`
+
+Interpretation:
+
+1. The graph remains large enough that graph-first narrowing is still the correct default.
+2. The current graph build is structurally usable for ownership and family detection.
+3. The absence of embeddings means semantic search is not currently enriched by vector indexing.
+
 ## 3. Graph Schema Surface Actually Produced
 
 The generated graph database at `.code-review-graph/graph.db` contains these primary tables:
@@ -152,6 +167,16 @@ Interpretation:
 1. The graph confirms that the repo is not just split by Maven modules; it also has cross-module semantic communities.
 2. Security, license, generator, jOOQ, transfer, and cache logic each form recognizable reading clusters.
 3. When a requirement touches one of these themes, an agent should inspect the whole cluster, not only one same-name module.
+
+### 5.1 Fresh architecture-overview interpretation
+
+Fresh MCP architecture overview reported `40 communities` with `0 cross-community edges` and `0 warnings`.
+
+Interpretation:
+
+1. The current post-processed graph is strongly directory-shaped rather than strongly cross-community-linked.
+2. This is still useful for module-family narrowing, but weaker for reasoning about deep architectural coupling.
+3. Agents should therefore trust the graph more for clustering and ownership than for cross-community dependency diagnosis.
 
 ## 6. Risk Signals From the Graph
 
@@ -330,6 +355,7 @@ The graph is useful, but the current output has some limitations that agents sho
 2. `igraph` was unavailable, so community detection used a fallback mode.
 3. `status` cannot run concurrently with another graph operation against the same database; a second process can hit `database is locked`.
 4. Top `CALLS` targets may include common variable or helper names (`Objects`, `log`, `out`) that are less useful than domain-specific targets.
+5. During the 2026-04-21 MCP re-check, some advanced MCP graph tools such as hub-node, bridge-node, and knowledge-gap queries failed with repository-resolution errors, while architecture overview and graph stats succeeded.
 
 Therefore:
 

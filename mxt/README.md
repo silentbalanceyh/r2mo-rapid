@@ -33,9 +33,26 @@ The README clearly states the core building blocks:
 - Code Review Graph Analysis: [`code-review-graph-r2mo-analysis.md`](./code-review-graph-r2mo-analysis.md)
 - Code Review Graph Usage: [`code-review-graph-usage.md`](./code-review-graph-usage.md)
 - MXT-R2MO MCP Rules: [`mxt-r2mo-mcp-rules.md`](./mxt-r2mo-mcp-rules.md)
+- MCP Route / Code Review Graph: [`mcp-route-code-review-graph.md`](./mcp-route-code-review-graph.md)
+- MCP Route / Spring Security: [`mcp-route-spring-security.md`](./mcp-route-spring-security.md)
+- MCP Route / Code Generator: [`mcp-route-code-generator.md`](./mcp-route-code-generator.md)
+- Spring Security MCP Guide: [`spring-security-mcp-guide.md`](./spring-security-mcp-guide.md)
+- Code Generator Usage: [`code-generator-usage.md`](./code-generator-usage.md)
 - Framework Trigger Matrix: [`framework-trigger-matrix.md`](./framework-trigger-matrix.md)
+- Frontend React Admin Guide: [`frontend-react-admin-guide.md`](./frontend-react-admin-guide.md)
+- Frontend Rust Leptos Guide: [`frontend-rust-leptos-guide.md`](./frontend-rust-leptos-guide.md)
+- Frontend Admin Design System: [`frontend-admin-design-system.md`](./frontend-admin-design-system.md)
+- Frontend Rust Admin Addendum: [`frontend-rust-admin-addendum.md`](./frontend-rust-admin-addendum.md)
+- Backend Module Layering Guide: [`backend-module-layering-guide.md`](./backend-module-layering-guide.md)
+- Backend DBE Guide: [`backend-dbe-guide.md`](./backend-dbe-guide.md)
+- Backend Validation And Job Guide: [`backend-validation-and-job-guide.md`](./backend-validation-and-job-guide.md)
+- Integration Contract-First Guide: [`integration-contract-first-guide.md`](./integration-contract-first-guide.md)
+- Integration Frontend Backend Handshake: [`integration-frontend-backend-handshake.md`](./integration-frontend-backend-handshake.md)
+- Integration Runtime Contract Guide: [`integration-runtime-contract-guide.md`](./integration-runtime-contract-guide.md)
+- Runtime Configuration Surface: [`runtime-configuration-surface.md`](./runtime-configuration-surface.md)
 - Search Hints: [`search-hints.md`](./search-hints.md)
 - Evolution Rules: [`evolution-rules.md`](./evolution-rules.md)
+- MXT Document SRP Audit: [`document-srp-audit.md`](./document-srp-audit.md)
 
 ## 3. Core Decision Framework
 
@@ -91,6 +108,12 @@ From the root `pom.xml`, four main layers are visible:
 4. For requirement decisions, see `abstraction-rules.md` and `framework-trigger-matrix.md`.
 5. For implementation narrowing, see `extension-points.md`, `search-hints.md`, and the graph documents.
 6. For long-term maintenance after upgrades, see `evolution-rules.md`.
+
+For MCP peer-side routing, add this refinement:
+
+- use the `mcp-route-*.md` files before the generic trigger matrix when the peer is dispatching by user wording,
+- use `spring-security-mcp-guide.md` when the request is clearly Spring Security specific,
+- use `code-generator-usage.md` when the request is clearly about generated code or generator customization.
 
 ## 6. Fast Path Selection for Agents
 

@@ -171,6 +171,27 @@ Whenever the framework structure changes, MXT must be updated.
 Whenever MXT is updated, it must be checked against the real codebase.
 If documents and code disagree, the code is authoritative and the documentation must catch up.
 
+## 8. Single-Responsibility Rule
+
+Each `mxt/*.md` file should answer one primary question for one main audience.
+
+Allowed exception:
+
+- `README.md` may remain a directory index and entry document.
+
+Split a document when one or more of the following is true:
+
+1. it mixes multiple technology stacks that can be read independently,
+2. it mixes framework guidance and app-specific addenda in a way that changes audience mid-file,
+3. it mixes operational routing, subsystem detail, and maintenance policy in one place,
+4. readers regularly need only one half of the file.
+
+Good split examples:
+
+- route index -> multiple `mcp-route-*.md` files
+- frontend multi-stack guide -> one file per stack plus optional design-system addendum
+- architecture map -> architecture map plus separate runtime-contract guide when needed
+
 ---
 
 ## Change Log
@@ -179,3 +200,4 @@ If documents and code disagree, the code is authoritative and the documentation 
 |------|------|-------------|---------|---------|
 | 2026-03-27 | evolution-rules.md | add | Created the MXT evolution maintenance guide | New baseline requirement |
 | 2026-03-27 | evolution-rules.md | update | Rewrote the document in English for AI-agent readability | AI-first English knowledge pack requirement |
+| 2026-04-21 | evolution-rules.md | update | Added the MXT single-responsibility rule for document splitting | Documentation structure review |
