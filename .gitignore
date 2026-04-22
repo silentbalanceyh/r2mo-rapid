@@ -29,3 +29,4 @@ rename.bat
 .flattened-pom.xml
 .obsidian/workspace.json
 .code-review-graph/
+.omc/
