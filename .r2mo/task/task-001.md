@@ -53,3 +53,5 @@ author:
 - Split the previously broad `evolution-rules.md` governance file into four single-purpose rules: `mxt-file-creation-rules.md`, `mxt-sync-rules.md`, `mxt-upgrade-verification.md`, and `mxt-change-log-rules.md`.
 - Ran another `code-review-graph` pass and filled the next high-value rule gaps with `spring-runtime-guide.md`, `oauth2-token-guide.md`, `spring-doc-guide.md`, and `spring-excel-guide.md`.
 - No explicit Team mode switch was found in the current workspace task context, so the task was executed directly by the leader without spawning Workers.
+- Added `mxt/mxt-coverage-report.md` to formalize the current MCP completeness judgment for AI agents, confirming that the remaining gaps are optional refinements rather than missing first-order framework rules.
+- Updated `mxt/README.md` and `mxt/document-srp-audit.md` so the new coverage report is part of the official MXT entry and SRP-governance set.

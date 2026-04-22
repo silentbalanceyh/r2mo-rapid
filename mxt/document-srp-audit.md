@@ -59,6 +59,7 @@ This audit uses three statuses:
 | `mcp-shortest-path.md` | shortest MCP retrieval path | Pass | one retrieval-optimization responsibility |
 | `mcp-token-saving-rules.md` | MCP token-saving heuristics | Pass | one token-optimization responsibility |
 | `mxt-change-log-rules.md` | MXT change-log convention | Pass | one governance responsibility |
+| `mxt-coverage-report.md` | current MCP coverage judgment | Pass | one coverage-status responsibility |
 | `mxt-file-creation-rules.md` | MXT file creation criteria | Pass | one governance responsibility |
 | `mxt-r2mo-ai-agent-guide.md` | final generalized agent entry guide | Pass | broad, but still one audience and one job |
 | `mxt-r2mo-mcp-rules.md` | MCP reading rules for this repository | Pass | large, but still one operational responsibility |
