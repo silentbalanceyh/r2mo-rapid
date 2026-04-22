@@ -28,6 +28,10 @@ Examples:
 - `r2mo-jaas` -> `jaas-boundary.md`
 - `r2mo-io` -> `io-boundary.md`
 - `r2mo-spring-cache` -> `spring-cache-guide.md`
+- `r2mo-spring` -> `spring-runtime-guide.md`
+- `r2mo-spring-doc` -> `spring-doc-guide.md`
+- `r2mo-spring-excel` -> `spring-excel-guide.md`
+- `r2mo-spring-security-oauth2*` -> `oauth2-token-guide.md`
 
 ### Capability family known, module still unclear
 

@@ -38,12 +38,16 @@ The README clearly states the core building blocks:
 - JAAS Boundary: [`jaas-boundary.md`](./jaas-boundary.md)
 - JCE Boundary: [`jce-boundary.md`](./jce-boundary.md)
 - Spring Layer Map: [`spring-layer-map.md`](./spring-layer-map.md)
+- Spring Runtime Guide: [`spring-runtime-guide.md`](./spring-runtime-guide.md)
 - Spring Cache Guide: [`spring-cache-guide.md`](./spring-cache-guide.md)
+- OAuth2 Token Guide: [`oauth2-token-guide.md`](./oauth2-token-guide.md)
 - `spec` Boundary: [`spec-boundary.md`](./spec-boundary.md)
 - Dual-Side Development: [`dual-side-development.md`](./dual-side-development.md)
 - Delivery Email Guide: [`delivery-email-guide.md`](./delivery-email-guide.md)
 - Delivery SMS Guide: [`delivery-sms-guide.md`](./delivery-sms-guide.md)
 - Delivery WeCo Guide: [`delivery-weco-guide.md`](./delivery-weco-guide.md)
+- Spring Doc Guide: [`spring-doc-guide.md`](./spring-doc-guide.md)
+- Spring Excel Guide: [`spring-excel-guide.md`](./spring-excel-guide.md)
 - Code Review Graph Analysis: [`code-review-graph-r2mo-analysis.md`](./code-review-graph-r2mo-analysis.md)
 - Code Review Graph Usage: [`code-review-graph-usage.md`](./code-review-graph-usage.md)
 - MXT-R2MO MCP Rules: [`mxt-r2mo-mcp-rules.md`](./mxt-r2mo-mcp-rules.md)
@@ -141,8 +145,11 @@ For MCP peer-side routing, add this refinement:
 - use `ams-boundary.md` when the target is specifically `r2mo-ams` rather than the broader shared-contract route,
 - use `spi-implementation-boundary.md` when the task is about SPI placement between shared/native/Spring layers,
 - use `io-boundary.md`, `jaas-boundary.md`, and `jce-boundary.md` when the target shared capability family is already known,
+- use `spring-runtime-guide.md` when the question is about generic Spring runtime base ownership rather than a specific Spring feature module,
 - use `spring-cache-guide.md` when the target is specifically `r2mo-spring-cache`,
+- use `oauth2-token-guide.md` when the target is specifically OAuth2 token or client-registration flow under Spring Security,
 - use `delivery-email-guide.md`, `delivery-sms-guide.md`, and `delivery-weco-guide.md` when the target is one delivery channel rather than the whole integration family,
+- use `spring-doc-guide.md` and `spring-excel-guide.md` when `doc/swagger` or `excel` is the concrete Spring-side target,
 - use `mcp-route-shared-contracts.md` for `r2mo-ams` / `r2mo-spec` / schema / marker / metadata / error-code wording,
 - use `mcp-route-shared-capability-modules.md` for `r2mo-dbe` / `r2mo-io` / `r2mo-jaas` / `r2mo-jce` / SPI-first wording,
 - use `core-capability-index.md` when the task is to extract the framework's main functions quickly from graph-backed capability clusters,

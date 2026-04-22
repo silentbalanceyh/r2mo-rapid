@@ -71,7 +71,11 @@ This audit uses three statuses:
 | `spec-boundary.md` | `r2mo-spec` boundary rules | Pass | one boundary question |
 | `spring-layer-map.md` | Spring-side layer ownership | Pass | Spring-only scope |
 | `spring-cache-guide.md` | `r2mo-spring-cache` ownership | Pass | one module guide responsibility |
+| `spring-doc-guide.md` | `r2mo-spring-doc` ownership | Pass | one module guide responsibility |
+| `spring-excel-guide.md` | `r2mo-spring-excel` ownership | Pass | one module guide responsibility |
+| `spring-runtime-guide.md` | `r2mo-spring` runtime-base ownership | Pass | one runtime-base responsibility |
 | `spring-security-mcp-guide.md` | Spring Security specialized reading path | Pass | one subsystem guide |
+| `oauth2-token-guide.md` | OAuth2 token and client flow ownership | Pass | one token-flow responsibility |
 
 ## 3. Immediate Fix Applied
 
