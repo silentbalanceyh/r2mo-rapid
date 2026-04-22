@@ -12,6 +12,7 @@ author:
 
 ## 规则清单
 - 顶层抽象 r2mo-ams
+- SPI实现层处理（原生实现、基于Spring容器实现）
 - 功能抽象（二级）r2mo-dbe, r2mo-io, r2mo-jaas, r2mo-jce, r2mo-spec
 - 双技术栈
 - 基于 Spring 的缓存描述：r2mo-spring-cache
