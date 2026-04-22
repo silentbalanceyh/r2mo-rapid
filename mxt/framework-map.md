@@ -40,6 +40,9 @@ Business Project
 - `r2mo-typed-hutool`
 - `r2mo-typed-vertx`
 - `r2mo-io-local`
+- `r2mo-xync-email`
+- `r2mo-xync-sms`
+- `r2mo-xync-weco`
 
 This layer answers "how abstractions are implemented", not "what the business wants to do".
 
@@ -78,6 +81,16 @@ This layer answers "how abstractions are implemented", not "what the business wa
   - `r2mo-vertx-jooq-jdbc`
   - `r2mo-vertx-jooq-generate`
   - `r2mo-vertx-jooq`
+
+### D.1 Delivery-provider foundation
+
+- `r2mo-xync-email`
+- `r2mo-xync-sms`
+- `r2mo-xync-weco`
+
+These modules form a reusable provider-facing delivery layer.
+They are not business-project integrations.
+They often sit below Spring-side email, SMS, and WeCom modules and should be read when the question is about channel/provider ownership rather than only Spring configuration.
 
 ### E. Bootstrap Assembly Layer
 

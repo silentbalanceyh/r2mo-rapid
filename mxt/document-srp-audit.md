@@ -21,12 +21,17 @@ This audit uses three statuses:
 |---|---|---|---|
 | `README.md` | entry/index for the MXT set | Borderline | acceptable as an entry doc, but should not absorb specialized guidance |
 | `abstraction-rules.md` | framework escalation rules | Pass | focused on abstraction admission and rejection |
+| `ams-boundary.md` | `r2mo-ams` boundary and ownership | Pass | one module-boundary responsibility |
 | `backend-module-layering-guide.md` | backend module topology and DPA ownership | Pass | layering-only responsibility |
 | `backend-dbe-guide.md` | DBE and query-shape guidance | Pass | persistence-only responsibility |
 | `backend-validation-and-job-guide.md` | validation, exception, pagination, and job boundaries | Pass | execution-boundary-only responsibility |
 | `code-generator-usage.md` | generator usage and customization routing | Pass | focused and evidence-backed |
 | `code-review-graph-r2mo-analysis.md` | repository graph findings | Pass | analysis-only responsibility |
 | `code-review-graph-usage.md` | graph operation workflow | Pass | usage-only responsibility |
+| `core-capability-index.md` | graph-backed capability extraction index | Pass | one capability-index responsibility |
+| `delivery-email-guide.md` | email delivery ownership | Pass | one delivery-channel responsibility |
+| `delivery-sms-guide.md` | SMS delivery ownership | Pass | one delivery-channel responsibility |
+| `delivery-weco-guide.md` | WeCom delivery ownership | Pass | one delivery-channel responsibility |
 | `document-srp-audit.md` | SRP audit of the MXT set | Pass | governance-only responsibility |
 | `dual-side-development.md` | Spring vs Vert.x development boundary | Pass | one architectural decision theme |
 | `evolution-rules.md` | maintenance rules for the MXT set | Borderline | still coherent, but already broad |
@@ -40,6 +45,13 @@ This audit uses three statuses:
 | `integration-contract-first-guide.md` | contract-first integration modeling | Pass | contract-only responsibility |
 | `integration-frontend-backend-handshake.md` | frontend/backend integration handshake | Pass | cross-layer execution-only responsibility |
 | `integration-runtime-contract-guide.md` | runtime configuration and secret contract | Pass | runtime-only responsibility |
+| `io-boundary.md` | `r2mo-io` boundary and ownership | Pass | one module-boundary responsibility |
+| `jaas-boundary.md` | `r2mo-jaas` boundary and ownership | Pass | one module-boundary responsibility |
+| `jce-boundary.md` | `r2mo-jce` boundary and ownership | Pass | one module-boundary responsibility |
+| `mcp-route-shared-contracts.md` | shared contract and metadata MCP route | Pass | one route, one purpose |
+| `mcp-route-shared-capability-modules.md` | shared capability / SPI-first MCP route | Pass | one route, one purpose |
+| `mcp-route-spring-integrations.md` | non-security Spring integration MCP route | Pass | one route, one purpose |
+| `mcp-route-vertx-jooq.md` | Vert.x / jOOQ MCP route | Pass | one route, one purpose |
 | `mcp-route-code-generator.md` | generator MCP regex route | Pass | one route, one purpose |
 | `mcp-route-code-review-graph.md` | graph MCP regex route | Pass | one route, one purpose |
 | `mcp-route-spring-security.md` | Spring Security MCP regex route | Pass | one route, one purpose |
@@ -47,8 +59,11 @@ This audit uses three statuses:
 | `mxt-r2mo-mcp-rules.md` | MCP reading rules for this repository | Pass | large, but still one operational responsibility |
 | `project-rule-awareness.md` | handling project-local rule files | Pass | one execution concern |
 | `search-hints.md` | search/navigation hints | Pass | navigation-only responsibility |
+| `runtime-configuration-surface.md` | runtime env/application interpretation | Pass | runtime-surface-only responsibility |
+| `spi-implementation-boundary.md` | shared/native/Spring SPI placement boundary | Pass | one boundary question |
 | `spec-boundary.md` | `r2mo-spec` boundary rules | Pass | one boundary question |
 | `spring-layer-map.md` | Spring-side layer ownership | Pass | Spring-only scope |
+| `spring-cache-guide.md` | `r2mo-spring-cache` ownership | Pass | one module guide responsibility |
 | `spring-security-mcp-guide.md` | Spring Security specialized reading path | Pass | one subsystem guide |
 
 ## 3. Immediate Fix Applied
@@ -62,7 +77,18 @@ It is now split into three route-specific files:
 
 That change makes the MCP routing layer SRP-aligned.
 
+The current route coverage has now been extended without undoing that split:
+
+- `mcp-route-shared-contracts.md`
+- `mcp-route-shared-capability-modules.md`
+- `mcp-route-spring-integrations.md`
+- `mcp-route-vertx-jooq.md`
+
 ## 4. Highest-Priority Follow-Up Splits
+
+No urgent split remains in the MCP route layer after the shared-contract, shared-capability, Spring-integration, and Vert.x/jOOQ routes were extracted.
+
+The remaining watch item is still `evolution-rules.md`, because it is the broadest governance document in the set.
 
 ## 5. Final Test For New Files
 
@@ -73,4 +99,3 @@ When adding a new `mxt/*.md` file, use this test first:
 3. If one whole section were removed, would the remaining document still answer the same question?
 
 If the answer to any of these is `no`, the content should probably be split.
-| `runtime-configuration-surface.md` | runtime env/application interpretation | Pass | runtime-surface-only responsibility |

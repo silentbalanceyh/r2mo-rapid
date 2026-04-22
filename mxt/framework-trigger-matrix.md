@@ -29,6 +29,20 @@ This prevents agents from over-reading unrelated framework code.
 | vertx, async, event loop, jooq runtime, jdbc bridge | Vert.x-side runtime | `framework-map.md`, `dual-side-development.md`, `search-hints.md` | `r2mo-vertx`, `r2mo-vertx-jooq*`, `r2mo-boot-vertx` | `AsyncDBContext`, Vert.x DB classes |
 | boot, default boot, startup bundle, assembly | Bootstrap assembly | `framework-map.md`, `abstraction-rules.md` | `r2mo-boot-spring`, `r2mo-boot-spring-default`, `r2mo-boot-vertx` | boot `pom.xml`, assembly/config chain |
 
+## 2.1 Preferred MCP Route Overrides
+
+When peer-side dispatch is driven by user wording, prefer these route files before falling back to the generic matrix row:
+
+| Trigger focus | Preferred route |
+|---|---|
+| `r2mo-ams`, `r2mo-spec`, metadata, marker, schema, error code | `mcp-route-shared-contracts.md` |
+| `r2mo-dbe`, `r2mo-io`, `r2mo-jaas`, `r2mo-jce`, SPI/provider wording | `mcp-route-shared-capability-modules.md` |
+| non-security `r2mo-spring-*` or `r2mo-xync-*` integrations such as cache, email, sms, weco, doc, excel | `mcp-route-spring-integrations.md` |
+| `r2mo-vertx*`, async DB bridge, `r2mo-vertx-jooq-*`, Vert.x-side jOOQ generation/runtime | `mcp-route-vertx-jooq.md` |
+| graph-first ownership/hotspot/impact wording | `mcp-route-code-review-graph.md` |
+| Spring Security runtime/plugin wording | `mcp-route-spring-security.md` |
+| generated code / processor / template wording | `mcp-route-code-generator.md` |
+
 ## 3. Escalation Rules
 
 ### Rule 1 — One trigger row is enough to start, but not enough to finish
@@ -74,3 +88,4 @@ This matrix is intended to be used together with:
 - `code-review-graph-r2mo-analysis.md`
 - `mxt-r2mo-mcp-rules.md`
 - `search-hints.md`
+- the matching `mcp-route-*.md` file when the request already has a clear wording pattern

@@ -24,15 +24,29 @@ The README clearly states the core building blocks:
 ## 2. What to Read First
 
 - Final AI Agent Entry: [`mxt-r2mo-ai-agent-guide.md`](./mxt-r2mo-ai-agent-guide.md)
+- Core Capability Index: [`core-capability-index.md`](./core-capability-index.md)
+- AMS Boundary: [`ams-boundary.md`](./ams-boundary.md)
 - Framework Overview: [`framework-map.md`](./framework-map.md)
 - Abstraction Escalation Rules: [`abstraction-rules.md`](./abstraction-rules.md)
+- SPI Implementation Boundary: [`spi-implementation-boundary.md`](./spi-implementation-boundary.md)
 - Extension Points Inventory: [`extension-points.md`](./extension-points.md)
+- IO Boundary: [`io-boundary.md`](./io-boundary.md)
+- JAAS Boundary: [`jaas-boundary.md`](./jaas-boundary.md)
+- JCE Boundary: [`jce-boundary.md`](./jce-boundary.md)
 - Spring Layer Map: [`spring-layer-map.md`](./spring-layer-map.md)
+- Spring Cache Guide: [`spring-cache-guide.md`](./spring-cache-guide.md)
 - `spec` Boundary: [`spec-boundary.md`](./spec-boundary.md)
 - Dual-Side Development: [`dual-side-development.md`](./dual-side-development.md)
+- Delivery Email Guide: [`delivery-email-guide.md`](./delivery-email-guide.md)
+- Delivery SMS Guide: [`delivery-sms-guide.md`](./delivery-sms-guide.md)
+- Delivery WeCo Guide: [`delivery-weco-guide.md`](./delivery-weco-guide.md)
 - Code Review Graph Analysis: [`code-review-graph-r2mo-analysis.md`](./code-review-graph-r2mo-analysis.md)
 - Code Review Graph Usage: [`code-review-graph-usage.md`](./code-review-graph-usage.md)
 - MXT-R2MO MCP Rules: [`mxt-r2mo-mcp-rules.md`](./mxt-r2mo-mcp-rules.md)
+- MCP Route / Shared Contracts: [`mcp-route-shared-contracts.md`](./mcp-route-shared-contracts.md)
+- MCP Route / Shared Capability Modules: [`mcp-route-shared-capability-modules.md`](./mcp-route-shared-capability-modules.md)
+- MCP Route / Spring Integrations: [`mcp-route-spring-integrations.md`](./mcp-route-spring-integrations.md)
+- MCP Route / Vert.x / jOOQ: [`mcp-route-vertx-jooq.md`](./mcp-route-vertx-jooq.md)
 - MCP Route / Code Review Graph: [`mcp-route-code-review-graph.md`](./mcp-route-code-review-graph.md)
 - MCP Route / Spring Security: [`mcp-route-spring-security.md`](./mcp-route-spring-security.md)
 - MCP Route / Code Generator: [`mcp-route-code-generator.md`](./mcp-route-code-generator.md)
@@ -111,6 +125,16 @@ From the root `pom.xml`, four main layers are visible:
 
 For MCP peer-side routing, add this refinement:
 
+- use `ams-boundary.md` when the target is specifically `r2mo-ams` rather than the broader shared-contract route,
+- use `spi-implementation-boundary.md` when the task is about SPI placement between shared/native/Spring layers,
+- use `io-boundary.md`, `jaas-boundary.md`, and `jce-boundary.md` when the target shared capability family is already known,
+- use `spring-cache-guide.md` when the target is specifically `r2mo-spring-cache`,
+- use `delivery-email-guide.md`, `delivery-sms-guide.md`, and `delivery-weco-guide.md` when the target is one delivery channel rather than the whole integration family,
+- use `mcp-route-shared-contracts.md` for `r2mo-ams` / `r2mo-spec` / schema / marker / metadata / error-code wording,
+- use `mcp-route-shared-capability-modules.md` for `r2mo-dbe` / `r2mo-io` / `r2mo-jaas` / `r2mo-jce` / SPI-first wording,
+- use `core-capability-index.md` when the task is to extract the framework's main functions quickly from graph-backed capability clusters,
+- use `mcp-route-spring-integrations.md` for non-security `r2mo-spring-*` and `r2mo-xync-*` integration modules such as cache, email, sms, weco, doc, and excel,
+- use `mcp-route-vertx-jooq.md` for Vert.x-side runtime, jOOQ bridge, and `r2mo-vertx-jooq-*` wording,
 - use the `mcp-route-*.md` files before the generic trigger matrix when the peer is dispatching by user wording,
 - use `spring-security-mcp-guide.md` when the request is clearly Spring Security specific,
 - use `code-generator-usage.md` when the request is clearly about generated code or generator customization.

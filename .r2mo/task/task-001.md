@@ -23,3 +23,26 @@ author:
 - 邮件功能 -email
 - 短信功能 -sms
 - 微信功能 -weco
+
+## Changes
+
+### 2026-04-22
+
+- Upgraded the MCP-facing documentation under `mxt/` in English without removing the existing route split.
+- Added four new SRP-aligned route documents:
+  - `mcp-route-shared-contracts.md`
+  - `mcp-route-shared-capability-modules.md`
+  - `mcp-route-spring-integrations.md`
+  - `mcp-route-vertx-jooq.md`
+- Expanded the route coverage so the MCP entry layer now explicitly covers:
+  - `r2mo-ams` and `r2mo-spec`
+  - `r2mo-dbe`, `r2mo-io`, `r2mo-jaas`, and `r2mo-jce`
+  - non-security `r2mo-spring-*` integration modules such as cache, email, sms, weco, doc, and excel
+  - `r2mo-vertx` and `r2mo-vertx-jooq-*`
+- Updated `mxt/README.md`, `mxt/mxt-r2mo-mcp-rules.md`, and `mxt/framework-trigger-matrix.md` to route wording to the new specialized MCP documents first.
+- Fixed and refreshed `mxt/document-srp-audit.md` so the new route files are audited and the misplaced `runtime-configuration-surface.md` row is normalized.
+- Performed a deeper `code-review-graph` pass and added `core-capability-index.md` as a graph-backed high-level entry for AI agents extracting framework core functions.
+- Filled an additional gap for delivery-provider ownership by extending the reading path to include `r2mo-xync-email`, `r2mo-xync-sms`, and `r2mo-xync-weco`, not only the Spring-side integration modules.
+- Added independent single-purpose documents for the previously merged rule items: `ams-boundary.md`, `spi-implementation-boundary.md`, `io-boundary.md`, `jaas-boundary.md`, `jce-boundary.md`, `spring-cache-guide.md`, `delivery-email-guide.md`, `delivery-sms-guide.md`, and `delivery-weco-guide.md`.
+- Updated `mxt/README.md` and `mxt/document-srp-audit.md` so the rule checklist can now map each missing detail rule to a dedicated primary document instead of only a family-level route.
+- No explicit Team mode switch was found in the current workspace task context, so the task was executed directly by the leader without spawning Workers.

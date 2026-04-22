@@ -41,7 +41,12 @@ Do not start from business vocabulary alone.
 Before graph or source inspection, prefer these files:
 
 - `mxt/mxt-r2mo-ai-agent-guide.md`
+- `mxt/core-capability-index.md`
 - `mxt/README.md`
+- `mxt/mcp-route-shared-contracts.md`
+- `mxt/mcp-route-shared-capability-modules.md`
+- `mxt/mcp-route-spring-integrations.md`
+- `mxt/mcp-route-vertx-jooq.md`
 - `mxt/mcp-route-code-review-graph.md`
 - `mxt/mcp-route-spring-security.md`
 - `mxt/mcp-route-code-generator.md`
@@ -79,6 +84,10 @@ In those cases, first consult the graph-backed analysis and narrow to a capabili
 
 For peer-side routing, prefer the dedicated route files:
 
+- `mxt/mcp-route-shared-contracts.md`
+- `mxt/mcp-route-shared-capability-modules.md`
+- `mxt/mcp-route-spring-integrations.md`
+- `mxt/mcp-route-vertx-jooq.md`
 - `mxt/mcp-route-code-review-graph.md`
 - `mxt/mcp-route-spring-security.md`
 - `mxt/mcp-route-code-generator.md`
@@ -86,6 +95,10 @@ For peer-side routing, prefer the dedicated route files:
 Those route files are intentionally more specific than the generic trigger mapping in this file.
 Use them first for:
 
+- shared contract and metadata requests,
+- shared capability and SPI-first requests,
+- non-security Spring and delivery-provider integration requests,
+- Vert.x / jOOQ-side requests,
 - graph-first analysis requests,
 - Spring Security-specific requests,
 - generator-specific requests.
@@ -301,9 +314,13 @@ Read only the minimal capability family implied by the trigger set.
 Examples:
 
 - JWT issue → `r2mo-spring-security` + `r2mo-spring-security-jwt`
+- Shared marker or metadata issue → `mcp-route-shared-contracts.md` + `r2mo-ams` / `r2mo-spec`
 - License verification → `r2mo-jce` + `framework-trigger-matrix.md` + exact `r2mo-jce` source
 - Upload/transfer issue → `r2mo-io` + `r2mo-io-local`
 - Query syntax issue → `r2mo-dbe` + concrete implementation module
+- Spring cache/email/sms/weco issue → `mcp-route-spring-integrations.md` + exact `r2mo-spring-*` module
+- Delivery provider issue → `mcp-route-spring-integrations.md` + exact `r2mo-xync-*` module
+- Vert.x runtime or jOOQ bridge issue → `mcp-route-vertx-jooq.md` + exact `r2mo-vertx-jooq*` module
 
 ## 10. How To Understand Framework Code Mentioned Indirectly by Requirements
 
