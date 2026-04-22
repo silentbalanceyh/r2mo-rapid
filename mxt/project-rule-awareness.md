@@ -77,7 +77,7 @@ When they conflict, prefer framework rules unless the MDC explicitly overrides a
 
 ```text
 1. Detect stack      → R2MO-first or Zero-first (from root pom.xml or framework BOM)
-2. Read mxt/         → framework-map, abstraction-rules, extension-points, evolution-rules
+2. Read mxt/         → framework-map, abstraction-rules, extension-points, mxt-file-creation-rules, mxt-sync-rules
 3. Check MDC layer   → if exists: inspect devapi.mdc first, then other relevant mdc files
 4. Extract project constraints from MDC (if present)
 5. Read .r2mo specs  → operations, schemas, proto, domain contracts

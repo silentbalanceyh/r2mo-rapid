@@ -67,9 +67,12 @@ The README clearly states the core building blocks:
 - Integration Contract-First Guide: [`integration-contract-first-guide.md`](./integration-contract-first-guide.md)
 - Integration Frontend Backend Handshake: [`integration-frontend-backend-handshake.md`](./integration-frontend-backend-handshake.md)
 - Integration Runtime Contract Guide: [`integration-runtime-contract-guide.md`](./integration-runtime-contract-guide.md)
+- MXT File Creation Rules: [`mxt-file-creation-rules.md`](./mxt-file-creation-rules.md)
+- MXT Sync Rules: [`mxt-sync-rules.md`](./mxt-sync-rules.md)
+- MXT Upgrade Verification: [`mxt-upgrade-verification.md`](./mxt-upgrade-verification.md)
+- MXT Change Log Rules: [`mxt-change-log-rules.md`](./mxt-change-log-rules.md)
 - Runtime Configuration Surface: [`runtime-configuration-surface.md`](./runtime-configuration-surface.md)
 - Search Hints: [`search-hints.md`](./search-hints.md)
-- Evolution Rules: [`evolution-rules.md`](./evolution-rules.md)
 - MXT Document SRP Audit: [`document-srp-audit.md`](./document-srp-audit.md)
 
 ## 3. Core Decision Framework

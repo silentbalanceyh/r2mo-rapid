@@ -36,7 +36,6 @@ This audit uses three statuses:
 | `delivery-weco-guide.md` | WeCom delivery ownership | Pass | one delivery-channel responsibility |
 | `document-srp-audit.md` | SRP audit of the MXT set | Pass | governance-only responsibility |
 | `dual-side-development.md` | Spring vs Vert.x development boundary | Pass | one architectural decision theme |
-| `evolution-rules.md` | maintenance rules for the MXT set | Borderline | still coherent, but already broad |
 | `extension-points.md` | extension and SPI entry points | Pass | focused on extension seams |
 | `framework-map.md` | repository architecture map | Pass | architecture-only after runtime-surface extraction |
 | `framework-trigger-matrix.md` | trigger-word to capability-family mapping | Pass | routing-only responsibility |
@@ -59,8 +58,12 @@ This audit uses three statuses:
 | `mcp-route-spring-security.md` | Spring Security MCP regex route | Pass | one route, one purpose |
 | `mcp-shortest-path.md` | shortest MCP retrieval path | Pass | one retrieval-optimization responsibility |
 | `mcp-token-saving-rules.md` | MCP token-saving heuristics | Pass | one token-optimization responsibility |
+| `mxt-change-log-rules.md` | MXT change-log convention | Pass | one governance responsibility |
+| `mxt-file-creation-rules.md` | MXT file creation criteria | Pass | one governance responsibility |
 | `mxt-r2mo-ai-agent-guide.md` | final generalized agent entry guide | Pass | broad, but still one audience and one job |
 | `mxt-r2mo-mcp-rules.md` | MCP reading rules for this repository | Pass | large, but still one operational responsibility |
+| `mxt-sync-rules.md` | MXT synchronization order after framework change | Pass | one governance responsibility |
+| `mxt-upgrade-verification.md` | MXT verification checklist after upgrades | Pass | one verification responsibility |
 | `project-rule-awareness.md` | handling project-local rule files | Pass | one execution concern |
 | `search-hints.md` | search/navigation hints | Pass | navigation-only responsibility |
 | `runtime-configuration-surface.md` | runtime env/application interpretation | Pass | runtime-surface-only responsibility |
@@ -92,10 +95,10 @@ The current route coverage has now been extended without undoing that split:
 
 No urgent split remains in the MCP route layer after the shared-contract, shared-capability, Spring-integration, and Vert.x/jOOQ routes were extracted.
 
-The remaining watch item is still `evolution-rules.md`, because it is the broadest governance document in the set.
-
 The current optimization direction is no longer route splitting first.
 It is now entry compression and retrieval-depth reduction for AI-agent MCP consumption.
+
+The previous governance broad file `evolution-rules.md` has been split into file-creation, sync, verification, and change-log rules.
 
 ## 5. Final Test For New Files
 
