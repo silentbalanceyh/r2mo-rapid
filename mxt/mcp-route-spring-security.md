@@ -8,7 +8,7 @@ Activate this route when the request is clearly about:
 
 - Spring Security runtime behavior,
 - filter chains,
-- login modes,
+- login modes (JWT, OAuth2, LDAP, SMS, email, WeCom),
 - token flow,
 - auth plugin modules,
 - or security SPI integration.
@@ -16,7 +16,7 @@ Activate this route when the request is clearly about:
 Preferred regex:
 
 ```regex
-(?i)\b(spring security|securityfilterchain|securitywebconfiguration|securitywebconfigurer|configsecurity|authservicemanager|login mode|filter chain|jwt|oauth2|oauth2client|ldap|captcha|bearer|token refresh|auth switcher|usercache)\b
+(?i)\b(spring security|securityfilterchain|securitywebconfiguration|securitywebconfigurer|configsecurity|authservicemanager|login mode|filter chain|jwt|oauth2|oauth2client|ldap|captcha|bearer|token refresh|auth switcher|usercache|security.email|security.sms|security.weco|security.ldap|sms.login|email.login|wecom.login|ldap.login)\b
 ```
 
 ## 2. Mandatory Reading Set
@@ -37,6 +37,12 @@ When this route matches, the agent should:
 ## 4. Priority Rule
 
 This route should beat the generic security/auth row in `framework-trigger-matrix.md` when the request is clearly Spring Security specific.
+
+It should also beat `mcp-route-spring-integrations.md` when the target is clearly a **login/authentication** flow rather than a **notification/delivery** flow. Boundary:
+
+- `r2mo-spring-security-email` / `security-sms` / `security-weco` = authentication login modes → **this route**
+- `r2mo-spring-email` / `spring-sms` / `spring-weco` = notification delivery integration → `mcp-route-spring-integrations.md`
+- `r2mo-xync-email` / `xync-sms` / `xync-weco` = provider-side delivery foundation → `mcp-route-spring-integrations.md`
 
 ## 5. Do Not Do
 

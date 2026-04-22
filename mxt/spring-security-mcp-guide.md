@@ -151,30 +151,47 @@ Read:
 
 Typical anchors:
 
-- `JwtSecurityConfigurer`
-- `JwtTokenBuilder`
-- `JwtTokenGenerator`
-- `JwtTokenRefresher`
+- `JwtSecurityConfigurer` — SPI entry point that registers JWT filter and token processing into the security chain
+- `JwtTokenBuilder` — constructs JWT token content (claims, subject, expiration)
+- `JwtTokenGenerator` — signs and serializes the built token into its final string form
+- `JwtTokenRefresher` — handles refresh-token validation and new token issuance
+- `JwtLoginController` — REST endpoint for JWT login (`/auth/login`)
+- `JwtSpringAuthenticator` — Spring Security `AuthenticationProvider` implementation for JWT validation
 
-### OAuth2
+Ownership split: `JwtTokenBuilder` owns claim composition, `JwtTokenGenerator` owns signing/serialization, `JwtTokenRefresher` owns refresh lifecycle. Read the builder first when token content is wrong. Read the generator first when signing fails.
+
+### OAuth2 (Authorization Server)
 
 Read:
 
 - `r2mo-spring-security`
 - `r2mo-spring-security-oauth2`
-- optionally `r2mo-spring-security-oauth2client`
 
 Typical anchors:
 
-- `OAuth2SpringConfigurer`
-- `OAuth2Switcher`
-- `OAuth2Endpoint`
-- `OAuth2SpringAuthResource`
-- `ConfigOAuth2`
+- `OAuth2SpringConfigurer` — SPI entry that registers OAuth2 authorization server into the security chain
+- `OAuth2SpringAuthorizationServer` — configures the authorization server endpoints (token, authorize, jwk)
+- `OAuth2TokenBuilder` — builds and customizes OAuth2 tokens (access + refresh)
+- `OAuth2JwtTokenCustomizer` — customizes JWT claims for OAuth2-issued tokens
+- `OAuth2JwkSourceManager` — manages JWK key source for token signing and verification
+- `OAuth2SpringEncoder` — password encoder configuration for OAuth2 client secrets
+- `ConfigOAuth2Spring` — `security.oauth2.*` property binding for the authorization server
 
-Important note:
+Important note: `r2mo-spring-security-oauth2` registers a `SecurityWebConfigurer` through `META-INF/services`. It also uses a **high-priority** filter chain for authorization server endpoints, separate from the normal resource chain.
 
-`r2mo-spring-security-oauth2` registers a `SecurityWebConfigurer` through `META-INF/services`, so SPI wiring is part of the runtime behavior rather than a side detail.
+### OAuth2 Client (Client Registration)
+
+Read:
+
+- `r2mo-spring-security`
+- `r2mo-spring-security-oauth2client`
+
+Typical anchors:
+
+- `OAuth2RegisteredClientAuto` — auto-configures registered OAuth2 clients from `security.oauth2.client.*` properties
+- `OAuth2RegisteredClientHelper` — helper for client registration lookup and validation
+
+Boundary: `r2mo-spring-security-oauth2` is the **authorization server** (issues tokens). `r2mo-spring-security-oauth2client` is the **client registration** (stores and retrieves registered clients). Read the server module first when the question is about token issuance. Read the client module first when the question is about client configuration or registration.
 
 ### LDAP
 
@@ -185,18 +202,71 @@ Read:
 
 Typical anchors:
 
-- `LdapConfig`
-- `LdapCommonController`
-- `LdapServiceImpl`
+- `LdapConfig` — Spring configuration that binds `spring.ldap.*` properties to the LDAP context source
+- `LdapServiceImpl` — implements LDAP bind authentication against the configured directory
+- `LdapCommonController` — REST endpoint for LDAP login (`/auth/ldap-login`)
+- `LdapLoginRequest` — request model for LDAP authentication
+- `LdapService` — service interface for LDAP authentication
 
-### SMS / email / WeCom
+Ownership split: `LdapConfig` owns directory connection configuration. `LdapServiceImpl` owns the authentication bind logic. `LdapCommonController` owns the endpoint. Read `LdapConfig` first when connection fails. Read `LdapServiceImpl` first when authentication logic is wrong.
+
+### SMS (Login)
 
 Read:
 
 - `r2mo-spring-security`
-- the matching plugin module
+- `r2mo-spring-security-sms`
 
-Treat these as mode-specific login plugins rather than app-local controllers.
+Typical anchors:
+
+- `SmsService` — service interface for SMS login (pre-auth send + login verification)
+- `SmsServiceImpl` — implements verification code generation, caching, and validation
+- `SmsServicePreAuth` — handles the pre-auth step: sending verification code to mobile (`/auth/sms-send`)
+- `SmsCommonController` — REST endpoints for SMS login flow (`/auth/sms-send`, `/auth/sms-login`)
+- `SmsCaptchaConfig` — `security.sms.*` property binding for captcha/code configuration
+- `SmsLoginRequest` — request model for SMS login
+- `UserAtBaseSMS` — user identity model for SMS-authenticated users
+
+Boundary with `r2mo-spring-sms`: this module handles **authentication login via SMS verification code**. The `r2mo-spring-sms` module handles **notification delivery via SMS**. Do not confuse them. See `spring-delivery-boundary.md` for the full three-layer model.
+
+### Email (Login)
+
+Read:
+
+- `r2mo-spring-security`
+- `r2mo-spring-security-email`
+
+Typical anchors:
+
+- `EmailService` — service interface for email login (pre-auth send + login verification)
+- `EmailServiceImpl` — implements verification code generation, caching, and validation
+- `EmailServicePreAuth` — handles the pre-auth step: sending verification code to email (`/auth/email-send`)
+- `EmailCommonController` — REST endpoints for email login flow (`/auth/email-send`, `/auth/email-login`)
+- `EmailCaptchaConfig` — `security.email.*` property binding for captcha/code configuration
+- `EmailLoginRequest` — request model for email login
+- `UserAtBaseEmail` — user identity model for email-authenticated users
+
+Boundary with `r2mo-spring-email`: this module handles **authentication login via email verification code**. The `r2mo-spring-email` module handles **notification delivery via email**. See `spring-delivery-boundary.md`.
+
+### WeCom (Login)
+
+Read:
+
+- `r2mo-spring-security`
+- `r2mo-spring-security-weco`
+
+Typical anchors:
+
+- `WeComServiceImpl` — implements WeCom QR-code login and OAuth callback flow
+- `WeChatServiceImpl` — implements WeChat (MP/CB) login flow for mobile scenarios
+- `WeComRequestUri` — constructs the WeCom OAuth authorization URI
+- `WeChatReqPreLogin` — pre-login request model for WeChat flow
+- `WeChatCommonController` — REST endpoints for WeCom login (`/auth/wecom-login`, `/auth/wecom-qrcode`)
+- `WeChatMPCBController` — REST endpoints for WeChat MP/CB callback flow
+- `WeComLoginRequest` — request model for WeCom login
+- `UserAtBaseWeCom` — user identity model for WeCom-authenticated users
+
+Boundary with `r2mo-spring-weco`: this module handles **authentication login via WeCom QR code or WeChat OAuth**. The `r2mo-spring-weco` module handles **notification delivery via WeCom**. See `spring-delivery-boundary.md`.
 
 ## 6. What Agents Should Assume
 

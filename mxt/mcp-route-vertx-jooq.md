@@ -11,6 +11,7 @@ Activate this route when the request is clearly about:
 - `r2mo-vertx-jooq-shared`,
 - `r2mo-vertx-jooq-jdbc`,
 - `r2mo-vertx-jooq-generate`,
+- `r2mo-dbe-jooq`,
 - async DB context,
 - jOOQ runtime bridging,
 - or Vert.x-side generator/runtime ownership.
@@ -18,7 +19,7 @@ Activate this route when the request is clearly about:
 Preferred regex:
 
 ```regex
-(?i)\b(r2mo-vertx|r2mo-vertx-jooq(?:-shared|-jdbc|-generate)?|vertx|asyncdbcontext|dbcontext|dbjx|dbvector|jooq runtime|jdbc bridge|forced type|typeofjooq|jooq source)\b
+(?i)\b(r2mo-vertx|r2mo-vertx-jooq(?:-shared|-jdbc|-generate)?|r2mo-dbe-jooq|vertx|asyncdbcontext|dbcontext|dbjx|dbvector|jooq runtime|jdbc bridge|forced type|typeofjooq|jooq source|dbe.jooq)\b
 ```
 
 ## 2. Mandatory Reading Set
@@ -45,6 +46,9 @@ Primary module families:
 - `r2mo-vertx-jooq-jdbc` for JDBC landing
 - `r2mo-vertx-jooq` for runtime bridge behavior
 - `r2mo-vertx-jooq-generate` for jOOQ source/type generation
+- `r2mo-dbe-jooq` for DBE-layer jOOQ abstraction interfaces (shared between Vert.x and future landings)
+
+Boundary note: `r2mo-dbe-jooq` owns the **DBE abstraction contract** for jOOQ-style access. The `r2mo-vertx-jooq*` family owns the **Vert.x runtime implementation**. Read `r2mo-dbe-jooq` first when the question is about interface ownership; read `r2mo-vertx-jooq*` when the question is about runtime execution or generation.
 
 ## 4. Allowed Combinations
 

@@ -10,6 +10,8 @@ Activate this route when the request is clearly about:
 - `r2mo-io`,
 - `r2mo-jaas`,
 - `r2mo-jce`,
+- `r2mo-typed-hutool`,
+- `r2mo-typed-vertx`,
 - shared SPI/provider-selection behavior,
 - native implementation ownership versus Spring/Vert.x landing,
 - or a capability that might still be container-neutral.
@@ -17,7 +19,7 @@ Activate this route when the request is clearly about:
 Preferred regex:
 
 ```regex
-(?i)\b(r2mo-dbe|r2mo-io|r2mo-jaas|r2mo-jce|shared capability|provider selection|spi|spid|claim base|user cache|license|encrypt|decrypt|storage|transfer|criteria|pager|sorter|projection)\b
+(?i)\b(r2mo-dbe|r2mo-io|r2mo-jaas|r2mo-jce|r2mo-typed-hutool|r2mo-typed-vertx|shared capability|provider selection|spi|spid|claim base|user cache|license|encrypt|decrypt|storage|transfer|criteria|pager|sorter|projection|typed.hutool|typed.vertx|type implementation)\b
 ```
 
 ## 2. Mandatory Reading Set
@@ -43,6 +45,8 @@ Primary module families:
 - `r2mo-io` for storage and transfer abstraction plus provider selection
 - `r2mo-jaas` for auth primitives, user cache, and claim-base semantics
 - `r2mo-jce` for crypto, signature, verification, and license-style primitives
+- `r2mo-typed-hutool` for Hutool-based synchronous data-type implementations
+- `r2mo-typed-vertx` for Vert.x-based asynchronous data-type implementations
 
 ## 4. Native vs Container Rule
 
