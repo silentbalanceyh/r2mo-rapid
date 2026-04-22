@@ -23,6 +23,10 @@ The README clearly states the core building blocks:
 
 ## 2. What to Read First
 
+- Fastest AI Entry: [`ai-agent-fast-start.md`](./ai-agent-fast-start.md)
+- MCP Shortest Path: [`mcp-shortest-path.md`](./mcp-shortest-path.md)
+- Distilled Capability Cards: [`distilled-capability-cards.md`](./distilled-capability-cards.md)
+- MCP Token-Saving Rules: [`mcp-token-saving-rules.md`](./mcp-token-saving-rules.md)
 - Final AI Agent Entry: [`mxt-r2mo-ai-agent-guide.md`](./mxt-r2mo-ai-agent-guide.md)
 - Core Capability Index: [`core-capability-index.md`](./core-capability-index.md)
 - AMS Boundary: [`ams-boundary.md`](./ams-boundary.md)
@@ -116,15 +120,21 @@ From the root `pom.xml`, four main layers are visible:
 
 ## 5. Recommended Reading Order
 
-1. First read `mxt-r2mo-ai-agent-guide.md` as the main entry for downstream AI agents.
-2. Then read `framework-map.md` to understand the big picture.
-3. Read `spec-boundary.md`, `spring-layer-map.md`, and `dual-side-development.md` to lock down ownership and side boundaries.
-4. For requirement decisions, see `abstraction-rules.md` and `framework-trigger-matrix.md`.
-5. For implementation narrowing, see `extension-points.md`, `search-hints.md`, and the graph documents.
-6. For long-term maintenance after upgrades, see `evolution-rules.md`.
+1. First read `ai-agent-fast-start.md` when the goal is shortest correct routing.
+2. Then read `mcp-shortest-path.md` when MCP token cost is the main constraint.
+3. Read `distilled-capability-cards.md` or `core-capability-index.md` only if the trigger is still vague.
+4. Read one matching `mcp-route-*.md` file.
+5. Read one boundary or guide file for the chosen module family.
+6. Open exact source only after ownership is locked.
+
+Use `mxt-r2mo-ai-agent-guide.md` and `README.md` as broader second-line references, not as the default first hop for every request.
 
 For MCP peer-side routing, add this refinement:
 
+- use `ai-agent-fast-start.md` when the agent starts cold and needs the cheapest first decision,
+- use `mcp-shortest-path.md` when MCP retrieval depth must stay minimal,
+- use `distilled-capability-cards.md` when the agent needs a one-screen capability summary,
+- use `mcp-token-saving-rules.md` when the main optimization target is token budget,
 - use `ams-boundary.md` when the target is specifically `r2mo-ams` rather than the broader shared-contract route,
 - use `spi-implementation-boundary.md` when the task is about SPI placement between shared/native/Spring layers,
 - use `io-boundary.md`, `jaas-boundary.md`, and `jce-boundary.md` when the target shared capability family is already known,

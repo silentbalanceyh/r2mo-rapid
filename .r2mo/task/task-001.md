@@ -45,4 +45,9 @@ author:
 - Filled an additional gap for delivery-provider ownership by extending the reading path to include `r2mo-xync-email`, `r2mo-xync-sms`, and `r2mo-xync-weco`, not only the Spring-side integration modules.
 - Added independent single-purpose documents for the previously merged rule items: `ams-boundary.md`, `spi-implementation-boundary.md`, `io-boundary.md`, `jaas-boundary.md`, `jce-boundary.md`, `spring-cache-guide.md`, `delivery-email-guide.md`, `delivery-sms-guide.md`, and `delivery-weco-guide.md`.
 - Updated `mxt/README.md` and `mxt/document-srp-audit.md` so the rule checklist can now map each missing detail rule to a dedicated primary document instead of only a family-level route.
+- Added `test/test_mxt_rules.py` with 50 executable `unittest` cases to validate the current `mxt/` rule set, route index wiring, SRP audit coverage, delivery-module coverage, and task-file change tracking.
+- Added a second optimization layer for AI-agent consumption: `ai-agent-fast-start.md`, `mcp-shortest-path.md`, `distilled-capability-cards.md`, and `mcp-token-saving-rules.md`.
+- Reordered the MXT reading strategy so broad docs become second-line references while MCP can now follow a shortest path of `fast start -> one route -> one module guide -> exact source`.
+- Extended the test suite from 50 to 72 executable `unittest` cases so the new fast-entry and token-saving rules are also enforced.
+- Expanded the regression suite to 200 executable `unittest` cases for document-routing consistency, fast-entry coverage, route compression, and token-saving behavior, then removed the temporary test files after verification as requested.
 - No explicit Team mode switch was found in the current workspace task context, so the task was executed directly by the leader without spawning Workers.

@@ -40,6 +40,11 @@ Do not start from business vocabulary alone.
 
 Before graph or source inspection, prefer these files:
 
+- `mxt/ai-agent-fast-start.md`
+- `mxt/mcp-shortest-path.md`
+- `mxt/distilled-capability-cards.md`
+- `mxt/mcp-token-saving-rules.md`
+- one matching `mxt/mcp-route-*.md` file if the trigger family is already known
 - `mxt/mxt-r2mo-ai-agent-guide.md`
 - `mxt/core-capability-index.md`
 - `mxt/README.md`
@@ -56,6 +61,9 @@ Before graph or source inspection, prefer these files:
 - `mxt/dual-side-development.md`
 - `mxt/search-hints.md`
 - `mxt/code-review-graph-r2mo-analysis.md`
+
+Prefer the smallest valid entry doc.
+Do not read all files above by default.
 
 When the peer-side router already matched a specialized route, also read:
 
@@ -103,6 +111,13 @@ Use them first for:
 - Spring Security-specific requests,
 - generator-specific requests.
 
+If the agent is still cold before routing, first read:
+
+- `mxt/ai-agent-fast-start.md`
+- then `mxt/mcp-shortest-path.md`
+
+If the agent already knows the module family, skip both and jump straight to the matching route or module guide.
+
 ## 5. When Graph-Guided Reading Is Optional
 
 Graph use is optional when:
@@ -111,6 +126,7 @@ Graph use is optional when:
 2. The symbol is already known and unique.
 3. The question is only about one local doc file under `mxt/`.
 4. The task is purely editorial and not about code ownership or execution logic.
+5. A single boundary/guide file already answers the ownership question.
 
 ## 6. Trigger-to-Family Mapping
 
@@ -311,6 +327,12 @@ If the requirement only needs one framework capability:
 
 Read only the minimal capability family implied by the trigger set.
 
+Shortest valid paths:
+
+- exact module known -> module guide -> exact source
+- route family known -> route file -> one guide -> exact source
+- trigger vague -> `ai-agent-fast-start.md` -> `core-capability-index.md` -> one route file
+
 Examples:
 
 - JWT issue → `r2mo-spring-security` + `r2mo-spring-security-jwt`
@@ -348,7 +370,7 @@ The agent should normalize the requirement into a framework family before openin
 If uncertain, use this default:
 
 ```text
-mxt docs -> root/module pom -> graph family narrowing -> exact source files -> answer
+ai-agent-fast-start.md -> one route file -> one boundary/guide doc -> root/module pom if needed -> graph narrowing if needed -> exact source files -> answer
 ```
 
 That is the intended MCP reading path for `mxt-r2mo`.

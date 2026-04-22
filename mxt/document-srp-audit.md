@@ -21,6 +21,7 @@ This audit uses three statuses:
 |---|---|---|---|
 | `README.md` | entry/index for the MXT set | Borderline | acceptable as an entry doc, but should not absorb specialized guidance |
 | `abstraction-rules.md` | framework escalation rules | Pass | focused on abstraction admission and rejection |
+| `ai-agent-fast-start.md` | cheapest first-hop routing for AI agents | Pass | one fast-entry responsibility |
 | `ams-boundary.md` | `r2mo-ams` boundary and ownership | Pass | one module-boundary responsibility |
 | `backend-module-layering-guide.md` | backend module topology and DPA ownership | Pass | layering-only responsibility |
 | `backend-dbe-guide.md` | DBE and query-shape guidance | Pass | persistence-only responsibility |
@@ -29,6 +30,7 @@ This audit uses three statuses:
 | `code-review-graph-r2mo-analysis.md` | repository graph findings | Pass | analysis-only responsibility |
 | `code-review-graph-usage.md` | graph operation workflow | Pass | usage-only responsibility |
 | `core-capability-index.md` | graph-backed capability extraction index | Pass | one capability-index responsibility |
+| `distilled-capability-cards.md` | compressed capability lookup cards | Pass | one compressed-lookup responsibility |
 | `delivery-email-guide.md` | email delivery ownership | Pass | one delivery-channel responsibility |
 | `delivery-sms-guide.md` | SMS delivery ownership | Pass | one delivery-channel responsibility |
 | `delivery-weco-guide.md` | WeCom delivery ownership | Pass | one delivery-channel responsibility |
@@ -55,6 +57,8 @@ This audit uses three statuses:
 | `mcp-route-code-generator.md` | generator MCP regex route | Pass | one route, one purpose |
 | `mcp-route-code-review-graph.md` | graph MCP regex route | Pass | one route, one purpose |
 | `mcp-route-spring-security.md` | Spring Security MCP regex route | Pass | one route, one purpose |
+| `mcp-shortest-path.md` | shortest MCP retrieval path | Pass | one retrieval-optimization responsibility |
+| `mcp-token-saving-rules.md` | MCP token-saving heuristics | Pass | one token-optimization responsibility |
 | `mxt-r2mo-ai-agent-guide.md` | final generalized agent entry guide | Pass | broad, but still one audience and one job |
 | `mxt-r2mo-mcp-rules.md` | MCP reading rules for this repository | Pass | large, but still one operational responsibility |
 | `project-rule-awareness.md` | handling project-local rule files | Pass | one execution concern |
@@ -89,6 +93,9 @@ The current route coverage has now been extended without undoing that split:
 No urgent split remains in the MCP route layer after the shared-contract, shared-capability, Spring-integration, and Vert.x/jOOQ routes were extracted.
 
 The remaining watch item is still `evolution-rules.md`, because it is the broadest governance document in the set.
+
+The current optimization direction is no longer route splitting first.
+It is now entry compression and retrieval-depth reduction for AI-agent MCP consumption.
 
 ## 5. Final Test For New Files
 
