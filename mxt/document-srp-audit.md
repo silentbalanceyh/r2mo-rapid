@@ -19,7 +19,7 @@ This audit uses three statuses:
 
 | File | Primary responsibility | Status | Note |
 |---|---|---|---|
-| `README.md` | entry/index for the MXT set | Borderline | acceptable as an entry doc, but should not absorb specialized guidance |
+| `README.md` | entry/index for the MXT set | Pass | slimmed to index-only; decision framework moved to `framework-map.md` |
 | `abstraction-rules.md` | framework escalation rules | Pass | focused on abstraction admission and rejection |
 | `ai-agent-fast-start.md` | cheapest first-hop routing for AI agents | Pass | one fast-entry responsibility |
 | `ams-boundary.md` | `r2mo-ams` boundary and ownership | Pass | one module-boundary responsibility |
@@ -62,7 +62,13 @@ This audit uses three statuses:
 | `mxt-coverage-report.md` | current MCP coverage judgment | Pass | one coverage-status responsibility |
 | `mxt-file-creation-rules.md` | MXT file creation criteria | Pass | one governance responsibility |
 | `mxt-r2mo-ai-agent-guide.md` | final generalized agent entry guide | Pass | broad, but still one audience and one job |
-| `mxt-r2mo-mcp-rules.md` | MCP reading rules for this repository | Pass | large, but still one operational responsibility |
+| `mxt-r2mo-mcp-rules.md` | MCP reading rules for this repository | Pass | trigger mapping extracted to `mcp-trigger-matrix.md`; now focused on reading rules only |
+| `mcp-trigger-matrix.md` | trigger-to-family mapping for MCP routing | Pass | one routing responsibility, extracted from `mxt-r2mo-mcp-rules.md` |
+| `typed-implementation-boundary.md` | `r2mo-typed-hutool` vs `r2mo-typed-vertx` boundary | Pass | one selection-boundary responsibility |
+| `dbe-implementation-boundary.md` | `r2mo-dbe-mybatisplus` vs `r2mo-dbe-jooq` boundary | Pass | one selection-boundary responsibility |
+| `boot-assembly-guide.md` | boot module assembly and forbidden zones | Pass | one assembly-guide responsibility |
+| `spring-adapter-guides.md` | spring-json/template/mybatisplus adapter ownership | Pass | one adapter-family responsibility (three isomorphic modules) |
+| `spring-delivery-boundary.md` | three-layer email/sms/weco delivery architecture | Pass | one boundary-clarification responsibility |
 | `mxt-sync-rules.md` | MXT synchronization order after framework change | Pass | one governance responsibility |
 | `mxt-upgrade-verification.md` | MXT verification checklist after upgrades | Pass | one verification responsibility |
 | `project-rule-awareness.md` | handling project-local rule files | Pass | one execution concern |

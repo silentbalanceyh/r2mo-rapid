@@ -115,11 +115,12 @@ Typical ownership:
 Graph signals:
 
 - communities: `spi-impl`, `dbe-async`, `jooq-async`, `postgres-converter`
-- dominant module families: `r2mo-dbe*`, `r2mo-dbe-mybatisplus`, `r2mo-vertx-jooq*`
+- dominant module families: `r2mo-dbe*`, `r2mo-dbe-mybatisplus`, `r2mo-dbe-jooq`, `r2mo-vertx-jooq*`
 
 Read first:
 
 - `backend-dbe-guide.md`
+- `dbe-implementation-boundary.md` — MyBatis-Plus vs jOOQ selection boundary
 - `mcp-route-shared-capability-modules.md`
 - `mcp-route-vertx-jooq.md`
 - `code-generator-usage.md` when generation is involved
@@ -189,6 +190,24 @@ Typical ownership:
 - security-adjacent token/cache management
 - SPI-driven provider choice
 
+### 3.8.5 Typed implementation and data-type selection
+
+Primary module families:
+
+- `r2mo-typed-hutool`
+- `r2mo-typed-vertx`
+
+Read first:
+
+- `typed-implementation-boundary.md`
+- `mcp-route-shared-capability-modules.md`
+
+Typical ownership:
+
+- Hutool-based synchronous data-type operations
+- Vert.x-based asynchronous data-type operations
+- selection between typed implementations based on runtime environment
+
 ### 3.9 Spring-side integrations and delivery adapters
 
 Graph signals:
@@ -200,6 +219,8 @@ Read first:
 
 - `mcp-route-spring-integrations.md`
 - `spring-layer-map.md`
+- `spring-adapter-guides.md` — json, template, mybatisplus adapter ownership
+- `spring-delivery-boundary.md` — three-layer email/sms/weco architecture
 - `extension-points.md`
 
 Typical ownership:
@@ -260,6 +281,11 @@ Typical ownership:
 | Which Vert.x/jOOQ module owns this? | `mcp-route-vertx-jooq.md` |
 | Which generator family owns this? | `mcp-route-code-generator.md` |
 | Which security plugin or auth flow owns this? | `mcp-route-spring-security.md` |
+| Login vs delivery boundary for email/sms/weco? | `spring-delivery-boundary.md` |
+| Typed-hutool vs typed-vertx selection? | `typed-implementation-boundary.md` |
+| MyBatis-Plus vs jOOQ DBE implementation? | `dbe-implementation-boundary.md` |
+| Boot assembly and default dependencies? | `boot-assembly-guide.md` |
+| Spring adapter (json/template/mybatisplus) ownership? | `spring-adapter-guides.md` |
 
 ## 5. Final Rule
 

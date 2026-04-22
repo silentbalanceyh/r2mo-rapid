@@ -88,36 +88,6 @@ Use graph-guided narrowing before broad source reading when at least one of the 
 
 In those cases, first consult the graph-backed analysis and narrow to a capability family.
 
-## 4.1 MCP Regex Routing
-
-For peer-side routing, prefer the dedicated route files:
-
-- `mxt/mcp-route-shared-contracts.md`
-- `mxt/mcp-route-shared-capability-modules.md`
-- `mxt/mcp-route-spring-integrations.md`
-- `mxt/mcp-route-vertx-jooq.md`
-- `mxt/mcp-route-code-review-graph.md`
-- `mxt/mcp-route-spring-security.md`
-- `mxt/mcp-route-code-generator.md`
-
-Those route files are intentionally more specific than the generic trigger mapping in this file.
-Use them first for:
-
-- shared contract and metadata requests,
-- shared capability and SPI-first requests,
-- non-security Spring and delivery-provider integration requests,
-- Vert.x / jOOQ-side requests,
-- graph-first analysis requests,
-- Spring Security-specific requests,
-- generator-specific requests.
-
-If the agent is still cold before routing, first read:
-
-- `mxt/ai-agent-fast-start.md`
-- then `mxt/mcp-shortest-path.md`
-
-If the agent already knows the module family, skip both and jump straight to the matching route or module guide.
-
 ## 5. When Graph-Guided Reading Is Optional
 
 Graph use is optional when:
@@ -130,115 +100,9 @@ Graph use is optional when:
 
 ## 6. Trigger-to-Family Mapping
 
-When a requirement contains the following trigger terms, narrow to the matching graph family first.
+The trigger-to-family mapping has been extracted into `mcp-trigger-matrix.md` for SRP alignment.
 
-### 6.1 Security / auth triggers
-
-Trigger words:
-
-- login
-- auth
-- authenticate
-- authorize
-- session
-- captcha
-- token
-- jwt
-- oauth2
-- ldap
-- security
-- principal
-- claim
-
-Preferred targets:
-
-- communities: `auth-security`, `oauth2-token`, `session-user`
-- modules: `r2mo-spring-security`, `r2mo-spring-security-*`, `r2mo-jaas`
-
-### 6.2 License / crypto triggers
-
-Trigger words:
-
-- license
-- activation
-- sign
-- verify
-- key
-- pem
-- encrypt
-- decrypt
-- jce
-- fingerprint
-- rsa
-- ecc
-- ed25519
-- sm2
-- sm4
-
-Preferred targets:
-
-- community: `common-license`
-- module: `r2mo-jce`
-- docs: `framework-trigger-matrix.md`, `code-review-graph-r2mo-analysis.md`
-
-### 6.3 DBE / query / generator triggers
-
-Trigger words:
-
-- dbe
-- criteria
-- pager
-- sorter
-- projection
-- query
-- generator
-- sql
-- jooq
-- mybatisplus
-- converter
-- metadata generation
-
-Preferred targets:
-
-- communities: `generate-generator`, `jooq-async`, `dbe-async`, `spi-jooq`, `postgres-converter`
-- modules: `r2mo-dbe*`, `r2mo-vertx-jooq*`, `r2mo-dbe-mybatisplus`
-
-### 6.4 IO / transfer triggers
-
-Trigger words:
-
-- io
-- file
-- upload
-- download
-- storage
-- transfer
-- hstore
-- htransfer
-- local file
-- remote file
-
-Preferred targets:
-
-- communities: `operation-transfer`, `common-transfer`
-- modules: `r2mo-io`, `r2mo-io-local`
-
-### 6.5 Cache / SPI / provider-selection triggers
-
-Trigger words:
-
-- cache
-- spi
-- spid
-- provider
-- extension point
-- implementation selection
-- plugin selection
-
-Preferred targets:
-
-- communities: `cache-cache`, `spi-impl`, `spi-jooq`
-- modules: `r2mo-spring-cache`, `r2mo-spring-security`, `r2mo-io`, `r2mo-jaas`
+When a requirement contains trigger terms, read `mcp-trigger-matrix.md` first, then follow the matching `mcp-route-*.md` file.
 
 ## 7. Core Repository Reading Rules
 
