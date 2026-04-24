@@ -5,5 +5,6 @@ package io.r2mo.base.io.enums;
  */
 public enum NodeType {
     FILE,
+    CHUNK,
     DIRECTORY
 }

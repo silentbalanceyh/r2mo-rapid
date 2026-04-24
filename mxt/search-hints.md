@@ -181,6 +181,14 @@ Why this order matters:
 3. Search `FactoryIoCommon`
 4. Search `SPI.findOne(`
 
+### To debug large-file upload / resume / chunk closed loop
+
+1. `mxt/io-boundary.md`
+2. `mxt/mcp-route-shared-capability-modules.md`
+3. search `RFS`, `TransferRequest`, `TransferToken`, `TransferLargeService`, `StoreChunk`
+4. then open concrete provider modules such as `r2mo-io-local`
+5. only after shared transfer flow is confirmed, inspect Spring / Zero adapters
+
 ### To modify query capabilities
 
 1. `r2mo-dbe`

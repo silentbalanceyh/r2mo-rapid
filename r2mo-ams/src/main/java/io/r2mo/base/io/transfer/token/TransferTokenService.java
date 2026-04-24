@@ -67,4 +67,13 @@ public interface TransferTokenService extends HTransferService<TransferRequest, 
      * @return 是否成功
      */
     boolean runExtend(String token, long expireSeconds);
+
+    /**
+     * 持久化令牌最新状态
+     *
+     * @param token 令牌对象
+     *
+     * @return 是否成功
+     */
+    boolean runStore(TransferToken token);
 }

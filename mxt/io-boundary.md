@@ -16,6 +16,10 @@ Read it first for:
 
 ## 2. What Belongs Here
 
+- upload session / transfer token / chunk / resume / complete / cancel semantics for large-file transfer,
+- transfer progress and uploaded/waiting chunk visibility,
+- container-neutral facades such as `RFS` and transfer-provider selection,
+
 - container-neutral storage interfaces,
 - transfer contracts,
 - shared IO action semantics,

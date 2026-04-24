@@ -43,6 +43,7 @@ Primary module families:
 
 - `r2mo-dbe` for shared query, CRUD, and query-shape ownership
 - `r2mo-io` for storage and transfer abstraction plus provider selection
+  - for large-file upload, start from `RFS`, `HTransfer`, `TransferRequest`, `TransferToken`, `TransferLargeService`, and the concrete provider such as `r2mo-io-local`
 - `r2mo-jaas` for auth primitives, user cache, and claim-base semantics
 - `r2mo-jce` for crypto, signature, verification, and license-style primitives
 - `r2mo-typed-hutool` for Hutool-based synchronous data-type implementations

@@ -57,7 +57,7 @@ public class StoreChunk extends AbstractStoreObject {
         this.setIndex(index);
         this.setFullFileName(request.getFileName());
         this.setByteFrom((long) index * request.getChunkSize());
-        this.setStorePath(request.getPathTarget() + "\\" + index + "-" + id + ".tmp");
+        this.setStorePath(java.nio.file.Paths.get(request.getPathTarget(), index + "-" + id + ".tmp").toString());
 
 
         if (request.getTotalSize() != null) {

@@ -203,6 +203,7 @@ Examples:
 - Shared marker or metadata issue → `mcp-route-shared-contracts.md` + `r2mo-ams` / `r2mo-spec`
 - License verification → `r2mo-jce` + `framework-trigger-matrix.md` + exact `r2mo-jce` source
 - Upload/transfer issue → `r2mo-io` + `r2mo-io-local`
+- Large-file upload / chunk / resume / complete issue → start from shared `r2mo-io` transfer contracts and only then inspect Spring/Zero adapter endpoints
 - Query syntax issue → `r2mo-dbe` + concrete implementation module
 - Spring cache/email/sms/weco issue → `mcp-route-spring-integrations.md` + exact `r2mo-spring-*` module
 - Delivery provider issue → `mcp-route-spring-integrations.md` + exact `r2mo-xync-*` module

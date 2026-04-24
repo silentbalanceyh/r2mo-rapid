@@ -8,6 +8,7 @@ import io.r2mo.io.modeling.TransferResponse;
 import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Ref;
 import io.r2mo.typed.exception.web._501NotSupportException;
+import io.r2mo.typed.json.JBase;
 import io.r2mo.typed.json.JObject;
 import io.r2mo.typed.json.JUtil;
 
@@ -47,10 +48,20 @@ class StoreInitToken implements StoreInit<TransferToken> {
         if (UT.isNotEmpty(parameters)) {
             token.setServiceProvider(parameters.getString(HTransferParam.TOKEN.SERVICE_PROVIDER));
             token.setServiceConsumer(parameters.getString(HTransferParam.TOKEN.SERVICE_CONSUMER));
+            token.setConfiguration(parameters.copy());
+        } else {
+            token.setConfiguration(JBase.parse("{}"));
         }
 
         // ===== 设置关联对象
-        final NodeType nodeType = request.getIsDirectory() ? NodeType.DIRECTORY : NodeType.FILE;
+        final NodeType nodeType;
+        if (Boolean.TRUE.equals(request.getIsDirectory())) {
+            nodeType = NodeType.DIRECTORY;
+        } else if (Boolean.TRUE.equals(request.getIsMultipart())) {
+            nodeType = NodeType.CHUNK;
+        } else {
+            nodeType = NodeType.FILE;
+        }
         token.setRef(Ref.of(nodeType.name(), request.getNodeId()));
 
 

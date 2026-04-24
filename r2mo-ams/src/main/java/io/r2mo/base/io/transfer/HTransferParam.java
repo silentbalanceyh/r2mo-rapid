@@ -29,6 +29,7 @@ public interface HTransferParam {
         String NODE_ID = "nodeId";
         String CLIENT_IP = "clientIp";
         String CLIENT_AGENT = "clientAgent";
+        String CHUNKS = "chunks";
     }
 
     interface REQUEST {

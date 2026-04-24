@@ -123,6 +123,31 @@ class LocalTokenService implements TransferTokenService {
     }
 
     @Override
+    public boolean runStore(final TransferToken token) {
+        try {
+            if (Objects.isNull(token) || Objects.isNull(token.getToken())) {
+                log.warn("[ R2MO ] 持久化令牌失败：令牌为空");
+                return false;
+            }
+            long expireTime = System.currentTimeMillis() + 3600000L;
+            if (token.getExpiredAt() != null) {
+                expireTime = java.time.Duration.between(
+                    java.time.LocalDateTime.now(),
+                    token.getExpiredAt()
+                ).toMillis() + System.currentTimeMillis();
+            }
+            final boolean saved = this.cache.runSave(token, expireTime);
+            if (saved) {
+                log.debug("[ R2MO ] 持久化令牌成功: tokenId={}", token.getToken());
+            }
+            return saved;
+        } catch (final Exception e) {
+            log.error("[ R2MO ] 持久化令牌时发生错误: tokenId={}", token == null ? null : token.getToken(), e);
+            return false;
+        }
+    }
+
+    @Override
     public TransferToken initialize(final TransferRequest request) {
         try {
             if (request == null) {

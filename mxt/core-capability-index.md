@@ -169,6 +169,7 @@ Typical ownership:
 - storage abstraction
 - local file implementation
 - transfer token, chunk, and progress flows
+- upload-session based large-file closed loop before any Spring/Zero adapter
 
 ### 3.8 Cache and provider selection
 

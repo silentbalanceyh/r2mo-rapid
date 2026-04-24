@@ -111,7 +111,7 @@ Before opening source code, normalize vague requirement words into one or more c
 | login, auth, session, jwt, oauth2, ldap, captcha, token, principal, claim | security/auth | `spring-layer-map.md`, `framework-trigger-matrix.md`, `mxt-r2mo-mcp-rules.md` |
 | license, activation, sign, verify, key, rsa, ecc, ed25519, sm2, sm4, encrypt, decrypt | license/crypto | `framework-trigger-matrix.md`, `code-review-graph-r2mo-analysis.md` |
 | criteria, pager, sorter, projection, query, generator, sql, jooq, mybatisplus | DBE/query/generator | `framework-map.md`, `dual-side-development.md`, `search-hints.md` |
-| upload, download, file, storage, transfer, hstore, htransfer | IO/transfer | `framework-map.md`, `extension-points.md`, `search-hints.md` |
+| upload, download, file, storage, transfer, hstore, htransfer, chunk, resume, complete, cancel | IO/transfer | `framework-map.md`, `extension-points.md`, `search-hints.md` |
 | cache, spi, spid, provider, extension point | cache/SPI/provider selection | `extension-points.md`, `mxt-r2mo-mcp-rules.md`, `search-hints.md` |
 | marker, metadata, schema, contract, openapi, error code | spec/contract | `spec-boundary.md`, `search-hints.md` |
 | bean, mvc, filter, interceptor, autoconfiguration | Spring runtime | `spring-layer-map.md`, `dual-side-development.md` |

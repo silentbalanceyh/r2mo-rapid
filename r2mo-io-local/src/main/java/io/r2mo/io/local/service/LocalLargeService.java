@@ -1,7 +1,10 @@
 package io.r2mo.io.local.service;
 
+import io.r2mo.base.io.HStore;
+import io.r2mo.base.io.HUri;
 import io.r2mo.base.io.modeling.FileRange;
 import io.r2mo.base.io.modeling.StoreChunk;
+import io.r2mo.base.io.transfer.HTransferParam;
 import io.r2mo.base.io.transfer.TransferRequest;
 import io.r2mo.base.io.transfer.TransferResult;
 import io.r2mo.base.io.transfer.token.TransferToken;
@@ -12,10 +15,12 @@ import io.r2mo.io.local.transfer.TransDownload;
 import io.r2mo.io.local.transfer.TransUpload;
 import io.r2mo.io.modeling.TransferResponse;
 import io.r2mo.io.service.TransferLargeService;
+import io.r2mo.spi.SPI;
 import io.r2mo.typed.common.Binary;
 import io.r2mo.typed.common.Ref;
 import io.r2mo.typed.exception.web._400BadRequestException;
 import io.r2mo.typed.exception.web._404NotFoundException;
+import io.r2mo.typed.json.JArray;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -76,6 +81,7 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
 
         // 4. 初始化分块状态
         this.initChunkList(token, chunks);
+        this.persistChunks(token, chunks);
 
         // 5. 创建响应
         final TransferResponse response = this.initializer.output(chunks);
@@ -128,18 +134,22 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
     }
 
     @Override
-    public Binary runDownload(final String filename, final FileRange range) {
-        return TransDownload.of().read(filename, range);
+    public Binary runDownload(final String token, final FileRange range) {
+        final java.nio.file.Path finalFilePath = this.finalFilePath(token, this.findStoreChunks(token));
+        final String absolute = finalFilePath.toString();
+        return TransDownload.of().read(absolute, range);
     }
 
     @Override
     public List<StoreChunk> dataUploaded(final String token) {
-        return UPLOADED_CHUNKS.getOrDefault(token, Collections.emptyList());
+        final List<StoreChunk> chunks = this.findStoreChunks(token);
+        return chunks.stream().filter(StoreChunk::getDone).toList();
     }
 
     @Override
     public List<StoreChunk> dataWaiting(final String token) {
-        return WAITING_CHUNKS.getOrDefault(token, Collections.emptyList());
+        final List<StoreChunk> chunks = this.findStoreChunks(token);
+        return chunks.stream().filter(chunk -> !Boolean.TRUE.equals(chunk.getDone())).toList();
     }
 
 
@@ -176,12 +186,12 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
         this.validChunks(token);
         // 2.执行分块合并逻辑
         this.mergeChunks(token);
-        // 3. 清理状态
-        this.cleanToken(token);
-        // 4. 完成令牌
-        this.token.runRevoke(token);
-        // 5.删除分片文件
+        // 3.删除分片文件
         this.rmChunk(token);
+        // 4. 清理状态
+        this.cleanToken(token);
+        // 5. 完成令牌
+        this.token.runRevoke(token);
         return TransferResult.SUCCESS;
     }
 
@@ -250,8 +260,14 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
             log.error("[ R2MO ] 无法确定最终文件路径：token={}", token);
             throw new _400BadRequestException("[ R2MO ] 无法确定最终文件路径：token=" + token);
         }
-        final String fileName = tokenInfo.getRef().refId().toString() + "-" + chunks.get(0).getFullFileName();
-        return Paths.get(chunks.get(0).getStorePath(), fileName);
+        final String fileName = chunks.get(0).getFullFileName();
+        final String configured = tokenInfo.getConfiguration() == null ? null : tokenInfo.getConfiguration().getString("finalPath");
+        if (configured != null && !configured.isBlank()) {
+            return Paths.get(configured);
+        }
+        final Path firstChunk = Paths.get(chunks.get(0).getStorePath());
+        final Path sessionDir = firstChunk.getParent();
+        return sessionDir.resolve(fileName);
     }
 
     /**
@@ -331,11 +347,15 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
         }
 
         // 3. 根据 nodeId 获取分块信息
-        final List<StoreChunk> chunks = this.nm.find(ref.refId());
+        List<StoreChunk> chunks = this.nm.findChunk(ref.refId());
+        if (Objects.isNull(chunks)) {
+            chunks = this.restoreChunks(tokenVerified, ref.refId());
+        }
         if (Objects.isNull(chunks)) {
             throw new _404NotFoundException("[ R2MO ] 分块信息不存在: " + ref.refId());
         }
 
+        this.refreshChunkStatus(token, chunks);
         return chunks;
     }
 
@@ -356,18 +376,83 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
         final List<StoreChunk> uploadedList = UPLOADED_CHUNKS.getOrDefault(token, new ArrayList<>());
         final List<StoreChunk> waitingList = WAITING_CHUNKS.getOrDefault(token, new ArrayList<>());
 
+        chunk.setDone(uploaded);
         if (uploaded) {
             // 添加到已上传列表，从等待列表中移除
-            uploadedList.add(chunk);
+            if (uploadedList.stream().noneMatch(c -> c.getId().equals(chunk.getId()))) {
+                uploadedList.add(chunk);
+            }
             waitingList.removeIf(c -> c.getId().equals(chunk.getId()));
         } else {
             // 添加到等待列表，从已上传列表中移除
-            waitingList.add(chunk);
+            if (waitingList.stream().noneMatch(c -> c.getId().equals(chunk.getId()))) {
+                waitingList.add(chunk);
+            }
             uploadedList.removeIf(c -> c.getId().equals(chunk.getId()));
         }
 
         UPLOADED_CHUNKS.put(token, uploadedList);
         WAITING_CHUNKS.put(token, waitingList);
+    }
+
+    private void persistChunks(final TransferToken token, final List<StoreChunk> chunks) {
+        if (Objects.isNull(token) || Objects.isNull(token.getConfiguration())) {
+            return;
+        }
+        final JArray serialized = UT.serializeJson(chunks);
+        token.getConfiguration().put(HTransferParam.TOKEN.CHUNKS, serialized);
+        this.token.runStore(token);
+    }
+
+    private List<StoreChunk> restoreChunks(final TransferToken token, final UUID nodeId) {
+        if (Objects.isNull(token) || Objects.isNull(token.getConfiguration())) {
+            return null;
+        }
+        final JArray chunksJ = token.getConfiguration().getJArray(HTransferParam.TOKEN.CHUNKS);
+        if (UT.isEmpty(chunksJ)) {
+            return null;
+        }
+        final List<StoreChunk> chunks = UT.deserializeJson(chunksJ, StoreChunk.class);
+        if (Objects.nonNull(chunks) && !chunks.isEmpty()) {
+            this.nm.put(nodeId, chunks);
+            return chunks;
+        }
+        return null;
+    }
+
+    private void refreshChunkStatus(final String token, final List<StoreChunk> chunks) {
+        final List<StoreChunk> uploadedList = new ArrayList<>();
+        final List<StoreChunk> waitingList = new ArrayList<>();
+        for (final StoreChunk chunk : chunks) {
+            final boolean uploaded = this.chunkExists(chunk);
+            chunk.setDone(uploaded);
+            if (uploaded) {
+                uploadedList.add(chunk);
+            } else {
+                waitingList.add(chunk);
+            }
+        }
+        CHUNK_STORE.put(token, new ArrayList<>(chunks));
+        UPLOADED_CHUNKS.put(token, uploadedList);
+        WAITING_CHUNKS.put(token, waitingList);
+    }
+
+    private boolean chunkExists(final StoreChunk chunk) {
+        final HStore store = SPI.V_STORE;
+        final String absolute = HUri.UT.resolve(store.pHome(), chunk.getStorePath());
+        final Path path = Paths.get(absolute);
+        if (!Files.exists(path)) {
+            return false;
+        }
+        try {
+            if (Objects.nonNull(chunk.getSize())) {
+                return Files.size(path) == chunk.getSize();
+            }
+            return true;
+        } catch (final IOException ex) {
+            log.warn("[ R2MO ] 分块状态检查失败: chunkId={}", chunk.getId(), ex);
+            return false;
+        }
     }
 
     //    /**
