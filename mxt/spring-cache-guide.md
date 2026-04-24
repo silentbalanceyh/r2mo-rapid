@@ -48,3 +48,17 @@ Use this order:
 ```text
 spring-cache-guide.md -> mcp-route-spring-integrations.md -> extension-points.md -> exact r2mo-spring-cache source
 ```
+
+## 6. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for Spring cache ownership
+- `r2mo-rapid` + `zero-ecotope` when cache/provider behavior must be compared with Zero cache or Redis plugin capability
+
+## 7. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one cache/provider symbol is already known
+- the unresolved point is structural spread between Spring landing, SPI selection, and backend/provider implementations

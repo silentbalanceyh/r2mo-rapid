@@ -43,3 +43,17 @@ Use this order:
 ```text
 delivery-sms-guide.md -> mcp-route-spring-integrations.md -> xync-sms or spring-sms -> exact source
 ```
+
+## 5. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for delivery foundation plus Spring landing ownership
+- `r2mo-rapid` + `zero-ecotope` when SMS delivery capability must be compared with Zero SMS plugin/auth-plugin boundaries
+
+## 6. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one delivery symbol is already known
+- the unresolved point is whether the issue belongs in provider foundation or Spring integration landing

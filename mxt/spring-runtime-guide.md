@@ -43,3 +43,18 @@ Use this order:
 ```text
 spring-runtime-guide.md -> spring-layer-map.md -> exact r2mo-spring source -> dependent spring feature module if needed
 ```
+
+## 5. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for Spring runtime base questions
+- `r2mo-rapid` + `zero-ecotope` when the unresolved point is a runtime comparison between Spring and Zero execution layers
+- `r2mo-rapid` + `r2mo-spec` only when shared contract meaning is still unresolved
+
+## 6. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one Spring runtime seam is already known
+- the unresolved point is structural spread between base runtime support and dependent Spring feature modules

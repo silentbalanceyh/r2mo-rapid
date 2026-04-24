@@ -103,12 +103,48 @@ Trigger words:
 - htransfer
 - local file
 - remote file
+- hfs
+- rfs
+- range download
+- configurable storage
 
 Preferred targets:
 
 - communities: `operation-transfer`, `common-transfer`
 - modules: `r2mo-io`, `r2mo-io-local`
 - route: `mcp-route-shared-capability-modules.md`
+- rule: `hfs-hstore-usage.md`
+
+Zero handshake:
+
+- If the same task mentions Ambient, Integration, attachment metadata, `ExAttachment`, `ExIo`, or Zero configurable storage, continue to `mcp-route-zero-ecotope-handshake.md` and the matching `mxt-zero` rule.
+
+## 5.1 Zero Ecotope Exmodule Triggers
+
+Trigger words:
+
+- ambient
+- activity log
+- audit log
+- change log
+- activity rule
+- expr rule
+- expression rule
+- modulat
+- dynamic module
+- modular operation
+- bag block
+- B_BAG
+- B_BLOCK
+- ExModulat
+- ExAttachment
+- ExIo
+
+Preferred targets:
+
+- server: `mxt-zero`
+- route: `mcp-route-zero-ecotope-handshake.md`
+- Zero rules: `ambient-activity-expression-rules.md`, `modulat-dynamic-operation-rules.md`, `attachment-storage-configurable-storage.md`, `io-utility-hfs-hstore-rules.md`
 
 ## 6. Cache / SPI / Provider-Selection Triggers
 

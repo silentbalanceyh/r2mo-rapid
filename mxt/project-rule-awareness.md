@@ -1,6 +1,6 @@
 # Project Rule Awareness (Harness 3.0)
 
-This document defines how AI agents should treat project-local rule files (MDC, `.mdc`, `.trae`, and equivalent) when working in a framework-based project.
+This document defines how AI agents should treat project-local rule files (`CLAUDE.md`, `AGENTS.md`, `CODEX.md`, `.cursor/rules`, `.trae`, and equivalent) when working in a framework-based project.
 
 ---
 
@@ -17,21 +17,21 @@ They must never be promoted into framework-level knowledge.
 
 ### Rule 1 — Inspect if present, ignore if absent
 
-If project-local rule files exist (`.cursor/rules/*.mdc`, `.trae/rules/*.md`, or equivalent), inspect them before starting implementation.
+If project-local rule files exist (`CLAUDE.md` / `AGENTS.md` / `CODEX.md` when present, `.cursor/rules/*.md`, `.trae/rules/*.md`, or equivalent), inspect them before starting implementation.
 
 If no rule files exist, ignore this layer entirely and continue with:
 - `mxt/` framework docs
 - source code
 - `.r2mo` specs
-- project `CLAUDE.md` / `AGENTS.md`
+- project `CLAUDE.md` / `AGENTS.md` / `CODEX.md` when present
 
 Do **not** block, loop, or ask the user about missing MDC files.
 
 ---
 
-### Rule 2 — `devapi.mdc` is the highest-priority backend rule file
+### Rule 2 — `devapi.md` is the highest-priority backend rule file
 
-If `devapi.mdc` (or equivalent API execution rule) exists, read it first before:
+If `devapi.md` (or equivalent API execution rule) exists, read it first before:
 - implementing backend APIs
 - validating request / response contracts
 - extracting data structures
@@ -78,7 +78,7 @@ When they conflict, prefer framework rules unless the MDC explicitly overrides a
 ```text
 1. Detect stack      → R2MO-first or Zero-first (from root pom.xml or framework BOM)
 2. Read mxt/         → framework-map, abstraction-rules, extension-points, mxt-file-creation-rules, mxt-sync-rules
-3. Check MDC layer   → if exists: inspect devapi.mdc first, then other relevant mdc files
+3. Check MDC layer   → if exists: inspect devapi.md first, then other relevant mdc files
 4. Extract project constraints from MDC (if present)
 5. Read .r2mo specs  → operations, schemas, proto, domain contracts
 6. Proceed with implementation using framework + project constraints

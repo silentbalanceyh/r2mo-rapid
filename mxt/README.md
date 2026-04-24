@@ -10,10 +10,18 @@ Start with the smallest valid entry:
 
 - Fastest AI Entry: [`ai-agent-fast-start.md`](./ai-agent-fast-start.md)
 - MCP Shortest Path: [`mcp-shortest-path.md`](./mcp-shortest-path.md)
+- Cross-Repo Biological Network: [`../../zero-ecotope/mxt/biological-network-overview.md`](../../zero-ecotope/mxt/biological-network-overview.md)
+- Pairwise Matrix: [`../../zero-ecotope/mxt/biological-network-pairwise-matrix.md`](../../zero-ecotope/mxt/biological-network-pairwise-matrix.md)
 - MCP Trigger Matrix: [`mcp-trigger-matrix.md`](./mcp-trigger-matrix.md)
 - Distilled Capability Cards: [`distilled-capability-cards.md`](./distilled-capability-cards.md)
 - MCP Token-Saving Rules: [`mcp-token-saving-rules.md`](./mcp-token-saving-rules.md)
 - MXT Coverage Report: [`mxt-coverage-report.md`](./mxt-coverage-report.md)
+
+Cross-repository rule:
+
+- solve inside `r2mo-rapid` alone when possible
+- use one partner repository when needed
+- treat any further repository as optional escalation only
 
 ## 2. MCP Route Files
 
@@ -24,6 +32,7 @@ Start with the smallest valid entry:
 - [`mcp-route-vertx-jooq.md`](./mcp-route-vertx-jooq.md) — `r2mo-vertx`, `r2mo-vertx-jooq*`, `r2mo-dbe-jooq`
 - [`mcp-route-code-generator.md`](./mcp-route-code-generator.md) — generator and processor
 - [`mcp-route-code-review-graph.md`](./mcp-route-code-review-graph.md) — graph-first analysis
+- [`mcp-route-zero-ecotope-handshake.md`](./mcp-route-zero-ecotope-handshake.md) — cross-pack routing into Zero Ecotope exmodule rules from R2MO MCP clients
 
 ## 3. Module Boundary and Guide Documents
 
@@ -38,6 +47,7 @@ Start with the smallest valid entry:
 ### Shared capability
 
 - [`io-boundary.md`](./io-boundary.md) — `r2mo-io`
+- [`hfs-hstore-usage.md`](./hfs-hstore-usage.md) — MDC rules for `HFS`, `HStore`, `RFS`, transfer sessions, range download, and storage providers
 - [`jaas-boundary.md`](./jaas-boundary.md) — `r2mo-jaas`
 - [`jce-boundary.md`](./jce-boundary.md) — `r2mo-jce`
 - [`typed-implementation-boundary.md`](./typed-implementation-boundary.md) — `r2mo-typed-hutool` vs `r2mo-typed-vertx`
@@ -48,6 +58,7 @@ Start with the smallest valid entry:
 
 - [`spring-layer-map.md`](./spring-layer-map.md) — Spring-side layer ownership
 - [`spring-runtime-guide.md`](./spring-runtime-guide.md) — `r2mo-spring` runtime base
+- [`spring-aop-guide.md`](./spring-aop-guide.md) — Spring AOP / AspectJ ownership between `r2mo-spring` and `r2mo-spring-security`
 - [`spring-cache-guide.md`](./spring-cache-guide.md) — `r2mo-spring-cache`
 - [`spring-doc-guide.md`](./spring-doc-guide.md) — `r2mo-spring-doc`
 - [`spring-excel-guide.md`](./spring-excel-guide.md) — `r2mo-spring-excel`
@@ -71,6 +82,7 @@ Start with the smallest valid entry:
 
 - [`code-review-graph-r2mo-analysis.md`](./code-review-graph-r2mo-analysis.md) — repository graph findings
 - [`code-review-graph-usage.md`](./code-review-graph-usage.md) — graph operation workflow
+- [`../../zero-ecotope/mxt/biological-network-dynamic-lookup.md`](../../zero-ecotope/mxt/biological-network-dynamic-lookup.md) — cross-repo dynamic lookup and direct deep retrieval rules
 
 ### Code generator
 

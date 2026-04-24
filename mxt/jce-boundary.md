@@ -54,3 +54,30 @@ Use this order:
 ```text
 jce-boundary.md -> mcp-route-shared-capability-modules.md -> framework-trigger-matrix.md -> exact r2mo-jce source
 ```
+
+## 6. Source and Resource Path
+
+Primary proof targets:
+
+- `r2mo-jce/src/main/java/io/r2mo/jce/common/HED.java`
+- `r2mo-jce/src/main/java/io/r2mo/jce/common/JceProvider.java`
+- `r2mo-jce/src/main/java/io/r2mo/jce/component/lic/AbstractLicenseService.java`
+- `r2mo-jce/src/main/java/io/r2mo/jce/component/lic/io/LicenseIo.java`
+- `r2mo-jce/src/main/java/io/r2mo/jce/component/lic/owner/PreActiveService.java`
+- concrete algorithm implementations such as `LicenseServiceRSA`, `LicenseServiceSM2`, `LicenseServiceECC`, `LicenseServiceEd25519`
+
+## 7. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for shared crypto and license primitives
+- `r2mo-rapid` + `rachel-momo` when the unresolved point is dependency/plugin governance for crypto libraries
+- `r2mo-rapid` + `zero-ecotope` only when a Zero-side capability consumes these primitives and ownership is ambiguous
+
+## 8. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one crypto or license symbol is already known,
+- the unresolved point is structural spread between primitive services, algorithm-specific implementations, and runtime consumers,
+- source remains the final proof.

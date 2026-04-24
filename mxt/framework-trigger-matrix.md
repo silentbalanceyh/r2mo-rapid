@@ -26,6 +26,7 @@ This prevents agents from over-reading unrelated framework code.
 | cache, provider, spi, spid, extension point, implementation selection | Cache / SPI | `extension-points.md`, `search-hints.md`, `mxt-r2mo-mcp-rules.md` | `r2mo-spring-cache`, `r2mo-spring-security`, `r2mo-io`, `r2mo-jaas` | `SPI.findOne*`, `@SPID`, provider/cache implementations |
 | doc, openapi, schema, marker, metadata, contract, error code | Spec / contract | `spec-boundary.md`, `search-hints.md` | `r2mo-spec` | `components/schemas`, `openapi`, `marker.md` |
 | spring bean, mvc, filter, interceptor, autoconfiguration, webflow | Spring-side runtime | `spring-layer-map.md`, `dual-side-development.md` | `r2mo-spring`, `r2mo-spring-*`, `r2mo-boot-spring*` | configuration classes, exception handlers, filter chains |
+| aop, aspect, captcha aspect, around advice, before advice, after advice | Spring AOP / cross-cutting | `spring-aop-guide.md`, `spring-layer-map.md`, `spring-security-mcp-guide.md` | `r2mo-spring`, `r2mo-spring-security`, matching `r2mo-spring-security-*` | `CaptchaValidationAspect`, `CaptchaOn`, Spring AOP configuration |
 | vertx, async, event loop, jooq runtime, jdbc bridge | Vert.x-side runtime | `framework-map.md`, `dual-side-development.md`, `search-hints.md` | `r2mo-vertx`, `r2mo-vertx-jooq*`, `r2mo-boot-vertx` | `AsyncDBContext`, Vert.x DB classes |
 | boot, default boot, startup bundle, assembly | Bootstrap assembly | `framework-map.md`, `abstraction-rules.md` | `r2mo-boot-spring`, `r2mo-boot-spring-default`, `r2mo-boot-vertx` | boot `pom.xml`, assembly/config chain |
 
@@ -67,6 +68,7 @@ Example:
 - `oauth2 token cache` → security/auth + cache/SPI
 - `encrypted license upload` → license/crypto + IO/transfer
 - `dynamic query in vertx` → DBE/query + Vert.x runtime
+- `shared marker referenced by aspect` → `r2mo-spec` for meaning, then runtime repo for execution
 
 ### Rule 3 — If a requirement smells shared, start shared
 
@@ -89,3 +91,14 @@ This matrix is intended to be used together with:
 - `mxt-r2mo-mcp-rules.md`
 - `search-hints.md`
 - the matching `mcp-route-*.md` file when the request already has a clear wording pattern
+- `../../zero-ecotope/mxt/biological-network-overview.md` when the question spans Momo, Spec, R2MO, and Zero
+
+## 5. Direct Deep Retrieval Rule
+
+If the trigger already places the task inside `r2mo-rapid` and the unresolved part is structural, direct `code-review-graph` lookup is valid before opening more broad route docs.
+
+Examples:
+
+- locate callers of `CaptchaValidationAspect`
+- confirm whether a symbol belongs to shared capability or Spring integration
+- inspect change impact inside one Spring module family

@@ -54,3 +54,31 @@ Use this order:
 ```text
 jaas-boundary.md -> mcp-route-shared-capability-modules.md -> spring-security-mcp-guide.md if needed -> exact source
 ```
+
+## 6. Source and Resource Path
+
+Primary proof targets:
+
+- `r2mo-jaas/src/main/java/io/r2mo/jaas/session/UserClaim.java`
+- `r2mo-jaas/src/main/java/io/r2mo/jaas/session/UserCache.java`
+- `r2mo-jaas/src/main/java/io/r2mo/jaas/session/UserSession.java`
+- `r2mo-jaas/src/main/java/io/r2mo/jaas/token/*`
+- `r2mo-jaas/src/main/java/io/r2mo/jaas/auth/*`
+
+Read `r2mo-spring-security` only when the unresolved point moves into Spring runtime landing.
+
+## 7. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for shared auth/session primitives
+- `r2mo-rapid` + `zero-ecotope` when a Zero-side session/security question must be compared against shared auth primitives
+- `r2mo-rapid` + `r2mo-spec` only when claim/token payload meaning is the unresolved contract surface
+
+## 8. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one auth primitive is already known,
+- the unresolved point is structural spread between claim/session/token primitives and runtime consumers,
+- graph results are verified against source afterward.

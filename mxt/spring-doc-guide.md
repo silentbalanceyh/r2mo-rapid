@@ -33,3 +33,17 @@ Use this order:
 ```text
 spring-doc-guide.md -> mcp-route-spring-integrations.md -> r2mo-spring-doc source -> spec docs only if contract details are needed
 ```
+
+## 4. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for Spring-side doc runtime ownership
+- `r2mo-rapid` + `r2mo-spec` when shared OpenAPI/schema semantics are the unresolved point
+
+## 5. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one doc/runtime symbol is already known
+- the unresolved point is structural spread between SpringDoc landing and shared contract definitions

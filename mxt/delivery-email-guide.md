@@ -43,3 +43,17 @@ Use this order:
 ```text
 delivery-email-guide.md -> mcp-route-spring-integrations.md -> xync-email or spring-email -> exact source
 ```
+
+## 5. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for delivery foundation plus Spring landing ownership
+- `r2mo-rapid` + `zero-ecotope` when email delivery capability must be compared with Zero email plugin/auth-plugin boundaries
+
+## 6. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one delivery symbol is already known
+- the unresolved point is whether the issue belongs in provider foundation or Spring integration landing

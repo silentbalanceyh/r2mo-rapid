@@ -46,3 +46,17 @@ Use this order:
 ```text
 oauth2-token-guide.md -> spring-security-mcp-guide.md -> r2mo-spring-security -> oauth2 or oauth2client module -> exact token flow source
 ```
+
+## 6. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for Spring OAuth2 token ownership
+- `r2mo-rapid` + `zero-ecotope` when OAuth2 capability/provider behavior must be compared across Spring and Zero lines
+
+## 7. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one OAuth2 token symbol is already known
+- the unresolved point is structural spread between base security runtime, authorization server behavior, and client registration modules

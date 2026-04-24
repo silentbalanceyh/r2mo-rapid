@@ -60,3 +60,30 @@ Use this order:
 ```text
 io-boundary.md -> extension-points.md -> mcp-route-shared-capability-modules.md -> r2mo-io -> concrete implementation module
 ```
+
+## 6. Source and Resource Path
+
+Primary proof targets:
+
+- `r2mo-ams/src/main/java/io/r2mo/base/io/HStore.java`
+- `r2mo-ams/src/main/java/io/r2mo/base/io/HTransfer.java`
+- `r2mo-ams/src/main/java/io/r2mo/base/io/modeling/*`
+- `r2mo-ams/src/main/java/io/r2mo/base/io/common/*`
+
+Read implementation modules only after the abstraction boundary is clear.
+
+## 7. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for shared IO abstraction ownership
+- `r2mo-rapid` + `zero-ecotope` when a Zero exmodule/plugin issue falls through into shared storage or transfer abstractions
+- `r2mo-rapid` + `r2mo-spec` only when file-transfer payload semantics become a shared contract problem
+
+## 8. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one IO symbol is already known,
+- the unresolved point is structural spread between abstraction interfaces and concrete landing modules,
+- source remains the final proof.

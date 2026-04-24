@@ -56,3 +56,17 @@ Read `r2mo-typed-hutool` first when the question is about data-type implementati
 ## 6. Final Rule
 
 Typed modules are implementation choices, not architectural boundaries. Read the shared vocabulary in `r2mo-ams` first, then choose one typed module based on the runtime environment.
+
+## 7. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for typed implementation selection
+- `r2mo-rapid` + `zero-ecotope` when the unresolved point is how Vert.x-side typed behavior lands in the Zero runtime ecosystem
+
+## 8. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one typed implementation symbol is already known
+- the unresolved point is structural spread between shared vocabulary, Hutool/Vert.x typed modules, and downstream runtime consumers

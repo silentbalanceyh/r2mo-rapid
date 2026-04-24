@@ -60,6 +60,34 @@ Read `r2mo-dbe` first for interface ownership. Read the implementation module fo
 - Do not put Vert.x runtime execution into `r2mo-dbe-jooq` itself; that belongs in `r2mo-vertx-jooq*`.
 - Do not add a third DBE implementation module unless a fundamentally different ORM is introduced.
 
-## 6. Final Rule
+## 6. Source and Resource Path
+
+Primary proof targets:
+
+- `r2mo-dbe-mybatisplus/src/main/resources/templates/*`
+- `r2mo-dbe-mybatisplus/src/main/resources/META-INF/services/io.r2mo.spi.FactoryDBAction`
+- `r2mo-dbe-jooq/src/main/resources/META-INF/services/io.r2mo.spi.FactoryDBAction`
+- `r2mo-spring-mybatisplus/src/main/resources/META-INF/spring/*`
+- `r2mo-vertx-jooq/pom.xml` and its runtime bridge code
+
+Read `r2mo-dbe` abstractions first, then one implementation module, then the landing/runtime module.
+
+## 7. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for persistence-strategy ownership
+- `r2mo-rapid` + `zero-ecotope` when a Zero module consumes DBE/jOOQ strategy and the landing boundary is unclear
+- `r2mo-rapid` + `r2mo-spec` only when generated model or query-payload meaning is the unresolved shared contract
+
+## 8. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one DBE implementation symbol is already known,
+- the unresolved point is structural spread between shared DBE abstractions, one concrete ORM strategy, and its runtime landing module,
+- source and POM/resource inspection still provide the final proof.
+
+## 9. Final Rule
 
 DBE implementation modules are persistence strategy choices. Read the shared interface in `r2mo-dbe` first, then read one implementation module based on the ORM strategy in use.

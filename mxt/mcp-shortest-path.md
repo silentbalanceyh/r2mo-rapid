@@ -32,6 +32,9 @@ Examples:
 - `r2mo-spring-doc` -> `spring-doc-guide.md`
 - `r2mo-spring-excel` -> `spring-excel-guide.md`
 - `r2mo-spring-security-oauth2*` -> `oauth2-token-guide.md`
+- `@Aspect` / `CaptchaValidationAspect` / Spring AOP -> `spring-aop-guide.md`
+- `HFS` / `HStore` / `RFS` -> `hfs-hstore-usage.md`
+- Zero Ambient / Integration / Modulat exmodule topics -> `mcp-route-zero-ecotope-handshake.md`, then the matching `mxt-zero` rule
 
 ### Capability family known, module still unclear
 
@@ -49,12 +52,21 @@ Use:
 ai-agent-fast-start.md -> core-capability-index.md -> one mcp-route-*.md -> exact source
 ```
 
+### Cross-repository wording is already present
+
+Use:
+
+```text
+../../zero-ecotope/mxt/biological-network-overview.md -> ../../zero-ecotope/mxt/biological-network-static-lookup.md -> one r2mo route doc -> exact source
+```
+
 ## 3. Token-Saving Rules
 
 - Prefer one route file over `README.md`.
 - Prefer one module boundary file over large family maps.
 - Prefer graph-backed capability narrowing before opening multiple source files.
 - Stop after one correct ownership answer is found.
+- If the repository is already known and the remaining uncertainty is structural, direct `code-review-graph` deep retrieval is allowed.
 
 ## 4. Anti-Patterns
 

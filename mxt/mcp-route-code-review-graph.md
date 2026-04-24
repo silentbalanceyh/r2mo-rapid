@@ -12,6 +12,7 @@ Activate this route when the user is asking for:
 - module targeting,
 - graph-backed execution-path narrowing,
 - or repository-level risk analysis.
+- cross-pack ownership between R2MO core and Zero Ecotope exmodules.
 
 Preferred regex:
 
@@ -48,6 +49,7 @@ This route can combine with:
 
 - `mcp-route-spring-security.md`
 - `mcp-route-code-generator.md`
+- `mcp-route-zero-ecotope-handshake.md`
 
 Examples:
 

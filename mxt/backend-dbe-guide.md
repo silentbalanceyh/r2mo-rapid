@@ -56,3 +56,18 @@ For persistence and search, use:
 ```text
 DBE facade -> JObject query shape -> generated CRUD compatibility -> no duplicate repository layer
 ```
+
+## 7. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for DBE usage guidance
+- `r2mo-rapid` + `zero-ecotope` when the unresolved point is how shared DBE/query abstractions land in the Zero runtime
+- `r2mo-rapid` + `r2mo-spec` only when shared contract meaning of payloads or models must be confirmed
+
+## 8. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one DBE/query symbol is already known
+- the unresolved point is structural spread between query shape, DBE facade, generated CRUD, and runtime landing modules

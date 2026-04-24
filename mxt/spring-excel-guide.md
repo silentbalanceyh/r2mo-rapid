@@ -33,3 +33,17 @@ Use this order:
 ```text
 spring-excel-guide.md -> mcp-route-spring-integrations.md -> r2mo-spring-excel source -> code-generator docs only if generation is actually involved
 ```
+
+## 4. Pairwise Handling
+
+Preferred pairs:
+
+- `r2mo-rapid` alone for Spring-side Excel integration ownership
+- `r2mo-rapid` + `zero-ecotope` when Excel plugin/integration boundaries must be compared across runtime lines
+
+## 5. Direct Deep Retrieval Rule
+
+Direct `code-review-graph` lookup is valid when:
+
+- one Excel symbol is already known
+- the unresolved point is structural spread between Spring Excel landing, SPI, and generation or import/export helpers
