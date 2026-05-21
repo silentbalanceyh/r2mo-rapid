@@ -56,8 +56,8 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
     private static final Map<String, List<StoreChunk>> WAITING_CHUNKS = new ConcurrentHashMap<>();
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private final StoreInit<List<StoreChunk>> initializer;
-    // 节点管理器实例
-    private final NodeManager nm = NodeManager.of();
+    // 节点管理器实例 — static 共享，跨线程/跨实例可见
+    private static final NodeManager nm = NodeManager.of();
 
     LocalLargeService(final TransferTokenService token) {
         super(token);
