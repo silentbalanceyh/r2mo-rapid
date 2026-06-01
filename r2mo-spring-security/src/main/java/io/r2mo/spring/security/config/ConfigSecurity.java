@@ -89,6 +89,7 @@ public class ConfigSecurity implements Serializable {
     private ConfigSecurityDev development;
     // OAuth2 配置（由 r2mo-spring-security-oauth2 模块使用）
     private Object oauth2;  // 避免直接依赖 OAuth2 模块
+    private ConfigSecurityExchange exchange;
 
     public static List<Kv<String, HttpMethod>> ignoreUris(final Collection<String> uris,
                                                           final HttpMethod defaultMethod) {
@@ -156,5 +157,10 @@ public class ConfigSecurity implements Serializable {
     // 内置配置：是否开启 OAuth2 认证（由 OAuth2 模块检查）
     public boolean isOAuth2() {
         return Objects.nonNull(this.oauth2);
+    }
+
+    // 内置配置：是否开启第三方 Token 交换
+    public boolean isExchange() {
+        return Objects.nonNull(this.exchange) && this.exchange.isEnabled();
     }
 }

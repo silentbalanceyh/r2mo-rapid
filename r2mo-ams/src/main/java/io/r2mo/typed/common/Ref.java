@@ -1,5 +1,6 @@
 package io.r2mo.typed.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -18,7 +19,9 @@ public class Ref implements Serializable {
     public static final String REF_TYPE = "refType";
     public static final String REF_ID = "refId";
 
+    @JsonProperty("refType")
     private String refType;
+    @JsonProperty("refId")
     private UUID refId;
 
     private Ref(final String type, final UUID id) {

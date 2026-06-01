@@ -16,3 +16,6 @@ io.r2mo.spring.security.extension.captcha.CaptchaValidationAspect
 io.r2mo.spring.security.extension.captcha.CaptchaLoginController
 io.r2mo.spring.security.token.AESTokenGenerator
 io.r2mo.spring.security.token.AESTokenRefresher
+io.r2mo.spring.security.exchange.ExchangeController
+io.r2mo.spring.security.exchange.ExchangeServiceUserAt
+io.r2mo.spring.security.config.ConfigSecurityExchange

@@ -100,7 +100,7 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
 
     @Override
     public TransferResult runUpload(final String token, final InputStream fileData, final int index) {
-        final List<StoreChunk> chunks = this.findStoreChunks(token);
+        final List<StoreChunk> chunks = this.resolveChunks(token);
         final StoreChunk targetChunk = this.findChunk(chunks, index);
 
         if (targetChunk == null) {
@@ -208,7 +208,7 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
      * @param token token
      */
     private void rmChunk(final String token) {
-        final List<StoreChunk> allChunks = this.findStoreChunks(token);
+        final List<StoreChunk> allChunks = this.resolveChunks(token);
         for (final StoreChunk sc : allChunks) {
             TransUpload.of().rm(sc);
         }
@@ -220,7 +220,7 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
      * 合并所有分块为一个完整文件
      */
     private void mergeChunks(final String token) {
-        final List<StoreChunk> allChunks = this.findStoreChunks(token);
+        final List<StoreChunk> allChunks = this.resolveChunks(token);
         // 获取最终文件路径
         final Path finalFilePath = this.finalFilePath(token, allChunks);
 
@@ -272,17 +272,27 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
 
     /**
      * 验证所有分块的完整性
+     * 直接读内存状态（CHUNK_STORE + UPLOADED_CHUNKS），不触发 refreshChunkStatus。
+     * refreshChunkStatus 通过 chunkExists 做磁盘探测，路径解析与写入路径不一致时
+     * 会把所有已上传分块标记为未上传，覆写正确的内存状态导致 0/N。
      */
     private void validChunks(final String token) {
-        final List<StoreChunk> allChunks = this.findStoreChunks(token);
-        final List<StoreChunk> uploadedChunks = UPLOADED_CHUNKS.getOrDefault(token, Collections.emptyList());
+        final List<StoreChunk> allChunks = CHUNK_STORE.getOrDefault(token, Collections.emptyList());
+        final int uploadedCount = UPLOADED_CHUNKS.getOrDefault(token, Collections.emptyList()).size();
 
-        // 1. 检查是否所有分块都已上传
-        if (uploadedChunks.size() != allChunks.size()) {
-            throw new _400BadRequestException("[ R2MO ] 还有分块未完成上传，无法完成传输。已完成: " + uploadedChunks.size() + "/" + allChunks.size());
+        if (uploadedCount != allChunks.size()) {
+            final long missingCount = allChunks.size() - uploadedCount;
+            final List<Integer> missingIndexes = allChunks.stream()
+                .filter(chunk -> !Boolean.TRUE.equals(chunk.getDone()))
+                .map(StoreChunk::getIndex)
+                .limit(10)
+                .toList();
+            log.error("[ R2MO ] 分块校验失败: token={}, uploaded={}/{}, missingCount={}, sampleMissingIndexes={}",
+                token, uploadedCount, allChunks.size(), missingCount, missingIndexes);
+            throw new _400BadRequestException("[ R2MO ] 还有分块未完成上传，无法完成传输。已完成: " + uploadedCount + "/" + allChunks.size() + "，缺失起始索引: " + missingIndexes);
         }
 
-        //
+        // 2. 磁盘完整性校验（仅 warn，不阻断流程）
         for (final StoreChunk chunk : allChunks) {
             try {
                 final Binary data = TransDownload.of().read(chunk.getStorePath());
@@ -303,7 +313,7 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
                 log.warn("[ R2MO ] 校验分块时发生异常: chunkId={}", chunk.getId(), e);
             }
         }
-        log.info("[ R2MO ] 完成验证： token={}, 分块数：{}", token, uploadedChunks.size());
+        log.info("[ R2MO ] 完成验证： token={}, 分块数：{}", token, uploadedCount);
     }
 
     /**
@@ -328,6 +338,31 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
             hexChars[i * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    /**
+     * 解析令牌并获取分块信息（不触发磁盘探测）。
+     * 保留令牌验证和分块恢复链路，但不调用 refreshChunkStatus，
+     * 避免因 chunkExists 路径不一致覆写正确的内存上传状态。
+     * 用于上传/合并/删除/校验等写操作场景。
+     */
+    private List<StoreChunk> resolveChunks(final String token) {
+        final TransferToken tokenVerified = this.token.runValidate(token);
+        if (Objects.isNull(tokenVerified)) {
+            throw new _404NotFoundException("[ R2MO ] 令牌无效或已过期: " + token);
+        }
+        final Ref ref = tokenVerified.getRef();
+        if (Objects.isNull(ref) || Objects.isNull(ref.refId())) {
+            throw new _404NotFoundException("[ R2MO ] 令牌关联的资源对象无效: " + token);
+        }
+        List<StoreChunk> chunks = this.nm.findChunk(ref.refId());
+        if (Objects.isNull(chunks)) {
+            chunks = this.restoreChunks(tokenVerified, ref.refId());
+        }
+        if (Objects.isNull(chunks)) {
+            throw new _404NotFoundException("[ R2MO ] 分块信息不存在: " + ref.refId());
+        }
+        return chunks;
     }
 
     /**
@@ -446,7 +481,13 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
         }
         try {
             if (Objects.nonNull(chunk.getSize())) {
-                return Files.size(path) == chunk.getSize();
+                final long actualSize = Files.size(path);
+                if (actualSize != chunk.getSize()) {
+                    log.warn("[ R2MO ] 分块大小不匹配: chunkId={}, index={}, expected={}, actual={}, path={}",
+                        chunk.getId(), chunk.getIndex(), chunk.getSize(), actualSize, absolute);
+                    return false;
+                }
+                return true;
             }
             return true;
         } catch (final IOException ex) {

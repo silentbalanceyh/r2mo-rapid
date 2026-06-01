@@ -32,4 +32,5 @@ public enum TypeLogin {
     JWT,             // JWT 令牌
     OTP,             // 一次性密码 (One-Time Password)
     SSO,             // 单点登录 (Single Sign-On)
+    EXCHANGE,        // 第三方集成 Token 交换
 }
