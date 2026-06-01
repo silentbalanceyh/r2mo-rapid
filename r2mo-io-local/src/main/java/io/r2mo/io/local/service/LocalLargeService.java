@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 大文件分块传输服务实现
@@ -93,9 +94,9 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
 
     private void initChunkList(final TransferToken token, final List<StoreChunk> chunks) {
         final String tokenId = token.getToken();
-        CHUNK_STORE.put(tokenId, new ArrayList<>(chunks));
-        UPLOADED_CHUNKS.put(tokenId, new ArrayList<>());
-        WAITING_CHUNKS.put(tokenId, new ArrayList<>(chunks));
+        CHUNK_STORE.put(tokenId, new CopyOnWriteArrayList<>(chunks));
+        UPLOADED_CHUNKS.put(tokenId, new CopyOnWriteArrayList<>());
+        WAITING_CHUNKS.put(tokenId, new CopyOnWriteArrayList<>(chunks));
     }
 
     @Override
@@ -405,29 +406,44 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
     }
 
     /**
-     * 更新分块状态
+     * 更新分块状态 — 使用 ConcurrentHashMap.compute 做原子 copy-on-write 更新，
+     * 避免并发 chunk 完成时 getOrDefault + modify + put 导致状态丢失。
      */
     private void updateChunkStatus(final String token, final StoreChunk chunk, final boolean uploaded) {
-        final List<StoreChunk> uploadedList = UPLOADED_CHUNKS.getOrDefault(token, new ArrayList<>());
-        final List<StoreChunk> waitingList = WAITING_CHUNKS.getOrDefault(token, new ArrayList<>());
-
         chunk.setDone(uploaded);
         if (uploaded) {
-            // 添加到已上传列表，从等待列表中移除
-            if (uploadedList.stream().noneMatch(c -> c.getId().equals(chunk.getId()))) {
-                uploadedList.add(chunk);
-            }
-            waitingList.removeIf(c -> c.getId().equals(chunk.getId()));
+            UPLOADED_CHUNKS.compute(token, (k, list) -> {
+                final List<StoreChunk> safe = list != null ? list : new CopyOnWriteArrayList<>();
+                if (safe.stream().noneMatch(c -> c.getId().equals(chunk.getId()))) {
+                    final List<StoreChunk> updated = new CopyOnWriteArrayList<>(safe);
+                    updated.add(chunk);
+                    return updated;
+                }
+                return safe;
+            });
+            WAITING_CHUNKS.compute(token, (k, list) -> {
+                if (list == null || list.isEmpty()) return list;
+                final List<StoreChunk> updated = new CopyOnWriteArrayList<>(list);
+                updated.removeIf(c -> c.getId().equals(chunk.getId()));
+                return updated;
+            });
         } else {
-            // 添加到等待列表，从已上传列表中移除
-            if (waitingList.stream().noneMatch(c -> c.getId().equals(chunk.getId()))) {
-                waitingList.add(chunk);
-            }
-            uploadedList.removeIf(c -> c.getId().equals(chunk.getId()));
+            WAITING_CHUNKS.compute(token, (k, list) -> {
+                final List<StoreChunk> safe = list != null ? list : new CopyOnWriteArrayList<>();
+                if (safe.stream().noneMatch(c -> c.getId().equals(chunk.getId()))) {
+                    final List<StoreChunk> updated = new CopyOnWriteArrayList<>(safe);
+                    updated.add(chunk);
+                    return updated;
+                }
+                return safe;
+            });
+            UPLOADED_CHUNKS.compute(token, (k, list) -> {
+                if (list == null || list.isEmpty()) return list;
+                final List<StoreChunk> updated = new CopyOnWriteArrayList<>(list);
+                updated.removeIf(c -> c.getId().equals(chunk.getId()));
+                return updated;
+            });
         }
-
-        UPLOADED_CHUNKS.put(token, uploadedList);
-        WAITING_CHUNKS.put(token, waitingList);
     }
 
     private void persistChunks(final TransferToken token, final List<StoreChunk> chunks) {
@@ -455,21 +471,35 @@ class LocalLargeService extends AbstractTransferService implements TransferLarge
         return null;
     }
 
+    /**
+     * 非破坏性刷新分块状态 — 只增不减。
+     * 磁盘探测发现的已上传分块会被提升到 UPLOADED_CHUNKS，
+     * 但已记录在 UPLOADED_CHUNKS 中的分块不会被降级（避免路径解析不一致
+     * 导致 refreshChunkStatus 覆写正确的内存上传状态 → 0/N）。
+     */
     private void refreshChunkStatus(final String token, final List<StoreChunk> chunks) {
-        final List<StoreChunk> uploadedList = new ArrayList<>();
-        final List<StoreChunk> waitingList = new ArrayList<>();
         for (final StoreChunk chunk : chunks) {
-            final boolean uploaded = this.chunkExists(chunk);
-            chunk.setDone(uploaded);
-            if (uploaded) {
-                uploadedList.add(chunk);
-            } else {
-                waitingList.add(chunk);
+            final boolean onDisk = this.chunkExists(chunk);
+            if (onDisk) {
+                // 磁盘上存在 → 提升为 uploaded（仅当尚未记录时）
+                chunk.setDone(true);
+                UPLOADED_CHUNKS.compute(token, (k, list) -> {
+                    if (list == null) return new CopyOnWriteArrayList<>(List.of(chunk));
+                    if (list.stream().anyMatch(c -> c.getId().equals(chunk.getId()))) return list;
+                    final List<StoreChunk> updated = new CopyOnWriteArrayList<>(list);
+                    updated.add(chunk);
+                    return updated;
+                });
+                WAITING_CHUNKS.compute(token, (k, list) -> {
+                    if (list == null || list.isEmpty()) return list;
+                    if (list.stream().noneMatch(c -> c.getId().equals(chunk.getId()))) return list;
+                    final List<StoreChunk> updated = new CopyOnWriteArrayList<>(list);
+                    updated.removeIf(c -> c.getId().equals(chunk.getId()));
+                    return updated;
+                });
             }
+            // 磁盘上不存在 → 不降级已记录的 uploaded 状态
         }
-        CHUNK_STORE.put(token, new ArrayList<>(chunks));
-        UPLOADED_CHUNKS.put(token, uploadedList);
-        WAITING_CHUNKS.put(token, waitingList);
     }
 
     private boolean chunkExists(final StoreChunk chunk) {
