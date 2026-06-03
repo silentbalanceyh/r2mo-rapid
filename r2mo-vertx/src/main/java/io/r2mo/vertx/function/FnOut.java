@@ -62,7 +62,7 @@ final class FnOut {
     static WebException failAt(final Throwable ex) {
         // 1. 始终打印原始异常堆栈，确保不丢失任何上下文
         Objects.requireNonNull(ex);
-        // log.error("[ R2MO ] 异常捕获: {}", ex.getMessage(), ex);
+        log.error("[ R2MO ] 异常捕获: {}", ex.getMessage(), ex);
 
         // 2. 定义搜索指针和候选项
         Throwable current = ex;
@@ -100,7 +100,20 @@ final class FnOut {
 
         // 场景 B: 啥也没找到，说明是纯粹的意外 (如 NullPointer, IndexOutOfBounds)
         // 此时使用原始异常 ex 的 message，或者取 root cause 的 message 会更准确
-        return new _500ServerInternalException("[ R2MO ] 调用过程中的其他异常：" + ex.getMessage());
+        String message = ex.getMessage();
+        if (message == null) {
+            // CompletionException / InvocationTargetException wrappers often have null getMessage()
+            // while the actual cause carries the real message (e.g. IllegalArgumentException)
+            Throwable cause = ex.getCause();
+            while (cause != null && cause != ex) {
+                if (cause.getMessage() != null) {
+                    message = cause.getMessage();
+                    break;
+                }
+                cause = cause.getCause();
+            }
+        }
+        return new _500ServerInternalException("[ R2MO ] 调用过程中的其他异常：" + message);
     }
 
     /**
