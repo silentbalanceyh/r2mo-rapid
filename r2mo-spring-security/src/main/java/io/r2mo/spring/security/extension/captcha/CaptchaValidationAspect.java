@@ -7,6 +7,7 @@ import io.r2mo.spring.security.exception._80222Exception401CaptchaWrong;
 import io.r2mo.spring.security.exception._80242Exception400CaptchaRequired;
 import io.r2mo.typed.exception.web._400BadRequestException;
 import io.r2mo.typed.json.JBase;
+import io.r2mo.typed.json.JObject;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,11 @@ import java.util.Objects;
 
 /**
  * 图形验证码校验切面
- * 拦截所有标注了 @CaptchaOn 的方法，在执行前从请求体中校验 captchaId 与 captcha
+ * 拦截所有标注了 @CaptchaOn 的方法，在执行前校验 captchaId 与 captcha。
+ * <p>
+ * 优先从控制器方法的 JObject 参数中读取验证码字段，避免与
+ * SecurityScopeResolver 争抢 request.getInputStream()。
+ * 仅在找不到 JObject 参数时降级为 raw body 读取。
  *
  * @author lang : 2025-11-13
  */
@@ -37,7 +42,8 @@ public class CaptchaValidationAspect {
     private final ConfigSecurity configSecurity;
 
     /**
-     * 在执行被 @CaptchaOn 注解的方法前进行验证码校验（从 JSON Body 读取）
+     * 在执行被 @CaptchaOn 注解的方法前进行验证码校验。
+     * 优先从 JObject 参数读取，降级时从 raw body 读取。
      */
     @Before("@annotation(io.r2mo.spring.security.extension.captcha.CaptchaOn)")
     public void validateCaptcha(final JoinPoint joinPoint) {
@@ -71,13 +77,33 @@ public class CaptchaValidationAspect {
             throw new _80242Exception400CaptchaRequired("[ R2MO ] 请求体必须为 application/json 格式");
         }
 
-        // 全部逻辑封装进 readCaptcha
-        final CaptchaRequest payload = this.readCaptcha(request, joinPoint);
+        // 优先从已解析的 JObject 参数中提取 captchaId / captcha，
+        // 避免与 SecurityScopeResolver 争抢 request.getInputStream()。
+        final String captchaId;
+        final String captcha;
+        final JObject requestJ = this.findJObject(joinPoint);
+        if (requestJ != null) {
+            captchaId = requestJ.getString(CaptchaRequest.ID);      // "captchaId"
+            captcha = requestJ.getString(CaptchaRequest.CODE);      // "captcha"
+        } else {
+            // 降级：原逻辑，兼容不支持 JObject 的老 Controller（同时打印 WARN）
+            log.warn("[ R2MO ] @CaptchaOn 方法未找到 JObject 参数，降级为 body 读取");
+            final CaptchaRequest payload = this.readCaptcha(request, joinPoint);
+            captchaId = payload.getCaptchaId();
+            captcha = payload.getCaptcha();
+        }
 
-        final String captchaId = payload.getCaptchaId().trim();
-        final String captcha = payload.getCaptcha().trim();
+        // 非空校验
+        if (captchaId == null || captchaId.trim().isEmpty()) {
+            log.warn("[ R2MO ] 方法 {} 缺少 captchaId 参数", joinPoint.getSignature());
+            throw new _80242Exception400CaptchaRequired("captchaId");
+        }
+        if (captcha == null || captcha.trim().isEmpty()) {
+            log.warn("[ R2MO ] 方法 {} 缺少 captcha 参数", joinPoint.getSignature());
+            throw new _80242Exception400CaptchaRequired("captcha");
+        }
 
-        final boolean valid = this.captchaService.validate(captchaId, captcha);
+        final boolean valid = this.captchaService.validate(captchaId.trim(), captcha.trim());
         if (!valid) {
             log.warn("[ R2MO ] 验证码校验失败，captchaId: {}", captchaId);
             throw new _80222Exception401CaptchaWrong(captcha);
@@ -87,8 +113,24 @@ public class CaptchaValidationAspect {
     }
 
     /**
-     * 从请求体读取 JSON，解析为 LoginCaptcha，并校验 captchaId 与 captcha 非空。
-     * 若任一环节失败，抛出对应的业务异常。
+     * 从 JoinPoint 方法参数中查找 JObject 实例。
+     * 遍历所有参数，返回第一个 instanceof JObject 的值。
+     *
+     * @return JObject 实例，若方法参数中无则返回 null
+     */
+    private JObject findJObject(final JoinPoint joinPoint) {
+        for (final Object arg : joinPoint.getArgs()) {
+            if (arg instanceof JObject jObject) {
+                return jObject;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 【降级路径】从请求体 raw InputStream 读取 captcha 数据。
+     * 仅在 Controller 方法参数中找不到 JObject 时使用。
+     * 注意：此方法依赖 request.getInputStream()，可能与下游 body 读取冲突。
      */
     private CaptchaRequest readCaptcha(final HttpServletRequest request, final JoinPoint joinPoint) {
         // 1. 解析 JSON
